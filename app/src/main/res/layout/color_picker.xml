@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <com.af.pxl.ColorPickerView
+        android:id="@+id/colorPickerHue"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:layout_below="@+id/colorView"
+        android:layout_marginEnd="14dp"
+        android:layout_marginStart="14dp" />
+
+    <com.af.pxl.ColorPickerView
+        android:id="@+id/colorPickerSat"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginStart="14dp"
+        android:layout_below="@+id/seekBarHue" />
+
+    <com.af.pxl.ColorPickerView
+        android:id="@+id/colorPickerVal"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:layout_below="@+id/seekBarSat"
+        android:layout_marginEnd="14dp"
+        android:layout_marginStart="14dp" />
+
+    <SeekBar
+        android:id="@+id/seekBarHue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/colorPickerHue"
+        android:max="360"
+        android:progress="180" />
+
+    <SeekBar
+        android:id="@+id/seekBarSat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/colorPickerSat"
+        android:max="100"
+        android:progress="50" />
+
+    <SeekBar
+        android:id="@+id/seekBarVal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/colorPickerVal"
+        android:max="100"
+        android:progress="50" />
+
+    <com.af.pxl.ColorView
+        android:id="@+id/colorView"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/colorPickButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/seekBarVal"
+        android:layout_centerHorizontal="true"
+        android:text="PICK!" />
+
+</RelativeLayout>
