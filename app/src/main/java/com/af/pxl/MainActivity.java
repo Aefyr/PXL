@@ -64,6 +64,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        SeekBar tempSeekBar = (SeekBar) findViewById(R.id.tempSeekBar);
+        tempSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                pixelSurface2.test_zoom(++i);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
         /*final CanvasView canvasView = (CanvasView) findViewById(R.id.canvasView);
         final ColorPickerView huePicker = (ColorPickerView) findViewById(R.id.colorPicker);
 

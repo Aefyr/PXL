@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PorterDuff;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -34,6 +35,10 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
 
     Path path;
     Matrix scaleMatrix;
+
+    float zoom = 1;
+    int offsetX = 0;
+    int offsetY = 0;
 
     boolean showGrid = true;
 
@@ -133,11 +138,16 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
         boolean forcedUpdate = false;
 
         boolean fillRequested = false;
+
+        boolean gridUpdateNeeded = true;
         Pixel fillStart;
         int[] fillColors;
 
         Canvas tempC;
         Bitmap tempB;
+
+        Bitmap gridB;
+        Canvas gridC;
 
         synchronized void pause(){
             try {
@@ -165,20 +175,9 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
             firstStart = false;
             tempB = Bitmap.createBitmap(Q,Q, Bitmap.Config.ARGB_8888);
             tempC = new Canvas(tempB);
-            Bitmap gridB = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
-            Canvas gridC = new Canvas(gridB);
-            Paint gridPaint = new Paint();
-            gridPaint.setColor(Color.BLACK);
-            gridPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-            gridPaint.setStrokeWidth(2);
-            int height = getHeight();
-            int width = getWidth();
-            for(int x = 0; x <= Q; x++){
-                gridC.drawLine(x*pixelSizeX, 0, x*pixelSizeX, height, gridPaint);
-            }
-            for(int y = 0; y <= Q; y++){
-                gridC.drawLine(0, pixelSizeY*y,width, pixelSizeY*y, gridPaint);
-            }
+            gridB = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+            gridC = new Canvas(gridB);
+            drawGrid();
             while (running){
                 long startTime = System.currentTimeMillis();
                 Canvas canvas = surfaceHolder.lockCanvas();
@@ -190,6 +189,10 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
                     fillRequested = false;
                 }
 
+                if(gridUpdateNeeded) {
+                    drawGrid();
+                    gridUpdateNeeded = false;
+                }
                 tempC.drawBitmap(pixelBitmap, 0,0, paint);
                 tempC.drawPath(path, paint);
 
@@ -212,6 +215,29 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
                 pause();
             }
         }
+
+        void drawGrid(){
+            Paint gridPaint = new Paint();
+            gridPaint.setColor(Color.BLACK);
+            gridPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+            gridPaint.setStrokeWidth(2);
+            gridC.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+            int height = getHeight();
+            int width = getWidth();
+            for(int x = 0; x <= Q; x++){
+                gridC.drawLine(x*pixelSizeX*zoom, 0, x*pixelSizeX*zoom, height, gridPaint);
+            }
+            for(int y = 0; y <= Q; y++){
+                gridC.drawLine(0, pixelSizeY*y*zoom,width, pixelSizeY*y*zoom, gridPaint);
+            }
+        }
+    }
+
+    void test_zoom(float zoomScale){
+        zoom = zoomScale;
+        scaleMatrix.setScale(scaleX * zoomScale, scaleY * zoomScale);
+        drawingThread2.gridUpdateNeeded = true;
+        drawingThread2.update();
     }
 
     //Tools
@@ -220,8 +246,8 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
     float nY;
 
     void Pen(MotionEvent event){
-        float sX = event.getX()/scaleX;
-        float sY = event.getY()/scaleY;
+        float sX = (event.getX()/scaleX)/zoom;
+        float sY = (event.getY()/scaleY)/zoom;
 
         if(event.getAction() == MotionEvent.ACTION_DOWN){
             pixelCanvas.drawPoint(sX,sY, paint);
@@ -260,8 +286,8 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
     void Fill(MotionEvent event){
         if(event.getAction()!=MotionEvent.ACTION_DOWN || alreadyFilling)
             return;
-        int x = (int)(event.getX()/scaleX);
-        int y = (int)(event.getY()/scaleY);
+        int x = (int)((event.getX()/scaleX)/zoom);
+        int y = (int)((event.getY()/scaleY)/zoom);
 
         drawingThread2.requestFill(new Pixel(x,y), new int[]{pixelBitmap.getPixel(x,y), paint.getColor()});
         drawingThread2.update();
