@@ -14,7 +14,6 @@ import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 
 /**
  * Created by Peter on 21.06.2017.
@@ -40,7 +39,7 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
 
     ArrayDeque<Bitmap> history;
 
-    float zoom = 1;
+    float zoomScale = 1;
     float offsetX = 0;
     float offsetY = 0;
 
@@ -97,7 +96,7 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
     public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
         scaleX = (float) i1/pixelCanvas.getWidth();
         scaleY = (float) i2/pixelCanvas.getHeight();
-        scaleMatrix.setScale(scaleX, scaleY);
+        scaleMatrix.setScale(scaleX* zoomScale, scaleY* zoomScale);
         pixelSizeX = (float) i1/(float)Q;
         pixelSizeY = (float) i2/(float)Q;
 
@@ -124,8 +123,8 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
         //TODO Optimize this
         if(event.getPointerCount() > 1){
 
-            float halfX = (event.getX(0) + event.getX(1))/2f/zoom;
-            float halfY = (event.getY(0) + event.getY(1))/2f/zoom;
+            float halfX = (event.getX(0) + event.getX(1))/2f/ zoomScale;
+            float halfY = (event.getY(0) + event.getY(1))/2f/ zoomScale;
             cancelTools(event);
 
             if(previousTouchCount == 1){
@@ -276,16 +275,16 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
             int height = getHeight();
             int width = getWidth();
             for(int x = 0; x <= Q; x++){
-                gridC.drawLine(x*pixelSizeX*zoom, 0, x*pixelSizeX*zoom, height, gridPaint);
+                gridC.drawLine(x*pixelSizeX* zoomScale, 0, x*pixelSizeX* zoomScale, height, gridPaint);
             }
             for(int y = 0; y <= Q; y++){
-                gridC.drawLine(0, pixelSizeY*y*zoom,width, pixelSizeY*y*zoom, gridPaint);
+                gridC.drawLine(0, pixelSizeY*y* zoomScale,width, pixelSizeY*y* zoomScale, gridPaint);
             }
         }
     }
 
-    void test_zoom(float zoomScale){
-        zoom = zoomScale;
+    void setZoomScale(float zoomScale){
+        this.zoomScale = zoomScale;
         scaleMatrix.setScale(scaleX * zoomScale, scaleY * zoomScale);
         drawingThread2.gridUpdateNeeded = true;
         if(drawingThread2.paused)
@@ -336,8 +335,8 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
         boolean inUse = false;
 
         void processMotionEvent(MotionEvent event){
-            sX = (event.getX()/scaleX)/zoom;
-            sY = (event.getY()/scaleY)/zoom;
+            sX = (event.getX()/scaleX)/ zoomScale;
+            sY = (event.getY()/scaleY)/ zoomScale;
 
             if(event.getAction() == MotionEvent.ACTION_DOWN){
                 path.reset();
@@ -380,8 +379,8 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
             if(canceled && moves < 10)
                 return;
 
-            sX = (event.getX()/scaleX)/zoom;
-            sY = (event.getY()/scaleY)/zoom;
+            sX = (event.getX()/scaleX)/ zoomScale;
+            sY = (event.getY()/scaleY)/ zoomScale;
             Bitmap b = Bitmap.createBitmap(Q,Q, Bitmap.Config.ARGB_8888);
             Canvas c = new Canvas(b);
 
@@ -401,8 +400,8 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
     void Fill(MotionEvent event){
         if(event.getAction()!=MotionEvent.ACTION_DOWN || alreadyFilling)
             return;
-        int x = (int)((event.getX()/scaleX)/zoom-offsetX);
-        int y = (int)((event.getY()/scaleY)/zoom-offsetY);
+        int x = (int)((event.getX()/scaleX)/ zoomScale -offsetX);
+        int y = (int)((event.getY()/scaleY)/ zoomScale -offsetY);
         if(x<0||x>Q||y<0||y>Q)
             return;
 
