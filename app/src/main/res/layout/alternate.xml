@@ -42,4 +42,12 @@
         android:max="8"
         android:layout_toStartOf="@+id/tempButton" />
 
+    <Button
+        android:id="@+id/tempButton3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tempSeekBar"
+        android:text="Undo" />
+
 </RelativeLayout>

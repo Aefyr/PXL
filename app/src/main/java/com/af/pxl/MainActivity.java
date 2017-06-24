@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         tempButton2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                pixelSurface2.commitHistoryChange();
                 pixelSurface2.pixelCanvas.drawColor(Color.WHITE);
                 pixelSurface2.drawingThread2.update();
             }
@@ -79,6 +80,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 
+            }
+        });
+
+        Button tempButton3 = (Button) findViewById(R.id.tempButton3);
+        tempButton3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pixelSurface2.rewindHistory();
             }
         });
 
