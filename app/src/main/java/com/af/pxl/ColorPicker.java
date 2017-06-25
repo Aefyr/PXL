@@ -3,23 +3,23 @@ package com.af.pxl;
 import android.widget.SeekBar;
 
 /**
- * Created by Peter on 17.06.2017.
+ * Created by Aefyr on 17.06.2017.
  */
 
-public class ColorPicker {
+class ColorPicker {
 
-    ColorPickerView hueView;
-    SeekBar hueBar;
-    ColorPickerView saturationView;
-    SeekBar saturationBar;
-    ColorPickerView valueView;
-    SeekBar valueBar;
+    private ColorPickerView hueView;
+    private SeekBar hueBar;
+    private ColorPickerView saturationView;
+    private SeekBar saturationBar;
+    private ColorPickerView valueView;
+    private SeekBar valueBar;
 
-    ColorView colorView;
+    private ColorView colorView;
 
     float[] color = {180,0.5f,0.5f};
 
-    public ColorPicker(ColorPickerView hueView, SeekBar hueBar, ColorPickerView saturationView, SeekBar saturationBar, ColorPickerView valueView, SeekBar valueBar, ColorView colorView){
+    ColorPicker(ColorPickerView hueView, SeekBar hueBar, ColorPickerView saturationView, SeekBar saturationBar, ColorPickerView valueView, SeekBar valueBar, ColorView colorView){
         this.hueView = hueView;
         this.hueBar = hueBar;
         this.saturationView = saturationView;
@@ -32,7 +32,7 @@ public class ColorPicker {
         initialize();
     }
 
-    void initialize(){
+    private void initialize(){
         colorView.color = saturationView.color = valueView.color = color;
 
         hueView.setMode(ColorPickerView.MODE.HUE);
@@ -50,8 +50,6 @@ public class ColorPicker {
                 }else if(seekBar == valueBar){
                     color[2] = (float)i * 0.01f;
                 }
-
-                //System.out.println("NEW COLOR HSV = "+color[0]+", "+color[1]+", "+color[2]);
 
                 updateColorViews();
             }
@@ -72,7 +70,7 @@ public class ColorPicker {
         valueBar.setOnSeekBarChangeListener(onSeekBarChangeListener);
     }
 
-    void updateColorViews(){
+    private void updateColorViews(){
         saturationView.invalidate();
         valueView.invalidate();
         colorView.invalidate();

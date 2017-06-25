@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 
 /**
- * Created by Peter on 20.06.2017.
+ * Created by Aefyr on 20.06.2017.
  */
 
 public class PixelSurface extends SurfaceView implements SurfaceHolder.Callback{

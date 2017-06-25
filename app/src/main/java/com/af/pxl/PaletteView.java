@@ -10,7 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 /**
- * Created by Peter on 18.06.2017.
+ * Created by Aefyr on 18.06.2017.
  */
 
 public class PaletteView extends View {
@@ -37,11 +37,6 @@ public class PaletteView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
-        if(event.getAction() == MotionEvent.ACTION_UP){
-
-        }
-
         return super.onTouchEvent(event);
     }
 

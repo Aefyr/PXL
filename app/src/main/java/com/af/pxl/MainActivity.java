@@ -12,6 +12,8 @@ import android.widget.Switch;
 
 public class MainActivity extends AppCompatActivity {
 
+    ColorPicker colorPicker;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,14 +37,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 final AlertDialog d = new AlertDialog.Builder(MainActivity.this).setView(R.layout.color_picker).create();
                 d.show();
-                final ColorPicker colorPicker = new ColorPicker((ColorPickerView) d.findViewById(R.id.colorPickerHue),(SeekBar) d.findViewById(R.id.seekBarHue),
+                colorPicker = new ColorPicker((ColorPickerView) d.findViewById(R.id.colorPickerHue),(SeekBar) d.findViewById(R.id.seekBarHue),
                         (ColorPickerView) d.findViewById(R.id.colorPickerSat), (SeekBar) d.findViewById(R.id.seekBarSat), (ColorPickerView) d.findViewById(R.id.colorPickerVal),
                         (SeekBar) d.findViewById(R.id.seekBarVal), (ColorView) d.findViewById(R.id.colorView));
-                ((Button)d.findViewById(R.id.colorPickButton)).setOnClickListener(new View.OnClickListener() {
+                (d.findViewById(R.id.colorPickButton)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         pixelSurface2.paint.setColor(Color.HSVToColor(colorPicker.color));
                         d.cancel();
+                        colorPicker = null;
                     }
                 });
             }
@@ -54,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 pixelSurface2.commitHistoryChange();
                 pixelSurface2.pixelCanvas.drawColor(Color.WHITE);
-                pixelSurface2.drawingThread2.update();
+                pixelSurface2.drawingThread2.update(false);
             }
         });
 

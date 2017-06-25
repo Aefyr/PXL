@@ -12,7 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 /**
- * Created by Peter on 13.06.2017.
+ * Created by Aefyr on 13.06.2017.
  */
 
 public class ColorPickerView extends View {
@@ -24,6 +24,8 @@ public class ColorPickerView extends View {
     Paint paint;
 
     float[] drawingColor;
+
+    LinearGradient gradient;
 
     MODE currentMode;
     float grades;
@@ -140,7 +142,7 @@ public class ColorPickerView extends View {
                 positions[x] = (float)x/360f;
             }
 
-            LinearGradient gradient = new LinearGradient(0, 0 , canvas.getWidth(), canvas.getHeight(),colors, positions, Shader.TileMode.CLAMP);
+            gradient = new LinearGradient(0, 0 , canvas.getWidth(), canvas.getHeight(),colors, positions, Shader.TileMode.CLAMP);
             p.setShader(gradient);
 
             canvas.drawRect(0,0,canvas.getWidth(), canvas.getHeight(), p);
@@ -159,9 +161,9 @@ public class ColorPickerView extends View {
             color1[modeInt] = 0;
             float[] color2 = color.clone();
             color2[modeInt] = 1;
-            LinearGradient shader = new LinearGradient(0,0, canvas.getWidth(), canvas.getHeight(), Color.HSVToColor(color1), Color.HSVToColor(color2), Shader.TileMode.CLAMP);
+            gradient = new LinearGradient(0,0, canvas.getWidth(), canvas.getHeight(), Color.HSVToColor(color1), Color.HSVToColor(color2), Shader.TileMode.CLAMP);
 
-            p.setShader(shader);
+            p.setShader(gradient);
 
             canvas.drawRect(0,0,canvas.getWidth(), canvas.getHeight(), p);
         }

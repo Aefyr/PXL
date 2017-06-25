@@ -8,7 +8,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 /**
- * Created by Peter on 17.06.2017.
+ * Created by Aefyr on 17.06.2017.
  */
 
 public class ColorView extends View {

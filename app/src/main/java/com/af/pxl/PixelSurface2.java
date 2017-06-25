@@ -16,7 +16,7 @@ import android.view.SurfaceHolder;
 import java.util.ArrayDeque;
 
 /**
- * Created by Peter on 21.06.2017.
+ * Created by Aefyr on 21.06.2017.
  */
 
 public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback {
@@ -37,7 +37,7 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
     Path path;
     Matrix scaleMatrix;
 
-    ArrayDeque<Bitmap> history;
+    private ArrayDeque<Bitmap> history;
 
     float zoomScale = 1;
     float offsetX = 0;
@@ -51,7 +51,7 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
 
     Pen pen;
 
-    public enum Tool{
+    enum Tool{
         PEN, FILL, COLORPICK
     }
 
@@ -65,7 +65,7 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
         initialize();
     }
 
-    void initialize(){
+    private void initialize(){
         getHolder().addCallback(this);
         paint = new Paint();
         paint.setColor(Color.RED);
@@ -76,7 +76,7 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
         pixelBitmap = Bitmap.createBitmap(Q,Q, Bitmap.Config.ARGB_8888);
         pixelCanvas = new Canvas(pixelBitmap);
         pixelCanvas.drawColor(Color.WHITE);
-        pen = new Pen();
+        pen = new Pen(this);
         drawingThread2 = new DrawingThread2();
         drawingThread2.running = true;
 
@@ -89,7 +89,7 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
         drawingThread2.surfaceHolder = surfaceHolder;
         if(drawingThread2.firstStart)
             drawingThread2.start();
-        drawingThread2.update();
+        drawingThread2.update(false);
     }
 
     @Override
@@ -125,7 +125,7 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
 
             float halfX = (event.getX(0) + event.getX(1))/2f/ zoomScale;
             float halfY = (event.getY(0) + event.getY(1))/2f/ zoomScale;
-            cancelTools(event);
+            pen.cancel(event);
 
             if(previousTouchCount == 1){
                 prevX = halfX;
@@ -140,15 +140,13 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
             offsetY += deltaY/pixelSizeY;
             System.out.println("Offset = "+offsetX + ", "+offsetY);
 
-            drawingThread2.update();
+            drawingThread2.update(false);
 
             prevX = halfX;
             prevY = halfY;
             previousTouchCount = event.getPointerCount();
 
             return true;
-        }else {
-            canceled = false;
         }
 
         if(previousTouchCount == 2){
@@ -167,9 +165,6 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
                 break;
         }
 
-        if(event.getPointerCount() == 1 && event.getAction() == MotionEvent.ACTION_UP)
-            canceled =false;
-
         previousTouchCount = event.getPointerCount();
         return true;
     }
@@ -187,6 +182,9 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
         boolean fillRequested = false;
 
         boolean gridUpdateNeeded = true;
+
+        private boolean pathUpdateNeeded = false;
+
         Pixel fillStart;
         int[] fillColors;
 
@@ -206,9 +204,14 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
             }
         }
 
-        synchronized void update(){
-            notify();
-            paused = false;
+        synchronized void update(boolean updatePath){
+            pathUpdateNeeded = updatePath;
+            if(paused) {
+                notify();
+                paused = false;
+            }else {
+                forcedUpdate = true;
+            }
         }
 
         void requestFill(Pixel c, int[] fillColors){
@@ -242,9 +245,14 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
                     drawGrid();
                     gridUpdateNeeded = false;
                 }
+
                 tempC.drawColor(Color.GRAY);
                 tempC.drawBitmap(pixelBitmap, offsetX,offsetY, paint);
-                tempC.drawPath(path, paint);
+
+                if(pathUpdateNeeded) {
+                    tempC.drawPath(path, paint);
+                    pathUpdateNeeded = false;
+                }
 
                 canvas.drawBitmap(tempB, scaleMatrix, paint);
 
@@ -287,12 +295,7 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
         this.zoomScale = zoomScale;
         scaleMatrix.setScale(scaleX * zoomScale, scaleY * zoomScale);
         drawingThread2.gridUpdateNeeded = true;
-        if(drawingThread2.paused)
-            drawingThread2.update();
-        else {
-            drawingThread2.gridUpdateNeeded = true;
-            drawingThread2.forcedUpdate = true;
-        }
+        drawingThread2.update(false);
     }
 
     void commitHistoryChange(){
@@ -308,94 +311,10 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
         history.removeFirst().getPixels(historyPixels,0,Q, 0, 0,Q,Q);
         pixelBitmap.setPixels(historyPixels,0,Q,0,0,Q,Q);
 
-        if(drawingThread2.paused)
-            drawingThread2.update();
-        else
-            drawingThread2.forcedUpdate = true;
+        drawingThread2.update(false);
     }
 
     //Tools
-    boolean canceled = false;
-    void cancelTools(MotionEvent event){
-        canceled = true;
-        if(pen.inUse)
-            pen.finishPath(event);
-    }
-
-    float nX;
-    float nY;
-
-    //TODO Optimize this, cuz too many same calculations
-    class Pen{
-        float sX;
-        float sY;
-
-        int moves = 0;
-
-        boolean inUse = false;
-
-        void processMotionEvent(MotionEvent event){
-            sX = (event.getX()/scaleX)/ zoomScale;
-            sY = (event.getY()/scaleY)/ zoomScale;
-
-            if(event.getAction() == MotionEvent.ACTION_DOWN){
-                path.reset();
-                path.moveTo(sX, sY);
-                nX = sX;
-                nY = sY;
-                inUse = true;
-                moves = 0;
-            }
-
-            if(event.getAction() == MotionEvent.ACTION_MOVE && inUse){
-
-                float a = sX+nX;
-                float b = sY+nY;
-
-                path.quadTo(nX, nY, a/2f, b/2f);
-                nX = sX;
-                nY = sY;
-
-                moves++;
-            }
-
-            if(event.getAction() == MotionEvent.ACTION_UP && inUse){
-                finishPath(event);
-            }
-
-
-            if(!drawingThread2.paused) {
-                drawingThread2.forcedUpdate = true;
-                return;
-            }
-
-            drawingThread2.update();
-        }
-
-        void finishPath(MotionEvent event){
-            Path t = path;
-            path = new Path();
-            inUse = false;
-            if(canceled && moves < 10)
-                return;
-
-            sX = (event.getX()/scaleX)/ zoomScale;
-            sY = (event.getY()/scaleY)/ zoomScale;
-            Bitmap b = Bitmap.createBitmap(Q,Q, Bitmap.Config.ARGB_8888);
-            Canvas c = new Canvas(b);
-
-            if(!canceled)
-             c.drawPoint(sX,sY, paint);
-
-            t.lineTo(nX, nY);
-            c.drawPath(t, paint);
-            commitHistoryChange();
-            pixelCanvas.drawBitmap(b, -offsetX, -offsetY, paint);
-            //pixelCanvas.drawPath(path, paint);
-        }
-    }
-
-
     boolean alreadyFilling = false;
     void Fill(MotionEvent event){
         if(event.getAction()!=MotionEvent.ACTION_DOWN || alreadyFilling)
@@ -406,7 +325,7 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
             return;
 
         drawingThread2.requestFill(new Pixel(x,y), new int[]{pixelBitmap.getPixel(x,y), paint.getColor()});
-        drawingThread2.update();
+        drawingThread2.update(false);
     }
 
     void filler(Pixel c, int oldColor, int newColor){
@@ -437,7 +356,7 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
     class Pixel {
         int x;
         int y;
-        public Pixel(int x, int y){
+        Pixel(int x, int y){
             this.x = x;
             this.y = y;
         }
