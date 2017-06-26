@@ -43,7 +43,7 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
     float offsetX = 0;
     float offsetY = 0;
 
-    boolean showGrid = true;
+    boolean showGrid = false;
 
     Tool currentTool = Tool.PEN;
 
@@ -111,6 +111,10 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
     int previousTouchCount;
     float prevX = 0;
     float prevY = 0;
+    float prevDistance = 0;
+    float cp = 0;
+    float th = 24;
+    float step = 0.05f;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -123,6 +127,8 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
         //TODO Optimize this
         if(event.getPointerCount() > 1){
 
+
+
             float halfX = (event.getX(0) + event.getX(1))/2f/ zoomScale;
             float halfY = (event.getY(0) + event.getY(1))/2f/ zoomScale;
             pen.cancel(event);
@@ -132,19 +138,44 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
                 prevY = halfY;
             }
 
+
+
+
             float deltaX = halfX - prevX;
             float deltaY = halfY - prevY;
-            System.out.println("Delta X: "+deltaX+", DeltaY:"+deltaY);
+            //System.out.println("Delta X: "+deltaX+", DeltaY:"+deltaY);
 
             offsetX += deltaX/pixelSizeX;
             offsetY += deltaY/pixelSizeY;
-            System.out.println("Offset = "+offsetX + ", "+offsetY);
+            //System.out.println("Offset = "+offsetX + ", "+offsetY);
 
             drawingThread2.update(false);
 
             prevX = halfX;
             prevY = halfY;
             previousTouchCount = event.getPointerCount();
+
+            //Zoom
+            float distance = vector2Distance(event.getX(0), event.getX(1), event.getY(0), event.getY(1));
+            float distanceDif = prevDistance - distance;
+            System.out.println("Distance="+distance);
+            if(previousTouchCount == 1){
+                distanceDif = 0;
+            }
+
+            cp += distanceDif;
+            System.out.println("cp="+cp);
+            if(cp>th){
+                setZoomScale(clamp((zoomScale-step-zoomScale/40), 1,10));
+                cp = 0;
+            }else if(cp<-th){
+                setZoomScale(clamp((zoomScale+step+zoomScale/40), 1, 10));
+                cp = 0;
+            }
+
+            System.out.println("zoomScale="+zoomScale);
+
+            prevDistance = distance;
 
             return true;
         }
@@ -167,6 +198,18 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
 
         previousTouchCount = event.getPointerCount();
         return true;
+    }
+
+    float vector2Distance(float x1, float x2, float y1, float y2){
+        return (float) Math.sqrt(Math.pow(x2-x1, 2)+Math.pow(y2-y1,2));
+    }
+
+    float clamp(float x, float min, float max){
+        if(x<min)
+            return min;
+        if(x>max)
+            return max;
+        return x;
     }
 
     class DrawingThread2 extends Thread{
@@ -254,10 +297,12 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
                     pathUpdateNeeded = false;
                 }
 
+                //TODO optimize this
                 canvas.drawBitmap(tempB, scaleMatrix, paint);
-
+                Matrix m = new Matrix();
+                m.setScale(zoomScale, zoomScale);
                 if(showGrid){
-                    canvas.drawBitmap(gridB, 0, 0, paint);
+                    canvas.drawBitmap(gridB, m, paint);
                 }
 
                 surfaceHolder.unlockCanvasAndPost(canvas);
@@ -294,8 +339,8 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
     void setZoomScale(float zoomScale){
         this.zoomScale = zoomScale;
         scaleMatrix.setScale(scaleX * zoomScale, scaleY * zoomScale);
-        drawingThread2.gridUpdateNeeded = true;
-        drawingThread2.update(false);
+        //drawingThread2.gridUpdateNeeded = true;
+        //drawingThread2.update(false);
     }
 
     void commitHistoryChange(){

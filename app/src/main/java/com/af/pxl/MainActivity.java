@@ -61,29 +61,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        SeekBar tempSeekBar = (SeekBar) findViewById(R.id.tempSeekBar);
-        tempSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                pixelSurface2.setZoomScale(++i);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
 
         Button tempButton3 = (Button) findViewById(R.id.tempButton3);
         tempButton3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 pixelSurface2.rewindHistory();
+            }
+        });
+
+        Switch tempSwitch2 = (Switch) findViewById(R.id.tempSwitch2);
+        tempSwitch2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                pixelSurface2.showGrid = b;
+                pixelSurface2.drawingThread2.update(false);
             }
         });
 

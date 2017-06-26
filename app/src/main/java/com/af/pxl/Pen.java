@@ -60,8 +60,10 @@ class Pen extends Tool {
 
     private void finishPath(){
         inUse = false;
-        if(wasCanceled && moves < 10)
-            return;
+        if(wasCanceled && moves < 10){
+          pixelSurface2.path.reset();
+          return;
+        }
 
         tempCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
         tempCanvas.drawPoint(sX,sY, pixelSurface2.paint);
@@ -70,6 +72,7 @@ class Pen extends Tool {
         tempCanvas.drawPath(pixelSurface2.path, pixelSurface2.paint);
         pixelSurface2.commitHistoryChange();
         pixelSurface2.pixelCanvas.drawBitmap(tempBitmap, -pixelSurface2.offsetX, -pixelSurface2.offsetY, pixelSurface2.paint);
+        pixelSurface2.path.reset();
     }
 
     @Override
