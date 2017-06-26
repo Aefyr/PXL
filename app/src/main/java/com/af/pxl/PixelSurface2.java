@@ -366,7 +366,7 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
             return;
         int x = (int)((event.getX()/scaleX)/ zoomScale -offsetX);
         int y = (int)((event.getY()/scaleY)/ zoomScale -offsetY);
-        if(x<0||x>Q||y<0||y>Q)
+        if(x<0||x>=Q||y<0||y>=Q)
             return;
 
         drawingThread2.requestFill(new Pixel(x,y), new int[]{pixelBitmap.getPixel(x,y), paint.getColor()});
@@ -385,14 +385,14 @@ public class PixelSurface2 extends SurfaceView implements SurfaceHolder.Callback
             Pixel p = s.removeFirst();
             if(pixelBitmap.getPixel(p.x, p.y) == oldColor){
                 pixelBitmap.setPixel(p.x, p.y, newColor);
-                if(p.x>0 && p.x<pixelBitmap.getWidth()-1) {
-                    s.add(new Pixel(p.x + 1, p.y));
-                    s.add(new Pixel(p.x - 1, p.y));
-                }
-                if(p.y > 0 && p.y < pixelBitmap.getWidth()-1){
-                    s.add(new Pixel(p.x, p.y+1));
+                if(p.x>0&&p.x<=Q-1)
+                    s.add(new Pixel(p.x-1, p.y));
+                if(p.x>=0&&p.x<Q-1)
+                    s.add(new Pixel(p.x+1, p.y));
+                if(p.y>0&&p.y<=Q-1)
                     s.add(new Pixel(p.x, p.y-1));
-                }
+                if(p.y>=0&&p.y<Q-1)
+                    s.add(new Pixel(p.x, p.y+1));
             }
         }
         alreadyFilling = false;
