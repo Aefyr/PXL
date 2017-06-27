@@ -18,9 +18,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //CanvasView canvasView = new CanvasView(this);
-        setContentView(R.layout.alternate);
+        setContentView(R.layout.alternate2);
 
-        final PixelSurface2 pixelSurface2 = (PixelSurface2) findViewById(R.id.pixelSurface);
+        final AdaptivePixelSurface aps = (AdaptivePixelSurface) findViewById(R.id.aps);
+
+
+        /*final PixelSurface2 pixelSurface2 = (PixelSurface2) findViewById(R.id.pixelSurface);
 
         Switch tempSwitch = (Switch) findViewById(R.id.tempSwitch);
         tempSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -77,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 pixelSurface2.showGrid = b;
                 pixelSurface2.drawingThread2.update(false);
             }
-        });
+        });*/
 
         /*final CanvasView canvasView = (CanvasView) findViewById(R.id.canvasView);
         final ColorPickerView huePicker = (ColorPickerView) findViewById(R.id.colorPicker);
