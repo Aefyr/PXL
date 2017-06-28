@@ -32,6 +32,9 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
     float pixelScale = 8f;
     Matrix pixelMatrix;
 
+    Pencil pencil;
+    CanvasHistory canvasHistory;
+
     public AdaptivePixelSurface(Context context) {
         super(context);
         initialize();
@@ -52,12 +55,21 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
         pixelMatrix.setScale(pixelScale, pixelScale);
         paint = new Paint();
         paint.setColor(Color.RED);
+        paint.setStrokeWidth(1);
+        paint.setStyle(Paint.Style.STROKE);
         pixelCanvas.drawColor(Color.WHITE);
+        pencil = new Pencil(this);
+        canvasHistory = new CanvasHistory(this, pixelBitmap, 100);
+
+        System.out.println(getWidth());
+        System.out.println("Canvas height="+pixelHeight*pixelScale+", Canvas width="+pixelWidth*pixelScale);
+        System.out.println("X="+matrixOffsetX+", Y="+matrixOffsetY);
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
         if(pixelDrawThread==null) {
+
             pixelDrawThread = new PixelDrawThread(surfaceHolder);
             pixelDrawThread.start();
         }else {
@@ -66,8 +78,14 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
         }
     }
 
+    boolean centered = false;
     @Override
     public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+        if(!centered) {
+            matrixOffsetX = i1 / 2 - ((pixelWidth * pixelScale) / 2);
+            matrixOffsetY = i2 / 2 - ((pixelHeight * pixelScale) / 2);
+            centered = true;
+        }
         pixelDrawThread.setSurfaceHolder(surfaceHolder);
         pixelDrawThread.update();
     }
@@ -79,23 +97,22 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
 
     float prevCX, prevCY;
     int prevPointerCount = 0;
-    float matrixOffsetX = 0, matrixOffsetY = 0;
+    float matrixOffsetX, matrixOffsetY;
 
     float prevDist = 0;
     float c = 0;
     float th = 32;
     float midX, midY;
 
-    float additionalOffsetX = 0;
-    float additionalOffsetY = 0;
-
-    float t1 = 128,t2 = 64;
-    boolean t3 = false;
+    float scaleAnchorX = 0, scaleAnchorY = 0;
+    boolean anchorSet = false;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
         if(event.getPointerCount() > 1){
+            pencil.cancel(event);
+
             midX = (event.getX(0)+event.getX(1))/2f;
             midY = (event.getY(0)+event.getY(1))/2f;
 
@@ -119,29 +136,26 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
                 c = 0;
             }
 
-            additionalOffsetX = 64;
-            additionalOffsetY = 64;
-
             prevDist = dist;
 
             matrixOffsetX += midX-prevCX;
             matrixOffsetY += midY-prevCY;
 
-            if(!t3) {
-                t3 = true;
-                float a = (midX - matrixOffsetX) / pixelScale + (pixelScale - 1f) * (t1 * (1f / pixelScale));
-                float b = (midY - matrixOffsetY) / pixelScale + (pixelScale - 1f) * (t2 * (1f / pixelScale));
-                float c = t1;
-                float d = t2;
-                t1 = a;
-                t2 = b;
+            if(!anchorSet) {
+                anchorSet = true;
+                float a = (midX - matrixOffsetX) / pixelScale + (1-1/pixelScale)* scaleAnchorX;
+                float b = (midY - matrixOffsetY) / pixelScale + (1-1/pixelScale)* scaleAnchorY;
+                float c = scaleAnchorX;
+                float d = scaleAnchorY;
+                scaleAnchorX = a;
+                scaleAnchorY = b;
                 matrixOffsetX += (a - c)*(pixelScale-1);
                 matrixOffsetY += (b - d)*(pixelScale-1);
             }
-            //t1 = 128;
-            //t2 = 64;
+            //scaleAnchorX = 128;
+            //scaleAnchorY = 64;
 
-            System.out.println("t1="+t1+", t2="+t2);
+            System.out.println("scaleAnchorX="+ scaleAnchorX +", scaleAnchorY="+ scaleAnchorY);
 
             //System.out.println("OffsetX="+matrixOffsetX +", OffsetY="+matrixOffsetY);
             System.out.println("Scale="+pixelScale);
@@ -158,13 +172,11 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
 
         float x = event.getX(0);
         float y = event.getY(0);
-        t3 = false;
+        anchorSet = false;
 
-        if(true){
-            pixelCanvas.drawPoint((x-matrixOffsetX)/pixelScale + (pixelScale-1f)*(t1*(1f/pixelScale)), (y-matrixOffsetY)/pixelScale+ (pixelScale-1f)*(t2*(1f/pixelScale)), paint);
-            System.out.println("Boop: "+((x-matrixOffsetX)/pixelScale + (pixelScale-1f)*(t1*(1f/pixelScale)))+", "+((y-matrixOffsetY)/pixelScale+ (pixelScale-1f)*(t2*(1f/pixelScale))));
-            pixelDrawThread.update();
-        }
+        //legacy (pixelScale-1f)*(scaleAnchorY *(1f/pixelScale))
+
+        pencil.processMotionEvent(event);
 
         prevPointerCount = event.getPointerCount();
         return true;
@@ -186,7 +198,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
         boolean forcedUpdate = false;
         boolean alive = true;
         boolean scaleChanged = false;
-        boolean translateChanged = false;
+        boolean translateChanged = true;
 
         void setSurfaceHolder(SurfaceHolder surfaceHolder){
             this.surfaceHolder = surfaceHolder;
@@ -221,7 +233,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
 
                 if(scaleChanged||translateChanged) {
                     pixelMatrix.reset();
-                    pixelMatrix.setScale(pixelScale, pixelScale, t1, t2);
+                    pixelMatrix.setScale(pixelScale, pixelScale, scaleAnchorX, scaleAnchorY);
                     pixelMatrix.postTranslate(matrixOffsetX, matrixOffsetY);
                     scaleChanged = false;
                     translateChanged = false;
@@ -233,7 +245,8 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
 
                 surfaceHolder.unlockCanvasAndPost(canvas);
 
-                //System.out.println("Canvas drawn in "+(System.currentTimeMillis() - start)+" ms");
+                System.out.println("Canvas drawn in "+(System.currentTimeMillis() - start)+" ms");
+
                 if(forcedUpdate) {
                     forcedUpdate = false;
                     continue;

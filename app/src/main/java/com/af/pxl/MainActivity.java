@@ -22,6 +22,33 @@ public class MainActivity extends AppCompatActivity {
 
         final AdaptivePixelSurface aps = (AdaptivePixelSurface) findViewById(R.id.aps);
 
+        final Button undo = (Button) findViewById(R.id.undoButton);
+        undo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                aps.canvasHistory.undoHistoricalChange();
+            }
+        });
+
+        final Button redo = (Button) findViewById(R.id.redoButton);
+        redo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                aps.canvasHistory.redoHistoricalChange();
+            }
+        });
+
+        aps.canvasHistory.setOnHistoryAvailabilityChangeListener(new CanvasHistory.OnHistoryAvailabilityChangeListener() {
+            @Override
+            public void pastAvailabilityChanged(boolean available) {
+                undo.setEnabled(available);
+            }
+
+            @Override
+            public void futureAvailabilityChanged(boolean available) {
+                redo.setEnabled(available);
+            }
+        });
 
         /*final PixelSurface2 pixelSurface2 = (PixelSurface2) findViewById(R.id.pixelSurface);
 
