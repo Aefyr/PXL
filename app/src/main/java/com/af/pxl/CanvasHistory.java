@@ -10,7 +10,7 @@ import java.util.ArrayList;
  */
 
 public class CanvasHistory {
-    AdaptivePixelSurface aps;
+    private AdaptivePixelSurface aps;
 
     private ArrayDeque<int[]> past;
     private Bitmap bitmap;
@@ -32,7 +32,7 @@ public class CanvasHistory {
         this.size = size;
         past = new ArrayDeque<>();
         future = new ArrayDeque<>();
-        arraySize = bitmap.getWidth()*bitmap.getWidth();
+        arraySize = bitmap.getWidth()*bitmap.getHeight();
         listeners = new ArrayList<>();
     }
 
@@ -40,7 +40,7 @@ public class CanvasHistory {
         listeners.add(listener);
     }
 
-    void commitHistoricalChange(){
+    /*void commitHistoricalChange(){
 
         if(past.size()==size){
             past.removeLast();
@@ -56,10 +56,50 @@ public class CanvasHistory {
             }
         }
 
+
         future.clear();
         for(OnHistoryAvailabilityChangeListener listener: listeners){
             listener.futureAvailabilityChanged(false);
         }
+    }*/
+
+
+    private int[] temp;
+    private boolean historicalChangeInProgress = false;
+    void startHistoricalChange(){
+        temp = new int[arraySize];
+        bitmap.getPixels(temp, 0, bitmap.getWidth(), 0, 0 , bitmap.getWidth(), bitmap.getHeight());
+        historicalChangeInProgress = true;
+    }
+
+    void completeHistoricalChange(){
+        if(historicalChangeInProgress) {
+            if (past.size() == size) {
+                past.removeLast();
+            }
+
+            past.addFirst(temp);
+
+            if (past.size() == 1) {
+                for (OnHistoryAvailabilityChangeListener listener : listeners) {
+                    listener.pastAvailabilityChanged(true);
+                }
+            }
+
+
+            future.clear();
+            for (OnHistoryAvailabilityChangeListener listener : listeners) {
+                listener.futureAvailabilityChanged(false);
+            }
+
+            historicalChangeInProgress = false;
+        }
+    }
+
+    void cancelHistoricalChange(){
+        bitmap.setPixels(temp, 0, bitmap.getWidth(), 0, 0 , bitmap.getWidth(), bitmap.getHeight());
+        aps.pixelDrawThread.update();
+        historicalChangeInProgress = false;
     }
 
     void undoHistoricalChange(){
@@ -68,15 +108,14 @@ public class CanvasHistory {
 
         int[] pixels = new int[arraySize];
 
-        bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0 , bitmap.getWidth(), bitmap.getHeight());
+        bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
         future.addFirst(pixels);
 
         pixels = past.removeFirst();
         bitmap.setPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
 
 
-
-        for(OnHistoryAvailabilityChangeListener listener: listeners){
+        for (OnHistoryAvailabilityChangeListener listener : listeners) {
             listener.futureAvailabilityChanged(true);
         }
 
@@ -111,6 +150,10 @@ public class CanvasHistory {
         }
 
         aps.pixelDrawThread.update();
+    }
+
+    int getHistorySize(){
+        return future.size()+past.size();
     }
 
 

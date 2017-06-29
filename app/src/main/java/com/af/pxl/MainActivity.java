@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -49,6 +50,26 @@ public class MainActivity extends AppCompatActivity {
                 redo.setEnabled(available);
             }
         });
+
+        Switch sym = (Switch) findViewById(R.id.sym);
+
+        sym.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                aps.symmetry = b;
+            }
+        });
+
+        Switch grid = (Switch) findViewById(R.id.grid);
+
+        grid.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                aps.setGridEnabled(b);
+            }
+        });
+
+
 
         /*final PixelSurface2 pixelSurface2 = (PixelSurface2) findViewById(R.id.pixelSurface);
 

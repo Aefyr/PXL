@@ -6,10 +6,14 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
+import android.widget.TextView;
 
 /**
  * Created by Aefyr on 27.06.2017.
@@ -26,14 +30,19 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
     Bitmap pixelBitmap;
     Canvas pixelCanvas;
 
-    Bitmap phantomBitmap;
-    Canvas phantomCanvas;
 
     float pixelScale = 8f;
     Matrix pixelMatrix;
 
     Pencil pencil;
     CanvasHistory canvasHistory;
+
+    boolean symmetry = false;
+    SymmetryType symmetryType = SymmetryType.HORIZONTAL;
+
+    enum SymmetryType{
+        HORIZONTAL, VERTICAL
+    }
 
     public AdaptivePixelSurface(Context context) {
         super(context);
@@ -49,14 +58,14 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
         getHolder().addCallback(this);
         pixelBitmap = Bitmap.createBitmap(pixelWidth, pixelHeight, Bitmap.Config.ARGB_8888);
         pixelCanvas = new Canvas(pixelBitmap);
-        phantomBitmap = Bitmap.createBitmap(pixelWidth, pixelHeight, Bitmap.Config.ARGB_8888);
-        phantomCanvas = new Canvas(phantomBitmap);
+
         pixelMatrix = new Matrix();
         pixelMatrix.setScale(pixelScale, pixelScale);
         paint = new Paint();
         paint.setColor(Color.RED);
         paint.setStrokeWidth(1);
         paint.setStyle(Paint.Style.STROKE);
+        paint.setTextSize(24);
         pixelCanvas.drawColor(Color.WHITE);
         pencil = new Pencil(this);
         canvasHistory = new CanvasHistory(this, pixelBitmap, 100);
@@ -64,6 +73,80 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
         System.out.println(getWidth());
         System.out.println("Canvas height="+pixelHeight*pixelScale+", Canvas width="+pixelWidth*pixelScale);
         System.out.println("X="+matrixOffsetX+", Y="+matrixOffsetY);
+
+        gridP = new Paint();
+        gridP.setColor(Color.BLUE);
+        gridP.setStyle(Paint.Style.FILL_AND_STROKE);
+        gridP.setStrokeWidth(1f);
+
+
+
+    }
+
+    Bitmap gridB;
+    Canvas gridC;
+    Paint gridP;
+    float[] p = {0, 0};
+    void drawGrid(){
+        gridC.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+        gridP.setStrokeWidth((int)(pixelScale/10));
+
+        p[0] = 0;
+        p[1] = 0;
+        pixelMatrix.mapPoints(p);
+
+        float lessThan1PixelOffsetX = p[0]%pixelScale>0?p[0]%pixelScale:pixelScale+p[0]%pixelScale;
+        float lessThan1PixelOffsetY = p[1]%pixelScale>0?p[1]%pixelScale:pixelScale+p[1]%pixelScale;
+
+
+        float oX = clamp(p[0], lessThan1PixelOffsetX, getWidth());
+        float oY = clamp(p[1], lessThan1PixelOffsetY , getHeight());
+
+        p[0] = pixelWidth;
+        p[1] = pixelHeight;
+        pixelMatrix.mapPoints(p);
+
+        float limitX = clamp(p[0], 0, getWidth());
+        float limitY = clamp(p[1], 0, getHeight());
+
+        float x = oX;
+        float y = oY;
+
+        while(x<limitX){
+            gridC.drawLine(x, oY - pixelScale, x, limitY+pixelScale, gridP);
+            x+=pixelScale;
+        }
+
+        while(y<limitY){
+            gridC.drawLine(oX-pixelScale, y, limitX+pixelScale, y, gridP);
+            y+=pixelScale;
+        }
+
+    }
+
+    float clamp(float x, float min, float max){
+        if(x<min)return min;
+        if(x>max) return max;
+        return x;
+    }
+
+    private boolean gridEnabled = false;
+    void setGridEnabled(boolean enabled){
+        gridEnabled = enabled;
+
+        if(gridEnabled){
+            gridB = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+            gridC = new Canvas(gridB);
+            drawGrid();
+        }else {
+            if(gridB!=null){
+                gridB.recycle();
+                gridB = null;
+                gridC = null;
+            }
+        }
+
+        pixelDrawThread.update();
     }
 
     @Override
@@ -76,6 +159,8 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
             pixelDrawThread.setSurfaceHolder(surfaceHolder);
             pixelDrawThread.update();
         }
+
+
     }
 
     boolean centered = false;
@@ -107,6 +192,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
     float scaleAnchorX = 0, scaleAnchorY = 0;
     boolean anchorSet = false;
 
+    //TODO Make method processEvent(float x, float y, int pointerId) in Tool class, and use a ArrayList of Paths or whatever that tool uses, so symmetry can be implemented on this level, just by sending mirrored coords with currentTool.pointers+1 as pointerId
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
@@ -155,10 +241,11 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
             //scaleAnchorX = 128;
             //scaleAnchorY = 64;
 
-            System.out.println("scaleAnchorX="+ scaleAnchorX +", scaleAnchorY="+ scaleAnchorY);
+            //System.out.println("scaleAnchorX="+ scaleAnchorX +", scaleAnchorY="+ scaleAnchorY);
 
-            //System.out.println("OffsetX="+matrixOffsetX +", OffsetY="+matrixOffsetY);
-            System.out.println("Scale="+pixelScale);
+            //System.out.println("PixelSize="+pixelScale+", OffsetX="+matrixOffsetX +", OffsetY="+matrixOffsetY);
+
+            //System.out.println("Scale="+pixelScale);
 
             prevCX = midX;
             prevCY = midY;
@@ -185,6 +272,10 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
     float vector2Distance(float x1, float y1, float x2, float y2){
         return (float) (Math.sqrt(Math.pow(x1-x2, 2)+ Math.pow(y1-y2, 2)));
     }
+
+    boolean showFps = true;
+    Rect bounds;
+    Paint textPaint;
 
     class PixelDrawThread extends Thread{
 
@@ -222,8 +313,17 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
             paused = false;
         }
 
+        long deltaTime = 1;
+
         @Override
         public void run() {
+            if(showFps) {
+                bounds = new Rect();
+                textPaint = new Paint();
+                textPaint.setColor(Color.GREEN);
+                textPaint.setTextAlign(Paint.Align.LEFT);
+                textPaint.setTextSize(50);
+            }
             while (alive){
                 long start = System.currentTimeMillis();
                 Canvas canvas = surfaceHolder.lockCanvas();
@@ -237,15 +337,30 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
                     pixelMatrix.postTranslate(matrixOffsetX, matrixOffsetY);
                     scaleChanged = false;
                     translateChanged = false;
+
+                    if(gridEnabled)
+                        drawGrid();
                 }
 
 
                 canvas.drawBitmap(pixelBitmap, pixelMatrix, paint);
-                //canvas.drawBitmap(phantomBitmap, pixelMatrix, paint);
+
+                if(gridEnabled) {
+                    canvas.drawBitmap(gridB, 0, 0, null);
+                }
+
+                if(showFps){
+                    String a = 1000/deltaTime+" fps.";
+                    paint.getTextBounds(a, 0, a.length(), bounds);
+                    canvas.drawText(a, getWidth()-bounds.width()*2, bounds.height()*2, textPaint);
+                }
 
                 surfaceHolder.unlockCanvasAndPost(canvas);
 
-                System.out.println("Canvas drawn in "+(System.currentTimeMillis() - start)+" ms");
+                deltaTime = System.currentTimeMillis() - start;
+                System.out.println("Canvas drawn in "+deltaTime+" ms");
+
+
 
                 if(forcedUpdate) {
                     forcedUpdate = false;
