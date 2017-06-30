@@ -6,14 +6,14 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
-import android.widget.TextView;
+
+import java.util.ArrayDeque;
 
 /**
  * Created by Aefyr on 27.06.2017.
@@ -257,6 +257,14 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
             return true;
         }
 
+        if(fillMode){
+            float[] p = {0, 0};
+            pixelMatrix.mapPoints(p);
+
+            floodFill((int)((event.getX()-p[0])/pixelScale), (int)((event.getY()-p[1])/pixelScale), paint.getColor());
+            return true;
+        }
+
         float x = event.getX(0);
         float y = event.getY(0);
         anchorSet = false;
@@ -271,6 +279,71 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
 
     float vector2Distance(float x1, float y1, float x2, float y2){
         return (float) (Math.sqrt(Math.pow(x1-x2, 2)+ Math.pow(y1-y2, 2)));
+    }
+
+    boolean fillMode = false;
+    void floodFill(int x, int y, int newC){
+        if(x<0||x>=pixelWidth||y<0||y>=pixelHeight||pixelBitmap.getPixel(x,y)==newC)
+            return;
+
+        canvasHistory.startHistoricalChange();
+
+        int oldC = pixelBitmap.getPixel(x,y);
+
+        long s = System.currentTimeMillis();
+        ArrayDeque<Pixel> p= new ArrayDeque<>();
+
+        p.add(new Pixel(x,y));
+
+        Pixel p1;
+        int x1, x2;
+        while(!p.isEmpty()){
+            p1 = p.remove();
+            if(p1.x <0||p1.x>=pixelWidth||p1.y<0||p1.y>=pixelHeight||pixelBitmap.getPixel(p1.x, p1.y)!=oldC)
+                continue;
+            x1 = p1.x;
+            x2 = p1.x;
+
+            while(x1<pixelWidth&&pixelBitmap.getPixel(x1, p1.y)==oldC)
+                x1++;
+
+            while(x2>=0&&pixelBitmap.getPixel(x2, p1.y)==oldC)
+                x2--;
+
+            x2++;
+
+
+            for(int i2 = x2; i2<x1; i2++){
+                pixelBitmap.setPixel(i2, p1.y, newC);
+            }
+
+            if(p1.y>0&&p1.y<pixelHeight) {
+                for (int i = x2; i < x1; i++) {
+                    if(pixelBitmap.getPixel(i, p1.y-1)==oldC)
+                        p.add(new Pixel(i, p1.y-1));
+                }
+            }
+            if(p1.y>=0&&p1.y<pixelHeight-1) {
+                for (int i = x2; i < x1; i++) {
+                    if(pixelBitmap.getPixel(i, p1.y+1)==oldC)
+                        p.add(new Pixel(i, p1.y+1));
+                }
+            }
+
+        }
+
+        canvasHistory.completeHistoricalChange();
+        System.out.println("Filled in "+(System.currentTimeMillis()-s)+" ms");
+        pixelDrawThread.update();
+    }
+
+    class Pixel {
+        int x, y;
+
+        Pixel(int x, int y){
+            this.x = x;
+            this.y = y;
+        }
     }
 
     boolean showFps = true;

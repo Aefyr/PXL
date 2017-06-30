@@ -41,4 +41,29 @@
         android:layout_centerHorizontal="true"
         android:text="Grid" />
 
+    <Button
+        android:id="@+id/testClear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:text="Clear" />
+
+    <ToggleButton
+        android:id="@+id/testFill"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/testClear"
+        android:text="FILLMODE"
+        android:textOff="FILL OFF"
+        android:textOn="FILL ON" />
+
+    <Button
+        android:id="@+id/tempCPick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/testFill"
+        android:text="Color" />
+
 </RelativeLayout>
