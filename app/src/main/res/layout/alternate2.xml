@@ -5,7 +5,9 @@
     <com.af.pxl.AdaptivePixelSurface
         android:id="@+id/aps"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:id="@+id/undoButton"
@@ -48,22 +50,28 @@
         android:layout_alignParentStart="true"
         android:text="Clear" />
 
-    <ToggleButton
-        android:id="@+id/testFill"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/testClear"
-        android:text="FILLMODE"
-        android:textOff="FILL OFF"
-        android:textOn="FILL ON" />
-
     <Button
         android:id="@+id/tempCPick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Color"
+        android:layout_below="@+id/testClear"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:id="@+id/cursor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/undoButton"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/testFill"
-        android:text="Color" />
+        android:text="DRAW" />
+
+    <Button
+        android:id="@+id/toolButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tempCPick"
+        android:text="TOOL" />
 
 </RelativeLayout>

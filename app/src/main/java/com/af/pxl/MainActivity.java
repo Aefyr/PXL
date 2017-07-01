@@ -1,9 +1,11 @@
 package com.af.pxl;
 
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -69,12 +71,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        ((ToggleButton)findViewById(R.id.testFill)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                aps.fillMode = b;
-            }
-        });
 
         findViewById(R.id.testClear).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,6 +98,45 @@ public class MainActivity extends AppCompatActivity {
                         colorPicker = null;
                     }
                 });
+            }
+        });
+
+        final Button c = (Button) findViewById(R.id.cursor);
+        c.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if(motionEvent.getAction() == MotionEvent.ACTION_DOWN)
+                    aps.cursorPencil.startUsing();
+                if(motionEvent.getAction() == MotionEvent.ACTION_UP)
+                    aps.cursorPencil.stopUsing();
+                return false;
+            }
+        });
+
+        Button toolPick = (Button) findViewById(R.id.toolButton);
+        final String[] tools = {"Pencil", "Cursor Pencil", "Flood Fill"};
+        toolPick.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new AlertDialog.Builder(MainActivity.this).setItems(tools, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        switch (i){
+                            case 0:
+                                c.setVisibility(View.GONE);
+                                aps.setTool(AdaptivePixelSurface.Tool.PENCIL);
+                                break;
+                            case 1:
+                                c.setVisibility(View.VISIBLE);
+                                aps.setTool(AdaptivePixelSurface.Tool.CURSOR_PENCIL);
+                                break;
+                            case 2:
+                                c.setVisibility(View.GONE);
+                                aps.setTool(AdaptivePixelSurface.Tool.FLOOD_FILL);
+                                break;
+                        }
+                    }
+                }).create().show();
             }
         });
 

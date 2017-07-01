@@ -1,6 +1,7 @@
 package com.af.pxl;
 
 import android.graphics.Canvas;
+import android.support.annotation.Nullable;
 import android.view.MotionEvent;
 
 /**
@@ -15,5 +16,5 @@ abstract class Tool {
 
     abstract void processMotionEvent(MotionEvent motionEvent);
 
-    abstract void cancel(MotionEvent motionEvent);
+    abstract void cancel(@Nullable MotionEvent motionEvent);
 }

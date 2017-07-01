@@ -149,8 +149,11 @@ public class Pencil extends Tool{
     void cancel(MotionEvent motionEvent) {
         if(!inUse)
             return;
-        sX = (motionEvent.getX()-adaptivePixelSurface.matrixOffsetX)/adaptivePixelSurface.pixelScale + (1-1/adaptivePixelSurface.pixelScale)* adaptivePixelSurface.scaleAnchorX;
-        sY = (motionEvent.getY()-adaptivePixelSurface.matrixOffsetY)/adaptivePixelSurface.pixelScale + (1-1/adaptivePixelSurface.pixelScale)* adaptivePixelSurface.scaleAnchorY;
+
+        if(motionEvent != null) {
+            sX = (motionEvent.getX() - adaptivePixelSurface.matrixOffsetX) / adaptivePixelSurface.pixelScale + (1 - 1 / adaptivePixelSurface.pixelScale) * adaptivePixelSurface.scaleAnchorX;
+            sY = (motionEvent.getY() - adaptivePixelSurface.matrixOffsetY) / adaptivePixelSurface.pixelScale + (1 - 1 / adaptivePixelSurface.pixelScale) * adaptivePixelSurface.scaleAnchorY;
+        }
 
         if(adaptivePixelSurface.symmetry){
             aSX = sX;
