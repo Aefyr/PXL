@@ -21,6 +21,12 @@ public class Cursor {
     Bitmap cursorPointerImage;
     private Canvas cursorPointerImageCanvas;
 
+    interface OnCursorChangeListener{
+        void onCursorEnabled(boolean enabled);
+    }
+
+    OnCursorChangeListener listener;
+
     Cursor(AdaptivePixelSurface adaptivePixelSurface){
         aps = adaptivePixelSurface;
         cursorPointerImage = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
@@ -60,6 +66,60 @@ public class Cursor {
         previousX = x;
         previousY = y;
 
+        switch (aps.currentTool){
+            case PENCIL:
+                aps.superPencil.move(currentX, currentY);
+                break;
+            case FLOOD_FILL:
+                break;
+            case COLOR_PICK:
+                break;
+        }
+
+        aps.pixelDrawThread.update();
+    }
+
+
+    void cursorDown(){
+        switch (aps.currentTool){
+            case PENCIL:
+                aps.superPencil.startDrawing(currentX, currentY);
+                break;
+            case FLOOD_FILL:
+                updateCanvasXY();
+                aps.floodFill((int)canvasX, (int)canvasY);
+                break;
+            case COLOR_PICK:
+                updateCanvasXY();
+                aps.colorPick((int)canvasX, (int)canvasY);
+                break;
+        }
+    }
+
+    void cursorUp(){
+        switch (aps.currentTool){
+            case PENCIL:
+                aps.superPencil.stopDrawing(currentX, currentY);
+                break;
+            case FLOOD_FILL:
+                break;
+            case COLOR_PICK:
+                break;
+        }
+    }
+
+    void setOnCursorChangeListener(OnCursorChangeListener listener){
+        this.listener = listener;
+    }
+
+    void setEnabled(boolean enabled){
+        if(enabled == aps.cursorMode)
+            return;
+
+        if(listener!=null){
+            listener.onCursorEnabled(enabled);
+        }
+        aps.cursorMode = enabled;
         aps.pixelDrawThread.update();
     }
 
@@ -73,5 +133,14 @@ public class Cursor {
 
     float getY(){
         return currentY;
+    }
+
+    private float[] p = {0, 0};
+    private float canvasX, canvasY;
+    void updateCanvasXY(){
+        p[0] = p[1] = 0;
+        aps.pixelMatrix.mapPoints(p);
+        canvasX = (currentX-p[0])/aps.pixelScale;
+        canvasY = (currentY-p[1])/aps.pixelScale;
     }
 }

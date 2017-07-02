@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
-import android.widget.ToggleButton;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -131,13 +130,13 @@ public class MainActivity extends AppCompatActivity {
                                 aps.setCursorModeEnabled(false);
                                 break;
                             case 2:
-                                aps.currentToolMode = AdaptivePixelSurface.ToolMode.COLOR_PICK;
+                                aps.currentTool = AdaptivePixelSurface.Tool.COLOR_PICK;
                                 break;
                             case 3:
-                                aps.currentToolMode = AdaptivePixelSurface.ToolMode.PENCIL;
+                                aps.currentTool = AdaptivePixelSurface.Tool.PENCIL;
                                 break;
                             case 4:
-                                aps.currentToolMode = AdaptivePixelSurface.ToolMode.FLOOD_FILL;
+                                aps.currentTool = AdaptivePixelSurface.Tool.FLOOD_FILL;
                                 break;
                         }
                     }
@@ -159,8 +158,8 @@ public class MainActivity extends AppCompatActivity {
         tempSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b) pixelSurface2.currentTool = PixelSurface2.Tool.FILL;
-                else pixelSurface2.currentTool = PixelSurface2.Tool.PEN;
+                if(b) pixelSurface2.toolButton = PixelSurface2.Tool.FILL;
+                else pixelSurface2.toolButton = PixelSurface2.Tool.PEN;
             }
         });
 

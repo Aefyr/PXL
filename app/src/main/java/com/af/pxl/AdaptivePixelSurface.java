@@ -37,12 +37,10 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
     int realWidth, realHeight;
 
     //Tools and utils
-
-
-    enum ToolMode{
+    enum Tool {
         PENCIL, FLOOD_FILL, COLOR_PICK
     }
-    ToolMode currentToolMode = ToolMode.PENCIL;
+    Tool currentTool = Tool.PENCIL;
 
 
     Pencil pencil;
@@ -62,6 +60,9 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
     enum SymmetryType{
         HORIZONTAL, VERTICAL
     }
+
+    //Rest
+    ColorCircle colorCircle;
 
     public AdaptivePixelSurface(Context context) {
         super(context);
@@ -90,6 +91,17 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
 
         cursor = new Cursor(this);
         superPencil = new SuperPencil(this);
+    }
+
+    void setColorCircle(ColorCircle colorCircle){
+        this.colorCircle = colorCircle;
+    }
+
+    private void updateColorCircle(){
+        if(colorCircle!=null){
+            colorCircle.setColor(paint.getColor());
+            colorCircle.invalidate();
+        }
     }
 
     //Utility methods
@@ -177,6 +189,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
         //Main paint
         paint = new Paint();
         paint.setColor(Color.RED);
+        updateColorCircle();
         paint.setStrokeWidth(1);
         paint.setStyle(Paint.Style.STROKE);
         paint.setTextSize(24);
@@ -235,7 +248,8 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
     boolean anchorSet = false;
 
     float lastX, lastY;
-    //TODO Make method processEvent(float x, float y, int pointerId) in Tool class, and use a ArrayList of Paths or whatever that tool uses, so symmetry can be implemented on this level, just by sending mirrored coords with currentTool.pointers+1 as pointerId
+    boolean touchToolWillBeUsedOnUpEvent = false;
+    //TODO Make method processEvent(float x, float y, int pointerId) in Tool class, and use a ArrayList of Paths or whatever that tool uses, so symmetry can be implemented on this level, just by sending mirrored coords with toolButton.pointers+1 as pointerId
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
@@ -244,14 +258,12 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
             return true;
 
         if(event.getPointerCount() > 1){
-            pencil.cancel(event);
             if(cursorMode){
                 superPencil.cancel(cursor.getX(), cursor.getY());
             }else {
                 superPencil.cancel(event.getX(), event.getY());
             }
-            cursorPencil.cancel(event);
-
+            touchToolWillBeUsedOnUpEvent = false;
 
 
             midX = (event.getX(0)+event.getX(1))/2f;
@@ -313,36 +325,47 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
         }
         anchorSet = false;
 
-
-        /*switch (currentTool){
-            case PENCIL:
-                pencil.processMotionEvent(event);
-                break;
-            case CURSOR_PENCIL:
-                cursor.processMotionEvent(event);
-                break;
-            case FLOOD_FILL:
-                p[0] = p[1] = 0;
-                pixelMatrix.mapPoints(p);
-
-                floodFill((int)((event.getX()-p[0])/pixelScale), (int)((event.getY()-p[1])/pixelScale), paint.getColor());
-                break;
-        }*/
-        //TEST
-        if(cursorMode){
+        if(cursorMode) {
             cursor.processMotionEvent(event);
-            superPencil.move(cursor.getX(), cursor.getY());
         }else {
-            if(event.getAction()==MotionEvent.ACTION_DOWN) {
-                superPencil.startDrawing(event.getX(), event.getY());
-            }
-            if(event.getAction()==MotionEvent.ACTION_MOVE){
-                superPencil.move(event.getX(), event.getY());
-            }
-            if(event.getAction() == MotionEvent.ACTION_UP) {
-                superPencil.stopDrawing(event.getX(), event.getY());
+            switch (currentTool) {
+                case PENCIL:
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        superPencil.startDrawing(event.getX(), event.getY());
+                    }
+                    if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                        superPencil.move(event.getX(), event.getY());
+                    }
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        superPencil.stopDrawing(event.getX(), event.getY());
+                    }
+                    break;
+                case COLOR_PICK:
+                    if(event.getAction() == MotionEvent.ACTION_DOWN)
+                        touchToolWillBeUsedOnUpEvent = true;
+                    else if(event.getAction() == MotionEvent.ACTION_UP){
+                        if(touchToolWillBeUsedOnUpEvent) {
+                            p[0] = p[1] = 0;
+                            pixelMatrix.mapPoints(p);
+                            colorPick((int) ((event.getX() - p[0]) / pixelScale), (int) ((event.getY() - p[1]) / pixelScale));
+                        }
+                    }
+                    break;
+                case FLOOD_FILL:
+                    if(event.getAction() == MotionEvent.ACTION_DOWN)
+                        touchToolWillBeUsedOnUpEvent = true;
+                    else if(event.getAction() == MotionEvent.ACTION_UP){
+                        if(touchToolWillBeUsedOnUpEvent) {
+                            p[0] = p[1] = 0;
+                            pixelMatrix.mapPoints(p);
+                            floodFill((int) ((event.getX() - p[0]) / pixelScale), (int) ((event.getY() - p[1]) / pixelScale));
+                        }
+                    }
+                    break;
             }
         }
+        //TEST
+
 
 
         lastX = event.getX();
@@ -365,7 +388,8 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
     }
 
     boolean fillInProgress = false;
-    void floodFill(int x, int y, int newC){
+    void floodFill(int x, int y){
+        int newC = paint.getColor();
         if(x<0||x>=pixelWidth||y<0||y>=pixelHeight||pixelBitmap.getPixel(x,y)==newC)
             return;
 
@@ -420,6 +444,13 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
         fillInProgress = false;
         System.out.println("Filled in "+(System.currentTimeMillis()-s)+" ms");
         pixelDrawThread.update();
+    }
+
+    void colorPick(int x, int y){
+        if(x<0||x>=pixelWidth||y<0||y>=pixelHeight)
+            return;
+        paint.setColor(pixelBitmap.getPixel(x, y));
+        updateColorCircle();
     }
 
     class Pixel {

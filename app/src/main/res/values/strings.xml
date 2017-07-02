@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">PXL</string>
+    <string name="pencil">Pencil</string>
+    <string name="fill">Flood Fill</string>
+    <string name="colorpick">Color Picker</string>
+    <string name="pencil_action">Draw!</string>
+    <string name="fill_action">Fill!</string>
+    <string name="colorpick_action">Pick!</string>
 </resources>

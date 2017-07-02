@@ -3,14 +3,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!-- Settings, should always be in the overflow -->
+
+    <item android:id="@+id/buttonCursor"
+        android:icon="@drawable/cursor"
+        android:title="Cursor"
+        app:showAsAction="always"/>
+
+    <item android:id="@+id/buttonFill"
+        android:icon="@drawable/fill"
+        android:title="Fill"
+        app:showAsAction="always"/>
+
+    <item android:id="@+id/buttonGrid"
+        android:icon="@drawable/grid"
+        android:title="Grid"
+        app:showAsAction="always"/>
+
     <item android:id="@+id/buttonUndo"
-        android:icon="@drawable/buttonundo"
+        android:icon="@drawable/undo"
         android:title="Undo"
         app:showAsAction="always"/>
 
     <item
         android:id="@+id/buttonRedo"
-        android:icon="@drawable/buttonredo"
+        android:icon="@drawable/redo"
         android:title="Redo"
         app:showAsAction="always" />
 

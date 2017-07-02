@@ -13,7 +13,7 @@ import android.view.View;
 
 public class ColorView extends View {
 
-    float[] color = {0,0,1};
+    float[] color = {255,1,1};
 
     public ColorView(Context context) {
         super(context);
