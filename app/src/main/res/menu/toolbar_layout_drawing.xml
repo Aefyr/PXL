@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Settings, should always be in the overflow -->
+    <item android:id="@+id/buttonUndo"
+        android:icon="@drawable/buttonundo"
+        android:title="Undo"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/buttonRedo"
+        android:icon="@drawable/buttonredo"
+        android:title="Redo"
+        app:showAsAction="always" />
+
+</menu>

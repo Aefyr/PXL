@@ -1,6 +1,7 @@
 package com.af.pxl;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 aps.setGridEnabled(b);
+                aps.fillMode = b;
             }
         });
 
@@ -106,15 +108,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if(motionEvent.getAction() == MotionEvent.ACTION_DOWN)
-                    aps.cursorPencil.startUsing();
+                    aps.superPencil.startDrawing(aps.cursor.getX(), aps.cursor.getY());
                 if(motionEvent.getAction() == MotionEvent.ACTION_UP)
-                    aps.cursorPencil.stopUsing();
+                    aps.superPencil.stopDrawing(aps.cursor.getX(), aps.cursor.getY());
                 return false;
             }
         });
 
         Button toolPick = (Button) findViewById(R.id.toolButton);
-        final String[] tools = {"Pencil", "Cursor Pencil", "Flood Fill"};
+        final String[] tools = {"Cursor Mode", "Normal Mode", "Color picker", "Pencil", "Flood Fill"};
         toolPick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -123,16 +125,19 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         switch (i){
                             case 0:
-                                c.setVisibility(View.GONE);
-                                aps.setTool(AdaptivePixelSurface.Tool.PENCIL);
+                                aps.setCursorModeEnabled(true);
                                 break;
                             case 1:
-                                c.setVisibility(View.VISIBLE);
-                                aps.setTool(AdaptivePixelSurface.Tool.CURSOR_PENCIL);
+                                aps.setCursorModeEnabled(false);
                                 break;
                             case 2:
-                                c.setVisibility(View.GONE);
-                                aps.setTool(AdaptivePixelSurface.Tool.FLOOD_FILL);
+                                aps.currentToolMode = AdaptivePixelSurface.ToolMode.COLOR_PICK;
+                                break;
+                            case 3:
+                                aps.currentToolMode = AdaptivePixelSurface.ToolMode.PENCIL;
+                                break;
+                            case 4:
+                                aps.currentToolMode = AdaptivePixelSurface.ToolMode.FLOOD_FILL;
                                 break;
                         }
                     }
@@ -140,6 +145,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, DrawingActivity.class);
+                MainActivity.this.startActivity(intent);
+            }
+        });
 
         /*final PixelSurface2 pixelSurface2 = (PixelSurface2) findViewById(R.id.pixelSurface);
 

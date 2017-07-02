@@ -74,4 +74,20 @@
         android:layout_below="@+id/tempCPick"
         android:text="TOOL" />
 
+    <Button
+        android:id="@+id/colorPickT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/toolButton"
+        android:text="Get color" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:text="Button" />
+
 </RelativeLayout>
