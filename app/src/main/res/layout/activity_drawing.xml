@@ -92,4 +92,10 @@
         android:layout_centerVertical="true"
         android:text="Draw!" />
 
+    <com.af.pxl.ToolPickView
+        android:id="@+id/test"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_below="@+id/currentTool" />
+
 </RelativeLayout>

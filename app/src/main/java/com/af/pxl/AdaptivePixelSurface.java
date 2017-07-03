@@ -364,7 +364,6 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
                     break;
             }
         }
-        //TEST
 
 
 
