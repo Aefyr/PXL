@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                 d.show();
                 colorPicker = new ColorPicker((ColorPickerView) d.findViewById(R.id.colorPickerHue),(SeekBar) d.findViewById(R.id.seekBarHue),
                         (ColorPickerView) d.findViewById(R.id.colorPickerSat), (SeekBar) d.findViewById(R.id.seekBarSat), (ColorPickerView) d.findViewById(R.id.colorPickerVal),
-                        (SeekBar) d.findViewById(R.id.seekBarVal), (ColorView) d.findViewById(R.id.colorView));
+                        (SeekBar) d.findViewById(R.id.seekBarVal), (ColorCircle) d.findViewById(R.id.colorView), aps.paint.getColor());
                 (d.findViewById(R.id.colorPickButton)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

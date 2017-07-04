@@ -16,15 +16,6 @@
         android:layout_alignParentStart="true" />
 
     <ImageButton
-        android:id="@+id/currentTool"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:scaleType="centerCrop"
-        app:srcCompat="@drawable/pencil" />
-
-    <ImageButton
         android:id="@+id/undo"
         android:layout_width="64dp"
         android:layout_height="64dp"
@@ -93,9 +84,9 @@
         android:text="Draw!" />
 
     <com.af.pxl.ToolPickView
-        android:id="@+id/test"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:id="@+id/currentTool"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_below="@+id/currentTool" />
 
 </RelativeLayout>

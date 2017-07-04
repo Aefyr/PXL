@@ -23,6 +23,15 @@ public class ToolPickView extends View {
     boolean startGet = false;
 
     int toolsCount = 3;
+    int currentTool = 0;
+
+    int circleColor;
+    int barColor;
+    int circleBorderColor;
+    int barBorderColor;
+
+    int toolBitmapSizeReducedBy;
+    float offsetBetweenTools;
 
     public ToolPickView(Context context) {
         super(context);
@@ -41,7 +50,6 @@ public class ToolPickView extends View {
             startWidth = width;
             startHeight = height;
             initialize();
-            showTools();
             startGet = true;
         }
         System.out.println("W:"+width+", H:"+height);
@@ -49,11 +57,20 @@ public class ToolPickView extends View {
 
     Bitmap[] tools;
     private void initialize(){
+        toolBitmapSizeReducedBy = startWidth/3;
+        offsetBetweenTools = startWidth/32f;
+
         tools = new Bitmap[3];
         Resources res = getResources();
-        tools[0] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.pencil), startWidth, startWidth, false);
-        tools[1] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.fill), startWidth, startWidth, false);
-        tools[2] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.colorpick), startWidth, startWidth, false);
+        tools[0] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.pencil), startWidth-toolBitmapSizeReducedBy, startWidth-toolBitmapSizeReducedBy, false);
+        tools[1] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.fill), startWidth-toolBitmapSizeReducedBy, startWidth-toolBitmapSizeReducedBy, false);
+        tools[2] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.colorpick), startWidth-toolBitmapSizeReducedBy, startWidth-toolBitmapSizeReducedBy, false);
+        circleColor = Color.parseColor("#FFFAFAFA");
+        barColor = Color.parseColor("#FFE0E0E0");
+        circleBorderColor = Color.parseColor("#FFBDBDBD");
+        barBorderColor = Color.parseColor("#FF9E9E9E");
+        cPaint = new Paint();
+
     }
 
     boolean actionWillBePerformed = false;
@@ -78,9 +95,10 @@ public class ToolPickView extends View {
         return super.onTouchEvent(event);
     }
 
+
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.drawColor(Color.BLUE);
+        //canvas.drawColor(Color.BLUE);
 
         if(toolsShown)
             drawTools(canvas);
@@ -89,58 +107,79 @@ public class ToolPickView extends View {
         super.onDraw(canvas);
     }
 
+    Paint cPaint;
     void drawMainCircle(Canvas canvas){
-        Paint cPaint = new Paint();
-        cPaint.setColor(Color.GRAY);
+
+        cPaint.setColor(circleColor);
         cPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-        cPaint.setStrokeWidth(1);
+        cPaint.setStrokeWidth(startWidth/32f);
 
         canvas.drawCircle((float)startWidth/2f, (float)startHeight/2f, (float) startWidth/2f-(float)startWidth/12f, cPaint);
-        cPaint.setColor(Color.WHITE);
-        canvas.drawRect((float)startWidth/2f - 30f , (float)startHeight/2f - 30f, (float)startWidth/2f +30f, (float)startHeight/2f + 30f, cPaint);
+
+        cPaint.setColor(circleBorderColor);
+        cPaint.setStyle(Paint.Style.STROKE);
+        canvas.drawCircle((float)startWidth/2f, (float)startHeight/2f, (float) startWidth/2f-(float)startWidth/12f, cPaint);
+        canvas.drawBitmap(tools[currentTool],toolBitmapSizeReducedBy/2, toolBitmapSizeReducedBy/2, null);
+        //canvas.drawRect((float)startWidth/2f - 30f , (float)startHeight/2f - 30f, (float)startWidth/2f +30f, (float)startHeight/2f + 30f, cPaint);
     }
 
     void drawTools(Canvas canvas){
-        Paint rPaint = new Paint();
-        rPaint.setColor(Color.MAGENTA);
-        rPaint.setStrokeWidth(1);
-        rPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        cPaint.setColor(barColor);
+        cPaint.setStrokeWidth(startWidth/32f);
+        cPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
-        canvas.drawRoundRect(width/8f, startWidth/12f, width-width/8f, height, 100, 100, rPaint);
+        canvas.drawRoundRect(width/8f, startWidth/12f, width-width/8f, height - startWidth/64f, 100, 100, cPaint);
+
+        cPaint.setColor(barBorderColor);
+        cPaint.setStyle(Paint.Style.STROKE);
+        canvas.drawRoundRect(width/8f, startWidth/12f, width-width/8f, height- startWidth/64f, 100, 100, cPaint);
 
         float realHeightForTools = height - (startWidth/2f-(float)startWidth/12f)*2f -(float)startWidth/12f;
         float startYForToolsZone = height - realHeightForTools;
 
         float y = startYForToolsZone;
-        float paddingY = startWidth/12f;
-        y+= paddingY;
+        y+= offsetBetweenTools;
 
-        rPaint.setColor(Color.BLACK);
+        cPaint.setColor(Color.BLACK);
         for(int i = 0; i < toolsCount; i++){
-            canvas.drawBitmap(tools[i], 0,y, null);
+            canvas.drawBitmap(tools[i], toolBitmapSizeReducedBy/2,y, null);
             //canvas.drawRect(0, y, startWidth, y+startWidth, rPaint);
-            y+= startWidth+paddingY;
+            y+= startWidth+offsetBetweenTools;
         }
     }
 
     void getClickedTool(float x, float y){
         float realHeightForTools = height - (startWidth/2f-(float)startWidth/12f)*2f -(float)startWidth/12f;
         float startYForToolsZone = height - realHeightForTools;
-        float paddingY = startWidth/12f;
 
-        int clickedItem = (int) ((y - startYForToolsZone)/(startWidth+paddingY));
+        int clickedItem = (int) ((y - startYForToolsZone)/(startWidth+offsetBetweenTools));
         if(y<startYForToolsZone)
             hideTools();
-
-        System.out.println("ClickedItem="+clickedItem);
+        else {
+            currentTool = clickedItem;
+            if(aps!=null){
+                switch (currentTool){
+                    case 0:
+                        aps.currentTool = AdaptivePixelSurface.Tool.PENCIL;
+                        break;
+                    case 1:
+                        aps.currentTool = AdaptivePixelSurface.Tool.FLOOD_FILL;
+                        break;
+                    case 2:
+                        aps.currentTool = AdaptivePixelSurface.Tool.COLOR_PICK;
+                        break;
+                }
+            }
+            hideTools();
+            System.out.println("ClickedItem=" + clickedItem);
+        }
     }
 
     boolean toolsShown = false;
 
     void showTools(){
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) getLayoutParams();
-        float paddingY = startWidth/12f;
-        params.height += paddingY*3+width*3;
+        params.height += offsetBetweenTools*3+width*3;
         setLayoutParams(params);
         toolsShown = true;
     }
@@ -150,5 +189,19 @@ public class ToolPickView extends View {
         params.height = startHeight;
         setLayoutParams(params);
         toolsShown = false;
+    }
+
+    AdaptivePixelSurface aps;
+
+    void setAps(final AdaptivePixelSurface aps){
+        this.aps = aps;
+        aps.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if(toolsShown)
+                    hideTools();
+                return aps.onTouchEvent(motionEvent);
+            }
+        });
     }
 }

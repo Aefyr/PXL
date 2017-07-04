@@ -1,5 +1,6 @@
 package com.af.pxl;
 
+import android.graphics.Color;
 import android.widget.SeekBar;
 
 /**
@@ -15,11 +16,11 @@ class ColorPicker {
     private ColorPickerView valueView;
     private SeekBar valueBar;
 
-    private ColorView colorView;
+    private ColorCircle colorCircle;
 
-    float[] color = {180,0.5f,0.5f};
+    float[] color = {0,0,0};
 
-    ColorPicker(ColorPickerView hueView, SeekBar hueBar, ColorPickerView saturationView, SeekBar saturationBar, ColorPickerView valueView, SeekBar valueBar, ColorView colorView){
+    ColorPicker(ColorPickerView hueView, SeekBar hueBar, ColorPickerView saturationView, SeekBar saturationBar, ColorPickerView valueView, SeekBar valueBar, ColorCircle colorCircle, int currentColor){
         this.hueView = hueView;
         this.hueBar = hueBar;
         this.saturationView = saturationView;
@@ -27,13 +28,24 @@ class ColorPicker {
         this.valueView = valueView;
         this.valueBar = valueBar;
 
-        this.colorView = colorView;
+        this.colorCircle = colorCircle;
 
+        setStartColor(currentColor);
         initialize();
     }
 
+    //Hai, hai, this workflow sucks, but I gonna write a new ColorPicker analogue soon anyway
+    private void setStartColor(int startColor){
+        Color.colorToHSV(startColor, color);
+
+        hueBar.setProgress((int) color[0]);
+        saturationBar.setProgress((int)(color[1]*100));
+        valueBar.setProgress((int)(color[2]*100));
+    }
+
     private void initialize(){
-        colorView.color = saturationView.color = valueView.color = color;
+        colorCircle.setColor(Color.HSVToColor(color));
+        saturationView.color = valueView.color = color;
 
         hueView.setMode(ColorPickerView.MODE.HUE);
         saturationView.setMode(ColorPickerView.MODE.SATURATION);
@@ -68,11 +80,12 @@ class ColorPicker {
         hueBar.setOnSeekBarChangeListener(onSeekBarChangeListener);
         saturationBar.setOnSeekBarChangeListener(onSeekBarChangeListener);
         valueBar.setOnSeekBarChangeListener(onSeekBarChangeListener);
+        updateColorViews();
     }
 
     private void updateColorViews(){
         saturationView.invalidate();
         valueView.invalidate();
-        colorView.invalidate();
+        colorCircle.setColor(Color.HSVToColor(color));
     }
 }

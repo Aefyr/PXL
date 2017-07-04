@@ -28,6 +28,7 @@
 
     <SeekBar
         android:id="@+id/seekBarHue"
+        style="@style/ColorPickerSeekBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -37,6 +38,7 @@
 
     <SeekBar
         android:id="@+id/seekBarSat"
+        style="@style/ColorPickerSeekBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -46,6 +48,7 @@
 
     <SeekBar
         android:id="@+id/seekBarVal"
+        style="@style/ColorPickerSeekBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -53,7 +56,7 @@
         android:max="100"
         android:progress="50" />
 
-    <com.af.pxl.ColorView
+    <com.af.pxl.ColorCircle
         android:id="@+id/colorView"
         android:layout_width="64dp"
         android:layout_height="64dp"
@@ -61,10 +64,12 @@
 
     <Button
         android:id="@+id/colorPickButton"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/seekBarVal"
         android:layout_centerHorizontal="true"
-        android:text="PICK!" />
+        android:elevation="0dp"
+        android:text="Done" />
 
 </RelativeLayout>

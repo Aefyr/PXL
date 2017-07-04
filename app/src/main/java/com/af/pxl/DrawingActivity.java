@@ -2,6 +2,7 @@ package com.af.pxl;
 
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,15 +10,18 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
 
 public class DrawingActivity extends AppCompatActivity {
 
     AdaptivePixelSurface aps;
-    ImageButton toolButton;
+    ToolPickView toolButton;
     String[] tools;
     AlertDialog toolPickDialog;
     ImageButton.OnClickListener onClickListener;
     Button cursorAction;
+
+    ColorCircle colorPickButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +34,33 @@ public class DrawingActivity extends AppCompatActivity {
         initializeImageButtonsOCL();
         initializeToolPicking();
         initializeCursor();
+        tempColorPickInitialize();
 
+    }
 
+    ColorPicker colorPicker;
+    void tempColorPickInitialize(){
+        colorPickButton = (ColorCircle) findViewById(R.id.color);
+        colorPickButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final AlertDialog d = new AlertDialog.Builder(DrawingActivity.this).setView(R.layout.color_picker).create();
+                d.show();
+                colorPicker = new ColorPicker((ColorPickerView) d.findViewById(R.id.colorPickerHue),(SeekBar) d.findViewById(R.id.seekBarHue),
+                        (ColorPickerView) d.findViewById(R.id.colorPickerSat), (SeekBar) d.findViewById(R.id.seekBarSat), (ColorPickerView) d.findViewById(R.id.colorPickerVal),
+                        (SeekBar) d.findViewById(R.id.seekBarVal), (ColorCircle) d.findViewById(R.id.colorView), aps.paint.getColor());
+                (d.findViewById(R.id.colorPickButton)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        int newColor = Color.HSVToColor(colorPicker.color);
+                        aps.paint.setColor(newColor);
+                        colorPickButton.setColor(newColor);
+                        d.cancel();
+                        colorPicker = null;
+                    }
+                });
+            }
+        });
     }
 
     private void initializeToolPicking(){
@@ -39,33 +68,9 @@ public class DrawingActivity extends AppCompatActivity {
 
         tools = new String[]{res.getString(R.string.pencil), res.getString(R.string.fill), res.getString(R.string.colorpick)};
 
-        toolButton = (ImageButton) findViewById(R.id.currentTool);
+        toolButton = (ToolPickView) findViewById(R.id.currentTool);
 
-        toolPickDialog = new AlertDialog.Builder(this).setItems(tools, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                switch (i){
-                    case 0:
-                        aps.currentTool = AdaptivePixelSurface.Tool.PENCIL;
-                        toolButton.setImageResource(R.drawable.pencil);
-                        cursorAction.setText(res.getString(R.string.pencil_action));
-                        break;
-                    case 1:
-                        aps.currentTool = AdaptivePixelSurface.Tool.FLOOD_FILL;
-                        toolButton.setImageResource(R.drawable.fill);
-                        cursorAction.setText(res.getString(R.string.fill_action));
-                        break;
-                    case 2:
-                        aps.currentTool = AdaptivePixelSurface.Tool.COLOR_PICK;
-                        toolButton.setImageResource(R.drawable.colorpick);
-                        cursorAction.setText(res.getString(R.string.colorpick_action));
-                        break;
-
-                }
-            }
-        }).create();
-
-        toolButton.setOnClickListener(onClickListener);
+        toolButton.setAps(aps);
     }
 
     private void initializeImageButtonsOCL(){

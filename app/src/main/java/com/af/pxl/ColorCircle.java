@@ -35,6 +35,7 @@ public class ColorCircle extends View {
 
     void setColor(int color){
         this.color = color;
+        invalidate();
     }
 
     @Override
@@ -44,11 +45,11 @@ public class ColorCircle extends View {
         int y = canvas.getHeight();
         p.setColor(color);
         p.setStyle(Paint.Style.FILL_AND_STROKE);
-        p.setStrokeWidth(x/12);
-        canvas.drawCircle(x/2, y/2, x<y?x/2-x/12:y/2-y/12, p);
+        p.setStrokeWidth(x/32);
+        canvas.drawCircle(x/2, y/2, x/2f-x/12f, p);
         p.setColor(borderColor);
         p.setStyle(Paint.Style.STROKE);
-        canvas.drawCircle(x/2, y/2, x<y?x/2-x/12:y/2-y/12, p);
+        canvas.drawCircle(x/2, y/2, x/2f-x/12f, p);
         System.out.println("REDRAW");
     }
 }
