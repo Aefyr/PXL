@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -38,25 +39,24 @@ public class DrawingActivity extends AppCompatActivity {
 
     }
 
+    Palette palette;
     ColorPicker colorPicker;
     void tempColorPickInitialize(){
         colorPickButton = (ColorCircle) findViewById(R.id.color);
+        palette = new Palette();
         colorPickButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final AlertDialog d = new AlertDialog.Builder(DrawingActivity.this).setView(R.layout.color_picker).create();
+                final AlertDialog d = new AlertDialog.Builder(DrawingActivity.this).setView(R.layout.palette).create();
                 d.show();
-                colorPicker = new ColorPicker((ColorPickerView) d.findViewById(R.id.colorPickerHue),(SeekBar) d.findViewById(R.id.seekBarHue),
-                        (ColorPickerView) d.findViewById(R.id.colorPickerSat), (SeekBar) d.findViewById(R.id.seekBarSat), (ColorPickerView) d.findViewById(R.id.colorPickerVal),
-                        (SeekBar) d.findViewById(R.id.seekBarVal), (ColorCircle) d.findViewById(R.id.colorView), aps.paint.getColor());
-                (d.findViewById(R.id.colorPickButton)).setOnClickListener(new View.OnClickListener() {
+                PaletteView paletteView = ((PaletteView)d.findViewById(R.id.paletteView));
+                paletteView.setPalette(palette);
+                paletteView.setOnColorChangedListener(new PaletteView.OnColorChangedListener() {
                     @Override
-                    public void onClick(View view) {
-                        int newColor = Color.HSVToColor(colorPicker.color);
+                    public void onColorChanged(int newColor) {
                         aps.paint.setColor(newColor);
                         colorPickButton.setColor(newColor);
                         d.cancel();
-                        colorPicker = null;
                     }
                 });
             }

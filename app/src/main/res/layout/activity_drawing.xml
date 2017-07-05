@@ -86,7 +86,6 @@
     <com.af.pxl.ToolPickView
         android:id="@+id/currentTool"
         android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_below="@+id/currentTool" />
+        android:layout_height="64dp" />
 
 </RelativeLayout>

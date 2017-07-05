@@ -188,7 +188,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
     void initializePaints(){
         //Main paint
         paint = new Paint();
-        paint.setColor(Color.RED);
+        paint.setColor(Color.CYAN);
         updateColorCircle();
         paint.setStrokeWidth(1);
         paint.setStyle(Paint.Style.STROKE);

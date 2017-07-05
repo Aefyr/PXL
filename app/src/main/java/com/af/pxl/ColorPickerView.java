@@ -69,13 +69,11 @@ public class ColorPickerView extends View {
         }else if(currentMode == MODE.SATURATION){
             modeInt = 1;
             grades = 100;
-            color[0] = 94;
             colors = null;
             positions = null;
         }else if(currentMode == MODE.VIBRANCE){
             modeInt = 2;
             grades = 100;
-            color[0] = 94;
             colors = null;
             positions = null;
         }
