@@ -51,39 +51,66 @@ public class PaletteView extends View {
 
     void setPalette(Palette palette){
         this.palette = palette;
+        for(int i = 0; i<100; i++){
+            addColor(Color.MAGENTA);
+        }
         invalidate();
     }
 
     boolean g = false;
     boolean h = false;
-    long start = 0;
-    long delayBeforeDeleteWindow = 500;
+    long delayBeforeDeleteWindow = 300;
+
+    float prevY;
+    float scrollOffsetY;
+    float offsetThisSession = 0;
+    boolean s = false;
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    public boolean onTouchEvent(final MotionEvent event) {
         if(event.getAction() == MotionEvent.ACTION_DOWN){
             g = true;
-            h = false;
-            start = System.currentTimeMillis();
+            h = true;
+            s = true;
+            offsetThisSession = 0;
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(!h)
+                        return;
+                    g = false;
+                    final int clickedColor = getClickedColor(event.getX(), event.getY());
+                    if(clickedColor>=palette.colors.size()||clickedColor==palette.currentColor)
+                        return ;
+                    new AlertDialog.Builder(getContext()).setTitle("Delete this color?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            deleteColor(clickedColor);
+                        }
+                    }).setNegativeButton("Cancel", null).create().show();
+                }
+            }, delayBeforeDeleteWindow);
             return true;
         }
         if(event.getAction() == MotionEvent.ACTION_MOVE){
-            if(System.currentTimeMillis() - start > delayBeforeDeleteWindow && !h){
-                h = true;
-                g = false;
-                final int clickedColor = getClickedColor(event.getX(), event.getY());
-                if(clickedColor>=palette.colors.size()||clickedColor==palette.currentColor)
-                    return true;
-                new AlertDialog.Builder(getContext()).setTitle("Delete this color?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        deleteColor(clickedColor);
-                    }
-                }).setNegativeButton("Cancel", null).create().show();
+            if(s){
+                prevY = event.getY();
+                s = false;
             }
+            float a = event.getY()-prevY;
+            scrollOffsetY=Utils.clamp(scrollOffsetY-a,0,((r*2+offsetY)*(lines-getHeight()/(r*2+offsetY)))+offsetY);
+            offsetThisSession+=Math.abs(a);
+            prevY = event.getY();
+            System.out.println("OffsetThisSession="+offsetThisSession);
+            if(offsetThisSession>=32){
+                g = false;
+                h = false;
+            }
+            invalidate();
         }
         if(event.getAction() == MotionEvent.ACTION_UP){
             if(g){
-                g =false;
+                h = false;
+                g = false;
                 int clickedColor = getClickedColor(event.getX(), event.getY());
                 if(clickedColor>palette.colors.size())
                     return true;
@@ -138,24 +165,50 @@ public class PaletteView extends View {
     float offsetX;
     int max;
     int lines;
-    //TODO Center circles
+
     void drawColors(Canvas canvas){
         max = (int)(getWidth()/(r*2+offsetX));
         lines = (int) Utils.clamp((float) Math.ceil((float)(palette.colors.size()+1)/max), 1, 999);
         resizeToFit();
         System.out.println("lines="+palette.colors.size()+1+"/"+max);
         System.out.println("r="+r+", max="+max+", offsetY="+offsetY+", offsetX="+offsetX);
-        float y = offsetY+r;
+        float y = offsetY+r-scrollOffsetY;
         float x = offsetX+r;
 
         int i = 0;
         int id = 0;
+        long start = System.currentTimeMillis();
+
+        //TODO Optimize this, cause now this just skipping thing is just retarded
         for(int c: palette.colors){
+            //I mean this V
+            if(y<-r){
+                x+= r*2+offsetX;
+                i++;
+                id++;
+                if(i==max){
+                    i=0;
+                    y += offsetY+r*2;
+                    x = offsetX+r;
+                }
+                continue;
+            }
+            if(y>getHeight()+r){
+                x+= r*2+offsetX;
+                i++;
+                id++;
+                if(i==max){
+                    i=0;
+                    y += offsetY+r*2;
+                    x = offsetX+r;
+                }
+                continue;
+            }
             paint.setColor(c);
             canvas.drawCircle(x,y,r, paint);
             if(id == palette.currentColor){
                 Paint p = new Paint();
-                p.setColor(Color.RED);
+                p.setColor(Utils.invertColor(c));
                 p.setStyle(Paint.Style.STROKE);
                 p.setStrokeWidth(offsetY/2);
                 canvas.drawCircle(x,y,r, p);
@@ -169,6 +222,7 @@ public class PaletteView extends View {
                 x = offsetX+r;
             }
         }
+        System.out.println("Palette drawn in "+(System.currentTimeMillis()-start)+" ms!");
 
         System.out.println("Drawing add sign at "+x+", "+y);
         drawAddColorSign(canvas, x, y);
@@ -190,7 +244,7 @@ public class PaletteView extends View {
 
     int getClickedColor(float x, float y){
         int clickedColumn = (int) (x/(r*2+offsetX));
-        int clickedRow = (int) (y/(r*2+offsetY));
+        int clickedRow = (int) ((y+scrollOffsetY)/(r*2+offsetY));
         System.out.println("Row="+clickedRow+", column="+clickedColumn);
         int clickedColor = clickedRow*max + clickedColumn;
         System.out.println("Clicked color: "+clickedColor);

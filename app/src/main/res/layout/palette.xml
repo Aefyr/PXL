@@ -6,5 +6,6 @@
     <com.af.pxl.PaletteView
         android:id="@+id/paletteView"
         android:layout_width="wrap_content"
-        android:layout_height="64dp" />
+        android:layout_height="64dp"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

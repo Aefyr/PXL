@@ -31,6 +31,7 @@ public class ColorCircle extends View {
         color = Color.RED;
         borderColor = Color.parseColor("#ffb0bec5");
         p.setColor(color);
+        p.setAntiAlias(true);
     }
 
     void setColor(int color){
@@ -47,7 +48,7 @@ public class ColorCircle extends View {
         p.setStyle(Paint.Style.FILL_AND_STROKE);
         p.setStrokeWidth(x/32);
         canvas.drawCircle(x/2, y/2, x/2f-x/12f, p);
-        p.setColor(borderColor);
+        p.setColor(Utils.invertColor(color));
         p.setStyle(Paint.Style.STROKE);
         canvas.drawCircle(x/2, y/2, x/2f-x/12f, p);
         System.out.println("REDRAW");
