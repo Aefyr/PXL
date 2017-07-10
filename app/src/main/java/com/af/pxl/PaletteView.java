@@ -19,10 +19,28 @@ import java.util.ArrayList;
  * Created by Aefyr on 18.06.2017.
  */
 
-public class PaletteView extends View {
+public class PaletteView extends View implements View.OnLongClickListener{
 
     Palette palette;
     Paint paint;
+
+    @Override
+    public boolean onLongClick(View view) {
+        g = false;
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ONLONGCLICK");
+        final int clickedColor = getClickedColor(lastX, lastY);
+        if(clickedColor>=palette.colors.size())
+            return true;
+        new AlertDialog.Builder(getContext()).setTitle("Delete this color?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if(clickedColor == palette.currentColor && clickedColor>0)
+                    palette.currentColor -= 1;
+                deleteColor(clickedColor);
+            }
+        }).setNegativeButton("Cancel", null).create().show();
+        return true;
+    }
 
     interface OnColorChangedListener{
         void onColorChanged(int newColor);
@@ -43,6 +61,7 @@ public class PaletteView extends View {
     void initialize(){
         paint = new Paint();
         paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        setOnLongClickListener(this);
     }
 
     void setOnColorChangedListener(OnColorChangedListener onColorChangedListener){
@@ -51,9 +70,6 @@ public class PaletteView extends View {
 
     void setPalette(Palette palette){
         this.palette = palette;
-        for(int i = 0; i<100; i++){
-            addColor(Color.MAGENTA);
-        }
         invalidate();
     }
 
@@ -65,30 +81,36 @@ public class PaletteView extends View {
     float scrollOffsetY;
     float offsetThisSession = 0;
     boolean s = false;
+    float lastX, lastY;
     @Override
     public boolean onTouchEvent(final MotionEvent event) {
+        lastX = event.getX();
+        lastY = event.getY();
         if(event.getAction() == MotionEvent.ACTION_DOWN){
             g = true;
             h = true;
             s = true;
+
             offsetThisSession = 0;
-            postDelayed(new Runnable() {
+            /*postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     if(!h)
                         return;
                     g = false;
                     final int clickedColor = getClickedColor(event.getX(), event.getY());
-                    if(clickedColor>=palette.colors.size()||clickedColor==palette.currentColor)
+                    if(clickedColor>=palette.colors.size())
                         return ;
                     new AlertDialog.Builder(getContext()).setTitle("Delete this color?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
+                            if(clickedColor == palette.currentColor && clickedColor>0)
+                                    palette.currentColor -= 1;
                             deleteColor(clickedColor);
                         }
                     }).setNegativeButton("Cancel", null).create().show();
                 }
-            }, delayBeforeDeleteWindow);
+            }, delayBeforeDeleteWindow);*/
             return true;
         }
         if(event.getAction() == MotionEvent.ACTION_MOVE){
@@ -114,19 +136,18 @@ public class PaletteView extends View {
                 int clickedColor = getClickedColor(event.getX(), event.getY());
                 if(clickedColor>palette.colors.size())
                     return true;
-                if(clickedColor==palette.colors.size()) {
+                if(palette.colors.size() <16 && clickedColor==palette.colors.size()) {
                     tempAddColorDialog();
                     return true;
                 }
                 palette.currentColor = clickedColor;
                 invalidate();
                 if(onColorChangedListener!=null){
-                    onColorChangedListener.onColorChanged(palette.colors.get(clickedColor));
+                    onColorChangedListener.onColorChanged(palette.colors.get(clickedColor).color);
                 }
             }
         }
 
-        getClickedColor(event.getX(), event.getY());
         return super.onTouchEvent(event);
     }
 
@@ -168,7 +189,8 @@ public class PaletteView extends View {
 
     void drawColors(Canvas canvas){
         max = (int)(getWidth()/(r*2+offsetX));
-        lines = (int) Utils.clamp((float) Math.ceil((float)(palette.colors.size()+1)/max), 1, 999);
+        int a = palette.colors.size()<16?palette.colors.size()+1:palette.colors.size();
+        lines = (int) Utils.clamp((float) Math.ceil((float)(a)/max), 1, 999);
         resizeToFit();
         System.out.println("lines="+palette.colors.size()+1+"/"+max);
         System.out.println("r="+r+", max="+max+", offsetY="+offsetY+", offsetX="+offsetX);
@@ -180,8 +202,9 @@ public class PaletteView extends View {
         long start = System.currentTimeMillis();
 
         //TODO Optimize this, cause now this just skipping thing is just retarded
-        for(int c: palette.colors){
+        for(PaletteColor pc: palette.colors){
             //I mean this V
+            int c = pc.color;
             if(y<-r){
                 x+= r*2+offsetX;
                 i++;
@@ -225,7 +248,9 @@ public class PaletteView extends View {
         System.out.println("Palette drawn in "+(System.currentTimeMillis()-start)+" ms!");
 
         System.out.println("Drawing add sign at "+x+", "+y);
-        drawAddColorSign(canvas, x, y);
+        if(palette.colors.size()<16) {
+            drawAddColorSign(canvas, x, y);
+        }
     }
 
     void drawAddColorSign(Canvas canvas, float x, float y){
@@ -252,7 +277,7 @@ public class PaletteView extends View {
     }
 
     void addColor(int color){
-        palette.colors.add(color);
+        palette.colors.add(new PaletteColor(color));
         invalidate();
     }
 

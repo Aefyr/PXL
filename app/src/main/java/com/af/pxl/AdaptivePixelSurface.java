@@ -63,6 +63,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
 
     //Rest
     ColorCircle colorCircle;
+    Palette2 palette;
 
     public AdaptivePixelSurface(Context context) {
         super(context);
@@ -102,6 +103,10 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
             colorCircle.setColor(paint.getColor());
             colorCircle.invalidate();
         }
+    }
+
+    void setPalette(Palette2 palette){
+        this.palette = palette;
     }
 
     //Utility methods
@@ -450,6 +455,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
             return;
         paint.setColor(pixelBitmap.getPixel(x, y));
         updateColorCircle();
+        palette.colorPickToolWasUsed(paint.getColor());
     }
 
     class Pixel {

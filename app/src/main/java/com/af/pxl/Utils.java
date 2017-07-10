@@ -1,6 +1,8 @@
 package com.af.pxl;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.widget.Toast;
 
 /**
  * Created by Aefyr on 01.07.2017.
@@ -19,5 +21,9 @@ class Utils {
 
     static int invertColor(int color){
         return Color.rgb(255-Color.red(color), 255-Color.green(color), 255 - Color.blue(color));
+    }
+
+    static void toaster(Context context, String message){
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 }

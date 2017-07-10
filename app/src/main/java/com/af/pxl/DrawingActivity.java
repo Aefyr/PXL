@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,11 +41,10 @@ public class DrawingActivity extends AppCompatActivity {
 
     }
 
-    Palette palette;
     ColorPicker colorPicker;
     void tempColorPickInitialize(){
         colorPickButton = (ColorCircle) findViewById(R.id.color);
-        palette = new Palette();
+        /*palette = new Palette();
         colorPickButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -54,9 +55,83 @@ public class DrawingActivity extends AppCompatActivity {
                 paletteView.setOnColorChangedListener(new PaletteView.OnColorChangedListener() {
                     @Override
                     public void onColorChanged(int newColor) {
-                        aps.paint.setColor(newColor);
-                        colorPickButton.setColor(newColor);
+                        //aps.paint.setColor(newColor);
+                        //colorPickButton.setColor(newColor);
+                        //d.cancel();
+                    }
+                });
+            }
+        });*/
+
+        final Palette2 palette2 = new Palette2(16, Color.WHITE);
+        aps.setPalette(palette2);
+        colorPickButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final AlertDialog d = new AlertDialog.Builder(DrawingActivity.this).setView(R.layout.palette).create();
+                d.show();
+                PaletteView2 paletteView = ((PaletteView2)d.findViewById(R.id.pv2));
+                paletteView.setPalette(palette2);
+
+                d.findViewById(R.id.pvAdd).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(palette2.isFull()) {
+                            Utils.toaster(DrawingActivity.this, "Palette is full!");
+                            return;
+                        }
+                        final AlertDialog d = new AlertDialog.Builder(DrawingActivity.this).setView(R.layout.color_picker).create();
+                        d.show();
+                        colorPicker = new ColorPicker((ColorPickerView) d.findViewById(R.id.colorPickerHue),(SeekBar) d.findViewById(R.id.seekBarHue),
+                                (ColorPickerView) d.findViewById(R.id.colorPickerSat), (SeekBar) d.findViewById(R.id.seekBarSat), (ColorPickerView) d.findViewById(R.id.colorPickerVal),
+                                (SeekBar) d.findViewById(R.id.seekBarVal), (ColorCircle) d.findViewById(R.id.colorView), Color.RED);
+                        (d.findViewById(R.id.colorPickButton)).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                int newColor = Color.HSVToColor(colorPicker.color);
+                                palette2.addColor(newColor);
+
+                                d.cancel();
+                                colorPicker = null;
+                            }
+                        });
+                    }
+                });
+
+                d.findViewById(R.id.pvDone).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        colorPickButton.setColor(palette2.getSelectedColor());
+                        aps.paint.setColor(palette2.getSelectedColor());
                         d.cancel();
+                    }
+                });
+
+                d.findViewById(R.id.pvEdit).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final AlertDialog d = new AlertDialog.Builder(DrawingActivity.this).setView(R.layout.color_picker).create();
+                        d.show();
+                        colorPicker = new ColorPicker((ColorPickerView) d.findViewById(R.id.colorPickerHue),(SeekBar) d.findViewById(R.id.seekBarHue),
+                                (ColorPickerView) d.findViewById(R.id.colorPickerSat), (SeekBar) d.findViewById(R.id.seekBarSat), (ColorPickerView) d.findViewById(R.id.colorPickerVal),
+                                (SeekBar) d.findViewById(R.id.seekBarVal), (ColorCircle) d.findViewById(R.id.colorView), palette2.getSelectedColor());
+                        (d.findViewById(R.id.colorPickButton)).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                int newColor = Color.HSVToColor(colorPicker.color);
+                                palette2.editColor(palette2.getSelectedColorIndex(), newColor);
+                                d.cancel();
+                                colorPicker = null;
+                            }
+                        });
+                    }
+                });
+
+                d.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialogInterface) {
+                        colorPickButton.setColor(palette2.getSelectedColor());
+                        aps.paint.setColor(palette2.getSelectedColor());
                     }
                 });
             }

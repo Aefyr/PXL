@@ -9,12 +9,38 @@ import java.util.ArrayList;
  */
 
 class Palette {
-    ArrayList<Integer> colors;
+    ArrayList<PaletteColor> colors;
     int currentColor = 0;
 
     Palette(){
         colors = new ArrayList<>();
-        colors.add(Color.RED);
+        colors.add(new PaletteColor(Color.RED));
+        colors.get(currentColor).setSelected(true);
+        colors.add(new PaletteColor(Color.RED));
+        colors.add(new PaletteColor(Color.RED));
+        colors.add(new PaletteColor(Color.RED));
+        colors.add(new PaletteColor(Color.RED));
+        colors.add(new PaletteColor(Color.RED));
+        colors.add(new PaletteColor(Color.RED));
+        colors.add(new PaletteColor(Color.RED));
+        colors.add(new PaletteColor(Color.RED));
+        colors.add(new PaletteColor(Color.RED));
+        colors.add(new PaletteColor(Color.RED));
+        colors.add(new PaletteColor(Color.RED));
+        colors.add(new PaletteColor(Color.RED));
+        colors.add(new PaletteColor(Color.RED));
+        colors.add(new PaletteColor(Color.RED));
+        colors.add(new PaletteColor(Color.RED));
+
     }
+
+    void setColorSelected(int colorId){
+        if(currentColor == colorId)
+            return;
+        colors.get(currentColor).setSelected(false);
+        colors.get(colorId).setSelected(true);
+        currentColor = colorId;
+    }
+
 
 }
