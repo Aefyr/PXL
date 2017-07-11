@@ -28,7 +28,7 @@ public class ColorCircle extends View {
 
     void initialize(){
         p = new Paint();
-        color = Color.RED;
+        color = Color.WHITE;
         borderColor = Color.parseColor("#ffb0bec5");
         p.setColor(color);
         //p.setAntiAlias(true);

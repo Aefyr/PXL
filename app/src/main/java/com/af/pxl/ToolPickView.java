@@ -22,7 +22,7 @@ public class ToolPickView extends View {
     int startWidth, startHeight;
     boolean startGet = false;
 
-    int toolsCount = 3;
+    int toolsCount = 4;
     int currentTool = 0;
 
     int circleColor;
@@ -60,11 +60,12 @@ public class ToolPickView extends View {
         toolBitmapSizeReducedBy = startWidth/3;
         offsetBetweenTools = startWidth/32f;
 
-        tools = new Bitmap[3];
+        tools = new Bitmap[4];
         Resources res = getResources();
         tools[0] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.pencil), startWidth-toolBitmapSizeReducedBy, startWidth-toolBitmapSizeReducedBy, false);
         tools[1] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.fill), startWidth-toolBitmapSizeReducedBy, startWidth-toolBitmapSizeReducedBy, false);
         tools[2] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.colorpick), startWidth-toolBitmapSizeReducedBy, startWidth-toolBitmapSizeReducedBy, false);
+        tools[3] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.colorswap), startWidth-toolBitmapSizeReducedBy, startWidth-toolBitmapSizeReducedBy, false);
         circleColor = Color.parseColor("#FFFAFAFA");
         barColor = Color.parseColor("#FFE0E0E0");
         circleBorderColor = Color.parseColor("#FFBDBDBD");
@@ -168,6 +169,9 @@ public class ToolPickView extends View {
                     case 2:
                         aps.currentTool = AdaptivePixelSurface.Tool.COLOR_PICK;
                         break;
+                    case 3:
+                        aps.currentTool = AdaptivePixelSurface.Tool.COLOR_SWAP;
+                        break;
                 }
             }
             hideTools();
@@ -179,7 +183,7 @@ public class ToolPickView extends View {
 
     void showTools(){
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) getLayoutParams();
-        params.height += offsetBetweenTools*3+width*3;
+        params.height += offsetBetweenTools*toolsCount+width*toolsCount;
         setLayoutParams(params);
         toolsShown = true;
     }

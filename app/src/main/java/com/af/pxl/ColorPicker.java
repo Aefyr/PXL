@@ -1,5 +1,6 @@
 package com.af.pxl;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.widget.SeekBar;
 
@@ -54,7 +55,6 @@ class ColorPicker {
         SeekBar.OnSeekBarChangeListener onSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-
                 if(seekBar == hueBar){
                     color[0] = i;
                 }else if (seekBar == saturationBar){
@@ -87,5 +87,23 @@ class ColorPicker {
         saturationView.invalidate();
         valueView.invalidate();
         colorCircle.setColor(Color.HSVToColor(color));
+        if(livePreview){
+            colorSwapper.swapColor(Color.HSVToColor(color));
+            listener.onLivePreviewUpdate();
+        }
+    }
+
+    private boolean livePreview = false;
+    private OnLivePreviewUpdateListener listener;
+    private ColorSwapper colorSwapper;
+
+    void setColorSwapPreview(Bitmap bitmap, int colorToSwap, OnLivePreviewUpdateListener listener){
+        this.listener = listener;
+        colorSwapper = new ColorSwapper(bitmap, colorToSwap);
+        livePreview = true;
+    }
+
+    interface OnLivePreviewUpdateListener{
+        void onLivePreviewUpdate();
     }
 }

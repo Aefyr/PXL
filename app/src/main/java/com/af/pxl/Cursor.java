@@ -93,6 +93,11 @@ public class Cursor {
                 updateCanvasXY();
                 aps.colorPick((int)canvasX, (int)canvasY);
                 break;
+            case COLOR_SWAP:
+                updateCanvasXY();
+                if(canvasX<aps.pixelWidth&&canvasX>=0&&canvasY<aps.pixelHeight&&canvasY>=0)
+                    aps.onSpecialToolUseListener.onColorSwapToolUse(aps.pixelBitmap.getPixel((int)canvasX, (int)canvasY));
+                break;
         }
     }
 
@@ -104,6 +109,8 @@ public class Cursor {
             case FLOOD_FILL:
                 break;
             case COLOR_PICK:
+                break;
+            case COLOR_SWAP:
                 break;
         }
     }
@@ -137,7 +144,7 @@ public class Cursor {
 
     private float[] p = {0, 0};
     private float canvasX, canvasY;
-    void updateCanvasXY(){
+    private void updateCanvasXY(){
         p[0] = p[1] = 0;
         aps.pixelMatrix.mapPoints(p);
         canvasX = (currentX-p[0])/aps.pixelScale;

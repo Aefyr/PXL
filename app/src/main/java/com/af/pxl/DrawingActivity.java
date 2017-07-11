@@ -1,21 +1,25 @@
 package com.af.pxl;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 
-public class DrawingActivity extends AppCompatActivity {
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+public class DrawingActivity extends AppCompatActivity implements AdaptivePixelSurface.OnSpecialToolUseListener{
 
     AdaptivePixelSurface aps;
     ToolPickView toolButton;
@@ -33,11 +37,13 @@ public class DrawingActivity extends AppCompatActivity {
 
         aps = (AdaptivePixelSurface) findViewById(R.id.aps);
         aps.setColorCircle((ColorCircle)findViewById(R.id.color));
+        aps.setOnSpecialToolUseListener(this);
 
         initializeImageButtonsOCL();
         initializeToolPicking();
         initializeCursor();
         tempColorPickInitialize();
+
 
     }
 
@@ -190,4 +196,41 @@ public class DrawingActivity extends AppCompatActivity {
         });
     }
 
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        //Color swap success
+        if(requestCode==322&&resultCode==1322){
+            Bitmap b = BitmapFactory.decodeFile(data.getStringExtra("path"));
+            Utils.setBitmapPixelsFromOtherBitmap(aps.pixelBitmap, b);
+            b.recycle();
+        }
+    }
+
+    //Special tools
+    @Override
+    public void onColorSwapToolUse(int color) {
+        System.out.println("Swapping color: "+color);
+        startColorSwapActivity(color);
+    }
+
+    //TODO Use custom view instead of ImageView in ColorSwapActivity, cuz that scaling algorithm sucks
+    private void startColorSwapActivity(int colorToSwap){
+
+        File t = new File(getFilesDir(), "p.pxl");
+        try(FileOutputStream stream = new FileOutputStream(t)){
+            aps.pixelBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Intent i = new Intent(DrawingActivity.this, ColorSwapActivity.class);
+        i.putExtra("path", t.getAbsolutePath());
+        i.putExtra("color", colorToSwap);
+
+        startActivityForResult(i, 322);
+    }
 }

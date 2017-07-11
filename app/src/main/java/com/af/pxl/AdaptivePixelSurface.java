@@ -38,7 +38,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
 
     //Tools and utils
     enum Tool {
-        PENCIL, FLOOD_FILL, COLOR_PICK
+        PENCIL, FLOOD_FILL, COLOR_PICK, COLOR_SWAP
     }
     Tool currentTool = Tool.PENCIL;
 
@@ -193,7 +193,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
     void initializePaints(){
         //Main paint
         paint = new Paint();
-        paint.setColor(Color.CYAN);
+        paint.setColor(Color.WHITE);
         updateColorCircle();
         paint.setStrokeWidth(1);
         paint.setStyle(Paint.Style.STROKE);
@@ -364,6 +364,20 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
                             p[0] = p[1] = 0;
                             pixelMatrix.mapPoints(p);
                             floodFill((int) ((event.getX() - p[0]) / pixelScale), (int) ((event.getY() - p[1]) / pixelScale));
+                    }
+                    }
+                    break;
+                case COLOR_SWAP:
+                    if(event.getAction() == MotionEvent.ACTION_DOWN)
+                        touchToolWillBeUsedOnUpEvent = true;
+                    else if(event.getAction() == MotionEvent.ACTION_UP) {
+                        if (touchToolWillBeUsedOnUpEvent) {
+                            p[0] = p[1] = 0;
+                            pixelMatrix.mapPoints(p);
+                            int x = (int) ((event.getX() - p[0]) / pixelScale);
+                            int y = (int) ((event.getY() - p[1]) / pixelScale);
+                            if(x<pixelWidth&&x>=0&&y<pixelHeight&&y>=0)
+                                onSpecialToolUseListener.onColorSwapToolUse(pixelBitmap.getPixel(x, y));
                         }
                     }
                     break;
@@ -589,5 +603,13 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
                 pause();
             }
         }
+    }
+
+    OnSpecialToolUseListener onSpecialToolUseListener;
+    void setOnSpecialToolUseListener(OnSpecialToolUseListener listener){
+        onSpecialToolUseListener = listener;
+    }
+    interface OnSpecialToolUseListener{
+        void onColorSwapToolUse(int color);
     }
 }

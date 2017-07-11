@@ -1,6 +1,7 @@
 package com.af.pxl;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.widget.Toast;
 
@@ -25,5 +26,18 @@ class Utils {
 
     static void toaster(Context context, String message){
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    }
+
+    static void swapColor(int[] pixels, int originalColor, int newColor){
+        for(int i = 0; i<pixels.length;i++){
+            if(pixels[i]==originalColor)
+                pixels[i]=newColor;
+        }
+    }
+
+    static void setBitmapPixelsFromOtherBitmap(Bitmap bitmap, Bitmap otherBitmap){
+        int[] pixels = new int[bitmap.getWidth()*bitmap.getHeight()];
+        otherBitmap.getPixels(pixels, 0, otherBitmap.getWidth(), 0, 0, otherBitmap.getWidth(), otherBitmap.getHeight());
+        bitmap.setPixels(pixels, 0, otherBitmap.getWidth(), 0, 0, otherBitmap.getWidth(), otherBitmap.getHeight());
     }
 }
