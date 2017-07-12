@@ -5,4 +5,8 @@
         <attr name="sizeOfColorY" format="dimension" />
         <attr name="gapBetweenColors" format="dimension" />
     </declare-styleable>
+
+    <declare-styleable name="PixelImageView">
+        <attr name="image" format="reference"/>
+    </declare-styleable>
 </resources>

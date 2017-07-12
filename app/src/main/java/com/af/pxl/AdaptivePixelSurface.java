@@ -166,6 +166,10 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
     }
 
     private boolean gridEnabled = false;
+    boolean toggleGrid(){
+        setGridEnabled(!gridEnabled);
+        return gridEnabled;
+    }
     void setGridEnabled(boolean enabled){
         gridEnabled = enabled;
 
@@ -193,6 +197,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
     void initializePaints(){
         //Main paint
         paint = new Paint();
+        paint.setAntiAlias(false);
         paint.setColor(Color.WHITE);
         updateColorCircle();
         paint.setStrokeWidth(1);
@@ -293,6 +298,8 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
                 pixelScale  *= 1.05f;
                 c = 0;
             }
+
+            pixelScale = Utils.clamp(pixelScale, 0.2f, realWidth/4);
 
             prevDist = dist;
 
@@ -558,7 +565,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
                 canvas.drawBitmap(pixelBitmap, pixelMatrix, paint);
 
                 if(gridEnabled) {
-                    canvas.drawBitmap(gridB, 0, 0, null);
+                    canvas.drawBitmap(gridB, 0, 0, paint);
                 }
 
                 //Draw fps count
@@ -579,13 +586,20 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
                     p[1] = 0;
                     pixelMatrix.mapPoints(p);
 
-                    float lessThan1PixelOffsetX = p[0]%pixelScale>0?p[0]%pixelScale:pixelScale+p[0]%pixelScale;
+                    //Legacy method, doesn't work with the very first pixels visible
+                    /*float lessThan1PixelOffsetX = p[0]%pixelScale>0?p[0]%pixelScale:pixelScale+p[0]%pixelScale;
                     float lessThan1PixelOffsetY = p[1]%pixelScale>0?p[1]%pixelScale:pixelScale+p[1]%pixelScale;
 
                     float x1 = (cursor.getX() -lessThan1PixelOffsetX - ((cursor.getX()-lessThan1PixelOffsetX)%pixelScale))+lessThan1PixelOffsetX;
                     float y1 = (cursor.getY()-lessThan1PixelOffsetY - ((cursor.getY()-lessThan1PixelOffsetY)%pixelScale))+lessThan1PixelOffsetY;
 
-                    canvas.drawRect(x1, y1, x1+pixelScale, y1+pixelScale, textPaint);
+                    canvas.drawRect(x1, y1, x1+pixelScale, y1+pixelScale, textPaint);*/
+
+                    float loX = p[0]%pixelScale;
+                    int bX = (int) Math.floor((cursor.getX()-loX)/pixelScale);
+                    float loY = p[1]%pixelScale;
+                    int bY = (int) Math.floor((cursor.getY()-loY)/pixelScale);
+                    canvas.drawRect(bX*pixelScale+loX, bY*pixelScale+loY, bX*pixelScale+loX+pixelScale, bY*pixelScale+loY+pixelScale, textPaint);
 
                 }
 

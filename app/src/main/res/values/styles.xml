@@ -14,4 +14,8 @@
         <item name="android:paddingBottom">2dp</item>
     </style>
 
+    <style name="PXLImageButton" parent="Widget.AppCompat.ImageButton">
+        <item name="android:backgroundTint">@color/colorImageButtonBackgroundTint</item>
+    </style>
+
 </resources>

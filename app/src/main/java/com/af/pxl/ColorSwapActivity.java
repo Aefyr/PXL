@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +18,8 @@ import java.io.IOException;
 
 public class ColorSwapActivity extends AppCompatActivity {
 
+    PixelImageView pixelImageView;
+    Bitmap image;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,10 +29,10 @@ public class ColorSwapActivity extends AppCompatActivity {
         String path = intent.getStringExtra("path");
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inMutable = true;
-        final Bitmap image = BitmapFactory.decodeFile(path, o);
+        image = BitmapFactory.decodeFile(path, o);
 
-        final ImageView imageView = (ImageView) findViewById(R.id.imageView);
-        imageView.setImageBitmap(image);
+        pixelImageView = (PixelImageView) findViewById(R.id.pxlImageView);
+        pixelImageView.setImageBitmap(image);
 
         int color = intent.getIntExtra("color", Color.RED);
 
@@ -40,7 +44,7 @@ public class ColorSwapActivity extends AppCompatActivity {
         colorPicker.setColorSwapPreview(image, color, new ColorPicker.OnLivePreviewUpdateListener() {
             @Override
             public void onLivePreviewUpdate() {
-                imageView.invalidate();
+                pixelImageView.invalidate();
             }
         });
 
@@ -63,6 +67,8 @@ public class ColorSwapActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
     @Override
     public void onBackPressed() {

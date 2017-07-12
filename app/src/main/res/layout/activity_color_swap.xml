@@ -6,15 +6,13 @@
     android:layout_height="match_parent"
     tools:context="com.af.pxl.ColorSwapActivity">
 
-    <ImageView
-        android:id="@+id/imageView"
+    <com.af.pxl.PixelImageView
+        android:id="@+id/pxlImageView"
         android:layout_width="256dp"
         android:layout_height="256dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="32dp"
-        android:scaleType="centerCrop"
-        app:srcCompat="@drawable/pencil" />
+        android:layout_marginTop="32dp" />
 
     <com.af.pxl.ColorPickerView
         android:id="@+id/colorPickerHue"
@@ -74,7 +72,7 @@
         android:id="@+id/colorView"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:layout_below="@+id/imageView"
+        android:layout_below="@+id/pxlImageView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp" />
 

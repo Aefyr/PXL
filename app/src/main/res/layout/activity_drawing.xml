@@ -17,6 +17,7 @@
 
     <ImageButton
         android:id="@+id/undo"
+        style="@style/PXLImageButton"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_alignParentBottom="true"
@@ -26,6 +27,7 @@
 
     <ImageButton
         android:id="@+id/redo"
+        style="@style/PXLImageButton"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_alignParentBottom="true"
@@ -35,24 +37,27 @@
 
     <ImageButton
         android:id="@+id/grid"
+        style="@style/PXLImageButton"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:scaleType="centerCrop"
-        app:srcCompat="@drawable/grid"
         android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/currentTool" />
+        android:layout_toStartOf="@+id/symmetry"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/gridoff" />
 
     <ImageButton
         android:id="@+id/symmetry"
+        style="@style/PXLImageButton"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/grid"
+        android:layout_alignStart="@+id/clear"
         android:scaleType="centerCrop"
-        app:srcCompat="@drawable/symmetry" />
+        app:srcCompat="@drawable/symmetryoff" />
 
     <ImageButton
         android:id="@+id/cursorMode"
+        style="@style/PXLImageButton"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_alignBottom="@+id/symmetry"
@@ -62,6 +67,7 @@
 
     <ImageButton
         android:id="@+id/clear"
+        style="@style/PXLImageButton"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_alignParentBottom="true"

@@ -22,7 +22,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //CanvasView canvasView = new CanvasView(this);
         setContentView(R.layout.alternate2);
-
         final AdaptivePixelSurface aps = (AdaptivePixelSurface) findViewById(R.id.aps);
 
         final Button undo = (Button) findViewById(R.id.undoButton);

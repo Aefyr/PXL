@@ -44,6 +44,29 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         initializeCursor();
         tempColorPickInitialize();
 
+        final ImageButton grid = (ImageButton) findViewById(R.id.grid);
+        grid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(aps.toggleGrid())
+                    grid.setImageResource(R.drawable.gridon);
+                else
+                    grid.setImageResource(R.drawable.gridoff);
+
+            }
+        });
+
+        final ImageButton symmetry = (ImageButton) findViewById(R.id.symmetry);
+        symmetry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                aps.symmetry = !aps.symmetry;
+                if(aps.symmetry)
+                    symmetry.setImageResource(R.drawable.symmetryon);
+                else
+                    symmetry.setImageResource(R.drawable.symmetryoff);
+            }
+        });
 
     }
 
