@@ -139,6 +139,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
         float x = oX;
         float y = oY;
 
+
         while(x<limitX){
             gridC.drawLine(x, oY - pixelScale, x, limitY+pixelScale, gridP);
             x+=pixelScale;
@@ -148,6 +149,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
             gridC.drawLine(oX-pixelScale, y, limitX+pixelScale, y, gridP);
             y+=pixelScale;
         }
+
 
     }
 
@@ -299,7 +301,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
                 c = 0;
             }
 
-            pixelScale = Utils.clamp(pixelScale, 0.2f, realWidth/4);
+            pixelScale = Utils.clamp(pixelScale, 1f, realWidth/4);
 
             prevDist = dist;
 
@@ -477,6 +479,13 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
         paint.setColor(pixelBitmap.getPixel(x, y));
         updateColorCircle();
         palette.colorPickToolWasUsed(paint.getColor());
+    }
+
+    void clearCanvas(){
+        canvasHistory.startHistoricalChange();
+        pixelCanvas.drawColor(Color.WHITE);
+        canvasHistory.completeHistoricalChange();
+        pixelDrawThread.update();
     }
 
     class Pixel {

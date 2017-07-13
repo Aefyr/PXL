@@ -10,17 +10,18 @@
         android:id="@+id/pxlImageView"
         android:layout_width="256dp"
         android:layout_height="256dp"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/livePreviewSwitch"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="32dp" />
+        android:layout_marginTop="16dp" />
 
     <com.af.pxl.ColorPickerView
         android:id="@+id/colorPickerHue"
         android:layout_width="match_parent"
         android:layout_height="24dp"
-        android:layout_below="@+id/colorView"
+        android:layout_below="@+id/imageViewArrow"
         android:layout_marginEnd="14dp"
-        android:layout_marginStart="14dp" />
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="8dp" />
 
     <com.af.pxl.ColorPickerView
         android:id="@+id/colorPickerSat"
@@ -69,12 +70,20 @@
         android:progress="50" />
 
     <com.af.pxl.ColorCircle
-        android:id="@+id/colorView"
+        android:id="@+id/newColor"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:layout_below="@+id/pxlImageView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp" />
+        android:layout_alignBottom="@+id/imageViewArrow"
+        android:layout_marginTop="16dp"
+        android:layout_toEndOf="@+id/imageViewArrow" />
+
+    <com.af.pxl.ColorCircle
+        android:id="@+id/oldColor"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_alignBottom="@+id/imageViewArrow"
+        android:layout_marginTop="16dp"
+        android:layout_toStartOf="@+id/imageViewArrow" />
 
     <Button
         android:id="@+id/colorPickButton"
@@ -86,4 +95,21 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true" />
+
+    <Switch
+        android:id="@+id/livePreviewSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:text="Live Preview" />
+
+    <ImageView
+        android:id="@+id/imageViewArrow"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        app:srcCompat="@drawable/redo"
+        android:layout_below="@+id/pxlImageView"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

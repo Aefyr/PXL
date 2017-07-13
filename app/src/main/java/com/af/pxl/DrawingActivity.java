@@ -43,30 +43,8 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         initializeToolPicking();
         initializeCursor();
         tempColorPickInitialize();
+        tempInitializeButtons();
 
-        final ImageButton grid = (ImageButton) findViewById(R.id.grid);
-        grid.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(aps.toggleGrid())
-                    grid.setImageResource(R.drawable.gridon);
-                else
-                    grid.setImageResource(R.drawable.gridoff);
-
-            }
-        });
-
-        final ImageButton symmetry = (ImageButton) findViewById(R.id.symmetry);
-        symmetry.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                aps.symmetry = !aps.symmetry;
-                if(aps.symmetry)
-                    symmetry.setImageResource(R.drawable.symmetryon);
-                else
-                    symmetry.setImageResource(R.drawable.symmetryoff);
-            }
-        });
 
     }
 
@@ -113,7 +91,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                         d.show();
                         colorPicker = new ColorPicker((ColorPickerView) d.findViewById(R.id.colorPickerHue),(SeekBar) d.findViewById(R.id.seekBarHue),
                                 (ColorPickerView) d.findViewById(R.id.colorPickerSat), (SeekBar) d.findViewById(R.id.seekBarSat), (ColorPickerView) d.findViewById(R.id.colorPickerVal),
-                                (SeekBar) d.findViewById(R.id.seekBarVal), (ColorCircle) d.findViewById(R.id.colorView), Color.RED);
+                                (SeekBar) d.findViewById(R.id.seekBarVal), (ColorCircle) d.findViewById(R.id.newColor), Color.RED);
                         (d.findViewById(R.id.colorPickButton)).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -143,7 +121,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                         d.show();
                         colorPicker = new ColorPicker((ColorPickerView) d.findViewById(R.id.colorPickerHue),(SeekBar) d.findViewById(R.id.seekBarHue),
                                 (ColorPickerView) d.findViewById(R.id.colorPickerSat), (SeekBar) d.findViewById(R.id.seekBarSat), (ColorPickerView) d.findViewById(R.id.colorPickerVal),
-                                (SeekBar) d.findViewById(R.id.seekBarVal), (ColorCircle) d.findViewById(R.id.colorView), palette2.getSelectedColor());
+                                (SeekBar) d.findViewById(R.id.seekBarVal), (ColorCircle) d.findViewById(R.id.newColor), palette2.getSelectedColor());
                         (d.findViewById(R.id.colorPickButton)).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -220,16 +198,72 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
     }
 
 
+    void tempInitializeButtons(){
+        final ImageButton grid = (ImageButton) findViewById(R.id.grid);
+        grid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(aps.toggleGrid())
+                    grid.setImageResource(R.drawable.gridon);
+                else
+                    grid.setImageResource(R.drawable.gridoff);
+
+            }
+        });
+
+        final ImageButton symmetry = (ImageButton) findViewById(R.id.symmetry);
+        symmetry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                aps.symmetry = !aps.symmetry;
+                if(aps.symmetry)
+                    symmetry.setImageResource(R.drawable.symmetryon);
+                else
+                    symmetry.setImageResource(R.drawable.symmetryoff);
+            }
+        });
+
+        ImageButton undo = (ImageButton) findViewById(R.id.undo);
+        undo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                aps.canvasHistory.undoHistoricalChange();
+            }
+        });
+
+        final ImageButton redo = (ImageButton) findViewById(R.id.redo);
+        redo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                aps.canvasHistory.redoHistoricalChange();
+            }
+        });
+
+        findViewById(R.id.clear).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                aps.clearCanvas();
+            }
+        });
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        //Color swap success
-        if(requestCode==322&&resultCode==1322){
-            Bitmap b = BitmapFactory.decodeFile(data.getStringExtra("path"));
-            Utils.setBitmapPixelsFromOtherBitmap(aps.pixelBitmap, b);
-            b.recycle();
+        //Color swap
+        if(requestCode==322){
+            //Success
+            if(resultCode == 1) {
+                Bitmap b = BitmapFactory.decodeFile(data.getStringExtra("path"));
+                Utils.setBitmapPixelsFromOtherBitmap(aps.pixelBitmap, b);
+                b.recycle();
+                aps.canvasHistory.completeHistoricalChange();
+            } else if(resultCode == 0){
+                //Cancel
+                aps.canvasHistory.cancelHistoricalChange();
+            }
         }
     }
 
@@ -253,7 +287,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         Intent i = new Intent(DrawingActivity.this, ColorSwapActivity.class);
         i.putExtra("path", t.getAbsolutePath());
         i.putExtra("color", colorToSwap);
-
+        aps.canvasHistory.startHistoricalChange();
         startActivityForResult(i, 322);
     }
 }

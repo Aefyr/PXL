@@ -13,8 +13,6 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 
-import java.util.ArrayList;
-
 /**
  * Created by Aefyr on 18.06.2017.
  */
@@ -294,7 +292,7 @@ public class PaletteView extends View implements View.OnLongClickListener{
         d.show();
         colorPicker = new ColorPicker((ColorPickerView) d.findViewById(R.id.colorPickerHue),(SeekBar) d.findViewById(R.id.seekBarHue),
                 (ColorPickerView) d.findViewById(R.id.colorPickerSat), (SeekBar) d.findViewById(R.id.seekBarSat), (ColorPickerView) d.findViewById(R.id.colorPickerVal),
-                (SeekBar) d.findViewById(R.id.seekBarVal), (ColorCircle) d.findViewById(R.id.colorView), Color.RED);
+                (SeekBar) d.findViewById(R.id.seekBarVal), (ColorCircle) d.findViewById(R.id.newColor), Color.RED);
         (d.findViewById(R.id.colorPickButton)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

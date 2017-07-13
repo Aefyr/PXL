@@ -83,24 +83,36 @@ class ColorPicker {
         updateColorViews();
     }
 
+
     private void updateColorViews(){
         saturationView.invalidate();
         valueView.invalidate();
         colorCircle.setColor(Color.HSVToColor(color));
         if(livePreview){
-            colorSwapper.swapColor(Color.HSVToColor(color));
+            applyColorSwap();
             listener.onLivePreviewUpdate();
         }
     }
 
+    //Color Swapping
     private boolean livePreview = false;
     private OnLivePreviewUpdateListener listener;
     private ColorSwapper colorSwapper;
 
-    void setColorSwapPreview(Bitmap bitmap, int colorToSwap, OnLivePreviewUpdateListener listener){
+    void useColorSwap(Bitmap bitmap, int colorToSwap, OnLivePreviewUpdateListener listener){
         this.listener = listener;
         colorSwapper = new ColorSwapper(bitmap, colorToSwap);
-        livePreview = true;
+    }
+
+    void setLivePreviewEnabled(boolean enabled){
+        livePreview = enabled;
+        if(livePreview)
+            applyColorSwap();
+            listener.onLivePreviewUpdate();
+    }
+
+    void applyColorSwap(){
+        colorSwapper.swapColor(Color.HSVToColor(color));
     }
 
     interface OnLivePreviewUpdateListener{

@@ -6,7 +6,7 @@
         android:id="@+id/colorPickerHue"
         android:layout_width="match_parent"
         android:layout_height="24dp"
-        android:layout_below="@+id/colorView"
+        android:layout_below="@+id/newColor"
         android:layout_marginEnd="14dp"
         android:layout_marginStart="14dp" />
 
@@ -57,7 +57,7 @@
         android:progress="50" />
 
     <com.af.pxl.ColorCircle
-        android:id="@+id/colorView"
+        android:id="@+id/newColor"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_centerHorizontal="true" />
