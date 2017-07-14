@@ -1,7 +1,12 @@
 package com.af.pxl;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Environment;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 
@@ -21,6 +26,8 @@ public class CanvasHistory {
 
     private ArrayList<OnHistoryAvailabilityChangeListener> listeners;
 
+    private File file;
+
     public interface OnHistoryAvailabilityChangeListener {
         void pastAvailabilityChanged(boolean available);
         void futureAvailabilityChanged(boolean available);
@@ -34,6 +41,13 @@ public class CanvasHistory {
         future = new ArrayDeque<>();
         arraySize = bitmap.getWidth()*bitmap.getHeight();
         listeners = new ArrayList<>();
+
+        // FIXME: 14.07.2017
+        //Reload autosave file if exists
+        file = new File(aps.getContext().getFilesDir(), "autosave.pxl");
+        if(file.exists()){
+            Utils.setBitmapPixelsFromOtherBitmap(aps.pixelBitmap, BitmapFactory.decodeFile(file.getAbsolutePath()));
+        }
     }
 
     public void setOnHistoryAvailabilityChangeListener(OnHistoryAvailabilityChangeListener listener){
@@ -92,6 +106,7 @@ public class CanvasHistory {
                 listener.futureAvailabilityChanged(false);
             }
 
+            saveCanvas();
             historicalChangeInProgress = false;
         }
     }
@@ -126,6 +141,7 @@ public class CanvasHistory {
         }
 
         aps.pixelDrawThread.update();
+        saveCanvas();
     }
 
     void redoHistoricalChange(){
@@ -150,6 +166,19 @@ public class CanvasHistory {
         }
 
         aps.pixelDrawThread.update();
+        saveCanvas();
+    }
+
+    private void saveCanvas(){
+
+
+        try {
+            try(FileOutputStream out = new FileOutputStream(file, false)){
+                aps.pixelBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     int getHistorySize(){

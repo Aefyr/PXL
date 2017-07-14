@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Build;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -129,11 +130,19 @@ public class ToolPickView extends View {
         cPaint.setStrokeWidth(startWidth/32f);
         cPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
-        canvas.drawRoundRect(width/8f, startWidth/12f, width-width/8f, height - startWidth/64f, 100, 100, cPaint);
+        if(Build.VERSION.SDK_INT>=21)
+            canvas.drawRoundRect(width/8f, startWidth/12f, width-width/8f, height - startWidth/64f, 100, 100, cPaint);
+        else
+            canvas.drawRect(width/8f, startWidth/12f + startWidth/2f, width-width/8f, height - startWidth/64f, cPaint);
+
 
         cPaint.setColor(barBorderColor);
         cPaint.setStyle(Paint.Style.STROKE);
-        canvas.drawRoundRect(width/8f, startWidth/12f, width-width/8f, height- startWidth/64f, 100, 100, cPaint);
+
+        if(Build.VERSION.SDK_INT>=21)
+            canvas.drawRoundRect(width/8f, startWidth/12f, width-width/8f, height - startWidth/64f, 100, 100, cPaint);
+        else
+            canvas.drawRect(width/8f, startWidth/12f + startWidth/2f, width-width/8f, height - startWidth/64f, cPaint);
 
         float realHeightForTools = height - (startWidth/2f-(float)startWidth/12f)*2f -(float)startWidth/12f;
         float startYForToolsZone = height - realHeightForTools;

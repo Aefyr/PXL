@@ -94,4 +94,13 @@
         android:layout_width="64dp"
         android:layout_height="64dp" />
 
+    <com.af.pxl.SymmetryModePickView
+        android:id="@+id/emve"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_alignStart="@+id/symmetry"
+        android:layout_below="@id/symmetry"
+        app:bitmapSize="60dp"
+        app:gapSize="4dp" />
+
 </RelativeLayout>

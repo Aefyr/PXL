@@ -199,6 +199,8 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
 
 
     void tempInitializeButtons(){
+
+        //Grid
         final ImageButton grid = (ImageButton) findViewById(R.id.grid);
         grid.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -211,18 +213,52 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
             }
         });
 
+        //Symmetry
+        final SymmetryModePickView symmetryModePickView = (SymmetryModePickView) findViewById(R.id.emve);
         final ImageButton symmetry = (ImageButton) findViewById(R.id.symmetry);
-        symmetry.setOnClickListener(new View.OnClickListener() {
+
+        symmetryModePickView.setOnItemClickedListener(new SymmetryModePickView.OnItemClickedListener() {
             @Override
-            public void onClick(View view) {
-                aps.symmetry = !aps.symmetry;
-                if(aps.symmetry)
-                    symmetry.setImageResource(R.drawable.symmetryon);
-                else
-                    symmetry.setImageResource(R.drawable.symmetryoff);
+            public void onItemClicked(int id) {
+                switch (id){
+                    case  0:
+                        aps.symmetry = false;
+                        symmetry.setImageResource(R.drawable.symmetryoff);
+                        symmetryModePickView.setVisibility(View.GONE);
+                        break;
+                    case 1:
+                        aps.symmetry = true;
+                        aps.symmetryType = AdaptivePixelSurface.SymmetryType.HORIZONTAL;
+                        symmetry.setImageResource(R.drawable.symmetryh);
+                        symmetryModePickView.setVisibility(View.GONE);
+                        break;
+                    case 2:
+                        aps.symmetry = true;
+                        aps.symmetryType = AdaptivePixelSurface.SymmetryType.VERTICAL;
+                        symmetry.setImageResource(R.drawable.symmetryv);
+                        symmetryModePickView.setVisibility(View.GONE);
+                        break;
+                }
             }
         });
 
+        symmetry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /*aps.symmetry = !aps.symmetry;
+                if(aps.symmetry)
+                    symmetry.setImageResource(R.drawable.symmetryh);
+                else
+                    symmetry.setImageResource(R.drawable.symmetryoff);
+                    */
+                if(symmetryModePickView.getVisibility()==View.GONE)
+                    symmetryModePickView.setVisibility(View.VISIBLE);
+                else
+                    symmetryModePickView.setVisibility(View.GONE);
+            }
+        });
+
+        //History
         ImageButton undo = (ImageButton) findViewById(R.id.undo);
         undo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -239,6 +275,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
             }
         });
 
+        //Clear
         findViewById(R.id.clear).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
