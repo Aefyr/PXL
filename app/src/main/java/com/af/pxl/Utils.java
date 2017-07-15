@@ -5,6 +5,10 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 /**
  * Created by Aefyr on 01.07.2017.
  */
@@ -39,5 +43,13 @@ class Utils {
         int[] pixels = new int[bitmap.getWidth()*bitmap.getHeight()];
         otherBitmap.getPixels(pixels, 0, otherBitmap.getWidth(), 0, 0, otherBitmap.getWidth(), otherBitmap.getHeight());
         bitmap.setPixels(pixels, 0, otherBitmap.getWidth(), 0, 0, otherBitmap.getWidth(), otherBitmap.getHeight());
+    }
+
+    static void saveBitmap(Bitmap bitmap, File path){
+        try(FileOutputStream fileOutputStream = new FileOutputStream(path)){
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
+        }catch (IOException e){
+
+        }
     }
 }

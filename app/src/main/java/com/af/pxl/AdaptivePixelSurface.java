@@ -122,32 +122,34 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
         p[1] = 0;
         pixelMatrix.mapPoints(p);
 
-        float lessThan1PixelOffsetX = p[0]%pixelScale>0?p[0]%pixelScale:pixelScale+p[0]%pixelScale;
-        float lessThan1PixelOffsetY = p[1]%pixelScale>0?p[1]%pixelScale:pixelScale+p[1]%pixelScale;
+        float gridCellSize = pixelScale * (int) Utils.clamp((8 * (1 - (pixelScale / (realWidth>realHeight?realHeight:realWidth / 64)))), 1, 8);
 
+        float lOX = Utils.clamp(p[0]%gridCellSize, p[0], realWidth);
+        float lOY = Utils.clamp(p[1]%gridCellSize, p[1], realHeight);
 
-        float oX = Utils.clamp(p[0], lessThan1PixelOffsetX, getWidth());
-        float oY = Utils.clamp(p[1], lessThan1PixelOffsetY , getHeight());
 
         p[0] = pixelWidth;
         p[1] = pixelHeight;
         pixelMatrix.mapPoints(p);
 
-        float limitX = Utils.clamp(p[0], 0, getWidth());
-        float limitY = Utils.clamp(p[1], 0, getHeight());
+        float limitX = Utils.clamp(p[0], 0, realWidth);
+        float limitY = Utils.clamp(p[1], 0, realHeight);
 
-        float x = oX;
-        float y = oY;
+        float x = lOX;
+        float y = lOY;
+
+
+
 
 
         while(x<limitX){
-            gridC.drawLine(x, oY - pixelScale, x, limitY+pixelScale, gridP);
-            x+=pixelScale;
+            gridC.drawLine(x, lOY - gridCellSize, x, limitY+gridCellSize, gridP);
+            x+=gridCellSize;
         }
 
         while(y<limitY){
-            gridC.drawLine(oX-pixelScale, y, limitX+pixelScale, y, gridP);
-            y+=pixelScale;
+            gridC.drawLine(lOX-gridCellSize, y, limitX+gridCellSize, y, gridP);
+            y+=gridCellSize;
         }
 
 

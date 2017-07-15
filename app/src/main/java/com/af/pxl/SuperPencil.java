@@ -100,7 +100,7 @@ public class SuperPencil {
                 mirroredPath.reset();
             path.reset();
             drawing = false;
-            aps.canvasHistory.cancelHistoricalChange();
+            aps.canvasHistory.cancelHistoricalChange(true);
         }
     }
 

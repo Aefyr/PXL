@@ -111,11 +111,14 @@ public class CanvasHistory {
         }
     }
 
-    void cancelHistoricalChange(){
-        bitmap.setPixels(temp, 0, bitmap.getWidth(), 0, 0 , bitmap.getWidth(), bitmap.getHeight());
-        aps.pixelDrawThread.update();
+    void cancelHistoricalChange(boolean canvasWasChanged){
+        if(canvasWasChanged) {
+            bitmap.setPixels(temp, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+            aps.pixelDrawThread.update();
+        }
         historicalChangeInProgress = false;
     }
+
 
     void undoHistoricalChange(){
         if(past.size()==0)

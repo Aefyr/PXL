@@ -45,6 +45,12 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         tempColorPickInitialize();
         tempInitializeButtons();
 
+        findViewById(R.id.TMP).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startTranslateActivity();
+            }
+        });
 
     }
 
@@ -299,32 +305,52 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                 aps.canvasHistory.completeHistoricalChange();
             } else if(resultCode == 0){
                 //Cancel
-                aps.canvasHistory.cancelHistoricalChange();
+                aps.canvasHistory.cancelHistoricalChange(false);
+            }
+        }
+
+        //Translate
+        if(requestCode==1337){
+            if(resultCode==1){
+                Bitmap b = BitmapFactory.decodeFile(data.getStringExtra("path"));
+                Utils.setBitmapPixelsFromOtherBitmap(aps.pixelBitmap, b);
+                b.recycle();
+                aps.canvasHistory.completeHistoricalChange();
+            }else if(resultCode==0) {
+                aps.canvasHistory.cancelHistoricalChange(false);
             }
         }
     }
 
     //Special tools
+
+    //ColorSwap
     @Override
     public void onColorSwapToolUse(int color) {
         System.out.println("Swapping color: "+color);
         startColorSwapActivity(color);
     }
 
-    //TODO Use custom view instead of ImageView in ColorSwapActivity, cuz that scaling algorithm sucks
     private void startColorSwapActivity(int colorToSwap){
 
         File t = new File(getFilesDir(), "p.pxl");
-        try(FileOutputStream stream = new FileOutputStream(t)){
-            aps.pixelBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Utils.saveBitmap(aps.pixelBitmap, t);
 
         Intent i = new Intent(DrawingActivity.this, ColorSwapActivity.class);
         i.putExtra("path", t.getAbsolutePath());
         i.putExtra("color", colorToSwap);
         aps.canvasHistory.startHistoricalChange();
         startActivityForResult(i, 322);
+    }
+
+    //Translate
+    private void startTranslateActivity(){
+        File t = new File(getFilesDir(), "ti.pxl");
+        Utils.saveBitmap(aps.pixelBitmap, t);
+        Intent i = new Intent(DrawingActivity.this, BitmapsMergeActivity.class);
+        i.putExtra("path", t.getAbsolutePath());
+        i.putExtra("mode", 1);
+        aps.canvasHistory.startHistoricalChange();
+        startActivityForResult(i, 1337);
     }
 }

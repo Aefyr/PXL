@@ -121,7 +121,7 @@ public class Pencil extends Tool{
         //adaptivePixelSurface.pixelBitmap.setPixels(backupBitmap, 0, adaptivePixelSurface.pixelWidth, 0, 0, adaptivePixelSurface.pixelWidth, adaptivePixelSurface.pixelHeight);
 
         if(wasCanceled && moves < 10){
-            adaptivePixelSurface.canvasHistory.cancelHistoricalChange();
+            adaptivePixelSurface.canvasHistory.cancelHistoricalChange(true);
             path.reset();
             if(adaptivePixelSurface.symmetry)
                 mirroredPath.reset();

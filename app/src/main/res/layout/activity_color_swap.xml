@@ -92,9 +92,8 @@
         android:layout_height="wrap_content"
         android:elevation="0dp"
         android:text="Done"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true" />
 
     <Switch
         android:id="@+id/livePreviewSwitch"
@@ -112,4 +111,13 @@
         app:srcCompat="@drawable/redo"
         android:layout_below="@+id/pxlImageView"
         android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/csCancel"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text="Cancel" />
 </RelativeLayout>

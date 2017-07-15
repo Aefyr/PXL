@@ -15,8 +15,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DrawingActivity" />
-        <activity android:name=".ColorSwapActivity"></activity>
+        <activity android:name=".DrawingActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ColorSwapActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".BitmapsMergeActivity" android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorImageButtonBackgroundTint"
+    tools:context="com.af.pxl.BitmapsMergeActivity">
+
+    <com.af.pxl.PixelImageView
+        android:id="@+id/pxlImageView"
+        android:layout_width="340dp"
+        android:layout_height="340dp"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="4dp"
+        app:autoResizeToMax="true" />
+
+    <ImageButton
+        android:id="@+id/ibl"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_below="@+id/ibu"
+        android:layout_toStartOf="@+id/ibb"
+        android:scaleType="centerInside"
+        app:srcCompat="@drawable/buttonundo" />
+
+    <ImageButton
+        android:id="@+id/ibu"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_below="@+id/pxlImageView"
+        android:layout_marginTop="8dp"
+        android:layout_toEndOf="@+id/ibl"
+        android:rotation="90"
+        android:scaleType="centerInside"
+        app:srcCompat="@drawable/buttonundo" />
+
+    <ImageButton
+        android:id="@+id/ibr"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_below="@+id/ibu"
+        android:layout_toEndOf="@+id/ibb"
+        android:rotation="180"
+        android:scaleType="centerInside"
+        app:srcCompat="@drawable/buttonundo" />
+
+    <ImageButton
+        android:id="@+id/ibb"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:rotation="-90"
+        android:scaleType="centerInside"
+        app:srcCompat="@drawable/buttonundo"
+        android:layout_below="@+id/ibu"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/done"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:text="Done" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/done"
+        android:layout_centerHorizontal="true"
+        android:text="You can move image by dragging it" />
+
+    <Button
+        android:id="@+id/cancel"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text="Cancel" />
+
+</RelativeLayout>

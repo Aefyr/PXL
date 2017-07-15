@@ -49,10 +49,23 @@ public class ColorSwapActivity extends AppCompatActivity {
         });
 
         Switch livePreviewSwitch = (Switch) findViewById(R.id.livePreviewSwitch);
+
+        colorPicker.applyColorSwap();
+        if(colorPicker.isLivePreviewAcceptable()) {
+            colorPicker.setLivePreviewEnabled(true);
+            livePreviewSwitch.setChecked(true);
+        }
+        else colorPicker.setLivePreviewEnabled(false);
+
+
         livePreviewSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 colorPicker.setLivePreviewEnabled(b);
+                if(b) {
+                    colorPicker.applyColorSwap();
+                    pixelImageView.invalidate();
+                }
             }
         });
 
@@ -61,17 +74,19 @@ public class ColorSwapActivity extends AppCompatActivity {
             public void onClick(View view) {
                 colorPicker.applyColorSwap();
                 File t = new File(getFilesDir(), "r.pxl");
-                try(FileOutputStream fos = new FileOutputStream(t)){
-                    image.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                } catch (IOException e) {
-                    Utils.toaster(ColorSwapActivity.this, "Something went wrong, try again");
-                    e.printStackTrace();
-                    return;
-                }
+                Utils.saveBitmap(image, t);
                 image.recycle();
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra("path", t.getAbsolutePath());
                 setResult(1, resultIntent);
+                finish();
+            }
+        });
+
+        findViewById(R.id.csCancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setResult(0);
                 finish();
             }
         });

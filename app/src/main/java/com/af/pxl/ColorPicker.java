@@ -106,13 +106,15 @@ class ColorPicker {
 
     void setLivePreviewEnabled(boolean enabled){
         livePreview = enabled;
-        if(livePreview)
-            applyColorSwap();
-            listener.onLivePreviewUpdate();
     }
 
     void applyColorSwap(){
         colorSwapper.swapColor(Color.HSVToColor(color));
+    }
+
+    boolean isLivePreviewAcceptable(){
+        applyColorSwap();
+        return colorSwapper.getDeltaTime() <= 60;
     }
 
     interface OnLivePreviewUpdateListener{

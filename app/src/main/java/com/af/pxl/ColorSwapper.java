@@ -12,6 +12,7 @@ public class ColorSwapper {
     private Bitmap bitmap;
     private int[] pixels;
     private HashSet<Integer> pixelsToSwap;
+    private long deltaTime;
 
     ColorSwapper(Bitmap bitmap, int colorToSwap){
         this.bitmap = bitmap;
@@ -26,11 +27,18 @@ public class ColorSwapper {
     }
 
     void swapColor(int newColor){
+        long start = System.currentTimeMillis();
         for(int i:pixelsToSwap){
             pixels[i] = newColor;
         }
-        System.out.println("Boom, swapped "+pixelsToSwap.size()+" pixels!");
+
 
         bitmap.setPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+        deltaTime = System.currentTimeMillis() - start;
+        System.out.println("Boom, swapped "+pixelsToSwap.size()+" pixels in "+deltaTime+" ms!");
+    }
+
+    long getDeltaTime(){
+        return deltaTime;
     }
 }
