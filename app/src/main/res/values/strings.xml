@@ -1,9 +1,17 @@
 <resources>
     <string name="app_name">PXL</string>
+
     <string name="pencil">Pencil</string>
     <string name="fill">Flood Fill</string>
     <string name="colorpick">Color Picker</string>
     <string name="pencil_action">Draw!</string>
     <string name="fill_action">Fill!</string>
     <string name="colorpick_action">Pick!</string>
+
+    <string name="done">Done</string>
+    <string name="cancel">Cancel</string>
+    <string name="cursor_action">PXL!</string>
+
+    <string name="live_preview">Live Preview</string>
+    <string name="moving_image_tip">You can move image by dragging it!</string>
 </resources>

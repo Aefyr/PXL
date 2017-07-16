@@ -49,7 +49,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
 
     //TEST
     Cursor cursor;
-    boolean cursorMode = true;
+    boolean cursorMode = false;
     boolean fillMode = false;
     SuperPencil superPencil;
 
@@ -202,6 +202,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
         //Main paint
         paint = new Paint();
         paint.setAntiAlias(false);
+        paint.setFilterBitmap(false);
         paint.setColor(Color.WHITE);
         updateColorCircle();
         paint.setStrokeWidth(1);
@@ -551,6 +552,8 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
                 textPaint.setTextSize(50);
                 textPaint.setStyle(Paint.Style.STROKE);
                 textPaint.setStrokeWidth(2);
+                textPaint.setAntiAlias(false);
+                textPaint.setFilterBitmap(false);
             }
             while (alive){
                 long start = System.currentTimeMillis();
@@ -590,8 +593,9 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
                 //Highlight the pixel we'll draw on with cursorPencil
                 //TODO Maybe make "less than 1 pixel" offsets global variables
                 if(cursorMode) {
-                    canvas.drawBitmap(cursor.cursorPointerImage, cursor.getX(), cursor.getY()-100, null);
-
+                    textPaint.setAlpha(cursor.opacity);
+                    canvas.drawBitmap(cursor.cursorPointerImage, cursor.matrix,  textPaint);
+                    textPaint.setAlpha(255);
                     //Stole this from drawGrid^^
                     p[0] = 0;
                     p[1] = 0;

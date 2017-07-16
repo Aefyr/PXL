@@ -97,7 +97,7 @@ public class BitmapsMergeActivity extends AppCompatActivity {
     }
 
 
-    void done(){
+    private void done(){
         File p = new File(getFilesDir(), "td.pxl");
         Utils.saveBitmap(b, p);
         Intent i = new Intent();
@@ -106,7 +106,7 @@ public class BitmapsMergeActivity extends AppCompatActivity {
         finish();
     }
 
-    void cancelled(){
+    private void cancelled(){
         setResult(0);
         finish();
     }

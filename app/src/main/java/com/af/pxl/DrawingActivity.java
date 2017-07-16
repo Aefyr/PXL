@@ -23,7 +23,6 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
 
     AdaptivePixelSurface aps;
     ToolPickView toolButton;
-    String[] tools;
     AlertDialog toolPickDialog;
     ImageButton.OnClickListener onClickListener;
     Button cursorAction;
@@ -51,6 +50,10 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                 startTranslateActivity();
             }
         });
+
+        BitmapFactory.Options op = new BitmapFactory.Options();
+        op.inScaled = false;
+        aps.cursor.setCursorPointerImage(BitmapFactory.decodeResource(getResources(), R.drawable.defaultcursor2, op));
 
     }
 
@@ -152,9 +155,6 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
     }
 
     private void initializeToolPicking(){
-        final Resources res = getResources();
-
-        tools = new String[]{res.getString(R.string.pencil), res.getString(R.string.fill), res.getString(R.string.colorpick)};
 
         toolButton = (ToolPickView) findViewById(R.id.currentTool);
 
@@ -162,6 +162,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
     }
 
     private void initializeImageButtonsOCL(){
+        final ImageButton cursorToggle = (ImageButton) findViewById(R.id.cursorMode);
         onClickListener = new ImageButton.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -171,6 +172,10 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                         break;
                     case R.id.cursorMode:
                         aps.cursor.setEnabled(!aps.cursorMode);
+                        if(aps.cursorMode)
+                            cursorToggle.setImageResource(R.drawable.cursor3);
+                        else
+                            cursorToggle.setImageResource(R.drawable.normal2);
                         break;
                 }
             }
@@ -251,12 +256,6 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         symmetry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*aps.symmetry = !aps.symmetry;
-                if(aps.symmetry)
-                    symmetry.setImageResource(R.drawable.symmetryh);
-                else
-                    symmetry.setImageResource(R.drawable.symmetryoff);
-                    */
                 if(symmetryModePickView.getVisibility()==View.GONE)
                     symmetryModePickView.setVisibility(View.VISIBLE);
                 else

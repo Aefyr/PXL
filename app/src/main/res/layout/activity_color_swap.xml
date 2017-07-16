@@ -90,10 +90,10 @@
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:elevation="0dp"
-        android:text="Done"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true" />
+        android:elevation="0dp"
+        android:text="@string/done" />
 
     <Switch
         android:id="@+id/livePreviewSwitch"
@@ -102,7 +102,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
-        android:text="Live Preview" />
+        android:text="@string/live_preview" />
 
     <ImageView
         android:id="@+id/imageViewArrow"
@@ -119,5 +119,5 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:text="Cancel" />
+        android:text="@string/cancel" />
 </RelativeLayout>

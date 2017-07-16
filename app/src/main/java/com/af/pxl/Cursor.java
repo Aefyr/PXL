@@ -3,6 +3,7 @@ package com.af.pxl;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.view.MotionEvent;
 
@@ -10,11 +11,14 @@ import android.view.MotionEvent;
  * Created by Aefyr on 02.07.2017.
  */
 
-public class Cursor {
+class Cursor {
     private AdaptivePixelSurface aps;
 
     private float currentX, currentY;
     private float limitX, limitY;
+    private int pixelSize = 128;
+    int opacity = 255;
+    Matrix matrix;
 
     private float sensitivity = 1f;
 
@@ -29,22 +33,44 @@ public class Cursor {
 
     Cursor(AdaptivePixelSurface adaptivePixelSurface){
         aps = adaptivePixelSurface;
-        cursorPointerImage = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
+        matrix = new Matrix();
         drawDefaultCursorImage();
     }
 
     private void drawDefaultCursorImage(){
+        cursorPointerImage = Bitmap.createBitmap(pixelSize, pixelSize, Bitmap.Config.ARGB_8888);
         cursorPointerImageCanvas = new Canvas(cursorPointerImage);
         Paint paint = new Paint();
         paint.setColor(Color.MAGENTA);
         paint.setStrokeWidth(8);
-        cursorPointerImageCanvas.drawLine(0, 0, 0, 100, paint);
-        cursorPointerImageCanvas.drawLine(0,100,100,100, paint);
+        cursorPointerImageCanvas.drawLine(0, 0, 0, pixelSize, paint);
+        cursorPointerImageCanvas.drawLine(0, pixelSize, pixelSize, pixelSize, paint);
+        calculateMatrix();
+    }
+
+    void setCursorPointerImage(Bitmap bitmap){
+        cursorPointerImage = bitmap;
+        System.out.println("SIZE="+cursorPointerImage.getWidth());
+        calculateMatrix();
+        if(aps.cursorMode)
+            aps.pixelDrawThread.update();
     }
 
     void setLimits(float limitX, float limitY){
         this.limitX = limitX;
         this.limitY = limitY;
+    }
+
+    private float scale;
+    private void calculateMatrix(){
+        scale = (float) pixelSize/(float) cursorPointerImage.getWidth();
+        updatePosition();
+    }
+
+    private void updatePosition(){
+        matrix.reset();
+        matrix.setScale(scale, scale);
+        matrix.postTranslate(currentX, currentY-pixelSize);
     }
 
     private float previousX, previousY;
@@ -61,6 +87,7 @@ public class Cursor {
         if(event.getAction() == MotionEvent.ACTION_MOVE) {
             currentX = Utils.clamp(currentX + (x - previousX)*sensitivity, 0, limitX);
             currentY = Utils.clamp(currentY + (y - previousY)*sensitivity, 0, limitY);
+            updatePosition();
         }
 
         previousX = x;
@@ -150,4 +177,5 @@ public class Cursor {
         canvasX = (currentX-p[0])/aps.pixelScale;
         canvasY = (currentY-p[1])/aps.pixelScale;
     }
+
 }

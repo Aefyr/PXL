@@ -32,24 +32,18 @@ class Utils {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
-    static void swapColor(int[] pixels, int originalColor, int newColor){
-        for(int i = 0; i<pixels.length;i++){
-            if(pixels[i]==originalColor)
-                pixels[i]=newColor;
-        }
-    }
-
     static void setBitmapPixelsFromOtherBitmap(Bitmap bitmap, Bitmap otherBitmap){
         int[] pixels = new int[bitmap.getWidth()*bitmap.getHeight()];
         otherBitmap.getPixels(pixels, 0, otherBitmap.getWidth(), 0, 0, otherBitmap.getWidth(), otherBitmap.getHeight());
         bitmap.setPixels(pixels, 0, otherBitmap.getWidth(), 0, 0, otherBitmap.getWidth(), otherBitmap.getHeight());
     }
 
-    static void saveBitmap(Bitmap bitmap, File path){
+    static boolean saveBitmap(Bitmap bitmap, File path){
         try(FileOutputStream fileOutputStream = new FileOutputStream(path)){
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
+            return true;
         }catch (IOException e){
-
+            return false;
         }
     }
 }
