@@ -55,6 +55,23 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         op.inScaled = false;
         aps.cursor.setCursorPointerImage(BitmapFactory.decodeResource(getResources(), R.drawable.defaultcursor2, op));
 
+
+        //PALETTES
+        PaletteUtils.initialize(this);
+        findViewById(R.id.savepalette).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PaletteUtils.savePalette(aps.palette);
+            }
+        });
+
+        findViewById(R.id.loadpalette).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                aps.setPalette(PaletteUtils.loadPalette("testPalette"));
+            }
+        });
+
     }
 
     ColorPicker colorPicker;
@@ -79,20 +96,19 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
             }
         });*/
 
-        final Palette2 palette2 = new Palette2(16, Color.WHITE);
-        aps.setPalette(palette2);
+        aps.setPalette(new Palette2("testPalette",16, Color.WHITE));
         colorPickButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final AlertDialog d = new AlertDialog.Builder(DrawingActivity.this).setView(R.layout.palette).create();
+                final AlertDialog d = new AlertDialog.Builder(DrawingActivity.this).setView(R.layout.palette).setTitle(aps.palette.getName()).create();
                 d.show();
                 PaletteView2 paletteView = ((PaletteView2)d.findViewById(R.id.pv2));
-                paletteView.setPalette(palette2);
+                paletteView.setPalette(aps.palette);
 
                 d.findViewById(R.id.pvAdd).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(palette2.isFull()) {
+                        if(aps.palette.isFull()) {
                             Utils.toaster(DrawingActivity.this, "Palette is full!");
                             return;
                         }
@@ -105,7 +121,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                             @Override
                             public void onClick(View view) {
                                 int newColor = Color.HSVToColor(colorPicker.color);
-                                palette2.addColor(newColor);
+                                aps.palette.addColor(newColor);
 
                                 d.cancel();
                                 colorPicker = null;
@@ -117,8 +133,8 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                 d.findViewById(R.id.pvDone).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        colorPickButton.setColor(palette2.getSelectedColor());
-                        aps.paint.setColor(palette2.getSelectedColor());
+                        colorPickButton.setColor(aps.palette.getSelectedColor());
+                        aps.paint.setColor(aps.palette.getSelectedColor());
                         d.cancel();
                     }
                 });
@@ -130,12 +146,12 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                         d.show();
                         colorPicker = new ColorPicker((ColorPickerView) d.findViewById(R.id.colorPickerHue),(SeekBar) d.findViewById(R.id.seekBarHue),
                                 (ColorPickerView) d.findViewById(R.id.colorPickerSat), (SeekBar) d.findViewById(R.id.seekBarSat), (ColorPickerView) d.findViewById(R.id.colorPickerVal),
-                                (SeekBar) d.findViewById(R.id.seekBarVal), (ColorCircle) d.findViewById(R.id.newColor), palette2.getSelectedColor());
+                                (SeekBar) d.findViewById(R.id.seekBarVal), (ColorCircle) d.findViewById(R.id.newColor), aps.palette.getSelectedColor());
                         (d.findViewById(R.id.colorPickButton)).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 int newColor = Color.HSVToColor(colorPicker.color);
-                                palette2.editColor(palette2.getSelectedColorIndex(), newColor);
+                                aps.palette.editColor(aps.palette.getSelectedColorIndex(), newColor);
                                 d.cancel();
                                 colorPicker = null;
                             }
@@ -146,8 +162,8 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                 d.setOnCancelListener(new DialogInterface.OnCancelListener() {
                     @Override
                     public void onCancel(DialogInterface dialogInterface) {
-                        colorPickButton.setColor(palette2.getSelectedColor());
-                        aps.paint.setColor(palette2.getSelectedColor());
+                        colorPickButton.setColor(aps.palette.getSelectedColor());
+                        aps.paint.setColor(aps.palette.getSelectedColor());
                     }
                 });
             }

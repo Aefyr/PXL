@@ -11,6 +11,7 @@ public class Palette2 {
     private ArrayList<Integer> colors;
     private int capacity;
     private int selectedColorIndex;
+    private String name;
 
     interface OnPaletteChangeListener{
         void paletteChanged();
@@ -18,7 +19,8 @@ public class Palette2 {
 
     OnPaletteChangeListener listener;
 
-    Palette2(int capacity, int initialColor){
+    Palette2(String name , int capacity, int initialColor){
+        this.name = name;
         colors = new ArrayList<>();
         colors.add(initialColor);
 
@@ -70,6 +72,14 @@ public class Palette2 {
             setSelectedColor(getSelectedColorIndex()+1);
         }else
             setSelectedColor(index);
+    }
+
+    String getName(){
+        return name;
+    }
+
+    ArrayList<Integer> getColors(){
+        return colors;
     }
 
     int getSize(){

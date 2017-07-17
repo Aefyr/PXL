@@ -6,7 +6,9 @@ import android.graphics.Color;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 
 /**
@@ -14,6 +16,8 @@ import java.io.IOException;
  */
 
 class Utils {
+
+
     static float clamp(float x, float min, float max){
         if(x<min)return min;
         if(x>max) return max;
@@ -46,4 +50,6 @@ class Utils {
             return false;
         }
     }
+
+
 }

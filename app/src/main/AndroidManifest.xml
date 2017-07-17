@@ -8,16 +8,27 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".LegacyActivity">
+        </activity>
+        <activity
+            android:name=".DrawingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ColorSwapActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".BitmapsMergeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DrawingActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".ColorSwapActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".BitmapsMergeActivity" android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

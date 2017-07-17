@@ -7,7 +7,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
-    
+
     <style name="ColorPickerSeekBar" parent="Widget.AppCompat.SeekBar">
         <item name="android:thumb">@drawable/colorpicker_seekbar_thumb</item>
         <item name="android:paddingTop">2dp</item>
@@ -15,9 +15,13 @@
     </style>
 
     <style name="PXLImageButton" parent="Widget.AppCompat.ImageButton">
-        <item name="android:background"> @drawable/selector1</item>
+        <item name="android:background">@drawable/selector1</item>
         <item name="android:scaleType">centerCrop</item>
         <item name="android:padding">9dp</item>
     </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>

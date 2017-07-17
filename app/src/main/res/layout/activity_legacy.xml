@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.af.pxl.LegacyActivity">
+
+    <com.af.pxl.CanvasView
+        android:id="@+id/canvasView"
+        android:layout_width="400dp"
+        android:layout_height="400dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp" />
+
+    <Switch
+        android:id="@+id/symmetrySwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/canvasView"
+        android:layout_below="@+id/canvasView"
+        android:text="Symmetry" />
+
+    <com.af.pxl.ColorPickerView
+        android:id="@+id/colorPicker"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/colorPick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/canvasView"
+        android:text="Pick Color" />
+
+    <Switch
+        android:id="@+id/gridSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/canvasView"
+        android:layout_toEndOf="@+id/symmetrySwitch"
+        android:text="Show Grid" />
+
+    <com.af.pxl.PaletteView
+        android:id="@+id/pal"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_below="@+id/colorPick" />
+
+    <Button
+        android:id="@+id/toolPickButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/canvasView"
+        android:layout_toLeftOf="@+id/colorPick"
+        android:text="Pick Tool" />
+
+
+</RelativeLayout>

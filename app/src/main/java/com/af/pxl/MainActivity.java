@@ -1,276 +1,130 @@
 package com.af.pxl;
 
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Color;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.MotionEvent;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.SeekBar;
-import android.widget.Switch;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+import com.af.pxl.Fragments.GalleryFragment;
+import com.af.pxl.Fragments.TestFrag;
 
-    ColorPicker colorPicker;
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
+
+    private FragmentManager fragmentManager;
+
+    enum FRAGMENT{
+        GALLERY, TEST
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //CanvasView canvasView = new CanvasView(this);
-        setContentView(R.layout.alternate2);
-        final AdaptivePixelSurface aps = (AdaptivePixelSurface) findViewById(R.id.aps);
+        setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        final Button undo = (Button) findViewById(R.id.undoButton);
-        undo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                aps.canvasHistory.undoHistoricalChange();
-            }
-        });
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
 
-        final Button redo = (Button) findViewById(R.id.redoButton);
-        redo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                aps.canvasHistory.redoHistoricalChange();
-            }
-        });
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
-        aps.canvasHistory.setOnHistoryAvailabilityChangeListener(new CanvasHistory.OnHistoryAvailabilityChangeListener() {
-            @Override
-            public void pastAvailabilityChanged(boolean available) {
-                undo.setEnabled(available);
-            }
+        //Fragments
+        fragmentManager = getSupportFragmentManager();
+    }
 
-            @Override
-            public void futureAvailabilityChanged(boolean available) {
-                redo.setEnabled(available);
-            }
-        });
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
 
-        Switch sym = (Switch) findViewById(R.id.sym);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
 
-        sym.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                aps.symmetry = b;
-            }
-        });
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
-        Switch grid = (Switch) findViewById(R.id.grid);
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
 
-        grid.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                aps.setGridEnabled(b);
-                aps.fillMode = b;
-            }
-        });
+        return super.onOptionsItemSelected(item);
+    }
 
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
 
-        findViewById(R.id.testClear).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                aps.canvasHistory.startHistoricalChange();
-                aps.pixelCanvas.drawColor(Color.WHITE);
-                aps.canvasHistory.completeHistoricalChange();
-                aps.pixelDrawThread.update();
-            }
-        });
+        if (id == R.id.nav_camera) {
 
-        findViewById(R.id.tempCPick).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final AlertDialog d = new AlertDialog.Builder(MainActivity.this).setView(R.layout.color_picker).create();
-                d.show();
-                colorPicker = new ColorPicker((ColorPickerView) d.findViewById(R.id.colorPickerHue),(SeekBar) d.findViewById(R.id.seekBarHue),
-                        (ColorPickerView) d.findViewById(R.id.colorPickerSat), (SeekBar) d.findViewById(R.id.seekBarSat), (ColorPickerView) d.findViewById(R.id.colorPickerVal),
-                        (SeekBar) d.findViewById(R.id.seekBarVal), (ColorCircle) d.findViewById(R.id.newColor), aps.paint.getColor());
-                (d.findViewById(R.id.colorPickButton)).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        aps.paint.setColor(Color.HSVToColor(colorPicker.color));
-                        d.cancel();
-                        colorPicker = null;
-                    }
-                });
-            }
-        });
+        } else if (id == R.id.nav_gallery) {
+            loadFragment(FRAGMENT.GALLERY);
+        } else if (id == R.id.nav_slideshow) {
+            loadFragment(FRAGMENT.TEST);
+        } else if (id == R.id.nav_manage) {
 
-        final Button c = (Button) findViewById(R.id.cursor);
-        c.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if(motionEvent.getAction() == MotionEvent.ACTION_DOWN)
-                    aps.superPencil.startDrawing(aps.cursor.getX(), aps.cursor.getY());
-                if(motionEvent.getAction() == MotionEvent.ACTION_UP)
-                    aps.superPencil.stopDrawing(aps.cursor.getX(), aps.cursor.getY());
-                return false;
-            }
-        });
+        } else if (id == R.id.nav_share) {
 
-        Button toolPick = (Button) findViewById(R.id.toolButton);
-        final String[] tools = {"Cursor Mode", "Normal Mode", "Color picker", "Pencil", "Flood Fill"};
-        toolPick.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new AlertDialog.Builder(MainActivity.this).setItems(tools, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        switch (i){
-                            case 0:
-                                aps.setCursorModeEnabled(true);
-                                break;
-                            case 1:
-                                aps.setCursorModeEnabled(false);
-                                break;
-                            case 2:
-                                aps.currentTool = AdaptivePixelSurface.Tool.COLOR_PICK;
-                                break;
-                            case 3:
-                                aps.currentTool = AdaptivePixelSurface.Tool.PENCIL;
-                                break;
-                            case 4:
-                                aps.currentTool = AdaptivePixelSurface.Tool.FLOOD_FILL;
-                                break;
-                        }
-                    }
-                }).create().show();
-            }
-        });
+        } else if (id == R.id.nav_send) {
 
-        findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, DrawingActivity.class);
-                MainActivity.this.startActivity(intent);
-            }
-        });
+        }
 
-        /*final PixelSurface2 pixelSurface2 = (PixelSurface2) findViewById(R.id.pixelSurface);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
 
-        Switch tempSwitch = (Switch) findViewById(R.id.tempSwitch);
-        tempSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b) pixelSurface2.toolButton = PixelSurface2.Tool.FILL;
-                else pixelSurface2.toolButton = PixelSurface2.Tool.PEN;
-            }
-        });
-
-        Button tempButton = (Button) findViewById(R.id.tempButton);
-        tempButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final AlertDialog d = new AlertDialog.Builder(MainActivity.this).setView(R.layout.color_picker).create();
-                d.show();
-                colorPicker = new ColorPicker((ColorPickerView) d.findViewById(R.id.colorPickerHue),(SeekBar) d.findViewById(R.id.seekBarHue),
-                        (ColorPickerView) d.findViewById(R.id.colorPickerSat), (SeekBar) d.findViewById(R.id.seekBarSat), (ColorPickerView) d.findViewById(R.id.colorPickerVal),
-                        (SeekBar) d.findViewById(R.id.seekBarVal), (ColorView) d.findViewById(R.id.colorView));
-                (d.findViewById(R.id.colorPickButton)).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        pixelSurface2.paint.setColor(Color.HSVToColor(colorPicker.color));
-                        d.cancel();
-                        colorPicker = null;
-                    }
-                });
-            }
-        });
-
-        Button tempButton2 = (Button) findViewById(R.id.tempButton2);
-        tempButton2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                pixelSurface2.commitHistoryChange();
-                pixelSurface2.pixelCanvas.drawColor(Color.WHITE);
-                pixelSurface2.drawingThread2.update(false);
-            }
-        });
-
-
-        Button tempButton3 = (Button) findViewById(R.id.tempButton3);
-        tempButton3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                pixelSurface2.rewindHistory();
-            }
-        });
-
-        Switch tempSwitch2 = (Switch) findViewById(R.id.tempSwitch2);
-        tempSwitch2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                pixelSurface2.showGrid = b;
-                pixelSurface2.drawingThread2.update(false);
-            }
-        });*/
-
-        /*final CanvasView canvasView = (CanvasView) findViewById(R.id.canvasView);
-        final ColorPickerView huePicker = (ColorPickerView) findViewById(R.id.colorPicker);
-
-
-        Switch symmetrySwitch = (Switch) findViewById(R.id.symmetrySwitch);
-
-        symmetrySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                canvasView.symmetry = b;
-            }
-        });
-
-        Switch gridSwitch = (Switch) findViewById(R.id.gridSwitch);
-
-        gridSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                canvasView.setGridEnabled(b);
-            }
-        });
-
-        Button colorPick = (Button) findViewById(R.id.colorPick);
-        colorPick.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final AlertDialog d = new AlertDialog.Builder(MainActivity.this).setView(R.layout.color_picker).create();
-                d.show();
-                final ColorPicker colorPicker = new ColorPicker((ColorPickerView) d.findViewById(R.id.colorPickerHue),(SeekBar) d.findViewById(R.id.seekBarHue),
-                        (ColorPickerView) d.findViewById(R.id.colorPickerSat), (SeekBar) d.findViewById(R.id.seekBarSat), (ColorPickerView) d.findViewById(R.id.colorPickerVal),
-                        (SeekBar) d.findViewById(R.id.seekBarVal), (ColorView) d.findViewById(R.id.colorView));
-                ((Button)d.findViewById(R.id.colorPickButton)).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        canvasView.pixelPaint.setColor(Color.HSVToColor(colorPicker.color));
-                        canvasView.drawThread.requestUpdate();
-                        d.cancel();
-                    }
-                });
-            }
-        });
-
-        Button toolPick = (Button) findViewById(R.id.toolPickButton);
-
-        toolPick.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final AlertDialog d = new AlertDialog.Builder(MainActivity.this).setView(R.layout.tool_picker).create();
-                d.show();
-
-                ((RadioGroup) d.findViewById(R.id.radioGroupTool)).setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
-                        if(i == R.id.radioButtonPen){
-                            System.out.println("PEN SELECTED");
-                        }
-                    }
-                });
-            }
-        });
-        */
-        //AlertDialog dialog = new AlertDialog.Builder(this).setView()
+    // FIXME: 17.07.2017 This is retarded
+    void loadFragment(FRAGMENT fragment){
+        switch (fragment){
+            case GALLERY:
+                GalleryFragment gallery = (GalleryFragment) fragmentManager.findFragmentByTag("Gallery");
+                if(gallery==null){
+                    gallery = new GalleryFragment();
+                    //fragmentManager.beginTransaction().add(R.id.container, gallery, "Gallery").commit();
+                    System.out.println("created gallery");
+                }
+                    fragmentManager.beginTransaction().replace(R.id.container, gallery, "Gallery").commit();
+                break;
+            case TEST:
+                TestFrag test = (TestFrag) fragmentManager.findFragmentByTag("Test");
+                if(test==null){
+                    test = new TestFrag();
+                    //fragmentManager.beginTransaction().add(R.id.container, test, "Test").commit();
+                    System.out.println("created test");
+                }
+                    fragmentManager.beginTransaction().replace(R.id.container, test, "Test").commit();
+                break;
+        }
     }
 }
