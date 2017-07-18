@@ -77,14 +77,16 @@
 
     <Button
         android:id="@+id/cursorAction"
-        android:layout_width="wrap_content"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/ninepatchbg"
+        android:layout_above="@+id/clear"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/selector2"
         android:text="@string/cursor_action"
         android:textColor="@color/colorAccent"
         android:textSize="24sp"
-        android:layout_above="@+id/undo"
-        android:layout_alignParentStart="true" />
+        android:visibility="gone" />
 
     <com.af.pxl.ToolPickView
         android:id="@+id/currentTool"
@@ -109,21 +111,5 @@
         android:layout_centerVertical="true"
         android:text="Move"
         app:srcCompat="@drawable/move" />
-
-    <Button
-        android:id="@+id/savepalette"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/cursorAction"
-        android:layout_alignParentStart="true"
-        android:text="SAVE PALETTE" />
-
-    <Button
-        android:id="@+id/loadpalette"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/savepalette"
-        android:layout_alignParentStart="true"
-        android:text="LOAD PALETTE" />
 
 </RelativeLayout>

@@ -2,6 +2,8 @@ package com.af.pxl;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.view.View;
+import android.view.Window;
 import android.widget.SeekBar;
 
 /**
@@ -32,6 +34,19 @@ class ColorPicker {
         this.colorCircle = colorCircle;
 
         setStartColor(currentColor);
+        initialize();
+    }
+
+    ColorPicker(Window colorPickerView, int startColor){
+        hueView = (ColorPickerView) colorPickerView.findViewById(R.id.colorPickerHue);
+        hueBar = (SeekBar) colorPickerView.findViewById(R.id.seekBarHue);
+        saturationView = (ColorPickerView) colorPickerView.findViewById(R.id.colorPickerSat);
+        saturationBar = (SeekBar) colorPickerView.findViewById(R.id.seekBarSat);
+        valueView = (ColorPickerView) colorPickerView.findViewById(R.id.colorPickerVal);
+        valueBar = (SeekBar) colorPickerView.findViewById(R.id.seekBarVal);
+        colorCircle = (ColorCircle) colorPickerView.findViewById(R.id.newColor);
+
+        setStartColor(startColor);
         initialize();
     }
 

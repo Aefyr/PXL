@@ -13,6 +13,8 @@ import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 
+import com.af.pxl.Palettes.Palette2;
+
 import java.util.ArrayDeque;
 
 /**
@@ -111,6 +113,12 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
         updateColorCircle();
     }
 
+    void setSymmetryEnabled(boolean enabled, SymmetryType type){
+        symmetry = enabled;
+        symmetryType = type;
+        superPencil.symmetryUpdate();
+    }
+
     //Utility methods
     Bitmap gridB;
     Canvas gridC;
@@ -118,7 +126,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
     float[] p = {0, 0};
     void drawGrid(){
         gridC.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-        gridP.setStrokeWidth((int)(pixelScale/10));
+        gridP.setStrokeWidth((int)Utils.clamp(pixelScale/20, 1, 999));
 
         p[0] = 0;
         p[1] = 0;
@@ -589,7 +597,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
                 if(showFps){
                     String a = 1000/deltaTime+" fps.";
                     paint.getTextBounds(a, 0, a.length(), bounds);
-                    canvas.drawText(a, getWidth()-bounds.width()*2, bounds.height()*2, textPaint);
+                    canvas.drawText(a, getWidth()-bounds.width()*2, bounds.height()*2+256, textPaint);
                 }
 
                 //Highlight the pixel we'll draw on with cursorPencil

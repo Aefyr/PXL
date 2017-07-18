@@ -1,4 +1,4 @@
-package com.af.pxl;
+package com.af.pxl.Palettes;
 
 import java.util.ArrayList;
 
@@ -19,19 +19,21 @@ public class Palette2 {
 
     OnPaletteChangeListener listener;
 
-    Palette2(String name , int capacity, int initialColor){
+    public Palette2(String name, int capacity, int initialColor, boolean wasLoaded){
         this.name = name;
         colors = new ArrayList<>();
         colors.add(initialColor);
+        if(!wasLoaded)
+            autoSave();
 
         this.capacity = capacity;
     }
 
-    int getSelectedColorIndex(){
+    public int getSelectedColorIndex(){
         return selectedColorIndex;
     }
 
-    int getSelectedColor(){
+    public int getSelectedColor(){
         return colors.get(selectedColorIndex);
     }
 
@@ -41,21 +43,23 @@ public class Palette2 {
         listenerEvent();
     }
 
-    void editColor(int index, int newValue){
+    public void editColor(int index, int newValue){
         if(index>=colors.size()||newValue == colors.get(index))
             return;
         colors.set(index, newValue);
         listenerEvent();
+        autoSave();
     }
 
-    int getColor(int index){
+    public int getColor(int index){
         return colors.get(index);
     }
 
-    void addColor(int color){
+    public void addColor(int color){
         if(!isFull())
             colors.add(color);
         listenerEvent();
+        autoSave();
     }
 
     void removeColor(int index){
@@ -65,7 +69,7 @@ public class Palette2 {
         listenerEvent();
     }
 
-    void colorPickToolWasUsed(int pickedColor){
+    public void colorPickToolWasUsed(int pickedColor){
         int index = colors.indexOf(pickedColor);
         if(index == -1) {
             addColor(pickedColor);
@@ -74,7 +78,7 @@ public class Palette2 {
             setSelectedColor(index);
     }
 
-    String getName(){
+    public String getName(){
         return name;
     }
 
@@ -86,7 +90,7 @@ public class Palette2 {
         return colors.size();
     }
 
-    boolean isFull(){
+    public boolean isFull(){
         return colors.size()>=capacity;
     }
 
@@ -97,6 +101,10 @@ public class Palette2 {
     void listenerEvent(){
         if(listener!=null)
             listener.paletteChanged();
+    }
+
+    private void autoSave(){
+        PaletteUtils.savePalette(this);
     }
 
 }

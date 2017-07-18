@@ -1,13 +1,12 @@
-package com.af.pxl;
+package com.af.pxl.Palettes;
 
 import android.content.Context;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.ArrayList;
 
 /**
  * Created by Aefyr on 17.07.2017.
@@ -18,7 +17,7 @@ public class PaletteUtils {
     private static String palettesPath;
     private static final String EXTENSION = ".pxlpalette";
 
-    static void initialize(Context c){
+    public static void initialize(Context c){
         palettesPath = c.getFilesDir()+"/palettes";
         File f = new File(palettesPath);
 
@@ -27,7 +26,7 @@ public class PaletteUtils {
         }
     }
 
-    static boolean savePalette(Palette2 palette){
+    public static boolean savePalette(Palette2 palette){
         File path = new File(palettesPath, palette.getName()+EXTENSION);
 
         if(!path.exists()){
@@ -60,7 +59,7 @@ public class PaletteUtils {
         }
     }
 
-    static Palette2 loadPalette(String name){
+    public static Palette2 loadPalette(String name){
         File path = new File(palettesPath, name+EXTENSION);
 
         try(FileReader reader = new FileReader(path)){
@@ -73,9 +72,10 @@ public class PaletteUtils {
             String[] colors = builder.toString().split(",");
             System.out.println("last color: "+colors[colors.length-1]);
 
-            Palette2 palette = new Palette2(name, 16, Integer.parseInt(colors[0]));
+            Palette2 palette = new Palette2(name, 16, Integer.parseInt(colors[0]), true);
+            ArrayList<Integer> paletteColors = palette.getColors();
             for(c=1; c<colors.length; c++){
-                palette.addColor(Integer.parseInt(colors[c]));
+                paletteColors.add(Integer.parseInt(colors[c]));
             }
 
             System.out.println("Palette was successfully loaded!");
@@ -86,5 +86,19 @@ public class PaletteUtils {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static ArrayList<String> getSavedPalettes(){
+        ArrayList<String> names = new ArrayList<>();
+
+        File file = new File(palettesPath);
+
+        for(File child:file.listFiles()){
+            String name = child.getName();
+            name = name.substring(0, name.length()-EXTENSION.length());
+            names.add(name);
+        }
+
+        return names;
     }
 }

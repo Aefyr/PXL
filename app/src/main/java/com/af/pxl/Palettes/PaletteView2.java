@@ -1,15 +1,17 @@
-package com.af.pxl;
+package com.af.pxl.Palettes;
 
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
+
+import com.af.pxl.R;
+import com.af.pxl.Utils;
 
 /**
  * Created by Aefyr on 10.07.2017.
@@ -103,9 +105,13 @@ public class PaletteView2 extends View implements Palette2.OnPaletteChangeListen
         return linesDisplayed != linesCount;
     }
 
-    void setPalette(Palette2 palette){
+    private boolean firstPalette = true;
+    public void setPalette(Palette2 palette){
         this.palette = palette;
         palette.setOnPaletteChangeListener(this);
+        if(!firstPalette)
+            reCalculate(getWidth(), getHeight());
+        firstPalette = false;
         invalidate();
     }
 

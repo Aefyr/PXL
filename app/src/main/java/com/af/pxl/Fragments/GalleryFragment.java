@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.af.pxl.DrawingActivity;
 import com.af.pxl.LegacyActivity;
 import com.af.pxl.R;
 
@@ -33,7 +34,7 @@ public class GalleryFragment extends Fragment {
         view.findViewById(R.id.saveme).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getActivity(), LegacyActivity.class);
+                Intent i = new Intent(getActivity(), DrawingActivity.class);
                 startActivity(i);
                 getActivity().finish();
             }

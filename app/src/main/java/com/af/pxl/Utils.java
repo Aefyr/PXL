@@ -15,7 +15,7 @@ import java.io.IOException;
  * Created by Aefyr on 01.07.2017.
  */
 
-class Utils {
+public class Utils {
 
 
     static float clamp(float x, float min, float max){
@@ -28,7 +28,7 @@ class Utils {
         return (float) (Math.sqrt(Math.pow(x1-x2, 2)+ Math.pow(y1-y2, 2)));
     }
 
-    static int invertColor(int color){
+    public static int invertColor(int color){
         return Color.rgb(255-Color.red(color), 255-Color.green(color), 255 - Color.blue(color));
     }
 

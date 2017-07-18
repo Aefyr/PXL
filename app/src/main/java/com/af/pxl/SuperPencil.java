@@ -1,5 +1,6 @@
 package com.af.pxl;
 
+import android.graphics.Matrix;
 import android.graphics.Path;
 
 /**
@@ -8,12 +9,16 @@ import android.graphics.Path;
 
 public class SuperPencil {
     private AdaptivePixelSurface aps;
+    Matrix mirrorMatrix;
 
     SuperPencil(AdaptivePixelSurface adaptivePixelSurface){
         aps = adaptivePixelSurface;
         path = new Path();
         mirroredPath = new Path();
+        mirrorMatrix = new Matrix();
     }
+
+    boolean instaDots = true;
 
     private boolean drawing = false;
     private Path path;
@@ -32,14 +37,17 @@ public class SuperPencil {
         path.moveTo(sX, sY);
         nX = sX;
         nY = sY;
+
+        aps.canvasHistory.startHistoricalChange();
+
+        aps.pixelCanvas.drawPoint(sX, sY, aps.paint);
+
         if(aps.symmetry){
             calculateSymmetricalCanvasXY();
             mirroredPath.reset();
-            mirroredPath.moveTo(aSX, aSY);
-            aNX = aSX;
-            aNY = aSY;
+            aps.pixelCanvas.drawPoint(aSX, aSY, aps.paint);
         }
-        aps.canvasHistory.startHistoricalChange();
+
         drawing = true;
     }
 
@@ -51,15 +59,24 @@ public class SuperPencil {
         sY = y;
         calculateCanvasXY();
 
-        path.quadTo(nX, nY, (sX+nX)/2f, (sY+nY)/2f);
+        if(aps.cursorMode)
+            path.lineTo(sX, sY);
+        else
+            path.quadTo(nX, nY, (sX+nX)/2f, (sY+nY)/2f);
+
         nX = sX;
         nY = sY;
 
+        if(aps.cursorMode&&instaDots){
+            aps.pixelCanvas.drawPoint(sX, sY,aps.paint);
+        }
+
         if(aps.symmetry){
-            calculateSymmetricalCanvasXY();
-            mirroredPath.quadTo(aNX, aNY, (aSX+aNX)/2f, (aSY+aNY)/2f);
-            aNX = aSX;
-            aNY = aSY;
+            if(aps.cursorMode&&instaDots) {
+                calculateSymmetricalCanvasXY();
+                aps.pixelCanvas.drawPoint(aSX, aSY,aps.paint);
+            }
+            path.transform(mirrorMatrix, mirroredPath);
             aps.pixelCanvas.drawPath(mirroredPath, aps.paint);
         }
 
@@ -74,12 +91,20 @@ public class SuperPencil {
         sX = x;
         sY = y;
         calculateCanvasXY();
+
+        path.lineTo(sX, sY);
+        path.setLastPoint(sX, sY);
+        aps.pixelCanvas.drawPath(path, aps.paint);
+        aps.pixelCanvas.drawPoint(sX, sY, aps.paint);
+
         if(aps.symmetry){
+            path.transform(mirrorMatrix, mirroredPath);
+            aps.pixelCanvas.drawPath(mirroredPath, aps.paint);
             calculateSymmetricalCanvasXY();
-            aps.pixelCanvas.drawPoint(aSX, aSY, aps.paint);
+            aps.pixelCanvas.drawPoint(sX, sY, aps.paint);
             mirroredPath.reset();
         }
-        aps.pixelCanvas.drawPoint(sX, sY, aps.paint);
+
         aps.canvasHistory.completeHistoricalChange();
         path.reset();
         drawing = false;
@@ -110,10 +135,11 @@ public class SuperPencil {
         aps.pixelMatrix.mapPoints(p);
         sX = (sX-p[0])/aps.pixelScale;
         sY = (sY-p[1])/aps.pixelScale;
+
     }
 
-    private float aSX, aSY, aNX, aNY;
     private Path mirroredPath;
+    private float aSX, aSY;
     private void calculateSymmetricalCanvasXY(){
         aSX = sX;
         aSY = sY;
@@ -127,5 +153,23 @@ public class SuperPencil {
             if(sY>aps.pixelHeight)
                 aSY = -aSY;
         }
+
+    }
+
+    void symmetryUpdate(){
+        if(!aps.symmetry)
+            return;
+        if(aps.symmetryType== AdaptivePixelSurface.SymmetryType.HORIZONTAL) {
+            float[] src = {0, 0, 0, aps.pixelHeight, aps.pixelWidth, 0, aps.pixelWidth, aps.pixelHeight};
+            float[] trgt = {aps.pixelWidth, 0, aps.pixelWidth, aps.pixelHeight, 0, 0, 0, aps.pixelHeight};
+            mirrorMatrix.setPolyToPoly(src, 0, trgt, 0, 4);
+            return;
+        }
+        if(aps.symmetryType == AdaptivePixelSurface.SymmetryType.VERTICAL){
+            float[] src = {0, 0, 0, aps.pixelHeight, aps.pixelWidth, 0, aps.pixelWidth, aps.pixelHeight};
+            float[] trgt = {0, aps.pixelHeight, 0,0, aps.pixelWidth, aps.pixelHeight, aps.pixelWidth, 0};
+            mirrorMatrix.setPolyToPoly(src, 0, trgt, 0, 4);
+        }
+
     }
 }

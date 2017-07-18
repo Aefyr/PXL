@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity
 
         //Fragments
         fragmentManager = getSupportFragmentManager();
+
+        loadFragment(FRAGMENT.GALLERY);
     }
 
     @Override

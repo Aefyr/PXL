@@ -4,17 +4,11 @@
     android:layout_width="wrap_content"
     android:layout_height="match_parent">
 
-    <com.af.pxl.PaletteView
-        android:id="@+id/paletteView"
-        android:layout_width="wrap_content"
-        android:layout_height="64dp"
-        android:layout_centerHorizontal="true"
-        android:visibility="gone"/>
-
-    <com.af.pxl.PaletteView2
+    <com.af.pxl.Palettes.PaletteView2
         android:id="@+id/pv2"
         android:layout_width="match_parent"
         android:layout_height="64dp"
+        android:layout_below="@+id/pvSelectPalette"
         android:layout_centerHorizontal="true"
         app:gapBetweenColors="8dp"
         app:sizeOfColorX="48dp"
@@ -46,4 +40,28 @@
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/pv2"
         android:text="Done" />
+
+    <TextView
+        android:id="@+id/paletteName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/pv2"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/pvSelectPalette"
+        android:gravity="center_vertical"
+        android:paddingStart="8dp"
+        android:text="Palette Name"
+        android:textColor="@color/colorThumbOutline"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/pvSelectPalette"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:text="Select Palette" />
 </RelativeLayout>

@@ -2,7 +2,6 @@ package com.af.pxl;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -12,12 +11,17 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.SeekBar;
+import android.widget.TextView;
+
+import com.af.pxl.Palettes.Palette2;
+import com.af.pxl.Palettes.PaletteUtils;
+import com.af.pxl.Palettes.PaletteView2;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class DrawingActivity extends AppCompatActivity implements AdaptivePixelSurface.OnSpecialToolUseListener{
 
@@ -58,19 +62,6 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
 
         //PALETTES
         PaletteUtils.initialize(this);
-        findViewById(R.id.savepalette).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PaletteUtils.savePalette(aps.palette);
-            }
-        });
-
-        findViewById(R.id.loadpalette).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                aps.setPalette(PaletteUtils.loadPalette("testPalette"));
-            }
-        });
 
     }
 
@@ -96,14 +87,17 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
             }
         });*/
 
-        aps.setPalette(new Palette2("testPalette",16, Color.WHITE));
+        aps.setPalette(new Palette2("testPalette",16, Color.WHITE, true));
         colorPickButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final AlertDialog d = new AlertDialog.Builder(DrawingActivity.this).setView(R.layout.palette).setTitle(aps.palette.getName()).create();
+                final AlertDialog d = new AlertDialog.Builder(DrawingActivity.this).setView(R.layout.palette).create();
                 d.show();
-                PaletteView2 paletteView = ((PaletteView2)d.findViewById(R.id.pv2));
+                final PaletteView2 paletteView = ((PaletteView2)d.findViewById(R.id.pv2));
                 paletteView.setPalette(aps.palette);
+                PaletteUtils.getSavedPalettes();
+
+                ((TextView)d.findViewById(R.id.paletteName)).setText(aps.palette.getName());
 
                 d.findViewById(R.id.pvAdd).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -112,11 +106,9 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                             Utils.toaster(DrawingActivity.this, "Palette is full!");
                             return;
                         }
-                        final AlertDialog d = new AlertDialog.Builder(DrawingActivity.this).setView(R.layout.color_picker).create();
+                        final AlertDialog d = new AlertDialog.Builder(DrawingActivity.this).setView(R.layout.color_picker).setTitle("Add color").create();
                         d.show();
-                        colorPicker = new ColorPicker((ColorPickerView) d.findViewById(R.id.colorPickerHue),(SeekBar) d.findViewById(R.id.seekBarHue),
-                                (ColorPickerView) d.findViewById(R.id.colorPickerSat), (SeekBar) d.findViewById(R.id.seekBarSat), (ColorPickerView) d.findViewById(R.id.colorPickerVal),
-                                (SeekBar) d.findViewById(R.id.seekBarVal), (ColorCircle) d.findViewById(R.id.newColor), Color.RED);
+                        colorPicker = new ColorPicker(d.getWindow(), Color.RED);
                         (d.findViewById(R.id.colorPickButton)).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -142,11 +134,9 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                 d.findViewById(R.id.pvEdit).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        final AlertDialog d = new AlertDialog.Builder(DrawingActivity.this).setView(R.layout.color_picker).create();
+                        final AlertDialog d = new AlertDialog.Builder(DrawingActivity.this).setView(R.layout.color_picker).setTitle("Edit color").create();
                         d.show();
-                        colorPicker = new ColorPicker((ColorPickerView) d.findViewById(R.id.colorPickerHue),(SeekBar) d.findViewById(R.id.seekBarHue),
-                                (ColorPickerView) d.findViewById(R.id.colorPickerSat), (SeekBar) d.findViewById(R.id.seekBarSat), (ColorPickerView) d.findViewById(R.id.colorPickerVal),
-                                (SeekBar) d.findViewById(R.id.seekBarVal), (ColorCircle) d.findViewById(R.id.newColor), aps.palette.getSelectedColor());
+                        colorPicker = new ColorPicker(d.getWindow(), aps.palette.getSelectedColor());
                         (d.findViewById(R.id.colorPickButton)).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -156,6 +146,46 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                                 colorPicker = null;
                             }
                         });
+                    }
+                });
+
+                d.findViewById(R.id.pvSelectPalette).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String[] options = {"Load Palette", "New Palette"};
+                        final AlertDialog da = new AlertDialog.Builder(DrawingActivity.this).setItems(options, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                if(i==0){
+                                    ArrayList<String> namesAL = PaletteUtils.getSavedPalettes();
+                                    final String[] names = namesAL.toArray(new String[namesAL.size()]);
+
+                                    AlertDialog dia = new AlertDialog.Builder(DrawingActivity.this).setItems(names, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            aps.setPalette(PaletteUtils.loadPalette(names[i]));
+                                            ((TextView)d.findViewById(R.id.paletteName)).setText(aps.palette.getName());
+                                            paletteView.setPalette(aps.palette);
+                                        }
+                                    }).create();
+                                    dia.show();
+
+                                }else if(i==1){
+                                    final AlertDialog dialog = new AlertDialog.Builder(DrawingActivity.this).setTitle("Create new palette").setView(R.layout.edit_text).create();
+                                    dialog.show();
+                                    dialog.findViewById(R.id.okButton).setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            aps.setPalette(new Palette2(((EditText)dialog.findViewById(R.id.editText)).getText().toString(), 16, Color.RED, false));
+                                            ((TextView)d.findViewById(R.id.paletteName)).setText(aps.palette.getName());
+                                            paletteView.setPalette(aps.palette);
+                                            dialog.cancel();
+                                        }
+                                    });
+                                }
+                            }
+                        }).create();
+                        da.show();
                     }
                 });
 
@@ -249,19 +279,17 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
             public void onItemClicked(int id) {
                 switch (id){
                     case  0:
-                        aps.symmetry = false;
+                        aps.setSymmetryEnabled(false, AdaptivePixelSurface.SymmetryType.HORIZONTAL);
                         symmetry.setImageResource(R.drawable.symmetryoff);
                         symmetryModePickView.setVisibility(View.GONE);
                         break;
                     case 1:
-                        aps.symmetry = true;
-                        aps.symmetryType = AdaptivePixelSurface.SymmetryType.HORIZONTAL;
+                        aps.setSymmetryEnabled(true, AdaptivePixelSurface.SymmetryType.HORIZONTAL);
                         symmetry.setImageResource(R.drawable.symmetryh);
                         symmetryModePickView.setVisibility(View.GONE);
                         break;
                     case 2:
-                        aps.symmetry = true;
-                        aps.symmetryType = AdaptivePixelSurface.SymmetryType.VERTICAL;
+                        aps.setSymmetryEnabled(true, AdaptivePixelSurface.SymmetryType.VERTICAL);
                         symmetry.setImageResource(R.drawable.symmetryv);
                         symmetryModePickView.setVisibility(View.GONE);
                         break;
