@@ -14,6 +14,7 @@ import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 
 import com.af.pxl.Palettes.Palette2;
+import com.af.pxl.Projects.Project;
 
 import java.util.ArrayDeque;
 
@@ -22,6 +23,8 @@ import java.util.ArrayDeque;
  */
 
 public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.Callback {
+
+    Project project;
 
     //Canvas and drawing
     PixelDrawThread pixelDrawThread;
@@ -117,6 +120,15 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
         symmetry = enabled;
         symmetryType = type;
         superPencil.symmetryUpdate();
+    }
+
+    void setProject(Project project){
+        this.project = project;
+        this.pixelWidth = project.pixelWidth;
+        this.pixelHeight = project.pixelHeight;
+        pixelBitmap = project.getBitmap(true);
+        pixelCanvas.setBitmap(pixelBitmap);
+        canvasHistory.setProject(project);
     }
 
     //Utility methods
@@ -230,9 +242,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
         if(pixelDrawThread==null) {
-            pixelScale = getWidth()<getHeight()?getWidth()/pixelWidth:getHeight()/pixelHeight;
-            matrixOffsetX = getWidth() / 2 - ((pixelWidth * pixelScale) / 2);
-            matrixOffsetY = getHeight() / 2 - ((pixelHeight * pixelScale) / 2);
+            centerCanvas();
             pixelDrawThread = new PixelDrawThread(surfaceHolder);
             pixelDrawThread.start();
         }else {
@@ -255,6 +265,12 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
     @Override
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
 
+    }
+
+    void centerCanvas(){
+        pixelScale = getWidth()<getHeight()?getWidth()/pixelWidth:getHeight()/pixelHeight;
+        matrixOffsetX = getWidth() / 2 - ((pixelWidth * pixelScale) / 2);
+        matrixOffsetY = getHeight() / 2 - ((pixelHeight * pixelScale) / 2);
     }
 
 

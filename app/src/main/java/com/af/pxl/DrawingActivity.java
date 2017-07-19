@@ -18,10 +18,10 @@ import android.widget.TextView;
 import com.af.pxl.Palettes.Palette2;
 import com.af.pxl.Palettes.PaletteUtils;
 import com.af.pxl.Palettes.PaletteView2;
+import com.af.pxl.Projects.ProjectsUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class DrawingActivity extends AppCompatActivity implements AdaptivePixelSurface.OnSpecialToolUseListener{
 
@@ -62,6 +62,10 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
 
         //PALETTES
         PaletteUtils.initialize(this);
+
+        if(getIntent().getStringExtra("projectToLoad")!=null){
+            aps.setProject(ProjectsUtils.loadProject(getIntent().getStringExtra("projectToLoad")));
+        }
 
     }
 

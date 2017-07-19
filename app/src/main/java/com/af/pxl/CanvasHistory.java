@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 
+import com.af.pxl.Projects.Project;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -41,13 +43,6 @@ public class CanvasHistory {
         future = new ArrayDeque<>();
         arraySize = bitmap.getWidth()*bitmap.getHeight();
         listeners = new ArrayList<>();
-
-        // FIXME: 14.07.2017
-        //Reload autosave file if exists
-        file = new File(aps.getContext().getFilesDir(), "autosave.pxl");
-        if(file.exists()){
-            Utils.setBitmapPixelsFromOtherBitmap(aps.pixelBitmap, BitmapFactory.decodeFile(file.getAbsolutePath()));
-        }
     }
 
     public void setOnHistoryAvailabilityChangeListener(OnHistoryAvailabilityChangeListener listener){
@@ -172,8 +167,15 @@ public class CanvasHistory {
         saveCanvas();
     }
 
-    private void saveCanvas(){
+    void setProject(Project project){
+        file = new File(project.projectDirectoryPath+"/image.pxl");
+        bitmap = aps.pixelBitmap;
+        arraySize = bitmap.getWidth()*bitmap.getHeight();
+    }
 
+    private void saveCanvas(){
+        if(file==null)
+            return;
 
         try {
             try(FileOutputStream out = new FileOutputStream(file, false)){

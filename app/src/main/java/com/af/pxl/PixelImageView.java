@@ -68,7 +68,7 @@ public class PixelImageView extends View{
 
 
     private Bitmap bitmap;
-    void setImageBitmap(Bitmap bitmap){
+    public void setImageBitmap(Bitmap bitmap){
         this.bitmap = bitmap;
         calculateMatrix();
     }

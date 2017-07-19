@@ -32,7 +32,7 @@ public class Utils {
         return Color.rgb(255-Color.red(color), 255-Color.green(color), 255 - Color.blue(color));
     }
 
-    static void toaster(Context context, String message){
+    public static void toaster(Context context, String message){
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
@@ -42,7 +42,7 @@ public class Utils {
         bitmap.setPixels(pixels, 0, otherBitmap.getWidth(), 0, 0, otherBitmap.getWidth(), otherBitmap.getHeight());
     }
 
-    static boolean saveBitmap(Bitmap bitmap, File path){
+    public static boolean saveBitmap(Bitmap bitmap, File path){
         try(FileOutputStream fileOutputStream = new FileOutputStream(path)){
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
             return true;
