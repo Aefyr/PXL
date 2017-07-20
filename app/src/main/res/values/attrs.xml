@@ -8,7 +8,8 @@
 
     <declare-styleable name="PixelImageView">
         <attr name="image" format="reference"/>
-        <attr name="autoResizeToMax" format="boolean"/>
+        <attr name="imageBackground" format="color"/>
+        <attr name="autoResizeToMax" format="boolean" />
     </declare-styleable>
     <declare-styleable name="SymmetryModePickView">
         <attr name="bitmapSize" format="dimension"/>

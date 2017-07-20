@@ -1,8 +1,6 @@
 package com.af.pxl;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Environment;
 
 import com.af.pxl.Projects.Project;
 
@@ -168,7 +166,7 @@ public class CanvasHistory {
     }
 
     void setProject(Project project){
-        file = new File(project.projectDirectoryPath+"/image.pxl");
+        file = new File(project.projectDirectory +"/image.pxl");
         bitmap = aps.pixelBitmap;
         arraySize = bitmap.getWidth()*bitmap.getHeight();
     }

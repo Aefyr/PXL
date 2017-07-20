@@ -14,6 +14,7 @@ import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 
 import com.af.pxl.Palettes.Palette2;
+import com.af.pxl.Palettes.PaletteUtils;
 import com.af.pxl.Projects.Project;
 
 import java.util.ArrayDeque;
@@ -99,21 +100,17 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
         superPencil = new SuperPencil(this);
     }
 
+    //Setters
     void setColorCircle(ColorCircle colorCircle){
         this.colorCircle = colorCircle;
     }
 
-    private void updateColorCircle(){
-        if(colorCircle!=null){
-            colorCircle.setColor(paint.getColor());
-            colorCircle.invalidate();
-        }
-    }
-
     void setPalette(Palette2 palette){
+        if(project!=null)
+            project.setPalette(palette);
+
         this.palette = palette;
-        paint.setColor(palette.getColor(0));
-        updateColorCircle();
+        paletteUpdated();
     }
 
     void setSymmetryEnabled(boolean enabled, SymmetryType type){
@@ -126,6 +123,8 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
         this.project = project;
         this.pixelWidth = project.pixelWidth;
         this.pixelHeight = project.pixelHeight;
+        this.palette = PaletteUtils.loadPalette(project.palette);
+        paletteUpdated();
         pixelBitmap = project.getBitmap(true);
         pixelCanvas.setBitmap(pixelBitmap);
         canvasHistory.setProject(project);
@@ -177,6 +176,20 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
 
     }
 
+    //Updaters
+    private void paletteUpdated(){
+        paint.setColor(palette.getColor(0));
+        updateColorCircle();
+    }
+
+    private void updateColorCircle(){
+        if(colorCircle!=null){
+            colorCircle.setColor(paint.getColor());
+            colorCircle.invalidate();
+        }
+    }
+
+    //Initializers?
     //TODO Add ability to create custom CursorPencil pointers
     Bitmap cursorPencilPointerBitmap;
     Canvas cursorPencilPointerCanvas;

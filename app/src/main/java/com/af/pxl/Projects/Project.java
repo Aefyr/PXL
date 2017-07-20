@@ -3,8 +3,11 @@ package com.af.pxl.Projects;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import java.io.FileNotFoundException;
+import com.af.pxl.Palettes.Palette2;
+
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 /**
@@ -12,7 +15,7 @@ import java.io.IOException;
  */
 
 public class Project {
-    public String projectDirectoryPath;
+    public File projectDirectory;
     public String name;
     Bitmap image;
 
@@ -22,9 +25,9 @@ public class Project {
     public String palette;
 
 
-    public Project(String name, String projectDirectoryPath){
-        this.name = name;
-        this.projectDirectoryPath = projectDirectoryPath;
+    public Project(File projectDirectory){
+        name = projectDirectory.getName();
+        this.projectDirectory = projectDirectory;
         loadMeta();
     }
 
@@ -32,12 +35,19 @@ public class Project {
         if(image == null) {
             BitmapFactory.Options op = new BitmapFactory.Options();
             op.inMutable = mutable;
-            return image = BitmapFactory.decodeFile(projectDirectoryPath + "/image.pxl", op);
+            return image = BitmapFactory.decodeFile(projectDirectory + "/image.pxl", op);
         }
         return image;
     }
 
-
+    public void setPalette(Palette2 palette){
+        File meta = new File(projectDirectory ,".pxlmeta");
+        try(FileWriter writer = new FileWriter(meta, false)) {
+            writer.write(pixelWidth+","+pixelHeight+","+palette.getName());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public String getResolutionString(){
         return pixelWidth+"x"+pixelHeight;
@@ -46,7 +56,7 @@ public class Project {
     private void loadMeta(){
         StringBuilder builder = new StringBuilder();
 
-        try(FileReader reader = new FileReader(projectDirectoryPath+"/m.pxlmeta")) {
+        try(FileReader reader = new FileReader(projectDirectory +"/.pxlmeta")) {
             int c = reader.read();
             while (c!=-1){
                 builder.append((char)c);

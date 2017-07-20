@@ -69,6 +69,14 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
 
     }
 
+    /*@Override
+    public void onBackPressed() {
+        Intent i = new Intent(this, MainActivity.class);
+        startActivity(i);
+        finish();
+        super.onBackPressed();
+    }*/
+
     ColorPicker colorPicker;
     void tempColorPickInitialize(){
         colorPickButton = (ColorCircle) findViewById(R.id.color);

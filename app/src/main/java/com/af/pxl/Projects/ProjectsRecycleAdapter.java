@@ -24,6 +24,7 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
 
     public interface OnProjectClickListener{
         void onProjectClick(Project project);
+        void onProjectLongClick(int id, Project project);
     }
 
     public void setOnProjectClickListener(OnProjectClickListener listener){
@@ -42,7 +43,7 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         Project p = getItem(position);
         holder.name.setText(p.name);
         holder.resolution.setText(p.getResolutionString());
@@ -50,9 +51,17 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onProjectClickListener.onProjectClick(getItem(position));
+                onProjectClickListener.onProjectClick(getItem(holder.getAdapterPosition()));
             }
         });
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                onProjectClickListener.onProjectLongClick(holder.getAdapterPosition(), getItem(holder.getAdapterPosition()));
+                return true;
+            }
+        });
+
     }
 
     @Override
@@ -62,6 +71,16 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
 
     public Project getItem(int index){
         return projects.get(index);
+    }
+
+    public void addItem(Project project){
+        projects.add(0, project);
+        notifyItemInserted(0);
+    }
+
+    public void removeItem(int index){
+        projects.remove(index);
+        notifyItemRemoved(index);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder{
