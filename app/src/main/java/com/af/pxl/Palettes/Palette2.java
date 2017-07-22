@@ -1,5 +1,7 @@
 package com.af.pxl.Palettes;
 
+import android.graphics.Color;
+
 import java.util.ArrayList;
 
 /**
@@ -52,6 +54,8 @@ public class Palette2 {
     }
 
     public int getColor(int index){
+        if(index>=colors.size())
+            return Color.TRANSPARENT;
         return colors.get(index);
     }
 
@@ -80,6 +84,10 @@ public class Palette2 {
 
     public String getName(){
         return name;
+    }
+
+    public void setName(String name){
+        this.name = name;
     }
 
     ArrayList<Integer> getColors(){

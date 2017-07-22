@@ -17,6 +17,7 @@ import android.view.MenuItem;
 
 import com.af.pxl.Fragments.GalleryFragment;
 import com.af.pxl.Fragments.TestFrag;
+import com.af.pxl.Palettes.PaletteUtils;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity
 
         //Fragments
         fragmentManager = getSupportFragmentManager();
+        PaletteUtils.initialize(this);
 
         loadFragment(FRAGMENT.GALLERY);
     }

@@ -30,5 +30,12 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
-        android:text="96x96" />
+        android:text="Size: 96x96" />
+
+    <TextView
+        android:id="@+id/lastModified"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Last Modified:\n32.02.88 13:37" />
 </LinearLayout>

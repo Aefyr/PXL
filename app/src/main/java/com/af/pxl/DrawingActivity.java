@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.af.pxl.Palettes.Palette2;
 import com.af.pxl.Palettes.PaletteUtils;
 import com.af.pxl.Palettes.PaletteView2;
+import com.af.pxl.Palettes.PaletteView3;
 import com.af.pxl.Projects.ProjectsUtils;
 
 import java.io.File;
@@ -105,7 +106,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
             public void onClick(View view) {
                 final AlertDialog d = new AlertDialog.Builder(DrawingActivity.this).setView(R.layout.palette).create();
                 d.show();
-                final PaletteView2 paletteView = ((PaletteView2)d.findViewById(R.id.pv2));
+                final PaletteView3 paletteView = ((PaletteView3)d.findViewById(R.id.pv2));
                 paletteView.setPalette(aps.palette);
                 PaletteUtils.getSavedPalettes();
 

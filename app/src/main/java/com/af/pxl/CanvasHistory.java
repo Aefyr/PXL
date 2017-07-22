@@ -26,7 +26,7 @@ public class CanvasHistory {
 
     private ArrayList<OnHistoryAvailabilityChangeListener> listeners;
 
-    private File file;
+    private File projectBitmap;
 
     public interface OnHistoryAvailabilityChangeListener {
         void pastAvailabilityChanged(boolean available);
@@ -165,20 +165,21 @@ public class CanvasHistory {
         saveCanvas();
     }
 
+
+    private Project project;
     void setProject(Project project){
-        file = new File(project.projectDirectory +"/image.pxl");
+        this.project = project;
+        projectBitmap = new File(project.projectDirectory +"/image.pxl");
         bitmap = aps.pixelBitmap;
         arraySize = bitmap.getWidth()*bitmap.getHeight();
     }
 
     private void saveCanvas(){
-        if(file==null)
+        if(projectBitmap ==null)
             return;
-
-        try {
-            try(FileOutputStream out = new FileOutputStream(file, false)){
-                aps.pixelBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-            }
+        try(FileOutputStream out = new FileOutputStream(projectBitmap, false)) {
+            aps.pixelBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            project.notifyProjectModified();
         } catch (IOException e) {
             e.printStackTrace();
         }

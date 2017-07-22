@@ -57,10 +57,7 @@ public class ProjectsUtils{
             return false;
 
         File f = new File(projectsFolderDirectory+"/"+name);
-        if(f.exists())
-            return false;
-
-        return true;
+        return (!f.exists());
     }
 
     public static Project createNewProject(String name, int pixelWidth, int pixelHeight, String palette){
@@ -100,6 +97,7 @@ public class ProjectsUtils{
     public static Project renameProject(Project project, String newName){
         File newProjectDirectory = new File(projectsFolderDirectory+"/"+newName);
         project.projectDirectory.renameTo(newProjectDirectory);
+        project.projectDirectory = newProjectDirectory;
         project.name = newName;
         return project;
     }

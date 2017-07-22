@@ -20,6 +20,11 @@
         <item name="android:padding">9dp</item>
     </style>
 
+    <style name="EditTextResolutionInput" parent="Widget.AppCompat.EditText">
+        <item name="android:digits">1234567890</item>
+        <item name="android:inputType">numberSigned</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />

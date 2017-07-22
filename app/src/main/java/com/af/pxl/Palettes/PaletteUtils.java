@@ -2,6 +2,9 @@ package com.af.pxl.Palettes;
 
 import android.content.Context;
 
+import com.af.pxl.R;
+import com.af.pxl.Utils;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -14,11 +17,16 @@ import java.util.ArrayList;
 
 public class PaletteUtils {
 
+    static final String PALETTE_NAME_VALIDITY_PATTERN = "\\w+[A-Za-zА-Яа-я_0-9\\s]*";
+    static String paletteDuplicatePostfix;
+
     private static String palettesPath;
     private static final String EXTENSION = ".pxlpalette";
+    private static final String DEFAULT_PALETTE = "-16711680,-65280,-255";
 
     public static void initialize(Context c){
         palettesPath = c.getFilesDir()+"/palettes";
+        paletteDuplicatePostfix = " "+c.getString(R.string.project_duplicate_postfix);
         File f = new File(palettesPath);
 
         if(!f.exists()){
@@ -82,11 +90,62 @@ public class PaletteUtils {
             return palette;
 
         } catch (IOException e) {
-            System.out.println("Failed to load the palette :(");
+            System.out.println("Failed to load the "+name+" palette, loading default one");
             e.printStackTrace();
-            return null;
+            return defaultPalette();
         }
     }
+
+    public static String renamePalette(Palette2 palette, String newName){
+        File old = new File(palettesPath+"/"+palette.getName()+EXTENSION);
+        old.renameTo(new File(palettesPath+"/"+newName+EXTENSION));
+        palette.setName(newName);
+        return newName;
+    }
+
+    public static String duplicatePalette(Palette2 original){
+        String newPaletteName = original.getName()+paletteDuplicatePostfix;
+        if(!isNameAvailable(newPaletteName)){
+            int a = 1;
+            System.out.println("Loop");
+            while (!isNameAvailable(newPaletteName+" "+a))
+                a++;
+
+            newPaletteName = newPaletteName+" "+a;
+        }
+
+        Utils.copyFileOrDirectory(new File(palettesPath+"/"+original.getName()+EXTENSION), new File(palettesPath+"/"+newPaletteName+EXTENSION));
+        return newPaletteName;
+    }
+
+    public static void deletePalette(Palette2 palette){
+        File p = new File(palettesPath+"/"+palette.getName()+EXTENSION);
+        p.delete();
+    }
+
+    public static boolean isNameAvailable(String name){
+        if(!name.matches(PALETTE_NAME_VALIDITY_PATTERN))
+            return false;
+
+        File f = new File(palettesPath+"/"+name+EXTENSION);
+        return (!f.exists());
+    }
+
+    public static Palette2 defaultPalette(){
+        File defaultPalette = new File(palettesPath+"/Default"+EXTENSION);
+        if(defaultPalette.exists())
+            return loadPalette("Default");
+        try {
+            defaultPalette.createNewFile();
+            FileWriter fileWriter = new FileWriter(defaultPalette);
+            fileWriter.write(DEFAULT_PALETTE);
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return loadPalette("Default");
+    }
+
 
     public static ArrayList<String> getSavedPalettes(){
         ArrayList<String> names = new ArrayList<>();

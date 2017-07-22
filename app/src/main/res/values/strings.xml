@@ -15,16 +15,24 @@
     <string name="cancel">Cancel</string>
     <string name="cursor_action">PXL!</string>
 
+    <!--gallery_item-->
+    <string name="size">Size</string>
+    <string name="last_modified">Last Modified</string>
+
     <!-- BitmapsMergeActivity -->
     <string name="live_preview">Live Preview</string>
     <string name="moving_image_tip">You can move image by dragging it!</string>
 
 
     <!-- Projects options -->
-    <string name="enter_new_name">Enter new name</string>
+    <string name="new_name">New name</string>
     <string name="rename_project">Rename Project</string>
     <string name="delete_project">Delete Project?</string>
     <string name="project_duplicate_postfix">copy</string>
+
+    <!-- Palettes options -->
+    <string name="rename_palette">Rename Palette</string>
+    <string name="delete_palette">Delete Palette?</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

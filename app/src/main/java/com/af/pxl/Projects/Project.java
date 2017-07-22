@@ -17,7 +17,7 @@ import java.io.IOException;
 public class Project {
     public File projectDirectory;
     public String name;
-    Bitmap image;
+    long lastModified;
 
     //Meta
     public int pixelWidth;
@@ -28,25 +28,31 @@ public class Project {
     public Project(File projectDirectory){
         name = projectDirectory.getName();
         this.projectDirectory = projectDirectory;
+        lastModified = projectDirectory.lastModified();
         loadMeta();
     }
 
     public Bitmap getBitmap(boolean mutable){
-        if(image == null) {
-            BitmapFactory.Options op = new BitmapFactory.Options();
-            op.inMutable = mutable;
-            return image = BitmapFactory.decodeFile(projectDirectory + "/image.pxl", op);
-        }
-        return image;
+        BitmapFactory.Options op = new BitmapFactory.Options();
+        op.inMutable = mutable;
+        return BitmapFactory.decodeFile(projectDirectory + "/image.pxl", op);
+
     }
 
     public void setPalette(Palette2 palette){
         File meta = new File(projectDirectory ,".pxlmeta");
         try(FileWriter writer = new FileWriter(meta, false)) {
             writer.write(pixelWidth+","+pixelHeight+","+palette.getName());
+            notifyProjectModified();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void notifyProjectModified(){
+        System.out.println("LastModifiedWas "+projectDirectory.lastModified());
+        System.out.println("Modified Time="+projectDirectory.setLastModified(System.currentTimeMillis()));
+
     }
 
     public String getResolutionString(){

@@ -4,10 +4,10 @@
     android:layout_width="wrap_content"
     android:layout_height="match_parent">
 
-    <com.af.pxl.Palettes.PaletteView2
+    <com.af.pxl.Palettes.PaletteView3
         android:id="@+id/pv2"
-        android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_width="256dp"
+        android:layout_height="256dp"
         android:layout_below="@+id/pvSelectPalette"
         android:layout_centerHorizontal="true"
         app:gapBetweenColors="8dp"

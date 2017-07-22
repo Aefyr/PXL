@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="128dp"
+    android:layout_height="160dp"
+    android:background="@drawable/selector2"
+    android:orientation="vertical"
+    android:padding="4dp">
+
+    <com.af.pxl.Palettes.PalettePreviewView
+        android:id="@+id/palettePreview"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/paletteName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:paddingBottom="16dp"
+        android:text="PaletteName"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:visibility="visible" />
+</LinearLayout>

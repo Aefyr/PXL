@@ -10,7 +10,11 @@ import android.widget.TextView;
 import com.af.pxl.PixelImageView;
 import com.af.pxl.R;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 
 /**
  * Created by Aefyr on 19.07.2017.
@@ -21,6 +25,7 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
     private LayoutInflater inflater;
     private ArrayList<Project> projects;
     private OnProjectClickListener onProjectClickListener;
+    SimpleDateFormat simpleDateFormat;
 
     public interface OnProjectClickListener{
         void onProjectClick(Project project);
@@ -33,7 +38,14 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
 
     public ProjectsRecycleAdapter(Context c, ArrayList<Project> projects){
         inflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        simpleDateFormat = new SimpleDateFormat("dd.MM.yy HH:mm");
         this.projects = projects;
+        Collections.sort(projects, new LastModifiedComparator());
+    }
+
+    public void setItems(ArrayList<Project> projects){
+        this.projects = projects;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -48,6 +60,7 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
         holder.name.setText(p.name);
         holder.resolution.setText(p.getResolutionString());
         holder.preview.setImageBitmap(p.getBitmap(false));
+        holder.lastModified.setText(simpleDateFormat.format(new Date(getItem(position).lastModified)));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -66,6 +79,8 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
 
     @Override
     public int getItemCount() {
+        if(projects==null)
+            return 0;
         return projects.size();
     }
 
@@ -83,15 +98,28 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
         notifyItemRemoved(index);
     }
 
+    class LastModifiedComparator implements Comparator<Project>{
+        @Override
+        public int compare(Project project, Project t1) {
+            if(project.projectDirectory.lastModified()<t1.projectDirectory.lastModified())
+                return 1;
+            if(project.projectDirectory.lastModified()>t1.projectDirectory.lastModified())
+                return -1;
+            return 0;
+        }
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder{
         private PixelImageView preview;
         private TextView name;
         private TextView resolution;
+        private TextView lastModified;
         public ViewHolder(View itemView) {
             super(itemView);
             preview = (PixelImageView) itemView.findViewById(R.id.preview);
             name = (TextView) itemView.findViewById(R.id.name);
             resolution = (TextView) itemView.findViewById(R.id.resolution);
+            lastModified = (TextView) itemView.findViewById(R.id.lastModified);
         }
     }
 
