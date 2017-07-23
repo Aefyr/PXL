@@ -3,7 +3,6 @@ package com.af.pxl.Fragments;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -17,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.Switch;
 
 import com.af.pxl.DrawingActivity;
 import com.af.pxl.Palettes.PalettePickerActivity;
@@ -91,7 +91,7 @@ public class GalleryFragment extends Fragment {
     }
 
     private void initializeFABOnClickListener(View view){
-        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.floatingActionButton2);
+        final FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.floatingActionButton2);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -129,14 +129,14 @@ public class GalleryFragment extends Fragment {
                     public void onClick(View view) {
                         String name = ((EditText)d.findViewById(R.id.name)).getText().toString();
                         if(!ProjectsUtils.isNameAvailable(name)){
-                            Utils.toaster(getContext(), "Project with this name already exists!");
+                            Utils.toaster(getContext(), getString(R.string.incorrect_name));
                             return;
                         }
 
 
                         int width = Integer.parseInt(widthET.getText().toString());
                         int height = Integer.parseInt(heightET.getText().toString());
-                        adapter.addItem(ProjectsUtils.createNewProject(name, width, height, "Default"));
+                        adapter.addItem(ProjectsUtils.createNewProject(name, width, height, "Default", ((Switch)d.findViewById(R.id.transparentBackground)).isChecked()));
                         d.dismiss();
                         openProject(name);
                     }
@@ -195,7 +195,7 @@ public class GalleryFragment extends Fragment {
                     adapter.notifyItemChanged(id);
                     renameDialog.dismiss();
                 }else {
-                    Utils.toaster(getContext(), "Name is incorrect or already in use!");
+                    Utils.toaster(getContext(), getString(R.string.incorrect_name));
                 }
             }
         });

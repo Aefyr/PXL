@@ -95,6 +95,7 @@ class Cursor {
 
         switch (aps.currentTool){
             case PENCIL:
+            case ERASER:
                 aps.superPencil.move(currentX, currentY);
                 break;
             case FLOOD_FILL:
@@ -110,6 +111,7 @@ class Cursor {
     void cursorDown(){
         switch (aps.currentTool){
             case PENCIL:
+            case ERASER:
                 aps.superPencil.startDrawing(currentX, currentY);
                 break;
             case FLOOD_FILL:
@@ -131,6 +133,7 @@ class Cursor {
     void cursorUp(){
         switch (aps.currentTool){
             case PENCIL:
+            case ERASER:
                 aps.superPencil.stopDrawing(currentX, currentY);
                 break;
             case FLOOD_FILL:

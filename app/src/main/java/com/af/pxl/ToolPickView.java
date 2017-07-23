@@ -23,7 +23,7 @@ public class ToolPickView extends View {
     int startWidth, startHeight;
     boolean startGet = false;
 
-    int toolsCount = 4;
+    int toolsCount = 5;
     int currentTool = 0;
 
     int circleColor;
@@ -61,12 +61,13 @@ public class ToolPickView extends View {
         toolBitmapSizeReducedBy = startWidth/3;
         offsetBetweenTools = startWidth/32f;
 
-        tools = new Bitmap[4];
+        tools = new Bitmap[toolsCount];
         Resources res = getResources();
         tools[0] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.pencil), startWidth-toolBitmapSizeReducedBy, startWidth-toolBitmapSizeReducedBy, false);
         tools[1] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.fill), startWidth-toolBitmapSizeReducedBy, startWidth-toolBitmapSizeReducedBy, false);
         tools[2] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.colorpick), startWidth-toolBitmapSizeReducedBy, startWidth-toolBitmapSizeReducedBy, false);
         tools[3] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.colorswap), startWidth-toolBitmapSizeReducedBy, startWidth-toolBitmapSizeReducedBy, false);
+        tools[4] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.eraser), startWidth-toolBitmapSizeReducedBy, startWidth-toolBitmapSizeReducedBy, false);
         circleColor = Color.parseColor("#FFFAFAFA");
         barColor = Color.parseColor("#FFE0E0E0");
         circleBorderColor = Color.parseColor("#FFBDBDBD");
@@ -170,16 +171,19 @@ public class ToolPickView extends View {
             if(aps!=null){
                 switch (currentTool){
                     case 0:
-                        aps.currentTool = AdaptivePixelSurface.Tool.PENCIL;
+                        aps.setTool(AdaptivePixelSurface.Tool.PENCIL);
                         break;
                     case 1:
-                        aps.currentTool = AdaptivePixelSurface.Tool.FLOOD_FILL;
+                        aps.setTool(AdaptivePixelSurface.Tool.FLOOD_FILL);
                         break;
                     case 2:
-                        aps.currentTool = AdaptivePixelSurface.Tool.COLOR_PICK;
+                        aps.setTool(AdaptivePixelSurface.Tool.COLOR_PICK);
                         break;
                     case 3:
-                        aps.currentTool = AdaptivePixelSurface.Tool.COLOR_SWAP;
+                        aps.setTool(AdaptivePixelSurface.Tool.COLOR_SWAP);
+                        break;
+                    case 4:
+                        aps.setTool(AdaptivePixelSurface.Tool.ERASER);
                         break;
                 }
             }

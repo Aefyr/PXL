@@ -2,6 +2,7 @@ package com.af.pxl.Projects;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 
 import com.af.pxl.Palettes.Palette2;
 
@@ -20,9 +21,10 @@ public class Project {
     long lastModified;
 
     //Meta
-    public int pixelWidth;
-    public int pixelHeight;
-    public String palette;
+    public int pixelWidth = 999;
+    public int pixelHeight = 999;
+    public String palette = "Default";
+    public boolean transparentBackground = false;
 
 
     public Project(File projectDirectory){
@@ -35,14 +37,18 @@ public class Project {
     public Bitmap getBitmap(boolean mutable){
         BitmapFactory.Options op = new BitmapFactory.Options();
         op.inMutable = mutable;
-        return BitmapFactory.decodeFile(projectDirectory + "/image.pxl", op);
+        op.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        Bitmap loadedBitmap = BitmapFactory.decodeFile(projectDirectory + "/image.pxl", op);
+        if(transparentBackground)
+            loadedBitmap.setHasAlpha(true);
+        return loadedBitmap;
 
     }
 
     public void setPalette(Palette2 palette){
         File meta = new File(projectDirectory ,".pxlmeta");
         try(FileWriter writer = new FileWriter(meta, false)) {
-            writer.write(pixelWidth+","+pixelHeight+","+palette.getName());
+            writer.write(pixelWidth+","+pixelHeight+","+palette.getName()+","+transparentBackground);
             notifyProjectModified();
         } catch (IOException e) {
             e.printStackTrace();
@@ -78,8 +84,17 @@ public class Project {
 
     private void parseMeta(String rawMeta){
         String[] metaValues = rawMeta.split(",");
-        pixelWidth = Integer.parseInt(metaValues[0]);
-        pixelHeight = Integer.parseInt(metaValues[1]);
-        palette = metaValues[2];
+        if(metaValues.length==0)
+            return;
+            pixelWidth = Integer.parseInt(metaValues[0]);
+        if(metaValues.length==1)
+            return;
+            pixelHeight = Integer.parseInt(metaValues[1]);
+        if(metaValues.length==2)
+            return;
+            palette = metaValues[2];
+        if(metaValues.length==3)
+            return;
+            transparentBackground = Boolean.parseBoolean(metaValues[3]);
     }
 }

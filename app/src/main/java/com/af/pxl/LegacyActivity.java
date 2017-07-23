@@ -67,7 +67,6 @@ public class LegacyActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 aps.setGridEnabled(b);
-                aps.fillMode = b;
             }
         });
 
@@ -93,7 +92,7 @@ public class LegacyActivity extends AppCompatActivity {
                 (d.findViewById(R.id.colorPickButton)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        aps.paint.setColor(Color.HSVToColor(colorPicker.color));
+                        aps.setColor(Color.HSVToColor(colorPicker.color));
                         d.cancel();
                         colorPicker = null;
                     }
@@ -129,13 +128,13 @@ public class LegacyActivity extends AppCompatActivity {
                                 aps.setCursorModeEnabled(false);
                                 break;
                             case 2:
-                                aps.currentTool = AdaptivePixelSurface.Tool.COLOR_PICK;
+                                aps.setTool(AdaptivePixelSurface.Tool.COLOR_PICK);
                                 break;
                             case 3:
-                                aps.currentTool = AdaptivePixelSurface.Tool.PENCIL;
+                                aps.setTool(AdaptivePixelSurface.Tool.PENCIL);
                                 break;
                             case 4:
-                                aps.currentTool = AdaptivePixelSurface.Tool.FLOOD_FILL;
+                                aps.setTool(AdaptivePixelSurface.Tool.FLOOD_FILL);
                                 break;
                         }
                     }

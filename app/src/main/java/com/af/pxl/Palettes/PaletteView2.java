@@ -108,7 +108,7 @@ public class PaletteView2 extends View implements Palette2.OnPaletteChangeListen
     private boolean firstPalette = true;
     public void setPalette(Palette2 palette){
         this.palette = palette;
-        palette.setOnPaletteChangeListener(this);
+        palette.addOnPaletteChangeListener(this);
         if(!firstPalette)
             reCalculate(getWidth(), getHeight());
         firstPalette = false;
@@ -116,10 +116,16 @@ public class PaletteView2 extends View implements Palette2.OnPaletteChangeListen
     }
 
     @Override
-    public void paletteChanged() {
+    public void onColorSelection(int selectedColor) {
+
+    }
+
+    @Override
+    public void onPaletteChanged() {
         reCalculate(getWidth(), getHeight());
         invalidate();
     }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {

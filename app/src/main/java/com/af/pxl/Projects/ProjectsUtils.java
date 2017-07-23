@@ -60,7 +60,7 @@ public class ProjectsUtils{
         return (!f.exists());
     }
 
-    public static Project createNewProject(String name, int pixelWidth, int pixelHeight, String palette){
+    public static Project createNewProject(String name, int pixelWidth, int pixelHeight, String palette, boolean transparentBackground){
         File newProjectDirectory = new File(projectsFolderDirectory+"/"+name);
         System.out.println("mkdirs="+newProjectDirectory.mkdir());
 
@@ -71,14 +71,16 @@ public class ProjectsUtils{
             e.printStackTrace();
         }
         try(FileWriter fileWrite = new FileWriter(meta)){
-            fileWrite.write(pixelWidth+","+pixelHeight+","+palette);
+            fileWrite.write(pixelWidth+","+pixelHeight+","+palette+","+transparentBackground);
         }catch (IOException e){
             e.printStackTrace();
         }
         File bitmapPath = new File(newProjectDirectory, "image.pxl");
         Bitmap b = Bitmap.createBitmap(pixelWidth, pixelHeight, Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(b);
-        c.drawColor(Color.WHITE);
+        if(!transparentBackground) {
+            Canvas c = new Canvas(b);
+            c.drawColor(Color.WHITE);
+        }
         Utils.saveBitmap(b, bitmapPath);
         b.recycle();
         return new Project(newProjectDirectory);

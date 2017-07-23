@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.PorterDuff;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -17,6 +18,7 @@ public class BitmapsMergeActivity extends AppCompatActivity {
 
 
     private int mode;
+    private boolean transparentBackground;
     private PixelImageView piv;
     private Bitmap b;
     private Bitmap image;
@@ -33,6 +35,7 @@ public class BitmapsMergeActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mode = intent.getIntExtra("mode", 999);
         String path = intent.getStringExtra("path");
+        transparentBackground = intent.getBooleanExtra("transparentBackground", false);
 
         piv = (PixelImageView) findViewById(R.id.pxlImageView);
 
@@ -91,7 +94,10 @@ public class BitmapsMergeActivity extends AppCompatActivity {
 
     void redraw(){
         m.setTranslate(offsetX, offsetY);
-        bC.drawColor(Color.WHITE);
+        if(!transparentBackground)
+            bC.drawColor(Color.WHITE);
+        else
+            bC.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
         bC.drawBitmap(image, m, null);
         piv.invalidate();
     }

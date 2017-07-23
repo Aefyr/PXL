@@ -15,11 +15,12 @@ public class Palette2 {
     private int selectedColorIndex;
     private String name;
 
-    interface OnPaletteChangeListener{
-        void paletteChanged();
+    public interface OnPaletteChangeListener{
+        void onColorSelection(int selectedColor);
+        void onPaletteChanged();
     }
 
-    OnPaletteChangeListener listener;
+    ArrayList<OnPaletteChangeListener> listeners;
 
     public Palette2(String name, int capacity, int initialColor, boolean wasLoaded){
         this.name = name;
@@ -29,6 +30,7 @@ public class Palette2 {
             autoSave();
 
         this.capacity = capacity;
+        listeners = new ArrayList<>(2);
     }
 
     public int getSelectedColorIndex(){
@@ -40,9 +42,11 @@ public class Palette2 {
     }
 
     void setSelectedColor(int index){
-        if(index<colors.size())
-            selectedColorIndex = index;
-        listenerEvent();
+        if(index>=colors.size())
+            return;
+        selectedColorIndex = index;
+        for(OnPaletteChangeListener listener: listeners)
+            listener.onColorSelection(colors.get(index));
     }
 
     public void editColor(int index, int newValue){
@@ -73,13 +77,13 @@ public class Palette2 {
         listenerEvent();
     }
 
-    public void colorPickToolWasUsed(int pickedColor){
+    public boolean colorPickToolWasUsed(int pickedColor){
         int index = colors.indexOf(pickedColor);
-        if(index == -1) {
-            addColor(pickedColor);
-            setSelectedColor(getSelectedColorIndex()+1);
-        }else
+        if(index != -1) {
             setSelectedColor(index);
+            return true;
+        }
+        return false;
     }
 
     public String getName(){
@@ -102,13 +106,22 @@ public class Palette2 {
         return colors.size()>=capacity;
     }
 
-    void setOnPaletteChangeListener(OnPaletteChangeListener listener){
-        this.listener = listener;
+    public void addOnPaletteChangeListener(OnPaletteChangeListener listener){
+        listeners.add(listener);
     }
 
-    void listenerEvent(){
-        if(listener!=null)
-            listener.paletteChanged();
+    public void removeOnPaletteChangedListener(OnPaletteChangeListener listener){
+        if(listeners.contains(listener))
+            listeners.remove(listener);
+    }
+
+    private void listenerEvent(){
+        System.out.println("LISTENERS COUNT: "+listeners.size());
+        for(int i = 0; i<listeners.size(); i++) {
+            listeners.get(i).onPaletteChanged();
+            System.out.println("LISTENERS COUNT: "+listeners.size()+", i="+i);
+        }
+
     }
 
     private void autoSave(){

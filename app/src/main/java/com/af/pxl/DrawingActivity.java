@@ -40,6 +40,11 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         setContentView(R.layout.activity_drawing);
 
         aps = (AdaptivePixelSurface) findViewById(R.id.aps);
+
+        if(getIntent().getStringExtra("projectToLoad")!=null){
+            aps.setProject(ProjectsUtils.loadProject(getIntent().getStringExtra("projectToLoad")));
+        }
+
         aps.setColorCircle((ColorCircle)findViewById(R.id.color));
         aps.setOnSpecialToolUseListener(this);
 
@@ -64,9 +69,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         //PALETTES
         PaletteUtils.initialize(this);
 
-        if(getIntent().getStringExtra("projectToLoad")!=null){
-            aps.setProject(ProjectsUtils.loadProject(getIntent().getStringExtra("projectToLoad")));
-        }
+
 
     }
 
@@ -78,7 +81,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         super.onBackPressed();
     }*/
 
-    ColorPicker colorPicker;
+    private ColorPicker colorPicker;
     void tempColorPickInitialize(){
         colorPickButton = (ColorCircle) findViewById(R.id.color);
         /*palette = new Palette();
@@ -100,7 +103,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
             }
         });*/
 
-        aps.setPalette(new Palette2("testPalette",16, Color.WHITE, true));
+        aps.setPalette(PaletteUtils.loadPalette(aps.project.palette));
         colorPickButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -139,7 +142,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                     @Override
                     public void onClick(View view) {
                         colorPickButton.setColor(aps.palette.getSelectedColor());
-                        aps.paint.setColor(aps.palette.getSelectedColor());
+                        aps.setColor(aps.palette.getSelectedColor());
                         d.cancel();
                     }
                 });
@@ -206,7 +209,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                     @Override
                     public void onCancel(DialogInterface dialogInterface) {
                         colorPickButton.setColor(aps.palette.getSelectedColor());
-                        aps.paint.setColor(aps.palette.getSelectedColor());
+                        aps.setColor(aps.palette.getSelectedColor());
                     }
                 });
             }
@@ -406,6 +409,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         Intent i = new Intent(DrawingActivity.this, BitmapsMergeActivity.class);
         i.putExtra("path", t.getAbsolutePath());
         i.putExtra("mode", 1);
+        i.putExtra("transparentBackground", aps.project.transparentBackground);
         aps.canvasHistory.startHistoricalChange();
         startActivityForResult(i, 1337);
     }

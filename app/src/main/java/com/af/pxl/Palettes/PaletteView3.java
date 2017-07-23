@@ -34,6 +34,7 @@ public class PaletteView3 extends View implements Palette2.OnPaletteChangeListen
     public void setPalette(Palette2 palette){
         this.palette = palette;
         loadColorsFromPalette();
+        palette.addOnPaletteChangeListener(this);
         invalidate();
     }
 
@@ -43,7 +44,6 @@ public class PaletteView3 extends View implements Palette2.OnPaletteChangeListen
             colors[i] = palette.getColor(i);
         }
         bitmap.setPixels(colors, 0, 4, 0, 0, 4, 4);
-        palette.setOnPaletteChangeListener(this);
     }
 
     void initialize(){
@@ -114,7 +114,19 @@ public class PaletteView3 extends View implements Palette2.OnPaletteChangeListen
     }
 
     @Override
-    public void paletteChanged() {
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if(palette!=null)
+            palette.removeOnPaletteChangedListener(this);
+    }
+
+    @Override
+    public void onColorSelection(int selectedColor) {
+
+    }
+
+    @Override
+    public void onPaletteChanged() {
         loadColorsFromPalette();
         invalidate();
     }

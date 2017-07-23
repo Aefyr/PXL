@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -23,13 +24,14 @@ import java.util.ArrayDeque;
  * Created by Aefyr on 27.06.2017.
  */
 
-public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.Callback {
+public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.Callback, Palette2.OnPaletteChangeListener {
 
     Project project;
 
     //Canvas and drawing
     PixelDrawThread pixelDrawThread;
     Paint paint;
+    int currentColor;
 
     int pixelWidth = 128;
     int pixelHeight = 128;
@@ -44,7 +46,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
 
     //Tools and utils
     enum Tool {
-        PENCIL, FLOOD_FILL, COLOR_PICK, COLOR_SWAP
+        PENCIL, FLOOD_FILL, COLOR_PICK, COLOR_SWAP, ERASER
     }
     Tool currentTool = Tool.PENCIL;
 
@@ -53,10 +55,8 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
     CursorPencil cursorPencil;
     CanvasHistory canvasHistory;
 
-    //TEST
     Cursor cursor;
     boolean cursorMode = false;
-    boolean fillMode = false;
     SuperPencil superPencil;
 
     //Symmetry
@@ -101,16 +101,62 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
     }
 
     //Setters
+    void setTool(Tool tool){
+        if(project.transparentBackground)
+            paint.setXfermode(null);
+        paint.setColor(currentColor);
+        switch (tool){
+            case PENCIL:
+                currentTool = Tool.PENCIL;
+                break;
+            case FLOOD_FILL:
+                currentTool = Tool.FLOOD_FILL;
+                break;
+            case COLOR_PICK:
+                currentTool = Tool.COLOR_PICK;
+                break;
+            case COLOR_SWAP:
+                currentTool = Tool.COLOR_SWAP;
+                break;
+            case ERASER:
+                currentTool = Tool.ERASER;
+                if(project.transparentBackground){
+                    paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+                }else
+                    paint.setColor(Color.WHITE);
+                break;
+        }
+    }
+
+    void setColor(int color){
+        currentColor = color;
+        if(currentTool!=Tool.ERASER)
+            paint.setColor(color);
+    }
+
     void setColorCircle(ColorCircle colorCircle){
         this.colorCircle = colorCircle;
     }
 
     void setPalette(Palette2 palette){
-        if(project!=null)
+        if(!palette.getName().equals(project.palette))
             project.setPalette(palette);
 
         this.palette = palette;
-        paletteUpdated();
+        palette.addOnPaletteChangeListener(this);
+        setColor(palette.getSelectedColor());
+        updateColorCircle(palette.getSelectedColor());
+    }
+
+    @Override
+    public void onColorSelection(int selectedColor) {
+        setColor(selectedColor);
+        updateColorCircle(selectedColor);
+    }
+
+    @Override
+    public void onPaletteChanged() {
+
     }
 
     void setSymmetryEnabled(boolean enabled, SymmetryType type){
@@ -121,12 +167,12 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
 
     void setProject(Project project){
         this.project = project;
-        this.pixelWidth = project.pixelWidth;
-        this.pixelHeight = project.pixelHeight;
-        this.palette = PaletteUtils.loadPalette(project.palette);
-        paletteUpdated();
         pixelBitmap = project.getBitmap(true);
+        this.pixelWidth = pixelBitmap.getWidth();
+        this.pixelHeight = pixelBitmap.getHeight();
+        setPalette(PaletteUtils.loadPalette(project.palette));
         pixelCanvas.setBitmap(pixelBitmap);
+        System.out.println("Loaded bitmap config: "+pixelBitmap.getConfig().name());
         canvasHistory.setProject(project);
     }
 
@@ -177,15 +223,10 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
     }
 
     //Updaters
-    private void paletteUpdated(){
-        paint.setColor(palette.getColor(0));
-        updateColorCircle();
-    }
 
-    private void updateColorCircle(){
+    private void updateColorCircle(int color){
         if(colorCircle!=null){
-            colorCircle.setColor(paint.getColor());
-            colorCircle.invalidate();
+            colorCircle.setColor(color);
         }
     }
 
@@ -233,21 +274,25 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
         initializeCursorPencil();
     }
 
+    Paint noAAPaint;
     void initializePaints(){
         //Main paint
         paint = new Paint();
         paint.setAntiAlias(false);
         paint.setFilterBitmap(false);
         paint.setColor(Color.WHITE);
-        updateColorCircle();
+        updateColorCircle(Color.WHITE);
         paint.setStrokeWidth(1);
         paint.setStyle(Paint.Style.STROKE);
         paint.setTextSize(24);
+        noAAPaint = new Paint(paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
+
 
         //Grid paint
         gridP = new Paint();
         gridP.setColor(Color.BLUE);
-        gridP.setStyle(Paint.Style.FILL_AND_STROKE);
+        gridP.setStyle(Paint.Style.STROKE);
         gridP.setStrokeWidth(1f);
     }
 
@@ -386,6 +431,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
         }else {
             switch (currentTool) {
                 case PENCIL:
+                case ERASER:
                     if (event.getAction() == MotionEvent.ACTION_DOWN) {
                         superPencil.startDrawing(event.getX(), event.getY());
                     }
@@ -518,14 +564,23 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
     void colorPick(int x, int y){
         if(x<0||x>=pixelWidth||y<0||y>=pixelHeight)
             return;
-        paint.setColor(pixelBitmap.getPixel(x, y));
-        updateColorCircle();
-        palette.colorPickToolWasUsed(paint.getColor());
+        int pickedColor = pixelBitmap.getPixel(x, y);
+        if(pickedColor==0)
+            return;
+        if(!palette.colorPickToolWasUsed(pickedColor)){
+            //Set LiveColor to pickedColor
+            setColor(pickedColor);
+            updateColorCircle(pickedColor);
+        }
+
     }
 
     void clearCanvas(){
         canvasHistory.startHistoricalChange();
-        pixelCanvas.drawColor(Color.WHITE);
+        if(project.transparentBackground)
+            pixelCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+        else
+            pixelCanvas.drawColor(Color.WHITE);
         canvasHistory.completeHistoricalChange();
         pixelDrawThread.update();
     }
@@ -615,10 +670,21 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
                 }
 
 
-                canvas.drawBitmap(pixelBitmap, pixelMatrix, paint);
+                canvas.drawBitmap(pixelBitmap, pixelMatrix, noAAPaint);
 
                 if(gridEnabled) {
-                    canvas.drawBitmap(gridB, 0, 0, paint);
+                    canvas.drawBitmap(gridB, 0, 0, noAAPaint);
+                }
+
+                if(project.transparentBackground){
+                    p[0] = p[1] = 0;
+                    pixelMatrix.mapPoints(p);
+                    float x1 = p[0];
+                    float y1 = p[1];
+                    p[0] = pixelWidth;
+                    p[1] = pixelHeight;
+                    pixelMatrix.mapPoints(p);
+                    canvas.drawRect(x1, y1, p[0], p[1], gridP);
                 }
 
                 //Draw fps count

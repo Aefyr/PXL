@@ -1,6 +1,7 @@
 package com.af.pxl;
 
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Path;
 
 /**
@@ -24,6 +25,7 @@ public class SuperPencil {
     private Path path;
     private float sX, sY, nX, nY;
     private int moves;
+
     void startDrawing(float x, float y){
         if(drawing)
             return;

@@ -14,6 +14,13 @@
     <string name="done">Done</string>
     <string name="cancel">Cancel</string>
     <string name="cursor_action">PXL!</string>
+    <string name="incorrect_name">Project name is already in use or incorrect!\n(You may use only letters, digits and spaces)</string>
+
+    <!-- Project creation -->
+    <string name="name">Name</string>
+    <string name="width">Width</string>
+    <string name="height">Height</string>
+    <string name="transparentBackground">Transparent Background</string>
 
     <!--gallery_item-->
     <string name="size">Size</string>
