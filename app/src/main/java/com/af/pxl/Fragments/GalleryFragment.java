@@ -66,7 +66,7 @@ public class GalleryFragment extends Fragment {
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.galleryRecycler);
         adapter = new ProjectsRecycleAdapter(getContext(), ProjectsUtils.getProjects());
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), (int) (Utils.getScreenWidth(getResources())/Utils.dpToPx(200, getResources()))));
 
 
         view.findViewById(R.id.test1).setOnClickListener(new View.OnClickListener() {

@@ -26,7 +26,7 @@ public class PalettePickerActivity extends AppCompatActivity {
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.palettesRecyclerView);
         adapter = new PalettePickRecyclerAdapter(this, PaletteUtils.getSavedPalettes());
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        recyclerView.setLayoutManager(new GridLayoutManager(this, (int)(Utils.getScreenWidth(getResources())/Utils.dpToPx(130, getResources()))));
         recyclerView.setAdapter(adapter);
 
         initializePaletteItemsInteractions();

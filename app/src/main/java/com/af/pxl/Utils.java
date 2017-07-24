@@ -1,8 +1,10 @@
 package com.af.pxl;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.util.TypedValue;
 import android.widget.Toast;
 
 import java.io.File;
@@ -18,6 +20,18 @@ import java.io.OutputStream;
 
 public class Utils {
 
+
+    public static float dpToPx(int dp, Resources r){
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
+    }
+
+    public static float getScreenWidth(Resources r){
+        return r.getDisplayMetrics().widthPixels;
+    }
+
+    public static float getScreenHeight(Resources r){
+        return r.getDisplayMetrics().heightPixels;
+    }
 
     static float clamp(float x, float min, float max){
         if(x<min)return min;

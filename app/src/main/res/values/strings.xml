@@ -17,6 +17,7 @@
     <string name="incorrect_name">Project name is already in use or incorrect!\n(You may use only letters, digits and spaces)</string>
 
     <!-- Project creation -->
+    <string name="create_new_project">Create New Project</string>
     <string name="name">Name</string>
     <string name="width">Width</string>
     <string name="height">Height</string>
