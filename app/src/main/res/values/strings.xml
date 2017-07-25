@@ -14,14 +14,24 @@
     <string name="done">Done</string>
     <string name="cancel">Cancel</string>
     <string name="cursor_action">PXL!</string>
-    <string name="incorrect_name">Project name is already in use or incorrect!\n(You may use only letters, digits and spaces)</string>
 
-    <!-- Project creation -->
+
+
+    <!-- Palettes -->
+    <string name="select_palette">Select Palette</string>
+    <string name="edit_color">Edit Color</string>
+    <string name="palettes">Palettes</string>
+    <string name="incorrect_palette_name">Palette name is already in use or incorrect!\n(You may use only letters, digits and spaces)</string>
+
+    <!-- Projects -->
+    <string name="projects">Projects</string>
     <string name="create_new_project">Create New Project</string>
     <string name="name">Name</string>
     <string name="width">Width</string>
     <string name="height">Height</string>
     <string name="transparentBackground">Transparent Background</string>
+    <string name="incorrect_width_or_height">You must enter width and height!</string>
+    <string name="incorrect_project_name">Project name is already in use or incorrect!\n(You may use only letters, digits and spaces)</string>
 
     <!--gallery_item-->
     <string name="size">Size</string>

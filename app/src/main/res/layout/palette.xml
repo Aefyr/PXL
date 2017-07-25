@@ -15,22 +15,13 @@
         app:sizeOfColorY="48dp" />
 
     <Button
-        android:id="@+id/pvAdd"
+        android:id="@+id/pvEdit"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/pv2"
-        android:text="Add" />
-
-    <Button
-        android:id="@+id/pvEdit"
-        style="@style/Widget.AppCompat.Button.Borderless.Colored"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/pv2"
-        android:layout_centerHorizontal="true"
-        android:text="Edit" />
+        android:text="@string/edit_color" />
 
     <Button
         android:id="@+id/pvDone"
@@ -39,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/pv2"
-        android:text="Done" />
+        android:text="@string/done" />
 
     <TextView
         android:id="@+id/paletteName"
@@ -63,5 +54,5 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:text="Select Palette" />
+        android:text="@string/select_palette" />
 </RelativeLayout>

@@ -24,10 +24,7 @@ import com.af.pxl.Projects.Project;
 import com.af.pxl.Projects.ProjectsRecycleAdapter;
 import com.af.pxl.Projects.ProjectsUtils;
 import com.af.pxl.R;
-import com.af.pxl.TestActivity;
 import com.af.pxl.Utils;
-
-import java.util.ArrayList;
 
 
 /**
@@ -36,6 +33,7 @@ import java.util.ArrayList;
 public class GalleryFragment extends Fragment {
 
     ProjectsRecycleAdapter adapter;
+    RecyclerView recyclerView;
 
     public GalleryFragment() {
         // Required empty public constructor
@@ -49,21 +47,9 @@ public class GalleryFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
 
 
-        view.findViewById(R.id.saveme).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(getActivity(), DrawingActivity.class);
-                startActivity(i);
-                getActivity().finish();
-            }
-        });
-
-
-
-
         ProjectsUtils.initialize(getContext());
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.galleryRecycler);
+        recyclerView = (RecyclerView) view.findViewById(R.id.galleryRecycler);
         adapter = new ProjectsRecycleAdapter(getContext(), ProjectsUtils.getProjects());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), (int) (Utils.getScreenWidth(getResources())/Utils.dpToPx(200, getResources()))));
@@ -127,17 +113,23 @@ public class GalleryFragment extends Fragment {
                 d.findViewById(R.id.create).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+
                         String name = ((EditText)d.findViewById(R.id.name)).getText().toString();
                         if(!ProjectsUtils.isNameAvailable(name)){
-                            Utils.toaster(getContext(), getString(R.string.incorrect_name));
+                            Utils.toaster(getContext(), getString(R.string.incorrect_project_name));
                             return;
                         }
 
+                        if(widthET.getText().length()==0||heightET.getText().length()==0){
+                            Utils.toaster(getContext(), getString(R.string.incorrect_width_or_height));
+                            return;
+                        }
 
                         int width = Integer.parseInt(widthET.getText().toString());
                         int height = Integer.parseInt(heightET.getText().toString());
                         adapter.addItem(ProjectsUtils.createNewProject(name, width, height, "Default", ((Switch)d.findViewById(R.id.transparentBackground)).isChecked()));
                         d.dismiss();
+                        recyclerView.scrollToPosition(0);
                         openProject(name);
                     }
                 });
@@ -195,7 +187,7 @@ public class GalleryFragment extends Fragment {
                     adapter.notifyItemChanged(id);
                     renameDialog.dismiss();
                 }else {
-                    Utils.toaster(getContext(), getString(R.string.incorrect_name));
+                    Utils.toaster(getContext(), getString(R.string.incorrect_project_name));
                 }
             }
         });

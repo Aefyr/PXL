@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
     <com.af.pxl.ColorPickerView
@@ -60,7 +61,15 @@
         android:id="@+id/newColor"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_toEndOf="@+id/arrow" />
+
+    <com.af.pxl.ColorCircle
+        android:id="@+id/oldColor"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_centerHorizontal="true"
+        android:layout_toStartOf="@+id/arrow" />
 
     <Button
         android:id="@+id/colorPickButton"
@@ -71,5 +80,13 @@
         android:layout_centerHorizontal="true"
         android:elevation="0dp"
         android:text="Done" />
+
+    <ImageView
+        android:id="@+id/arrow"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        app:srcCompat="@drawable/redo" />
 
 </RelativeLayout>

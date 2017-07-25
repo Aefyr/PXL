@@ -98,7 +98,7 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
         notifyItemRemoved(index);
     }
 
-    class LastModifiedComparator implements Comparator<Project>{
+    private class LastModifiedComparator implements Comparator<Project>{
         @Override
         public int compare(Project project, Project t1) {
             if(project.projectDirectory.lastModified()<t1.projectDirectory.lastModified())

@@ -32,6 +32,9 @@ public class PaletteView3 extends View implements Palette2.OnPaletteChangeListen
     }
 
     public void setPalette(Palette2 palette){
+        if(this.palette!=null)
+            this.palette.removeOnPaletteChangedListener(this);
+
         this.palette = palette;
         loadColorsFromPalette();
         palette.addOnPaletteChangeListener(this);

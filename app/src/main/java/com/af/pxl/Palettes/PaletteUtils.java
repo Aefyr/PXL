@@ -20,8 +20,8 @@ public class PaletteUtils {
     static final String PALETTE_NAME_VALIDITY_PATTERN = "\\w+[A-Za-zА-Яа-я_0-9\\s]*";
     static String paletteDuplicatePostfix;
 
-    private static String palettesPath;
-    private static final String EXTENSION = ".pxlpalette";
+    static String palettesPath;
+    static final String EXTENSION = ".pxlpalette";
     private static final String DEFAULT_PALETTE = "-16711680,-65280,-255";
 
     public static void initialize(Context c){
@@ -58,6 +58,7 @@ public class PaletteUtils {
                     fileWriter.append(",");
                 }
             }
+            path.setLastModified(System.currentTimeMillis());
             System.out.println("Palette was saved!");
             return true;
         } catch (IOException e) {
@@ -135,15 +136,8 @@ public class PaletteUtils {
         File defaultPalette = new File(palettesPath+"/Default"+EXTENSION);
         if(defaultPalette.exists())
             return loadPalette("Default");
-        try {
-            defaultPalette.createNewFile();
-            FileWriter fileWriter = new FileWriter(defaultPalette);
-            fileWriter.write(DEFAULT_PALETTE);
-            fileWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return loadPalette("Default");
+        Palette2 p = new Palette2("Default");
+        return p;
     }
 
 

@@ -136,6 +136,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
 
     void setColorCircle(ColorCircle colorCircle){
         this.colorCircle = colorCircle;
+        updateColorCircle(paint.getColor());
     }
 
     void setPalette(Palette2 palette){

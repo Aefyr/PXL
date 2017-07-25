@@ -2,6 +2,7 @@ package com.af.pxl.Palettes;
 
 import android.graphics.Color;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -10,10 +11,12 @@ import java.util.ArrayList;
 
 public class Palette2 {
 
+    private final static int[] defaultPaletteColors = {-16717636,-13959417,-4020990, -58879, -7798531, -16776960, -11583173, -1, -12000284, -4854924, -870305, -38823, -3706428, -16635957, - 15092247, -7901340};
     private ArrayList<Integer> colors;
     private int capacity;
     private int selectedColorIndex;
     private String name;
+    File directory;
 
     public interface OnPaletteChangeListener{
         void onColorSelection(int selectedColor);
@@ -26,10 +29,22 @@ public class Palette2 {
         this.name = name;
         colors = new ArrayList<>();
         colors.add(initialColor);
+        directory = new File(PaletteUtils.palettesPath, name+PaletteUtils.EXTENSION);
         if(!wasLoaded)
             autoSave();
 
         this.capacity = capacity;
+        listeners = new ArrayList<>(2);
+    }
+
+    public Palette2(String name){
+        this.name = name;
+        this.capacity = 16;
+        colors = new ArrayList<>();
+        for(int color: defaultPaletteColors){
+            colors.add(color);
+        }
+        autoSave();
         listeners = new ArrayList<>(2);
     }
 
@@ -126,6 +141,10 @@ public class Palette2 {
 
     private void autoSave(){
         PaletteUtils.savePalette(this);
+    }
+
+    public long lastModified(){
+        return directory.lastModified();
     }
 
 }

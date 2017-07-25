@@ -2,7 +2,6 @@ package com.af.pxl;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.view.View;
 import android.view.Window;
 import android.widget.SeekBar;
 
@@ -10,7 +9,7 @@ import android.widget.SeekBar;
  * Created by Aefyr on 17.06.2017.
  */
 
-class ColorPicker {
+public class ColorPicker {
 
     private ColorPickerView hueView;
     private SeekBar hueBar;
@@ -19,11 +18,12 @@ class ColorPicker {
     private ColorPickerView valueView;
     private SeekBar valueBar;
 
-    private ColorCircle colorCircle;
+    private ColorCircle newColorCircle;
+    private ColorCircle oldColorCircle;
 
     float[] color = {0,0,0};
 
-    ColorPicker(ColorPickerView hueView, SeekBar hueBar, ColorPickerView saturationView, SeekBar saturationBar, ColorPickerView valueView, SeekBar valueBar, ColorCircle colorCircle, int currentColor){
+    public ColorPicker(ColorPickerView hueView, SeekBar hueBar, ColorPickerView saturationView, SeekBar saturationBar, ColorPickerView valueView, SeekBar valueBar, ColorCircle newColorCircle, int currentColor){
         this.hueView = hueView;
         this.hueBar = hueBar;
         this.saturationView = saturationView;
@@ -31,20 +31,21 @@ class ColorPicker {
         this.valueView = valueView;
         this.valueBar = valueBar;
 
-        this.colorCircle = colorCircle;
+        this.newColorCircle = newColorCircle;
 
         setStartColor(currentColor);
         initialize();
     }
 
-    ColorPicker(Window colorPickerView, int startColor){
+    public ColorPicker(Window colorPickerView, int startColor){
         hueView = (ColorPickerView) colorPickerView.findViewById(R.id.colorPickerHue);
         hueBar = (SeekBar) colorPickerView.findViewById(R.id.seekBarHue);
         saturationView = (ColorPickerView) colorPickerView.findViewById(R.id.colorPickerSat);
         saturationBar = (SeekBar) colorPickerView.findViewById(R.id.seekBarSat);
         valueView = (ColorPickerView) colorPickerView.findViewById(R.id.colorPickerVal);
         valueBar = (SeekBar) colorPickerView.findViewById(R.id.seekBarVal);
-        colorCircle = (ColorCircle) colorPickerView.findViewById(R.id.newColor);
+        newColorCircle = (ColorCircle) colorPickerView.findViewById(R.id.newColor);
+        oldColorCircle = (ColorCircle) colorPickerView.findViewById(R.id.oldColor);
 
         setStartColor(startColor);
         initialize();
@@ -52,15 +53,16 @@ class ColorPicker {
 
     //Hai, hai, this workflow sucks, but I gonna write a new ColorPicker analogue soon anyway
     private void setStartColor(int startColor){
-        Color.colorToHSV(startColor, color);
+        oldColorCircle.setColor(startColor);
 
+        Color.colorToHSV(startColor, color);
         hueBar.setProgress((int) color[0]);
         saturationBar.setProgress((int)(color[1]*100));
         valueBar.setProgress((int)(color[2]*100));
     }
 
     private void initialize(){
-        colorCircle.setColor(Color.HSVToColor(color));
+        newColorCircle.setColor(Color.HSVToColor(color));
         saturationView.color = valueView.color = color;
 
         hueView.setMode(ColorPickerView.MODE.HUE);
@@ -102,11 +104,15 @@ class ColorPicker {
     private void updateColorViews(){
         saturationView.invalidate();
         valueView.invalidate();
-        colorCircle.setColor(Color.HSVToColor(color));
+        newColorCircle.setColor(Color.HSVToColor(color));
         if(livePreview){
             applyColorSwap();
             listener.onLivePreviewUpdate();
         }
+    }
+
+    public int getColor(){
+        return Color.HSVToColor(color);
     }
 
     //Color Swapping

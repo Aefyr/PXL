@@ -1,11 +1,7 @@
 package com.af.pxl;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -16,7 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.af.pxl.Fragments.GalleryFragment;
-import com.af.pxl.Fragments.TestFrag;
+import com.af.pxl.Fragments.PalettesFragment;
 import com.af.pxl.Palettes.PaletteUtils;
 
 public class MainActivity extends AppCompatActivity
@@ -121,13 +117,13 @@ public class MainActivity extends AppCompatActivity
                     fragmentManager.beginTransaction().replace(R.id.container, gallery, "Gallery").commit();
                 break;
             case TEST:
-                TestFrag test = (TestFrag) fragmentManager.findFragmentByTag("Test");
-                if(test==null){
-                    test = new TestFrag();
+                PalettesFragment palettes = (PalettesFragment) fragmentManager.findFragmentByTag("Palettes");
+                if(palettes==null){
+                    palettes = new PalettesFragment();
                     //fragmentManager.beginTransaction().add(R.id.container, test, "Test").commit();
                     System.out.println("created test");
                 }
-                    fragmentManager.beginTransaction().replace(R.id.container, test, "Test").commit();
+                    fragmentManager.beginTransaction().replace(R.id.container, palettes, "Palettes").commit();
                 break;
         }
     }

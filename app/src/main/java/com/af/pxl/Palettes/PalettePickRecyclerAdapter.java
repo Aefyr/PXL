@@ -10,6 +10,8 @@ import android.widget.TextView;
 import com.af.pxl.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Created by Aefyr on 22.07.2017.
@@ -17,13 +19,15 @@ import java.util.ArrayList;
 
 public class PalettePickRecyclerAdapter extends RecyclerView.Adapter<PalettePickRecyclerAdapter.ViewHolder> {
 
-    ArrayList<String> paletteNames;
+    public ArrayList<String> paletteNames;
     LayoutInflater inflater;
     OnPaletteInteractionListener listener;
+    public final static int AUTO_POSITION = 3221337;
 
-    PalettePickRecyclerAdapter(Context c, ArrayList<String> paletteNames){
+    public PalettePickRecyclerAdapter(Context c, ArrayList<String> paletteNames){
         inflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.paletteNames = paletteNames;
+        Collections.sort(paletteNames);
     }
 
     @Override
@@ -65,6 +69,11 @@ public class PalettePickRecyclerAdapter extends RecyclerView.Adapter<PalettePick
     }
 
     public void addItem(String paletteName, int index){
+        if(index==AUTO_POSITION) {
+            index = 0;
+            while(paletteName.compareTo(paletteNames.get(index))>0)
+                index++;
+        }
         paletteNames.add(index, paletteName);
         notifyItemInserted(index);
     }
@@ -89,8 +98,19 @@ public class PalettePickRecyclerAdapter extends RecyclerView.Adapter<PalettePick
         }
     }
 
-    interface OnPaletteInteractionListener{
+    public interface OnPaletteInteractionListener{
         void onPaletteLongClick(Palette2 palette,int index);
         void onPaletteClick(Palette2 palette, int index);
+    }
+
+    private class LastModifiedComparator implements Comparator<Palette2>{
+        @Override
+        public int compare(Palette2 project, Palette2 t1) {
+            if(project.lastModified()<t1.lastModified())
+                return 1;
+            if(project.lastModified()>t1.lastModified())
+                return -1;
+            return 0;
+        }
     }
 }
