@@ -2,6 +2,7 @@ package com.af.pxl.Palettes;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
@@ -25,6 +26,12 @@ public class PaletteManager {
     private Palette2 currentPalette;
     private boolean first = true;
 
+    OnCloseListener listener;
+
+    public interface OnCloseListener{
+        void onClose();
+    }
+
     public void showPaletteManagerDialog(final AppCompatActivity a, final Palette2 palette){
         if(paletteManagerDialog==null) {
             paletteManagerDialog = new AlertDialog.Builder(a).setView(R.layout.palette).create();
@@ -34,35 +41,51 @@ public class PaletteManager {
         if(first) {
             paletteName = (TextView) paletteManagerDialog.findViewById(R.id.paletteName);
             paletteView = (PaletteView3) paletteManagerDialog.findViewById(R.id.pv2);
+            if(listener!=null){
+                paletteManagerDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialogInterface) {
+                        listener.onClose();
+                    }
+                });
+            }
+            if(hideSelectPaletteOption)
+                paletteManagerDialog.findViewById(R.id.pvSelectPalette).setVisibility(View.GONE);
             first = false;
         }
         paletteChanged(palette);
         dialogShown = true;
 
-
-        paletteManagerDialog.findViewById(R.id.pvSelectPalette).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent pickerIntent = new Intent(a, PalettePickerActivity.class);
-                pickerIntent.putExtra("pickerMode", true);
-                a.startActivityForResult(pickerIntent, PalettePickerActivity.REQUEST_CODE_PICK_PALETTE);
-            }
-        });
+        if(!hideSelectPaletteOption) {
+            paletteManagerDialog.findViewById(R.id.pvSelectPalette).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent pickerIntent = new Intent(a, PalettePickerActivity.class);
+                    pickerIntent.putExtra("pickerMode", true);
+                    a.startActivityForResult(pickerIntent, PalettePickerActivity.REQUEST_CODE_PICK_PALETTE);
+                }
+            });
+        }
 
         paletteManagerDialog.findViewById(R.id.pvEdit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final AlertDialog colorEditDialog = new AlertDialog.Builder(a).setView(R.layout.color_picker).setTitle(a.getString(R.string.edit_color)).create();
-                colorEditDialog.show();
-                colorPicker = new ColorPicker(colorEditDialog.getWindow(), currentPalette.getSelectedColor());
-                (colorEditDialog.findViewById(R.id.colorPickButton)).setOnClickListener(new View.OnClickListener() {
+                final AlertDialog colorEditDialog = new AlertDialog.Builder(a).setView(R.layout.color_picker).setPositiveButton(a.getString(R.string.done), new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(View view) {
+                    public void onClick(DialogInterface dialogInterface, int i) {
                         currentPalette.editColor(currentPalette.getSelectedColorIndex(), colorPicker.getColor());
-                        colorEditDialog.cancel();
                         colorPicker = null;
                     }
-                });
+                }).setNegativeButton(a.getString(R.string.cancel), null).setTitle(a.getString(R.string.edit_color)).create();
+                colorEditDialog.show();
+                colorPicker = new ColorPicker(colorEditDialog.getWindow(), currentPalette.getSelectedColor());
+            }
+        });
+
+        paletteManagerDialog.findViewById(R.id.pvDone).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                paletteManagerDialog.cancel();
             }
         });
 
@@ -86,5 +109,14 @@ public class PaletteManager {
         if(!dialogShown)
             return;
         paletteManagerDialog.cancel();
+    }
+
+    public void setOnCloseListener(OnCloseListener listener){
+        this.listener = listener;
+    }
+
+    private boolean hideSelectPaletteOption;
+    public void hideSelectPaletteOption(boolean a){
+        hideSelectPaletteOption = a;
     }
 }

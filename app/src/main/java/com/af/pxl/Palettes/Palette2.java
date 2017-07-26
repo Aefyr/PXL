@@ -57,11 +57,11 @@ public class Palette2 {
     }
 
     void setSelectedColor(int index){
-        if(index>=colors.size())
+        if(index>=colors.size()||index == selectedColorIndex)
             return;
         selectedColorIndex = index;
-        for(OnPaletteChangeListener listener: listeners)
-            listener.onColorSelection(colors.get(index));
+        selectedColorChangedEvent(colors.get(index));
+
     }
 
     public void editColor(int index, int newValue){
@@ -69,6 +69,7 @@ public class Palette2 {
             return;
         colors.set(index, newValue);
         listenerEvent();
+        selectedColorChangedEvent(newValue);
         autoSave();
     }
 
@@ -98,6 +99,7 @@ public class Palette2 {
             setSelectedColor(index);
             return true;
         }
+        editColor(selectedColorIndex, pickedColor);
         return false;
     }
 
@@ -136,7 +138,11 @@ public class Palette2 {
             listeners.get(i).onPaletteChanged();
             System.out.println("LISTENERS COUNT: "+listeners.size()+", i="+i);
         }
+    }
 
+    private void selectedColorChangedEvent(int newColor){
+        for(OnPaletteChangeListener listener: listeners)
+            listener.onColorSelection(newColor);
     }
 
     private void autoSave(){

@@ -8,7 +8,7 @@
         android:id="@+id/pv2"
         android:layout_width="256dp"
         android:layout_height="256dp"
-        android:layout_below="@+id/pvSelectPalette"
+        android:layout_below="@+id/paletteName"
         android:layout_centerHorizontal="true"
         app:gapBetweenColors="8dp"
         app:sizeOfColorX="48dp"
@@ -36,14 +36,13 @@
         android:id="@+id/paletteName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/pv2"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/pvSelectPalette"
         android:gravity="center_vertical"
+        android:padding="8dp"
         android:paddingStart="8dp"
         android:text="Palette Name"
-        android:textColor="@color/colorThumbOutline"
+        android:textColor="@color/colorAccent"
         android:textSize="24sp"
         android:textStyle="bold" />
 
@@ -52,7 +51,8 @@
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
+        android:text="@string/select_palette"
         android:layout_alignParentTop="true"
-        android:text="@string/select_palette" />
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/pv2" />
 </RelativeLayout>

@@ -51,8 +51,6 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
     Tool currentTool = Tool.PENCIL;
 
 
-    Pencil pencil;
-    CursorPencil cursorPencil;
     CanvasHistory canvasHistory;
 
     Cursor cursor;
@@ -83,21 +81,30 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
 
     private void initialize(){
         getHolder().addCallback(this);
-        pixelBitmap = Bitmap.createBitmap(pixelWidth, pixelHeight, Bitmap.Config.ARGB_8888);
-        pixelCanvas = new Canvas(pixelBitmap);
+        /*pixelBitmap = Bitmap.createBitmap(pixelWidth, pixelHeight, Bitmap.Config.ARGB_8888);
+        pixelCanvas = new Canvas(pixelBitmap);*/
 
         pixelMatrix = new Matrix();
         pixelMatrix.setScale(pixelScale, pixelScale);
 
-        pixelCanvas.drawColor(Color.WHITE);
+        //pixelCanvas.drawColor(Color.WHITE);
 
-        canvasHistory = new CanvasHistory(this, pixelBitmap, 100);
+        //canvasHistory = new CanvasHistory(this, pixelBitmap, 100);
 
-        initializeTools();
         initializePaints();
 
         cursor = new Cursor(this);
         superPencil = new SuperPencil(this);
+    }
+
+    void cleanupWeReLeaving(){
+        pixelDrawThread.alive = false;
+        pixelDrawThread.update();
+        try{
+            pixelDrawThread.join();
+        }catch (InterruptedException e){
+            cleanupWeReLeaving();
+        }
     }
 
     //Setters
@@ -169,12 +176,12 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
     void setProject(Project project){
         this.project = project;
         pixelBitmap = project.getBitmap(true);
+        pixelCanvas = new Canvas(pixelBitmap);
+        canvasHistory = new CanvasHistory(this, project, 100);
         this.pixelWidth = pixelBitmap.getWidth();
         this.pixelHeight = pixelBitmap.getHeight();
         setPalette(PaletteUtils.loadPalette(project.palette));
-        pixelCanvas.setBitmap(pixelBitmap);
         System.out.println("Loaded bitmap config: "+pixelBitmap.getConfig().name());
-        canvasHistory.setProject(project);
     }
 
     //Utility methods
@@ -233,18 +240,6 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
 
     //Initializers?
     //TODO Add ability to create custom CursorPencil pointers
-    Bitmap cursorPencilPointerBitmap;
-    Canvas cursorPencilPointerCanvas;
-    void initializeCursorPencil(){
-        cursorPencilPointerBitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
-        cursorPencilPointerCanvas = new Canvas(cursorPencilPointerBitmap);
-        Paint testCursorP = new Paint();
-        testCursorP.setStrokeWidth(8);
-        testCursorP.setColor(Color.MAGENTA);
-        testCursorP.setStyle(Paint.Style.FILL_AND_STROKE);
-        cursorPencilPointerCanvas.drawLine(0, 0, 0, 100, testCursorP);
-        cursorPencilPointerCanvas.drawLine(0, 100, 100, 100, testCursorP);
-    }
 
     private boolean gridEnabled = false;
     boolean toggleGrid(){
@@ -255,24 +250,14 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
         gridEnabled = enabled;
 
         if(gridEnabled){
-            gridB = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
-            gridC = new Canvas(gridB);
-            drawGrid();
-        }else {
-            if(gridB!=null){
-                gridB.recycle();
-                gridB = null;
-                gridC = null;
+            if(gridB == null) {
+                gridB = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+                gridC = new Canvas(gridB);
             }
+            drawGrid();
         }
 
         pixelDrawThread.update();
-    }
-
-    void initializeTools(){
-        pencil = new Pencil(this);
-        cursorPencil = new CursorPencil(this);
-        initializeCursorPencil();
     }
 
     Paint noAAPaint;
@@ -301,6 +286,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
         if(pixelDrawThread==null) {
+            cursor.center(getWidth(), getHeight());
             centerCanvas();
             pixelDrawThread = new PixelDrawThread(surfaceHolder);
             pixelDrawThread.start();
@@ -570,10 +556,10 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
             return;
         if(!palette.colorPickToolWasUsed(pickedColor)){
             //Set LiveColor to pickedColor
-            setColor(pickedColor);
+            /*setColor(pickedColor);
             updateColorCircle(pickedColor);
+            palette.editColor(palette.getSelectedColorIndex(), pickedColor);*/
         }
-
     }
 
     void clearCanvas(){
@@ -735,7 +721,8 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
                     forcedUpdate = false;
                     continue;
                 }
-                pause();
+                if(alive)
+                    pause();
             }
         }
     }

@@ -11,6 +11,7 @@ import com.af.pxl.Utils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -22,10 +23,12 @@ public class ProjectsUtils{
     static String projectsFolderDirectory;
     static String projectDuplicatePostfix;
     static final String PROJECT_NAME_VALIDITY_PATTERN = "\\w+[A-Za-zА-Яа-я_0-9\\s]*";
+    static int previewSize;
 
     public static void initialize(Context c){
         projectsFolderDirectory = c.getFilesDir()+"/projects";
         projectDuplicatePostfix = " "+c.getString(R.string.project_duplicate_postfix);
+        previewSize = (int)Utils.dpToPx(144, c.getResources());
 
         File testDir = new File(projectsFolderDirectory);
 
@@ -84,6 +87,19 @@ public class ProjectsUtils{
         Utils.saveBitmap(b, bitmapPath);
         b.recycle();
         return new Project(newProjectDirectory);
+    }
+
+    public static Project createProjectFromBitmap(Context c, Bitmap bitmap){
+        String name = c.getString(R.string.name_imported);
+        if(!isNameAvailable(name)){
+            int a = 1;
+            while(!isNameAvailable(name+" "+a))
+                a++;
+            name+=" "+a;
+        }
+        Project project = createNewProject(name, bitmap.getWidth(), bitmap.getHeight(),"Default", bitmap.hasAlpha());
+        Utils.saveBitmap(bitmap, new File(project.projectDirectory, "image.pxl"));
+        return project;
     }
 
     public static void deleteProject(Project project){

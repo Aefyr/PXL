@@ -22,7 +22,7 @@
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
+            android:theme="@style/SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,7 +32,7 @@
         <activity
             android:name=".TestActivity"
             android:theme="@style/OverlayActivity" />
-        <activity android:name=".Palettes.PalettePickerActivity"></activity>
+        <activity android:name=".Palettes.PalettePickerActivity" />
     </application>
 
 </manifest>

@@ -126,6 +126,7 @@ public class BitmapsMergeActivity extends AppCompatActivity {
     private float cX, cY;
     private float pX, pY;
     private int t = 8;
+    private int prevPointerCount = 0;
     private void setupTouch(){
         piv.setOnSizeChangedListener(new PixelImageView.OnSizeChangedListener() {
             @Override
@@ -136,8 +137,25 @@ public class BitmapsMergeActivity extends AppCompatActivity {
         piv.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                float x = motionEvent.getX();
-                float y = motionEvent.getY();
+                float x = 0;
+                float y = 0;
+                int pointerCount = motionEvent.getPointerCount();
+                if(pointerCount > 1){
+                    for(int p = 0; p<pointerCount;p++){
+                        x+=motionEvent.getX(p);
+                        y+=motionEvent.getY(p);
+                    }
+                    x/=pointerCount;
+                    y/=pointerCount;
+                }else {
+                    x = motionEvent.getX();
+                    y = motionEvent.getY();
+                }
+
+                if(prevPointerCount!=pointerCount){
+                    pX = x;
+                    pY = y;
+                }
 
                 if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     pX = x;
@@ -150,22 +168,22 @@ public class BitmapsMergeActivity extends AppCompatActivity {
                     cY+=y-pY;
 
                     if(cX>t){
-                        offsetX++;
+                        offsetX+=cX/t;
                         redraw();
                         cX = 0;
                     }
                     if(cX<-t){
-                        offsetX--;
+                        offsetX+=cX/t;
                         redraw();
                         cX = 0;
                     }
                     if(cY>t){
-                        offsetY++;
+                        offsetY+=cY/t;
                         redraw();
                         cY = 0;
                     }
                     if(cY<-t){
-                        offsetY--;
+                        offsetY+=cY/t;
                         redraw();
                         cY = 0;
                     }
@@ -173,7 +191,7 @@ public class BitmapsMergeActivity extends AppCompatActivity {
                     pX = x;
                     pY = y;
                 }
-
+                prevPointerCount = pointerCount;
                 return false;
             }
         });

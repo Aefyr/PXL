@@ -1,8 +1,11 @@
 package com.af.pxl.Fragments;
 
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -26,11 +29,15 @@ import com.af.pxl.Projects.ProjectsUtils;
 import com.af.pxl.R;
 import com.af.pxl.Utils;
 
+import java.io.FileNotFoundException;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class GalleryFragment extends Fragment {
+
+    static final int IMPORT_IMAGE = 512;
 
     ProjectsRecycleAdapter adapter;
     RecyclerView recyclerView;
@@ -52,16 +59,7 @@ public class GalleryFragment extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.galleryRecycler);
         adapter = new ProjectsRecycleAdapter(getContext(), ProjectsUtils.getProjects());
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), (int) (Utils.getScreenWidth(getResources())/Utils.dpToPx(200, getResources()))));
-
-
-        view.findViewById(R.id.test1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(getActivity(), PalettePickerActivity.class);
-                startActivity(i);
-            }
-        });
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), (int) (Utils.getScreenWidth(getResources())/Utils.dpToPx(180, getResources()))));
 
         initializeFABOnClickListener(view);
         initializeOnProjectClickListener();
@@ -81,60 +79,105 @@ public class GalleryFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final AlertDialog d = new AlertDialog.Builder(getContext()).setView(R.layout.project_creation).create();
-                d.show();
-
-                TextWatcher resolutionLimiter = new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable editable) {
-                        if(editable.length()==0)
-                            return;
-                        if(Integer.parseInt(editable.toString())>512)
-                            editable.replace(0, editable.length(), 512+"");
-                    }
-                };
-
-                final EditText widthET = (EditText)d.findViewById(R.id.width);
-                final EditText heightET = (EditText)d.findViewById(R.id.height);
-
-                widthET.addTextChangedListener(resolutionLimiter);
-                heightET.addTextChangedListener(resolutionLimiter);
-
-                d.findViewById(R.id.create).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                        String name = ((EditText)d.findViewById(R.id.name)).getText().toString();
-                        if(!ProjectsUtils.isNameAvailable(name)){
-                            Utils.toaster(getContext(), getString(R.string.incorrect_project_name));
-                            return;
-                        }
-
-                        if(widthET.getText().length()==0||heightET.getText().length()==0){
-                            Utils.toaster(getContext(), getString(R.string.incorrect_width_or_height));
-                            return;
-                        }
-
-                        int width = Integer.parseInt(widthET.getText().toString());
-                        int height = Integer.parseInt(heightET.getText().toString());
-                        adapter.addItem(ProjectsUtils.createNewProject(name, width, height, "Default", ((Switch)d.findViewById(R.id.transparentBackground)).isChecked()));
-                        d.dismiss();
-                        recyclerView.scrollToPosition(0);
-                        openProject(name);
-                    }
-                });
+               AlertDialog newProjectOptionPick = new AlertDialog.Builder(getContext()).setItems(getResources().getStringArray(R.array.new_project_options), new DialogInterface.OnClickListener() {
+                   @Override
+                   public void onClick(DialogInterface dialogInterface, int i) {
+                       if(i==0)
+                           createNewProject();
+                       else if(i==1)
+                           importImage();
+                   }
+               }).create();
+                newProjectOptionPick.show();;
             }
         });
+    }
+
+    private void createNewProject(){
+        final AlertDialog d = new AlertDialog.Builder(getContext()).setView(R.layout.project_creation).create();
+        d.show();
+
+        TextWatcher resolutionLimiter = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if(editable.length()==0)
+                    return;
+                if(Integer.parseInt(editable.toString())>512)
+                    editable.replace(0, editable.length(), 512+"");
+            }
+        };
+
+        final EditText widthET = (EditText)d.findViewById(R.id.width);
+        final EditText heightET = (EditText)d.findViewById(R.id.height);
+
+        widthET.addTextChangedListener(resolutionLimiter);
+        heightET.addTextChangedListener(resolutionLimiter);
+
+        d.findViewById(R.id.create).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String name = ((EditText)d.findViewById(R.id.name)).getText().toString();
+                if(!ProjectsUtils.isNameAvailable(name)){
+                    Utils.toaster(getContext(), getString(R.string.incorrect_project_name));
+                    return;
+                }
+
+                if(widthET.getText().length()==0||heightET.getText().length()==0){
+                    Utils.toaster(getContext(), getString(R.string.incorrect_width_or_height));
+                    return;
+                }
+
+                int width = Integer.parseInt(widthET.getText().toString());
+                int height = Integer.parseInt(heightET.getText().toString());
+                adapter.addItem(ProjectsUtils.createNewProject(name, width, height, "Default", ((Switch)d.findViewById(R.id.transparentBackground)).isChecked()));
+                d.dismiss();
+                recyclerView.scrollToPosition(0);
+                openProject(name);
+            }
+        });
+    }
+
+    private void importImage(){
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), IMPORT_IMAGE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==IMPORT_IMAGE&&resultCode== Activity.RESULT_OK){
+            Bitmap importedImage;
+            try {
+                importedImage = BitmapFactory.decodeStream(getContext().getContentResolver().openInputStream(data.getData()));
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                Utils.toaster(getContext(), getString(R.string.error));
+                return;
+            }
+            if(importedImage.getWidth()>512||importedImage.getHeight()>512){
+                new AlertDialog.Builder(getContext()).setMessage(getString(R.string.imported_bitmap_too_big)).setPositiveButton(getString(R.string.ok), null).show();
+                return;
+            }
+            Project p = ProjectsUtils.createProjectFromBitmap(getContext(), importedImage);
+            importedImage.recycle();
+            adapter.addItem(p);
+            recyclerView.scrollToPosition(0);
+            openProject(p.name);
+        }
     }
 
     private void initializeOnProjectClickListener(){
@@ -196,6 +239,7 @@ public class GalleryFragment extends Fragment {
 
     private void duplicateProject(Project project){
         adapter.addItem(ProjectsUtils.duplicateProject(project));
+        recyclerView.scrollToPosition(0);
     }
 
     private void deleteProject(final Project project, final int id){

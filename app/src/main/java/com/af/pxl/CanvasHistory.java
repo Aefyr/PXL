@@ -43,6 +43,15 @@ public class CanvasHistory {
         listeners = new ArrayList<>();
     }
 
+    public CanvasHistory(AdaptivePixelSurface aps, Project project, int size){
+        this.aps = aps;
+        this.size = size;
+        setProject(project);
+        past = new ArrayDeque<>();
+        future = new ArrayDeque<>();
+        listeners = new ArrayList<>();
+    }
+
     public void setOnHistoryAvailabilityChangeListener(OnHistoryAvailabilityChangeListener listener){
         listeners.add(listener);
     }

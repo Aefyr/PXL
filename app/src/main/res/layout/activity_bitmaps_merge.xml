@@ -4,57 +4,61 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorImageButtonBackgroundTint"
+    android:background="@color/colorPrimaryDark"
     tools:context="com.af.pxl.BitmapsMergeActivity">
 
     <com.af.pxl.PixelImageView
         android:id="@+id/pxlImageView"
         android:layout_width="340dp"
         android:layout_height="340dp"
-        android:layout_below="@+id/textView"
         android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
         android:layout_marginTop="4dp"
+        android:background="@drawable/tile_background"
         app:autoResizeToMax="true" />
 
     <ImageButton
         android:id="@+id/ibl"
-        android:layout_width="64dp"
+        android:layout_width="48dp"
         android:layout_height="64dp"
-        android:layout_below="@+id/ibu"
-        android:layout_toStartOf="@+id/ibb"
+        android:background="@android:color/transparent"
+        android:rotation="-90"
         android:scaleType="centerInside"
-        app:srcCompat="@drawable/buttonundo" />
+        app:srcCompat="@drawable/arrow"
+        android:layout_alignTop="@+id/ibr"
+        android:layout_alignStart="@+id/pxlImageView" />
 
     <ImageButton
         android:id="@+id/ibu"
         android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_below="@+id/pxlImageView"
-        android:layout_marginTop="8dp"
-        android:layout_toEndOf="@+id/ibl"
-        android:rotation="90"
+        android:layout_height="48dp"
+        android:background="@android:color/transparent"
         android:scaleType="centerInside"
-        app:srcCompat="@drawable/buttonundo" />
+        app:srcCompat="@drawable/arrow"
+        android:layout_alignTop="@+id/pxlImageView"
+        android:layout_centerHorizontal="true" />
 
     <ImageButton
         android:id="@+id/ibr"
-        android:layout_width="64dp"
+        android:layout_width="48dp"
         android:layout_height="64dp"
-        android:layout_below="@+id/ibu"
-        android:layout_toEndOf="@+id/ibb"
-        android:rotation="180"
+        android:background="@android:color/transparent"
+        android:rotation="90"
         android:scaleType="centerInside"
-        app:srcCompat="@drawable/buttonundo" />
+        app:srcCompat="@drawable/arrow"
+        android:layout_centerVertical="true"
+        android:layout_alignEnd="@+id/pxlImageView" />
 
     <ImageButton
         android:id="@+id/ibb"
         android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:rotation="-90"
+        android:layout_height="48dp"
+        android:background="@android:color/transparent"
+        android:rotation="180"
         android:scaleType="centerInside"
-        app:srcCompat="@drawable/buttonundo"
-        android:layout_below="@+id/ibu"
-        android:layout_centerHorizontal="true" />
+        app:srcCompat="@drawable/arrow"
+        android:layout_alignBottom="@+id/pxlImageView"
+        android:layout_alignStart="@+id/ibu" />
 
     <Button
         android:id="@+id/done"
@@ -69,9 +73,10 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/done"
+        android:layout_above="@+id/pxlImageView"
         android:layout_centerHorizontal="true"
-        android:text="@string/moving_image_tip" />
+        android:text="@string/moving_image_tip"
+        android:textColor="@color/colorAlmostWhite" />
 
     <Button
         android:id="@+id/cancel"

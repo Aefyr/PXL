@@ -35,11 +35,7 @@ public class ColorSwapActivity extends AppCompatActivity {
 
         int color = intent.getIntExtra("color", Color.RED);
 
-        ((ColorCircle) findViewById(R.id.oldColor)).setColor(color);
-
-        final ColorPicker colorPicker = new ColorPicker((ColorPickerView) findViewById(R.id.colorPickerHue),(SeekBar) findViewById(R.id.seekBarHue),
-                (ColorPickerView) findViewById(R.id.colorPickerSat), (SeekBar) findViewById(R.id.seekBarSat), (ColorPickerView) findViewById(R.id.colorPickerVal),
-                (SeekBar) findViewById(R.id.seekBarVal), (ColorCircle) findViewById(R.id.newColor), color);
+        final ColorPicker colorPicker = new ColorPicker(getWindow(), color);
 
         colorPicker.useColorSwap(image, color, new ColorPicker.OnLivePreviewUpdateListener() {
             @Override

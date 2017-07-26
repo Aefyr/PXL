@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 
 import com.af.pxl.Palettes.Palette2;
+import com.af.pxl.Palettes.PaletteManager;
 import com.af.pxl.Palettes.PalettePickRecyclerAdapter;
 import com.af.pxl.Palettes.PaletteUtils;
 import com.af.pxl.R;
@@ -29,6 +31,7 @@ public class PalettesFragment extends Fragment {
 
 
     PalettePickRecyclerAdapter adapter;
+    PaletteManager paletteManager;
 
     public PalettesFragment() {
         // Required empty public constructor
@@ -58,7 +61,16 @@ public class PalettesFragment extends Fragment {
         return view;
     }
 
+    private int managedPaletteIndex = 0;
     private void initializePaletteItemsInteractions(){
+        paletteManager = new PaletteManager();
+        paletteManager.hideSelectPaletteOption(true);
+        paletteManager.setOnCloseListener(new PaletteManager.OnCloseListener() {
+            @Override
+            public void onClose() {
+                adapter.notifyItemChanged(managedPaletteIndex);
+            }
+        });
         adapter.setOnPaletteInteractionListener(new PalettePickRecyclerAdapter.OnPaletteInteractionListener() {
             @Override
             public void onPaletteLongClick(final Palette2 palette, final int index) {
@@ -67,7 +79,8 @@ public class PalettesFragment extends Fragment {
 
             @Override
             public void onPaletteClick(Palette2 palette, int index) {
-                createAndShowOptionsDialog(palette, index);
+                managedPaletteIndex = index;
+                paletteManager.showPaletteManagerDialog((AppCompatActivity) getActivity(), palette);
             }
         });
     }

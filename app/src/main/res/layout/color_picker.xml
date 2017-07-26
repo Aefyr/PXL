@@ -71,16 +71,6 @@
         android:layout_centerHorizontal="true"
         android:layout_toStartOf="@+id/arrow" />
 
-    <Button
-        android:id="@+id/colorPickButton"
-        style="@style/Widget.AppCompat.Button.Borderless.Colored"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/seekBarVal"
-        android:layout_centerHorizontal="true"
-        android:elevation="0dp"
-        android:text="Done" />
-
     <ImageView
         android:id="@+id/arrow"
         android:layout_width="64dp"

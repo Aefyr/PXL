@@ -106,10 +106,13 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                         break;
                     case R.id.cursorMode:
                         aps.cursor.setEnabled(!aps.cursorMode);
-                        if(aps.cursorMode)
+                        if(aps.cursorMode) {
                             cursorToggle.setImageResource(R.drawable.cursor3);
-                        else
+                            cursorAction.setVisibility(View.VISIBLE);
+                        } else {
                             cursorToggle.setImageResource(R.drawable.normal2);
+                            cursorAction.setVisibility(View.GONE);
+                        }
                         break;
                 }
             }
@@ -130,16 +133,6 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         });
 
         (findViewById(R.id.cursorMode)).setOnClickListener(onClickListener);
-
-        aps.cursor.setOnCursorChangeListener(new Cursor.OnCursorChangeListener() {
-            @Override
-            public void onCursorEnabled(boolean enabled) {
-                if(enabled){
-                    cursorAction.setVisibility(View.VISIBLE);
-                }else
-                    cursorAction.setVisibility(View.GONE);
-            }
-        });
     }
 
 
@@ -261,6 +254,13 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
 
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        aps.cleanupWeReLeaving();
+        finish();
+        super.onBackPressed();
     }
 
     //Special tools

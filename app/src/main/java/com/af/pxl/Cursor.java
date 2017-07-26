@@ -172,6 +172,12 @@ class Cursor {
         return currentY;
     }
 
+    void center(int width, int height){
+        currentX = width/2;
+        currentY = height/2;
+        updatePosition();
+    }
+
     private float[] p = {0, 0};
     private float canvasX, canvasY;
     private void updateCanvasXY(){

@@ -42,7 +42,7 @@ public class PixelImageView extends View{
         try {
             bitmap = BitmapFactory.decodeResource(getResources(), a.getResourceId(R.styleable.PixelImageView_image, R.drawable.pencil));
             autoResize = a.getBoolean(R.styleable.PixelImageView_autoResizeToMax, false);
-            backgroundColor = a.getColor(R.styleable.PixelImageView_imageBackground, Color.GRAY);
+            backgroundColor = a.getColor(R.styleable.PixelImageView_imageBackground, Color.TRANSPARENT);
         }finally {
             a.recycle();
         }
@@ -101,7 +101,8 @@ public class PixelImageView extends View{
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawColor(backgroundColor);
+        if(backgroundColor!=0)
+            canvas.drawColor(backgroundColor);
         canvas.drawBitmap(bitmap, scaleMatrix, p);
     }
 

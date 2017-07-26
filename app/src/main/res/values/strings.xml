@@ -10,11 +10,10 @@
     <string name="colorpick_action">Pick!</string>
 
     <!-- Commons -->
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="done">Done</string>
     <string name="cancel">Cancel</string>
     <string name="cursor_action">PXL!</string>
-
 
 
     <!-- Palettes -->
@@ -22,6 +21,7 @@
     <string name="edit_color">Edit Color</string>
     <string name="palettes">Palettes</string>
     <string name="incorrect_palette_name">Palette name is already in use or incorrect!\n(You may use only letters, digits and spaces)</string>
+    <string name="error">Internal error</string>
 
     <!-- Projects -->
     <string name="projects">Projects</string>
@@ -32,6 +32,8 @@
     <string name="transparentBackground">Transparent Background</string>
     <string name="incorrect_width_or_height">You must enter width and height!</string>
     <string name="incorrect_project_name">Project name is already in use or incorrect!\n(You may use only letters, digits and spaces)</string>
+    <string name="imported_bitmap_too_big">Maximum size of imported image is 512x512!</string>
+    <string name="name_imported">Imported</string>
 
     <!--gallery_item-->
     <string name="size">Size</string>
@@ -39,7 +41,7 @@
 
     <!-- BitmapsMergeActivity -->
     <string name="live_preview">Live Preview</string>
-    <string name="moving_image_tip">You can move image by dragging it!</string>
+    <string name="moving_image_tip">You also can move image by dragging it!</string>
 
 
     <!-- Projects options -->
