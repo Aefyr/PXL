@@ -247,16 +247,21 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
         return gridEnabled;
     }
     void setGridEnabled(boolean enabled){
-        gridEnabled = enabled;
 
-        if(gridEnabled){
+        if(enabled){
             if(gridB == null) {
                 gridB = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
-                gridC = new Canvas(gridB);
+                if(gridC==null)
+                    gridC = new Canvas(gridB);
+                else
+                    gridC.setBitmap(gridB);
             }
             drawGrid();
+        }else {
+            gridC.setBitmap(null);
+            gridB = null;
         }
-
+        gridEnabled = enabled;
         pixelDrawThread.update();
     }
 
@@ -327,7 +332,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
 
     float prevDist = 0;
     float c = 0;
-    float th = 32;
+    int th = 32;
     float midX, midY;
 
     float scaleAnchorX = 0, scaleAnchorY = 0;

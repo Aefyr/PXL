@@ -63,6 +63,17 @@ public class ProjectsUtils{
         return (!f.exists());
     }
 
+    public static String getDefaultProjectName(Context c){
+        String name = c.getString(R.string.project);
+        if(!isNameAvailable(name)){
+            int a = 1;
+            while(!isNameAvailable(name+" "+a))
+                a++;
+            name += " "+a;
+        }
+        return name;
+    }
+
     public static Project createNewProject(String name, int pixelWidth, int pixelHeight, String palette, boolean transparentBackground){
         File newProjectDirectory = new File(projectsFolderDirectory+"/"+name);
         System.out.println("mkdirs="+newProjectDirectory.mkdir());

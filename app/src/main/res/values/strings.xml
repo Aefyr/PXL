@@ -24,6 +24,7 @@
     <string name="error">Internal error</string>
 
     <!-- Projects -->
+    <string name="project">Project</string>
     <string name="projects">Projects</string>
     <string name="create_new_project">Create New Project</string>
     <string name="name">Name</string>
@@ -34,6 +35,11 @@
     <string name="incorrect_project_name">Project name is already in use or incorrect!\n(You may use only letters, digits and spaces)</string>
     <string name="imported_bitmap_too_big">Maximum size of imported image is 512x512!</string>
     <string name="name_imported">Imported</string>
+    <string name="original">Original</string>
+    <string name="select_resolution">Select resolution of exported image</string>
+    <string name="share">Share</string>
+    <string name="exporting">Exporting image</string>
+    <string name="storage_permissions_denied">Sorry, but I can\'t save image without the permission to use storage</string>
 
     <!--gallery_item-->
     <string name="size">Size</string>

@@ -14,8 +14,8 @@ import android.view.MotionEvent;
 class Cursor {
     private AdaptivePixelSurface aps;
 
-    private float currentX, currentY;
-    private float limitX, limitY;
+    private int currentX, currentY;
+    private int limitX, limitY;
     private int pixelSize = 128;
     int opacity = 255;
     Matrix matrix;
@@ -56,7 +56,7 @@ class Cursor {
             aps.pixelDrawThread.update();
     }
 
-    void setLimits(float limitX, float limitY){
+    void setLimits(int limitX, int limitY){
         this.limitX = limitX;
         this.limitY = limitY;
     }
@@ -85,8 +85,8 @@ class Cursor {
         }
 
         if(event.getAction() == MotionEvent.ACTION_MOVE) {
-            currentX = Utils.clamp(currentX + (x - previousX)*sensitivity, 0, limitX);
-            currentY = Utils.clamp(currentY + (y - previousY)*sensitivity, 0, limitY);
+            currentX = Utils.clamp(currentX + (int) ((x - previousX)*sensitivity), 0, limitX);
+            currentY = Utils.clamp(currentY + (int)((y - previousY)*sensitivity), 0, limitY);
             updatePosition();
         }
 

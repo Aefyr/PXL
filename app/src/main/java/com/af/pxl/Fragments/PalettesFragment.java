@@ -86,7 +86,7 @@ public class PalettesFragment extends Fragment {
     }
 
     private void createAndShowOptionsDialog(final Palette2 palette,final int index){
-        String[] options = getResources().getStringArray(R.array.project_options);
+        String[] options = getResources().getStringArray(R.array.palette_options);
         AlertDialog optionsDialog = new AlertDialog.Builder(getContext()).setTitle(palette.getName()).setItems(options, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {

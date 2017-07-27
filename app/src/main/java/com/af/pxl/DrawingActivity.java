@@ -1,5 +1,6 @@
 package com.af.pxl;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,6 +18,7 @@ import com.af.pxl.Palettes.PaletteUtils;
 import com.af.pxl.Projects.ProjectsUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 public class DrawingActivity extends AppCompatActivity implements AdaptivePixelSurface.OnSpecialToolUseListener{
 
@@ -52,6 +54,13 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
             @Override
             public void onClick(View view) {
                 startTranslateActivity();
+            }
+        });
+
+        findViewById(R.id.importB).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mergeTool();
             }
         });
 
@@ -233,7 +242,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
             }
         }
 
-        //Translate
+        //Translate and merge
         if(requestCode==1337){
             if(resultCode==1){
                 Bitmap b = BitmapFactory.decodeFile(data.getStringExtra("path"));
@@ -254,6 +263,20 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
 
             }
         }
+
+        //Image Picker
+        if(requestCode == IMPORT_IMAGE){
+            if(resultCode == Activity.RESULT_OK){
+                Intent mergeIntent = new Intent(DrawingActivity.this, BitmapsMergeActivity.class);
+                File t = new File(getFilesDir(), "ti.pxl");
+                Utils.saveBitmap(aps.pixelBitmap, t);
+                mergeIntent.putExtra("path", t.getAbsolutePath());
+                mergeIntent.putExtra("mode", BitmapsMergeActivity.MODE_MERGE);
+                mergeIntent.putExtra("uri", data.getDataString());
+                aps.canvasHistory.startHistoricalChange();
+                startActivityForResult(mergeIntent, 1337);
+            }
+        }
     }
 
     @Override
@@ -262,6 +285,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         finish();
         super.onBackPressed();
     }
+
 
     //Special tools
 
@@ -290,9 +314,21 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         Utils.saveBitmap(aps.pixelBitmap, t);
         Intent i = new Intent(DrawingActivity.this, BitmapsMergeActivity.class);
         i.putExtra("path", t.getAbsolutePath());
-        i.putExtra("mode", 1);
+        i.putExtra("mode", BitmapsMergeActivity.MODE_TRANSLATE);
         i.putExtra("transparentBackground", aps.project.transparentBackground);
         aps.canvasHistory.startHistoricalChange();
         startActivityForResult(i, 1337);
     }
+
+
+    //Merge
+    static final int IMPORT_IMAGE = 13322;
+    private void mergeTool(){
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), IMPORT_IMAGE);
+    }
+
+
 }

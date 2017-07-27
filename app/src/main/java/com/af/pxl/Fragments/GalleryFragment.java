@@ -2,11 +2,19 @@ package com.af.pxl.Fragments;
 
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -22,14 +30,16 @@ import android.widget.EditText;
 import android.widget.Switch;
 
 import com.af.pxl.DrawingActivity;
-import com.af.pxl.Palettes.PalettePickerActivity;
 import com.af.pxl.Projects.Project;
 import com.af.pxl.Projects.ProjectsRecycleAdapter;
 import com.af.pxl.Projects.ProjectsUtils;
 import com.af.pxl.R;
 import com.af.pxl.Utils;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Random;
+import java.util.jar.Manifest;
 
 
 /**
@@ -97,6 +107,8 @@ public class GalleryFragment extends Fragment {
         final AlertDialog d = new AlertDialog.Builder(getContext()).setView(R.layout.project_creation).create();
         d.show();
 
+        final EditText nameET = (EditText)d.findViewById(R.id.name);
+
         TextWatcher resolutionLimiter = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -127,7 +139,7 @@ public class GalleryFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                String name = ((EditText)d.findViewById(R.id.name)).getText().toString();
+                String name = nameET.getText().toString();
                 if(!ProjectsUtils.isNameAvailable(name)){
                     Utils.toaster(getContext(), getString(R.string.incorrect_project_name));
                     return;
@@ -194,13 +206,19 @@ public class GalleryFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         switch (i){
-                            case 0:
-                                renameProject(project, id);
+                            case 0 :
+                                exportProject(project, false);
                                 break;
                             case 1:
-                                duplicateProject(project);
+                                exportProject(project, true);
                                 break;
                             case 2:
+                                renameProject(project, id);
+                                break;
+                            case 3:
+                                duplicateProject(project);
+                                break;
+                            case 4:
                                 deleteProject(project, id);
                                 break;
                         }
@@ -209,6 +227,136 @@ public class GalleryFragment extends Fragment {
                 optionsDialog.show();
             }
         });
+    }
+
+    AlertDialog exportResolutionPickDialog;
+    private void exportProject(final Project project, final boolean forShare){
+        String[] resolutionOptions = {project.pixelWidth+"x"+project.pixelHeight+" ("+getString(R.string.original)+")", project.pixelWidth*2+"x"+project.pixelHeight*2+" (x2)", project.pixelWidth*4+"x"+project.pixelHeight*4+" (x4)", project.pixelWidth*8+"x"+project.pixelHeight*8+" (x8)"};
+        exportResolutionPickDialog = new AlertDialog.Builder(getContext()).setTitle(getString(R.string.select_resolution)).setItems(resolutionOptions, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                int resolutionMultiplier = 1;
+                switch (i){
+                    case 0:
+                        break;
+                    case 1:
+                        resolutionMultiplier = 2;
+                        break;
+                    case 2:
+                        resolutionMultiplier = 4;
+                        break;
+                    case 3:
+                        resolutionMultiplier = 8;
+                        break;
+                }
+                ExportTask exportTask = new ExportTask();
+                exportTask.execute(exportTask.createParams(project, forShare, resolutionMultiplier));
+            }
+        }).create();
+        if(!checkPermissions()){
+            requestPermissions();
+            return;
+        }
+        exportResolutionPickDialog.show();
+
+    }
+
+
+    private class ExportTask extends AsyncTask<ExportTask.Params, Void, ExportTask.Params>{
+
+        class Params{
+            Project project;
+            boolean share;
+            int resolutionMultiplier;
+            File imagePath;
+            Params(Project p, boolean share, int resolutionMultiplier){
+                this.project = p;
+                this.share = share;
+                this.resolutionMultiplier = resolutionMultiplier;
+            }
+        }
+
+        Params createParams(Project p, boolean share, int resolutionMultiplier){
+            return new Params(p, share, resolutionMultiplier);
+        }
+
+        ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(getContext(), ProgressDialog.STYLE_SPINNER);
+            progressDialog.setMessage(getString(R.string.exporting)+"...");
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
+        @Override
+        protected Params doInBackground(Params... params) {
+            File exportDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/PXL");
+            if(!exportDir.exists())
+                exportDir.mkdirs();
+            if(params[0].share) {
+                File imagePath = new File(exportDir, params[0].project.name + ".png");
+                Utils.saveBitmap(Bitmap.createScaledBitmap(params[0].project.getBitmap(false), params[0].project.pixelWidth * params[0].resolutionMultiplier, params[0].project.pixelHeight * params[0].resolutionMultiplier, false), imagePath);
+                params[0].imagePath = imagePath;
+            }else {
+                File imagePath = new File(exportDir, params[0].project.name + ".png");
+                Utils.saveBitmap(Bitmap.createScaledBitmap(params[0].project.getBitmap(false), params[0].project.pixelWidth * params[0].resolutionMultiplier, params[0].project.pixelHeight * params[0].resolutionMultiplier, false), imagePath);
+                params[0].imagePath = imagePath;
+            }
+
+            return params[0];
+        }
+
+        @Override
+        protected void onPostExecute(Params params) {
+            super.onPostExecute(params);
+            progressDialog.dismiss();
+            if(params.share){
+                Intent shareIntent = new Intent();
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.setType("image/*");
+                shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(params.imagePath));
+                startActivity(Intent.createChooser(shareIntent, getString(R.string.share)));
+                params.imagePath.deleteOnExit();
+            }else {
+                Utils.alternativeAddImageToGallery(getContext(), params.imagePath);
+            }
+        }
+    }
+
+    final static int STORAGE_PERMISSIONS_REQUEST = 3232;
+    boolean permissionsGranted = false;
+    private boolean checkPermissions(){
+        if(permissionsGranted)
+            return true;
+        if(Build.VERSION.SDK_INT>=23) {
+            if(getContext().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED&&(getContext().checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED))
+                permissionsGranted = true;
+        }else
+            permissionsGranted = true;
+        return permissionsGranted;
+    }
+    private void requestPermissions(){
+        if(Build.VERSION.SDK_INT >=23) {
+            requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSIONS_REQUEST);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode==STORAGE_PERMISSIONS_REQUEST){
+            if(grantResults[0]==PackageManager.PERMISSION_GRANTED && grantResults[1]==PackageManager.PERMISSION_GRANTED) {
+                Utils.toaster(getContext(), "Yay, we got permissions!");
+                exportResolutionPickDialog.show();
+            }
+            else {
+                new AlertDialog.Builder(getContext()).setMessage(getString(R.string.storage_permissions_denied)).setPositiveButton(getString(R.string.ok), null).show();
+            }
+        }
     }
 
     private void renameProject(final Project project, final int id){

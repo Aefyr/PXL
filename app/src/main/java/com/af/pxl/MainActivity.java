@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity
         PaletteUtils.initialize(this);
 
         loadFragment(FRAGMENT.GALLERY);
+        navigationView.setCheckedItem(R.id.nav_gallery);
     }
 
     @Override
@@ -86,17 +87,15 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_gallery) {
             loadFragment(FRAGMENT.GALLERY);
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_palettes) {
             loadFragment(FRAGMENT.TEST);
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_community) {
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_settings) {
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_donate) {
 
         }
 

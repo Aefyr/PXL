@@ -1,5 +1,6 @@
 package com.af.pxl;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -7,20 +8,27 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.PorterDuff;
+import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 public class BitmapsMergeActivity extends AppCompatActivity {
 
+
+    static final int MODE_MERGE = 13221;
+    static final int MODE_TRANSLATE = 13220;
 
     private int mode;
     private boolean transparentBackground;
     private PixelImageView piv;
     private Bitmap b;
+    private Bitmap o;
     private Bitmap image;
     private Canvas bC;
     private Matrix m;
@@ -35,11 +43,36 @@ public class BitmapsMergeActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mode = intent.getIntExtra("mode", 999);
         String path = intent.getStringExtra("path");
-        transparentBackground = intent.getBooleanExtra("transparentBackground", false);
+        image = BitmapFactory.decodeFile(path);
+        if(mode == MODE_TRANSLATE) {
+            transparentBackground = intent.getBooleanExtra("transparentBackground", false);
+        }else if(mode == MODE_MERGE) {
+            try {
+                o = BitmapFactory.decodeStream(getContentResolver().openInputStream(Uri.parse(intent.getStringExtra("uri"))));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                Utils.toaster(this, getString(R.string.error));
+                finish();
+            }
+            if(o.getHeight()>512||o.getWidth()>512){
+                AlertDialog errorDialog = new AlertDialog.Builder(this).setMessage(getString(R.string.imported_bitmap_too_big)).setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialogInterface) {
+                        cancelled();
+                    }
+                }).setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        cancelled();
+                    }
+                }).create();
+                errorDialog.show();
+            }
+        }
 
         piv = (PixelImageView) findViewById(R.id.pxlImageView);
 
-        image = BitmapFactory.decodeFile(path);
+
 
         b = Bitmap.createBitmap(image.getWidth(), image.getHeight(), Bitmap.Config.ARGB_8888);
         bC = new Canvas(b);
@@ -94,11 +127,17 @@ public class BitmapsMergeActivity extends AppCompatActivity {
 
     void redraw(){
         m.setTranslate(offsetX, offsetY);
-        if(!transparentBackground)
-            bC.drawColor(Color.WHITE);
-        else
+        if(mode == MODE_TRANSLATE) {
+            if (!transparentBackground)
+                bC.drawColor(Color.WHITE);
+            else
+                bC.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+            bC.drawBitmap(image, m, null);
+        }else if(mode == MODE_MERGE){
             bC.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-        bC.drawBitmap(image, m, null);
+            bC.drawBitmap(image, 0, 0, null);
+            bC.drawBitmap(o, m, null);
+        }
         piv.invalidate();
     }
 

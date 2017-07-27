@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="project_options">
+        <item>Save to Gallery</item>
+        <item>Share</item>
+        <item>Rename</item>
+        <item>Duplicate</item>
+        <item>Delete</item>
+    </string-array>
+    <string-array name="palette_options">
         <item>Rename</item>
         <item>Duplicate</item>
         <item>Delete</item>

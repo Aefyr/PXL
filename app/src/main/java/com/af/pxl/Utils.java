@@ -1,9 +1,12 @@
 package com.af.pxl;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.media.MediaScannerConnection;
+import android.provider.MediaStore;
 import android.util.TypedValue;
 import android.widget.Toast;
 
@@ -39,6 +42,12 @@ public class Utils {
         return x;
     }
 
+    static int clamp(int x, int min, int max){
+        if(x<min)return min;
+        if(x>max) return max;
+        return x;
+    }
+
     static float vector2Distance(float x1, float y1, float x2, float y2){
         return (float) (Math.sqrt(Math.pow(x1-x2, 2)+ Math.pow(y1-y2, 2)));
     }
@@ -64,6 +73,21 @@ public class Utils {
         }catch (IOException e){
             return false;
         }
+    }
+
+    public static void addImageToGallery(final String filePath, final Context context) {
+
+        ContentValues values = new ContentValues();
+
+        values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
+        values.put(MediaStore.MediaColumns.DATA, filePath);
+
+        context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+    }
+
+    public static void alternativeAddImageToGallery(Context c, File imagePath){
+        MediaScannerConnection.scanFile(c, new String[]{imagePath.toString()}, null, null);
     }
 
     public static void copyFileOrDirectory(File sourceLocation, File targetLocation) {
