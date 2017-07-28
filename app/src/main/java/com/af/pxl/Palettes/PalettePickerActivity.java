@@ -48,7 +48,7 @@ public class PalettePickerActivity extends AppCompatActivity {
         adapter.setOnPaletteInteractionListener(new PalettePickRecyclerAdapter.OnPaletteInteractionListener() {
             @Override
             public void onPaletteLongClick(final Palette2 palette, final int index) {
-                String[] options = getResources().getStringArray(R.array.project_options);
+                String[] options = getResources().getStringArray(R.array.palette_options);
                 AlertDialog optionsDialog = new AlertDialog.Builder(PalettePickerActivity.this).setTitle(palette.getName()).setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

@@ -73,7 +73,7 @@ public class CursorOpacityPreference extends Preference {
         }
     }
 
-    void updateValueAndPreview(){
+    private void updateValueAndPreview(){
         float alpha = currentOpacity/255f;
         value.setText(twoDigitsAfterPoint.format(alpha*100)+"%");
         preview.setAlpha(alpha);
