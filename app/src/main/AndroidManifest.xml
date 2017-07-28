@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.af.pxl">
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -13,15 +15,15 @@
         <activity
             android:name=".DrawingActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoStatusBar"/>
+            android:theme="@style/AppTheme.NoStatusBar" />
         <activity
             android:name=".ColorSwapActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoStatusBar"/>
+            android:theme="@style/AppTheme.NoStatusBar" />
         <activity
             android:name=".BitmapsMergeActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoStatusBar"/>
+            android:theme="@style/AppTheme.NoStatusBar" />
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
@@ -39,8 +41,7 @@
         <activity
             android:name=".Palettes.PalettePickerActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoStatusBar"/>
+            android:theme="@style/AppTheme.NoStatusBar" />
     </application>
-
 
 </manifest>

@@ -34,7 +34,7 @@ public class ColorCircle extends View {
         //p.setAntiAlias(true);
     }
 
-    void setColor(int color){
+    public void setColor(int color){
         this.color = color;
         invalidate();
     }

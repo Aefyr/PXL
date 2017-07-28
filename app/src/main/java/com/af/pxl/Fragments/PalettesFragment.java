@@ -27,7 +27,7 @@ import com.af.pxl.Utils;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PalettesFragment extends Fragment {
+public class PalettesFragment extends android.app.Fragment {
 
 
     PalettePickRecyclerAdapter adapter;
@@ -45,8 +45,8 @@ public class PalettesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_palettes, container, false);
 
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.palettesRecycler);
-        adapter = new PalettePickRecyclerAdapter(getContext(), PaletteUtils.getSavedPalettes());
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), (int)(Utils.getScreenWidth(getResources())/Utils.dpToPx(130, getResources()))));
+        adapter = new PalettePickRecyclerAdapter(getActivity(), PaletteUtils.getSavedPalettes());
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), (int)(Utils.getScreenWidth(getResources())/Utils.dpToPx(130, getResources()))));
         recyclerView.setAdapter(adapter);
 
         initializePaletteItemsInteractions();
@@ -87,7 +87,7 @@ public class PalettesFragment extends Fragment {
 
     private void createAndShowOptionsDialog(final Palette2 palette,final int index){
         String[] options = getResources().getStringArray(R.array.palette_options);
-        AlertDialog optionsDialog = new AlertDialog.Builder(getContext()).setTitle(palette.getName()).setItems(options, new DialogInterface.OnClickListener() {
+        AlertDialog optionsDialog = new AlertDialog.Builder(getActivity()).setTitle(palette.getName()).setItems(options, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 switch (i){
@@ -107,7 +107,7 @@ public class PalettesFragment extends Fragment {
     }
 
     private void createPalette(){
-        final AlertDialog creationDialog = new AlertDialog.Builder(getContext()).setView(R.layout.edit_text).create();
+        final AlertDialog creationDialog = new AlertDialog.Builder(getActivity()).setView(R.layout.edit_text).create();
         creationDialog.show();
         final EditText paletteNameET = (EditText) creationDialog.findViewById(R.id.editText);
         creationDialog.findViewById(R.id.okButton).setOnClickListener(new View.OnClickListener() {
@@ -118,14 +118,14 @@ public class PalettesFragment extends Fragment {
                     adapter.addItem(new Palette2(paletteName).getName(), PalettePickRecyclerAdapter.AUTO_POSITION);
                     creationDialog.cancel();
                 }else {
-                    Utils.toaster(getContext(), getString(R.string.incorrect_palette_name));
+                    Utils.toaster(getActivity(), getString(R.string.incorrect_palette_name));
                 }
             }
         });
     }
 
     private void renamePalette(final Palette2 palette, final int id){
-        final AlertDialog renameDialog = new AlertDialog.Builder(getContext()).setTitle(getString(R.string.rename_palette)).setView(R.layout.edit_text).create();
+        final AlertDialog renameDialog = new AlertDialog.Builder(getActivity()).setTitle(getString(R.string.rename_palette)).setView(R.layout.edit_text).create();
         renameDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         renameDialog.show();
 
@@ -144,7 +144,7 @@ public class PalettesFragment extends Fragment {
                     adapter.notifyItemChanged(id);
                     renameDialog.dismiss();
                 }else {
-                    Utils.toaster(getContext(), getString(R.string.incorrect_palette_name));
+                    Utils.toaster(getActivity(), getString(R.string.incorrect_palette_name));
                 }
             }
         });
@@ -155,7 +155,7 @@ public class PalettesFragment extends Fragment {
     }
 
     private void deletePalette(final Palette2 palette, final int id){
-        AlertDialog deleteDialog = new AlertDialog.Builder(getContext()).setTitle(palette.getName()).setMessage(getString(R.string.delete_palette)).setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+        AlertDialog deleteDialog = new AlertDialog.Builder(getActivity()).setTitle(palette.getName()).setMessage(getString(R.string.delete_palette)).setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 PaletteUtils.deletePalette(palette);

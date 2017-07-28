@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/cursorSensText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/cursor_sensitivity"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+
+    <SeekBar
+        android:id="@+id/cursorSensSeekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="39"
+        android:paddingTop="4dp"
+        android:progress="9" />
+
+    <TextView
+        android:id="@+id/cursorSensValue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="4dp"
+        android:text="1.0x" />
+</LinearLayout>

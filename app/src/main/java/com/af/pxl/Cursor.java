@@ -1,11 +1,16 @@
 package com.af.pxl;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.view.MotionEvent;
+
+import com.af.pxl.Fragments.PreferencesFragment;
 
 /**
  * Created by Aefyr on 02.07.2017.
@@ -14,7 +19,7 @@ import android.view.MotionEvent;
 class Cursor {
     private AdaptivePixelSurface aps;
 
-    private int currentX, currentY;
+    private float currentX, currentY;
     private int limitX, limitY;
     private int pixelSize = 128;
     int opacity = 255;
@@ -33,6 +38,11 @@ class Cursor {
 
     Cursor(AdaptivePixelSurface adaptivePixelSurface){
         aps = adaptivePixelSurface;
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(aps.getContext());
+        opacity = preferences.getInt(PreferencesFragment.CURSOR_OPACITY, 255);
+        sensitivity = preferences.getInt(PreferencesFragment.CURSOR_SENSITIVITY, 9)/10f + 0.1f;
+
         matrix = new Matrix();
         drawDefaultCursorImage();
     }
@@ -85,8 +95,8 @@ class Cursor {
         }
 
         if(event.getAction() == MotionEvent.ACTION_MOVE) {
-            currentX = Utils.clamp(currentX + (int) ((x - previousX)*sensitivity), 0, limitX);
-            currentY = Utils.clamp(currentY + (int)((y - previousY)*sensitivity), 0, limitY);
+            currentX = Utils.clamp(currentX + ((x - previousX)*sensitivity), 0, limitX);
+            currentY = Utils.clamp(currentY + ((y - previousY)*sensitivity), 0, limitY);
             updatePosition();
         }
 
@@ -179,12 +189,12 @@ class Cursor {
     }
 
     private float[] p = {0, 0};
-    private float canvasX, canvasY;
+    private int canvasX, canvasY;
     private void updateCanvasXY(){
         p[0] = p[1] = 0;
         aps.pixelMatrix.mapPoints(p);
-        canvasX = (currentX-p[0])/aps.pixelScale;
-        canvasY = (currentY-p[1])/aps.pixelScale;
+        canvasX = (int) ((currentX-p[0])/aps.pixelScale);
+        canvasY = (int) ((currentY-p[1])/aps.pixelScale);
     }
 
 }

@@ -110,7 +110,7 @@
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:text="Move"
-        app:srcCompat="@drawable/move" />
+        app:srcCompat="@drawable/tempsplash" />
 
     <ImageButton
         android:id="@+id/importB"

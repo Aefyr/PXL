@@ -1,6 +1,9 @@
 package com.af.pxl;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,15 +16,16 @@ import android.view.MenuItem;
 
 import com.af.pxl.Fragments.GalleryFragment;
 import com.af.pxl.Fragments.PalettesFragment;
+import com.af.pxl.Fragments.PreferencesFragment;
 import com.af.pxl.Palettes.PaletteUtils;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private FragmentManager fragmentManager;
+    private android.app.FragmentManager fragmentManager;
 
     enum FRAGMENT{
-        GALLERY, TEST
+        GALLERY, TEST, PREFERENCES
     }
 
     @Override
@@ -42,7 +46,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         //Fragments
-        fragmentManager = getSupportFragmentManager();
+        fragmentManager = getFragmentManager();
         PaletteUtils.initialize(this);
 
         loadFragment(FRAGMENT.GALLERY);
@@ -92,7 +96,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_palettes) {
             loadFragment(FRAGMENT.TEST);
         } else if (id == R.id.nav_community) {
-
+            loadFragment(FRAGMENT.PREFERENCES);
         } else if (id == R.id.nav_settings) {
 
         } else if (id == R.id.nav_donate) {
@@ -124,6 +128,15 @@ public class MainActivity extends AppCompatActivity
                     System.out.println("created test");
                 }
                     fragmentManager.beginTransaction().replace(R.id.container, palettes, "Palettes").commit();
+                break;
+            case PREFERENCES:
+                PreferencesFragment preferences = (PreferencesFragment) fragmentManager.findFragmentByTag("Preferences");
+                if(preferences==null){
+                    preferences = new PreferencesFragment();
+                    //fragmentManager.beginTransaction().add(R.id.container, test, "Test").commit();
+                    System.out.println("created test");
+                }
+                fragmentManager.beginTransaction().replace(R.id.container, preferences, "Preferences").commit();
                 break;
         }
     }

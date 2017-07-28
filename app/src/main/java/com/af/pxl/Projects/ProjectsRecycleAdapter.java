@@ -28,7 +28,7 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
     SimpleDateFormat simpleDateFormat;
 
     public interface OnProjectClickListener{
-        void onProjectClick(Project project);
+        void onProjectClick(Project project, int id);
         void onProjectLongClick(int id, Project project);
     }
 
@@ -64,7 +64,7 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onProjectClickListener.onProjectClick(getItem(holder.getAdapterPosition()));
+                onProjectClickListener.onProjectClick(getItem(holder.getAdapterPosition()), holder.getAdapterPosition());
             }
         });
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {

@@ -282,6 +282,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
     @Override
     public void onBackPressed() {
         aps.cleanupWeReLeaving();
+        setResult(1);
         finish();
         super.onBackPressed();
     }

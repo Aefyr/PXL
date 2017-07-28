@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/cursorOpacityText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/cursor_opacity"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+
+    <SeekBar
+        android:id="@+id/cursorOpacitySeekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="255"
+        android:paddingTop="4dp"
+        android:progress="255" />
+
+    <TextView
+        android:id="@+id/cursorOpacityValue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="4dp"
+        android:text="100%" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/tile_background"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/cursorOpacityPreview"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/defaultcursor" />
+    </LinearLayout>
+
+</LinearLayout>

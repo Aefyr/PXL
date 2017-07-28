@@ -45,7 +45,7 @@ import java.util.jar.Manifest;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class GalleryFragment extends Fragment {
+public class GalleryFragment extends android.app.Fragment {
 
     static final int IMPORT_IMAGE = 512;
 
@@ -64,12 +64,12 @@ public class GalleryFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
 
 
-        ProjectsUtils.initialize(getContext());
+        ProjectsUtils.initialize(getActivity());
 
         recyclerView = (RecyclerView) view.findViewById(R.id.galleryRecycler);
-        adapter = new ProjectsRecycleAdapter(getContext(), ProjectsUtils.getProjects());
+        adapter = new ProjectsRecycleAdapter(getActivity(), ProjectsUtils.getProjects());
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), (int) (Utils.getScreenWidth(getResources())/Utils.dpToPx(180, getResources()))));
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), (int) (Utils.getScreenWidth(getResources())/Utils.dpToPx(180, getResources()))));
 
         initializeFABOnClickListener(view);
         initializeOnProjectClickListener();
@@ -77,10 +77,13 @@ public class GalleryFragment extends Fragment {
         return view;
     }
 
-    private void openProject(String name){
+    private static final int DRAWING_REQUEST = 1445;
+    private int openedProjectIndex = 0;
+    private void openProject(String name, int index){
         Intent i = new Intent(getActivity(), DrawingActivity.class);
         i.putExtra("projectToLoad", name);
-        startActivity(i);
+        openedProjectIndex = index;
+        startActivityForResult(i, DRAWING_REQUEST);
         //getActivity().finish();
     }
 
@@ -89,7 +92,7 @@ public class GalleryFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               AlertDialog newProjectOptionPick = new AlertDialog.Builder(getContext()).setItems(getResources().getStringArray(R.array.new_project_options), new DialogInterface.OnClickListener() {
+               AlertDialog newProjectOptionPick = new AlertDialog.Builder(getActivity()).setItems(getResources().getStringArray(R.array.new_project_options), new DialogInterface.OnClickListener() {
                    @Override
                    public void onClick(DialogInterface dialogInterface, int i) {
                        if(i==0)
@@ -104,7 +107,7 @@ public class GalleryFragment extends Fragment {
     }
 
     private void createNewProject(){
-        final AlertDialog d = new AlertDialog.Builder(getContext()).setView(R.layout.project_creation).create();
+        final AlertDialog d = new AlertDialog.Builder(getActivity()).setView(R.layout.project_creation).create();
         d.show();
 
         final EditText nameET = (EditText)d.findViewById(R.id.name);
@@ -141,12 +144,12 @@ public class GalleryFragment extends Fragment {
 
                 String name = nameET.getText().toString();
                 if(!ProjectsUtils.isNameAvailable(name)){
-                    Utils.toaster(getContext(), getString(R.string.incorrect_project_name));
+                    Utils.toaster(getActivity(), getString(R.string.incorrect_project_name));
                     return;
                 }
 
                 if(widthET.getText().length()==0||heightET.getText().length()==0){
-                    Utils.toaster(getContext(), getString(R.string.incorrect_width_or_height));
+                    Utils.toaster(getActivity(), getString(R.string.incorrect_width_or_height));
                     return;
                 }
 
@@ -155,7 +158,7 @@ public class GalleryFragment extends Fragment {
                 adapter.addItem(ProjectsUtils.createNewProject(name, width, height, "Default", ((Switch)d.findViewById(R.id.transparentBackground)).isChecked()));
                 d.dismiss();
                 recyclerView.scrollToPosition(0);
-                openProject(name);
+                openProject(name, 0);
             }
         });
     }
@@ -173,36 +176,38 @@ public class GalleryFragment extends Fragment {
         if(requestCode==IMPORT_IMAGE&&resultCode== Activity.RESULT_OK){
             Bitmap importedImage;
             try {
-                importedImage = BitmapFactory.decodeStream(getContext().getContentResolver().openInputStream(data.getData()));
+                importedImage = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(data.getData()));
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
-                Utils.toaster(getContext(), getString(R.string.error));
+                Utils.toaster(getActivity(), getString(R.string.error));
                 return;
             }
             if(importedImage.getWidth()>512||importedImage.getHeight()>512){
-                new AlertDialog.Builder(getContext()).setMessage(getString(R.string.imported_bitmap_too_big)).setPositiveButton(getString(R.string.ok), null).show();
+                new AlertDialog.Builder(getActivity()).setMessage(getString(R.string.imported_bitmap_too_big)).setPositiveButton(getString(R.string.ok), null).show();
                 return;
             }
-            Project p = ProjectsUtils.createProjectFromBitmap(getContext(), importedImage);
+            Project p = ProjectsUtils.createProjectFromBitmap(getActivity(), importedImage);
             importedImage.recycle();
             adapter.addItem(p);
             recyclerView.scrollToPosition(0);
-            openProject(p.name);
+            openProject(p.name, 0);
+        } else if(requestCode==DRAWING_REQUEST&&resultCode==1){
+            adapter.notifyItemChanged(openedProjectIndex);
         }
     }
 
     private void initializeOnProjectClickListener(){
         adapter.setOnProjectClickListener(new ProjectsRecycleAdapter.OnProjectClickListener() {
             @Override
-            public void onProjectClick(Project project) {
+            public void onProjectClick(Project project, int id) {
                 System.out.println("Clicked "+project.name);
-                openProject(project.name);
+                openProject(project.name, id);
             }
 
             @Override
             public void onProjectLongClick(final int id, final Project project) {
-                AlertDialog optionsDialog = new AlertDialog.Builder(getContext()).setTitle(project.name).setItems(getResources().getStringArray(R.array.project_options), new DialogInterface.OnClickListener() {
+                AlertDialog optionsDialog = new AlertDialog.Builder(getActivity()).setTitle(project.name).setItems(getResources().getStringArray(R.array.project_options), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         switch (i){
@@ -232,7 +237,7 @@ public class GalleryFragment extends Fragment {
     AlertDialog exportResolutionPickDialog;
     private void exportProject(final Project project, final boolean forShare){
         String[] resolutionOptions = {project.pixelWidth+"x"+project.pixelHeight+" ("+getString(R.string.original)+")", project.pixelWidth*2+"x"+project.pixelHeight*2+" (x2)", project.pixelWidth*4+"x"+project.pixelHeight*4+" (x4)", project.pixelWidth*8+"x"+project.pixelHeight*8+" (x8)"};
-        exportResolutionPickDialog = new AlertDialog.Builder(getContext()).setTitle(getString(R.string.select_resolution)).setItems(resolutionOptions, new DialogInterface.OnClickListener() {
+        exportResolutionPickDialog = new AlertDialog.Builder(getActivity()).setTitle(getString(R.string.select_resolution)).setItems(resolutionOptions, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 int resolutionMultiplier = 1;
@@ -350,17 +355,17 @@ public class GalleryFragment extends Fragment {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(requestCode==STORAGE_PERMISSIONS_REQUEST){
             if(grantResults[0]==PackageManager.PERMISSION_GRANTED && grantResults[1]==PackageManager.PERMISSION_GRANTED) {
-                Utils.toaster(getContext(), "Yay, we got permissions!");
+                Utils.toaster(getActivity(), "Yay, we got permissions!");
                 exportResolutionPickDialog.show();
             }
             else {
-                new AlertDialog.Builder(getContext()).setMessage(getString(R.string.storage_permissions_denied)).setPositiveButton(getString(R.string.ok), null).show();
+                new AlertDialog.Builder(getActivity()).setMessage(getString(R.string.storage_permissions_denied)).setPositiveButton(getString(R.string.ok), null).show();
             }
         }
     }
 
     private void renameProject(final Project project, final int id){
-        final AlertDialog renameDialog = new AlertDialog.Builder(getContext()).setTitle(getString(R.string.rename_project)).setView(R.layout.edit_text).create();
+        final AlertDialog renameDialog = new AlertDialog.Builder(getActivity()).setTitle(getString(R.string.rename_project)).setView(R.layout.edit_text).create();
         renameDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         renameDialog.show();
 
@@ -378,7 +383,7 @@ public class GalleryFragment extends Fragment {
                     adapter.notifyItemChanged(id);
                     renameDialog.dismiss();
                 }else {
-                    Utils.toaster(getContext(), getString(R.string.incorrect_project_name));
+                    Utils.toaster(getActivity(), getString(R.string.incorrect_project_name));
                 }
             }
         });
@@ -391,7 +396,7 @@ public class GalleryFragment extends Fragment {
     }
 
     private void deleteProject(final Project project, final int id){
-        AlertDialog deleteDialog = new AlertDialog.Builder(getContext()).setTitle(project.name).setMessage(getString(R.string.delete_project)).setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+        AlertDialog deleteDialog = new AlertDialog.Builder(getActivity()).setTitle(project.name).setMessage(getString(R.string.delete_project)).setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 ProjectsUtils.deleteProject(project);

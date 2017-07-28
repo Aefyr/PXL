@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/preferenceName"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/colorCircle"
+        android:gravity="center_vertical"
+        android:text="ColorPick Preference"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+
+    <com.af.pxl.ColorCircle
+        android:id="@+id/colorCircle"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="end" />
+</RelativeLayout>

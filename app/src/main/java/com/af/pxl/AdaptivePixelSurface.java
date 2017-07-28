@@ -1,6 +1,7 @@
 package com.af.pxl;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -9,11 +10,13 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 
+import com.af.pxl.Fragments.PreferencesFragment;
 import com.af.pxl.Palettes.Palette2;
 import com.af.pxl.Palettes.PaletteUtils;
 import com.af.pxl.Projects.Project;
@@ -266,6 +269,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
     }
 
     Paint noAAPaint;
+    private int backgroundColor = Color.GRAY;
     void initializePaints(){
         //Main paint
         paint = new Paint();
@@ -280,9 +284,11 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
 
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        backgroundColor = preferences.getInt(PreferencesFragment.BACKGROUND_COLOR, Color.GRAY);
         //Grid paint
         gridP = new Paint();
-        gridP.setColor(Color.BLUE);
+        gridP.setColor(preferences.getInt(PreferencesFragment.GRID_COLOR, Color.BLACK));
         gridP.setStyle(Paint.Style.STROKE);
         gridP.setStrokeWidth(1f);
     }
@@ -319,8 +325,8 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
 
     void centerCanvas(){
         pixelScale = getWidth()<getHeight()?getWidth()/pixelWidth:getHeight()/pixelHeight;
-        matrixOffsetX = getWidth() / 2 - ((pixelWidth * pixelScale) / 2);
-        matrixOffsetY = getHeight() / 2 - ((pixelHeight * pixelScale) / 2);
+        matrixOffsetX = (int) (getWidth() / 2 - ((pixelWidth * pixelScale) / 2));
+        matrixOffsetY = (int) (getHeight() / 2 - ((pixelHeight * pixelScale) / 2));
     }
 
 
@@ -328,7 +334,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
 
     float prevCX, prevCY;
     int prevPointerCount = 0;
-    float matrixOffsetX, matrixOffsetY;
+    int matrixOffsetX, matrixOffsetY;
 
     float prevDist = 0;
     float c = 0;
@@ -386,6 +392,8 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
 
             matrixOffsetX += midX-prevCX;
             matrixOffsetY += midY-prevCY;
+            //matrixOffsetX = Utils.clamp(matrixOffsetX, (int)-pixelScale*pixelWidth, realWidth);
+            //matrixOffsetY = Utils.clamp(matrixOffsetX, (int)-pixelScale*pixelHeight, realHeight);
 
             if(!anchorSet) {
                 anchorSet = true;
@@ -647,7 +655,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
                 if(canvas == null)
                     continue;
 
-                canvas.drawColor(Color.GRAY);
+                canvas.drawColor(backgroundColor);
 
                 //Recalculate matrix and grid if zoom or/and move were used
                 if(scaleChanged||translateChanged) {
