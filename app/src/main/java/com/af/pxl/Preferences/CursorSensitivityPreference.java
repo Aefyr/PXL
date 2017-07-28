@@ -1,6 +1,7 @@
 package com.af.pxl.Preferences;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.preference.Preference;
 import android.util.AttributeSet;
 import android.view.View;
@@ -51,10 +52,17 @@ public class CursorSensitivityPreference extends Preference {
     }
 
     @Override
+    protected Object onGetDefaultValue(TypedArray a, int index) {
+        return a.getInt(index, 9);
+    }
+
+    @Override
     protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
         super.onSetInitialValue(restorePersistedValue, defaultValue);
         if(restorePersistedValue){
             currentSensitivity = getPersistedInt(9);
+        }else {
+            currentSensitivity = (int) defaultValue;
         }
 
     }
