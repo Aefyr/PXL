@@ -71,7 +71,7 @@ public class PalettePickRecyclerAdapter extends RecyclerView.Adapter<PalettePick
     public void addItem(String paletteName, int index){
         if(index==AUTO_POSITION) {
             index = 0;
-            while(paletteName.compareTo(paletteNames.get(index))>0)
+            while(index<paletteNames.size()&&paletteName.compareTo(paletteNames.get(index))>0)
                 index++;
         }
         paletteNames.add(index, paletteName);

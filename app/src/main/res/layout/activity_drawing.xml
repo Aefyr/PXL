@@ -112,13 +112,4 @@
         android:text="Move"
         app:srcCompat="@drawable/tempsplash" />
 
-    <ImageButton
-        android:id="@+id/importB"
-        style="@style/PXLImageButton"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/TMP"
-        app:srcCompat="@drawable/ok" />
-
 </RelativeLayout>

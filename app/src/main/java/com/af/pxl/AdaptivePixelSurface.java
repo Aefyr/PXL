@@ -379,10 +379,10 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
             //System.out.println("distance="+dist);
 
             if(c>th){
-                pixelScale *= 0.95f;
+                pixelScale *= Math.pow(0.95f, Math.abs(c/th));
                 c = 0;
             }else if(c<-th){
-                pixelScale  *= 1.05f;
+                pixelScale *= Math.pow(1.05f, Math.abs(c/th));
                 c = 0;
             }
 

@@ -107,9 +107,10 @@ public class PalettesFragment extends android.app.Fragment {
     }
 
     private void createPalette(){
-        final AlertDialog creationDialog = new AlertDialog.Builder(getActivity()).setView(R.layout.edit_text).create();
+        final AlertDialog creationDialog = new AlertDialog.Builder(getActivity()).setTitle(getString(R.string.create_new_palette)).setView(R.layout.edit_text).create();
         creationDialog.show();
         final EditText paletteNameET = (EditText) creationDialog.findViewById(R.id.editText);
+        paletteNameET.setHint(getString(R.string.enter_name));
         creationDialog.findViewById(R.id.okButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

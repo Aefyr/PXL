@@ -3,6 +3,8 @@ package com.af.pxl;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -10,10 +12,14 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.graphics.Shader;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.af.pxl.Fragments.PreferencesFragment;
 import com.af.pxl.Palettes.Palette2;
@@ -29,9 +35,12 @@ import java.util.ArrayDeque;
 public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteChangeListener {
 
     Project project;
+    boolean projectReady = false;
+    boolean surfaceReady = false;
 
     //Canvas and drawing
     Paint paint;
+    private Paint cursorPaint;
     int currentColor;
 
     int pixelWidth = 128;
@@ -91,10 +100,9 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
 
         //canvasHistory = new CanvasHistory(this, pixelBitmap, 100);
 
-        initializePaints();
-
         cursor = new CursorH(this);
         superPencil = new SuperPencilH(this);
+        initializePaints();
         ter();
     }
 
@@ -165,24 +173,44 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
         superPencil.symmetryUpdate();
     }
 
+    Paint trans;
     public void setProject(Project project){
         this.project = project;
         pixelBitmap = project.getBitmap(true);
-        pixelCanvas = new Canvas(pixelBitmap);
-        canvasHistory = new CanvasHistoryH(this, project, 100);
         this.pixelWidth = pixelBitmap.getWidth();
         this.pixelHeight = pixelBitmap.getHeight();
+        pixelCanvas = new Canvas(pixelBitmap);
+        canvasHistory = new CanvasHistoryH(this, project, CanvasHistoryH.ADAPTIVE_SIZE);
         setPalette(PaletteUtils.loadPalette(project.palette));
-        System.out.println("Loaded bitmap config: "+pixelBitmap.getConfig().name());
+        if(project.transparentBackground){
+            SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(getContext());
+            int bg = p.getInt(PreferencesFragment.TRANSPARENT_CANVAS_BACKGROUND_COLOR, 111);
+            trans = new Paint();
+            if(bg<0){
+                trans.setColor(bg);
+                trans.setStyle(Paint.Style.FILL);
+            }else if(bg == 111) {
+                BitmapFactory.Options op = new BitmapFactory.Options();
+                op.inScaled = false;
+                op.inMutable = false;
+                trans.setShader(new BitmapShader(BitmapFactory.decodeResource(getResources(), R.drawable.tilebglidl), Shader.TileMode.REPEAT, Shader.TileMode.REPEAT));
+                trans.setFilterBitmap(false);
+                trans.setAntiAlias(false);
+                trans.setStyle(Paint.Style.FILL);
+            }else if(bg == 322){
+                trans.setColor(gridP.getColor());
+                trans.setStyle(Paint.Style.STROKE);
+                trans.setStrokeWidth((int)Utils.dpToPx(1, getResources()));
+            }
+
+        }
+        projectReady = true;
     }
 
     //Utility methods
-    Bitmap gridB;
-    Canvas gridC;
     Paint gridP;
     float[] p = {0, 0};
-    void drawGrid(){
-        gridC.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+    void drawGrid(Canvas c){
         gridP.setStrokeWidth((int)Utils.clamp(pixelScale/20, 1, 999));
 
         p[0] = 0;
@@ -210,12 +238,12 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
 
 
         while(x<limitX){
-            gridC.drawLine(x, lOY - gridCellSize, x, limitY+gridCellSize, gridP);
+            c.drawLine(x, lOY - gridCellSize, x, limitY+gridCellSize, gridP);
             x+=gridCellSize;
         }
 
         while(y<limitY){
-            gridC.drawLine(lOX-gridCellSize, y, limitX+gridCellSize, y, gridP);
+            c.drawLine(lOX-gridCellSize, y, limitX+gridCellSize, y, gridP);
             y+=gridCellSize;
         }
 
@@ -239,20 +267,6 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
         return gridEnabled;
     }
     void setGridEnabled(boolean enabled){
-
-        if(enabled){
-            if(gridB == null) {
-                gridB = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
-                if(gridC==null)
-                    gridC = new Canvas(gridB);
-                else
-                    gridC.setBitmap(gridB);
-            }
-            drawGrid();
-        }else {
-            gridC.setBitmap(null);
-            gridB = null;
-        }
         gridEnabled = enabled;
         invalidate();
     }
@@ -280,20 +294,25 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
         gridP.setColor(preferences.getInt(PreferencesFragment.GRID_COLOR, Color.BLACK));
         gridP.setStyle(Paint.Style.STROKE);
         gridP.setStrokeWidth(1f);
+
+        cursorPaint = new Paint();
+        cursorPaint.setStyle(Paint.Style.STROKE);
+        cursorPaint.setAntiAlias(false);
+        cursorPaint.setAlpha(cursor.opacity);
+        cursorPaint.setStrokeWidth(Utils.dpToPx(1, getResources()));
     }
 
-    //SurfaceView.Callback methods
-    boolean OK = false;
-    boolean ready = false;
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         realWidth = w;
         realHeight = h;
         cursor.setLimits(realWidth, realHeight);
-        if(!ready){
+        if(!surfaceReady){
+            th = (int) Utils.dpToPx(1, getResources());
             centerCanvas();
-            ready = true;
+            cursor.center(realWidth, realHeight);
+            surfaceReady = true;
         }
         invalidate();
     }
@@ -301,9 +320,9 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
 
 
     void centerCanvas(){
-        pixelScale = getWidth()<getHeight()?getWidth()/pixelWidth:getHeight()/pixelHeight;
-        matrixOffsetX = (int) (getWidth() / 2 - ((pixelWidth * pixelScale) / 2));
-        matrixOffsetY = (int) (getHeight() / 2 - ((pixelHeight * pixelScale) / 2));
+        pixelScale = realWidth<realHeight?realWidth/pixelWidth:realHeight/pixelHeight;
+        matrixOffsetX = (int) (realWidth / 2 - ((pixelWidth * pixelScale) / 2));
+        matrixOffsetY = (int) (realHeight / 2 - ((pixelHeight * pixelScale) / 2));
     }
 
 
@@ -315,7 +334,7 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
 
     float prevDist = 0;
     float c = 0;
-    int th = 32;
+    int th = 1;
     float midX, midY;
 
     float scaleAnchorX = 0, scaleAnchorY = 0;
@@ -331,7 +350,7 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
         if(fillInProgress)
             return true;
 
-        if(event.getPointerCount() > 1){
+        if(event.getPointerCount() != 1){
             if(cursorMode){
                 superPencil.cancel(cursor.getX(), cursor.getY());
             }else {
@@ -346,7 +365,7 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
             float dist = Utils.vector2Distance(event.getX(0), event.getY(0), event.getX(1), event.getY(1));
             float deltaDist = prevDist - dist;
 
-            if(prevPointerCount <= 1){
+            if(prevPointerCount !=event.getPointerCount()){
                 prevCX = midX;
                 prevCY = midY;
                 deltaDist = 0;
@@ -356,10 +375,12 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
             //System.out.println("distance="+dist);
 
             if(c>th){
-                pixelScale *= 0.95f;
+                pixelScale *= Math.pow(0.995f, Math.abs(c/th));
+                System.out.println("RESETED C WITH VALUE OF "+c);
                 c = 0;
             }else if(c<-th){
-                pixelScale  *= 1.05f;
+                pixelScale *= Math.pow(1.005f, Math.abs(c/th));
+                System.out.println("RESETED C WITH VALUE OF "+c);
                 c = 0;
             }
 
@@ -577,15 +598,19 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
     boolean showFps = true;
     Paint textPaint;
     Rect bounds;
+    int screenRefreshRate=60;
     long deltaTime = 1;
 
     void ter(){
+        Display display = ((WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        screenRefreshRate = (int) display.getRefreshRate();
+        System.out.println("refreshRate="+screenRefreshRate);
         bounds = new Rect();
         textPaint = new Paint();
         textPaint.setColor(Color.GREEN);
         textPaint.setTextAlign(Paint.Align.LEFT);
         textPaint.setTextSize(50);
-        textPaint.setStyle(Paint.Style.STROKE);
+        textPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         textPaint.setStrokeWidth(2);
         textPaint.setAntiAlias(false);
         textPaint.setFilterBitmap(false);
@@ -595,8 +620,11 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
         long start = System.currentTimeMillis();
         super.onDraw(canvas);
         canvas.drawColor(backgroundColor);
-        if(!OK||!ready)
+
+
+        if(!projectReady)
             return;
+
         //Recalculate matrix and grid if zoom or/and move were used
         if(scaleChanged||translateChanged) {
             pixelMatrix.reset();
@@ -605,17 +633,9 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
             scaleChanged = false;
             translateChanged = false;
 
-            if(gridEnabled)
-                drawGrid();
         }
 
-
-        canvas.drawBitmap(pixelBitmap, pixelMatrix, noAAPaint);
-
-        if(gridEnabled) {
-            canvas.drawBitmap(gridB, 0, 0, noAAPaint);
-        }
-
+        //Draw transparency tile
         if(project.transparentBackground){
             p[0] = p[1] = 0;
             pixelMatrix.mapPoints(p);
@@ -624,46 +644,81 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
             p[0] = pixelWidth;
             p[1] = pixelHeight;
             pixelMatrix.mapPoints(p);
-            canvas.drawRect(x1, y1, p[0], p[1], gridP);
+            canvas.drawRect(x1, y1, p[0], p[1], trans);
         }
 
+        //Draw the actual drawing
+        canvas.drawBitmap(pixelBitmap, pixelMatrix, noAAPaint);
 
-        if(showFps){
-            deltaTime = (long) Utils.clamp(deltaTime, 1, 1000);
-            String a = 1000/deltaTime+" fps.";
-            paint.getTextBounds(a, 0, a.length(), bounds);
-            canvas.drawText(a, getWidth()-bounds.width()*2, bounds.height()*2+256, textPaint);
+        //Draw grid
+        if(gridEnabled) {
+            drawGrid(canvas);
         }
+
 
         //Highlight the pixel we'll draw on with cursorPencil
         //TODO Maybe make "less than 1 pixel" offsets global variables
         if(cursorMode) {
-            noAAPaint.setAlpha(cursor.opacity);
-            canvas.drawBitmap(cursor.cursorPointerImage, cursor.matrix,  noAAPaint);
-            noAAPaint.setAlpha(255);
-            //Stole this from drawGrid^^
+            canvas.drawBitmap(cursor.cursorPointerImage, cursor.matrix, cursorPaint);
             p[0] = 0;
             p[1] = 0;
             pixelMatrix.mapPoints(p);
-
-            //Legacy method, doesn't work with the very first pixels visible
-                    /*float lessThan1PixelOffsetX = p[0]%pixelScale>0?p[0]%pixelScale:pixelScale+p[0]%pixelScale;
-                    float lessThan1PixelOffsetY = p[1]%pixelScale>0?p[1]%pixelScale:pixelScale+p[1]%pixelScale;
-
-                    float x1 = (cursor.getX() -lessThan1PixelOffsetX - ((cursor.getX()-lessThan1PixelOffsetX)%pixelScale))+lessThan1PixelOffsetX;
-                    float y1 = (cursor.getY()-lessThan1PixelOffsetY - ((cursor.getY()-lessThan1PixelOffsetY)%pixelScale))+lessThan1PixelOffsetY;
-
-                    canvas.drawRect(x1, y1, x1+pixelScale, y1+pixelScale, textPaint);*/
 
             float loX = p[0]%pixelScale;
             int bX = (int) Math.floor((cursor.getX()-loX)/pixelScale);
             float loY = p[1]%pixelScale;
             int bY = (int) Math.floor((cursor.getY()-loY)/pixelScale);
-            canvas.drawRect(bX*pixelScale+loX, bY*pixelScale+loY, bX*pixelScale+loX+pixelScale, bY*pixelScale+loY+pixelScale, paint);
+
+            cursor.updateCanvasXY();
+            if(!cursor.offCanvasBounds())
+                cursorPaint.setColor(Utils.invertColor(pixelBitmap.getPixel(cursor.getCanvasX(), cursor.getCanvasY())));
+            canvas.drawRect(bX*pixelScale+loX, bY*pixelScale+loY, bX*pixelScale+loX+pixelScale, bY*pixelScale+loY+pixelScale, cursorPaint);
         }
+
+
+        //Draw FPS
+        if(showFps){
+            deltaTime = (long) Utils.clamp(deltaTime, 1, 1000);
+            String a = "???";
+            if(1000/deltaTime>screenRefreshRate)
+                a = "SYNCHRONIZED fps";
+            else
+                a = 1000/deltaTime+" fps.";
+            paint.getTextBounds(a, 0, a.length(), bounds);
+            canvas.drawText(a, getWidth()-bounds.width()*3, bounds.height()*2+256, textPaint);
+        }
+
         deltaTime = System.currentTimeMillis() - start;
         System.out.println("Canvas drawn in "+deltaTime+" ms");
     }
+
+    /*void writeStateToBundle(Bundle outState){
+        outState.putString("projectToLoad", project.name);
+        outState.putInt("selectedColor", currentColor);
+        outState.putBoolean("grid", gridEnabled);
+        outState.putBoolean("cursorMode", cursorMode);
+        outState.putBoolean("symmetry", symmetry);
+        int symmetryT = 0;
+        if(symmetryType == SymmetryType.VERTICAL)
+            symmetryT = 1;
+        outState.putInt("symmetryType", symmetryT);
+        int tool = 0;
+        switch (currentTool){
+            case FLOOD_FILL:
+                tool = 1;
+                break;
+            case COLOR_PICK:
+                tool = 2;
+                break;
+            case COLOR_SWAP:
+                tool = 3;
+                break;
+            case ERASER:
+                tool = 4;
+                break;
+        }
+        outState.putInt("tool", tool);
+    }*/
 
     OnSpecialToolUseListener onSpecialToolUseListener;
     public void setOnSpecialToolUseListener(OnSpecialToolUseListener listener){

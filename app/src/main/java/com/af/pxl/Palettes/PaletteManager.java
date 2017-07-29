@@ -62,6 +62,7 @@ public class PaletteManager {
                 public void onClick(View view) {
                     Intent pickerIntent = new Intent(a, PalettePickerActivity.class);
                     pickerIntent.putExtra("pickerMode", true);
+                    pickerIntent.putExtra("currentPalette", currentPalette.getName());
                     a.startActivityForResult(pickerIntent, PalettePickerActivity.REQUEST_CODE_PICK_PALETTE);
                 }
             });
@@ -98,6 +99,7 @@ public class PaletteManager {
         paletteChanged(palette);
 
     }
+
 
     private void paletteChanged(Palette2 newPalette){
         currentPalette = newPalette;

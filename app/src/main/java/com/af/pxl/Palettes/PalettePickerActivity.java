@@ -21,6 +21,8 @@ public class PalettePickerActivity extends AppCompatActivity {
 
     PalettePickRecyclerAdapter adapter;
     public static int REQUEST_CODE_PICK_PALETTE = 932;
+    private String currentPaletteName;
+    private boolean currentPaletteNameChanged = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +34,7 @@ public class PalettePickerActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new GridLayoutManager(this, (int)(Utils.getScreenWidth(getResources())/Utils.dpToPx(130, getResources()))));
         recyclerView.setAdapter(adapter);
 
+        currentPaletteName = getIntent().getStringExtra("currentPalette");
         initializePaletteItemsInteractions(getIntent().getBooleanExtra("pickerMode", false));
 
 
@@ -82,9 +85,10 @@ public class PalettePickerActivity extends AppCompatActivity {
     }
 
     private void createPalette(){
-        final AlertDialog creationDialog = new AlertDialog.Builder(this).setView(R.layout.edit_text).create();
+        final AlertDialog creationDialog = new AlertDialog.Builder(this).setView(R.layout.edit_text).setTitle(getString(R.string.create_new_palette)).create();
         creationDialog.show();
         final EditText paletteNameET = (EditText) creationDialog.findViewById(R.id.editText);
+        paletteNameET.setHint(getString(R.string.enter_name));
         creationDialog.findViewById(R.id.okButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -114,6 +118,10 @@ public class PalettePickerActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String newName = nameEditText.getText().toString();
                 if(PaletteUtils.isNameAvailable(newName)){
+                    if(palette.getName().equals(currentPaletteName)) {
+                        currentPaletteNameChanged = true;
+                        currentPaletteName = newName;
+                    }
                     PaletteUtils.renamePalette(palette, newName);
                     adapter.paletteNames.set(id, newName);
                     adapter.notifyItemChanged(id);
@@ -138,5 +146,17 @@ public class PalettePickerActivity extends AppCompatActivity {
             }
         }).setNegativeButton(getString(R.string.cancel), null).create();
         deleteDialog.show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(currentPaletteNameChanged){
+            System.out.println("HEY!");
+            Intent result = new Intent();
+            result.putExtra("pickedPalette", currentPaletteName);
+            setResult(1, result);
+            finish();
+        }
+        super.onBackPressed();
     }
 }

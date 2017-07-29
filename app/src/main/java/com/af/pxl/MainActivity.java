@@ -24,9 +24,11 @@ public class MainActivity extends AppCompatActivity
 
     private android.app.FragmentManager fragmentManager;
 
-    enum FRAGMENT{
+    private enum FRAGMENT{
         GALLERY, TEST, PREFERENCES
     }
+
+    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +44,7 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         //Fragments
@@ -79,6 +81,8 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            navigationView.setCheckedItem(R.id.nav_community);
+            loadFragment(FRAGMENT.PREFERENCES);
             return true;
         }
 

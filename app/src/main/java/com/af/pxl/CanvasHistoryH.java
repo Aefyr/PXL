@@ -22,6 +22,8 @@ public class CanvasHistoryH {
     private int size;
     private int arraySize;
 
+    final static int ADAPTIVE_SIZE = 322;
+
     private ArrayDeque<int[]> future;
 
     private ArrayList<OnHistoryAvailabilityChangeListener> listeners;
@@ -45,11 +47,28 @@ public class CanvasHistoryH {
 
     public CanvasHistoryH(AdaptivePixelSurfaceH aps, Project project, int size){
         this.aps = aps;
-        this.size = size;
+        if(size==ADAPTIVE_SIZE) {
+            autoSize();
+        }else
+            this.size = size;
         setProject(project);
         past = new ArrayDeque<>();
         future = new ArrayDeque<>();
         listeners = new ArrayList<>();
+    }
+
+    private void autoSize(){
+        int pixelCount = aps.pixelHeight*aps.pixelWidth;
+        if(pixelCount<=4096)
+            this.size = 300;
+        else if(pixelCount<=16384)
+            this.size = 200;
+        else if(pixelCount<=65536)
+            this.size = 100;
+        else
+            this.size = 64;
+
+        Utils.toaster(aps.getContext(), String.format(aps.getContext().getString(R.string.hisotory_size), this.size));
     }
 
     public void setOnHistoryAvailabilityChangeListener(OnHistoryAvailabilityChangeListener listener){
@@ -89,6 +108,7 @@ public class CanvasHistoryH {
     }
 
     void completeHistoricalChange(){
+        System.out.println("HSIZE="+past.size());
         if(historicalChangeInProgress) {
             if (past.size() == size) {
                 past.removeLast();

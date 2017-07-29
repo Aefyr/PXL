@@ -8,18 +8,19 @@
             android:key="grid_color"
             android:layout="@layout/pref_generic_color_pick"
             android:title="@string/select_grid_color" />
+        <com.af.pxl.Preferences.TransparentColorBackgroundPreference android:title="@string/trans_canvas_bg" android:key="trans_background" android:layout="@layout/pref_trans_background" android:defaultValue="111"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/cursor">
         <com.af.pxl.Preferences.CursorSensitivityPreference
             android:defaultValue="9"
             android:key="cursor_sensitivity"
             android:layout="@layout/pref_cursor_sensitivity_seekbar"
-            android:title="Cursor Sensitivity" />
+            android:title="@string/cursor_sensitivity" />
         <com.af.pxl.Preferences.CursorOpacityPreference
             android:defaultValue="255"
             android:key="cursor_opacity"
             android:layout="@layout/pref_cursor_opacity_seekbar"
-            android:title="Cursor opacity" />
+            android:title="@string/cursor_opacity" />
         <Preference
             android:enabled="false"
             android:title="@string/select_cursor_image" />

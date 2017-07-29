@@ -8,17 +8,9 @@
 
     <!-- TODO: Update blank fragment layout -->
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="128dp"
-        android:background="@drawable/tile_background"
-        app:srcCompat="@drawable/tempsplash" />
-
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="5dp" />
+        android:layout_height="match_parent" />
 
 </LinearLayout>

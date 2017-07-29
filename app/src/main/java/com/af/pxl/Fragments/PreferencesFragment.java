@@ -24,6 +24,7 @@ public class PreferencesFragment extends PreferenceFragment {
     public static final String CURSOR_OPACITY = "cursor_opacity";
     public static final String GRID_COLOR = "grid_color";
     public static final String BACKGROUND_COLOR = "background_color";
+    public static final String TRANSPARENT_CANVAS_BACKGROUND_COLOR = "trans_background";
 
 
     public PreferencesFragment() {

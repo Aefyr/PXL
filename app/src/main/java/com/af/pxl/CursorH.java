@@ -125,11 +125,11 @@ class CursorH {
                 break;
             case FLOOD_FILL:
                 updateCanvasXY();
-                aps.floodFill((int)canvasX, (int)canvasY);
+                aps.floodFill(canvasX, canvasY);
                 break;
             case COLOR_PICK:
                 updateCanvasXY();
-                aps.colorPick((int)canvasX, (int)canvasY);
+                aps.colorPick(canvasX, canvasY);
                 break;
             case COLOR_SWAP:
                 updateCanvasXY();
@@ -189,11 +189,23 @@ class CursorH {
 
     private float[] p = {0, 0};
     private int canvasX, canvasY;
-    private void updateCanvasXY(){
+    void updateCanvasXY(){
         p[0] = p[1] = 0;
         aps.pixelMatrix.mapPoints(p);
         canvasX = (int) ((currentX-p[0])/aps.pixelScale);
         canvasY = (int) ((currentY-p[1])/aps.pixelScale);
+    }
+
+    boolean offCanvasBounds(){
+        return !(canvasX>=0&&canvasY>=0&&canvasX<aps.pixelWidth&&canvasY<aps.pixelHeight);
+    }
+
+    int getCanvasX(){
+        return canvasX;
+    }
+
+    int getCanvasY(){
+        return canvasY;
     }
 
 }

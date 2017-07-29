@@ -1,9 +1,12 @@
 package com.af.pxl;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,6 +29,8 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
     AlertDialog toolPickDialog;
     ImageButton.OnClickListener onClickListener;
     Button cursorAction;
+    ImageButton undoButton;
+    ImageButton redoButton;
 
     ColorCircle colorPickButton;
 
@@ -35,7 +40,6 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         setContentView(R.layout.activity_drawing);
 
         aps = (AdaptivePixelSurfaceH) findViewById(R.id.aps);
-        aps.OK = true;
 
         if(getIntent().getStringExtra("projectToLoad")!=null){
             aps.setProject(ProjectsUtils.loadProject(getIntent().getStringExtra("projectToLoad")));
@@ -53,14 +57,8 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         findViewById(R.id.TMP).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startTranslateActivity();
-            }
-        });
-
-        findViewById(R.id.importB).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mergeTool();
+                //startTranslateActivity();
+                canvasWiseOptionsDialog();
             }
         });
 
@@ -71,10 +69,32 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
 
         //PALETTES
         PaletteUtils.initialize(this);
-
-
-
     }
+
+    private void canvasWiseOptionsDialog(){
+        AlertDialog canvasWiseOptionsDialog = new AlertDialog.Builder(this).setTitle(getString(R.string.canvas_options)).setItems(getResources().getStringArray(R.array.canvas_options_array), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                switch (i){
+                    case 0:
+                        startTranslateActivity();
+                        break;
+                    case 1:
+                        mergeTool();
+                        break;
+                    case 2:
+                        aps.scaleAnchorX = 0;
+                        aps.scaleAnchorY = 0;
+                        aps.centerCanvas();
+                        aps.translateChanged = true;
+                        aps.invalidate();
+                        break;
+                }
+            }
+        }).create();
+        canvasWiseOptionsDialog.show();
+    }
+
 
     /*@Override
     public void onBackPressed() {
@@ -198,16 +218,16 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         });
 
         //History
-        ImageButton undo = (ImageButton) findViewById(R.id.undo);
-        undo.setOnClickListener(new View.OnClickListener() {
+        undoButton = (ImageButton) findViewById(R.id.undo);
+        undoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 aps.canvasHistory.undoHistoricalChange();
             }
         });
 
-        final ImageButton redo = (ImageButton) findViewById(R.id.redo);
-        redo.setOnClickListener(new View.OnClickListener() {
+        redoButton = (ImageButton) findViewById(R.id.redo);
+        redoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 aps.canvasHistory.redoHistoricalChange();
@@ -222,6 +242,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
             }
         });
     }
+
 
 
     @Override
@@ -260,7 +281,6 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                 aps.setPalette(PaletteUtils.loadPalette(data.getStringExtra("pickedPalette")));
                 paletteManager.setPalette(aps.palette);
             }else if(resultCode == 0){
-
             }
         }
 
@@ -330,6 +350,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), IMPORT_IMAGE);
     }
+
 
 
 }
