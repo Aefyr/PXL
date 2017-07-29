@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Commons -->
+    <string name="done">Готово</string>
+    <string name="cancel">Отмена</string>
+    <string name="cursor_action">PXL!</string>
+    <string name="error">Ошибка</string>
+
+
+    <!-- Palettes -->
+    <string name="select_palette">Выбрать палитру</string>
+    <string name="edit_color">Изменить цвет</string>
+    <string name="palettes">Палитры</string>
+    <string name="incorrect_palette_name">Имя палитры уже занято или некорректно!\n(В имене можно использовать только буквы, цифры и пробелы)</string>
+    <string name="create_new_palette">Новая палитра</string>
+    <string name="enter_name">Введите имя</string>
+
+    <!-- Projects -->
+    <string name="project">Проект</string>
+    <string name="projects">Проекты</string>
+    <string name="create_new_project">Новый проект</string>
+    <string name="name">Имя</string>
+    <string name="width">Ширина</string>
+    <string name="height">Высота</string>
+    <string name="transparentBackground">Прозрачный фон</string>
+    <string name="incorrect_width_or_height">Необходимо ввести ширину и высоту!</string>
+    <string name="incorrect_project_name">Имя проекта уже занято или некорректно!\n(В имене можно использовать только буквы, цифры и пробелы)</string>
+    <string name="imported_bitmap_too_big">Максимальный размер импортированного изображения - 512x512!</string>
+    <string name="name_imported">Импортировано</string>
+    <string name="original">Оригинал</string>
+    <string name="select_resolution">Выберите разрешение экспортированного изображения</string>
+    <string name="share">Поделиться</string>
+    <string name="exporting">Идёт экспорт изображения</string>
+    <string name="storage_permissions_denied">Невозможно сохранить изображение без доступа к памяти!</string>
+
+    <!--gallery_item-->
+    <string name="size">Размер</string>
+    <string name="last_modified">Изменено</string>
+
+    <!-- BitmapsMergeActivity -->
+    <string name="live_preview">Лайв-превью</string>
+    <string name="moving_image_tip">Вы также можете перетаскивать изображение!</string>
+
+
+    <!-- Projects options -->
+    <string name="new_name">Новое имя</string>
+    <string name="rename_project">Переименовать проект</string>
+    <string name="delete_project">Удалить проект?</string>
+    <string name="project_duplicate_postfix">копия</string>
+
+    <!-- Palettes options -->
+    <string name="rename_palette">Переименовать палитру</string>
+    <string name="delete_palette">Удалить палитру?</string>
+
+    <!-- Drawing Activity -->
+    <string name="canvas_options">Холст</string>
+    <string name="hisotory_size">Размер истории - %d</string>
+
+    <!-- Preferences -->
+    <string name="pixel_surface">PixelSurface</string>
+    <string name="cursor">Курсор</string>
+    <string name="select_background_color">Выбрать цвет фона</string>
+    <string name="select_grid_color">Выбрать цвет сетки</string>
+    <string name="cursor_sensitivity">Чувствительность курсора</string>
+    <string name="cursor_opacity">Непрозрачность курсора</string>
+    <string name="select_cursor_image">Выбрать изображение курсора</string>
+    <string name="trans_canvas_bg">Фон прозрачного холста</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Настройки</string>
+    <string name="fill">Заливка</string>
+    <string name="fill_action">Залить</string>
+    <string name="ok">ОК</string>
+    <string name="create">Создать</string>
+</resources>

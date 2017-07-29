@@ -14,7 +14,7 @@
     </string-array>
     <string-array name="new_project_options">
         <item>Create New Project</item>
-        <item>Import Image from Gallery</item>
+        <item>Import Image</item>
     </string-array>
 
     <string-array name="canvas_options_array">

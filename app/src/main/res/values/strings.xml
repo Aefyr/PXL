@@ -42,6 +42,7 @@
     <string name="share">Share</string>
     <string name="exporting">Exporting image</string>
     <string name="storage_permissions_denied">Sorry, but I can\'t save image without the permission to use storage</string>
+    <string name="create">Create</string>
 
     <!--gallery_item-->
     <string name="size">Size</string>

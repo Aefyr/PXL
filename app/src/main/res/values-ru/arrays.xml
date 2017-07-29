@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="project_options">
+        <item>Сохранить в галерею</item>
+        <item>Поделиться</item>
+        <item>Переименовать</item>
+        <item>Создать копию</item>
+        <item>Удалить</item>
+    </string-array>
+    <string-array name="palette_options">
+        <item>Переименовать</item>
+        <item>Создать копию</item>
+        <item>Удалить</item>
+    </string-array>
+    <string-array name="new_project_options">
+        <item>Новый проект</item>
+        <item>Импрорировать изображение</item>
+    </string-array>
+
+    <string-array name="canvas_options_array">
+        <item>Смещение пикселей</item>
+        <item>Наложить изображение</item>
+        <item>Центрировать холст</item>
+    </string-array>
+
+    <string-array name="trans_bg_options">
+        <item>Черно-белая плитка</item>
+        <item>Контур холста</item>
+        <item>Цвет</item>
+    </string-array>
+</resources>
