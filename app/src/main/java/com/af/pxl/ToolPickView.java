@@ -171,19 +171,19 @@ public class ToolPickView extends View {
             if(aps!=null){
                 switch (currentTool){
                     case 0:
-                        aps.setTool(AdaptivePixelSurface.Tool.PENCIL);
+                        aps.setTool(AdaptivePixelSurfaceH.Tool.PENCIL);
                         break;
                     case 1:
-                        aps.setTool(AdaptivePixelSurface.Tool.ERASER);
+                        aps.setTool(AdaptivePixelSurfaceH.Tool.ERASER);
                         break;
                     case 2:
-                        aps.setTool(AdaptivePixelSurface.Tool.FLOOD_FILL);
+                        aps.setTool(AdaptivePixelSurfaceH.Tool.FLOOD_FILL);
                         break;
                     case 3:
-                        aps.setTool(AdaptivePixelSurface.Tool.COLOR_PICK);
+                        aps.setTool(AdaptivePixelSurfaceH.Tool.COLOR_PICK);
                         break;
                     case 4:
-                        aps.setTool(AdaptivePixelSurface.Tool.COLOR_SWAP);
+                        aps.setTool(AdaptivePixelSurfaceH.Tool.COLOR_SWAP);
                         break;
                 }
             }
@@ -208,9 +208,9 @@ public class ToolPickView extends View {
         toolsShown = false;
     }
 
-    AdaptivePixelSurface aps;
+    AdaptivePixelSurfaceH aps;
 
-    void setAps(final AdaptivePixelSurface aps){
+    void setAps(final AdaptivePixelSurfaceH aps){
         this.aps = aps;
         aps.setOnTouchListener(new OnTouchListener() {
             @Override

@@ -36,7 +36,7 @@ public class Utils {
         return r.getDisplayMetrics().heightPixels;
     }
 
-    static float clamp(float x, float min, float max){
+    public static float clamp(float x, float min, float max){
         if(x<min)return min;
         if(x>max) return max;
         return x;
@@ -48,7 +48,7 @@ public class Utils {
         return x;
     }
 
-    static float vector2Distance(float x1, float y1, float x2, float y2){
+    public static float vector2Distance(float x1, float y1, float x2, float y2){
         return (float) (Math.sqrt(Math.pow(x1-x2, 2)+ Math.pow(y1-y2, 2)));
     }
 

@@ -18,11 +18,10 @@ import com.af.pxl.Palettes.PaletteUtils;
 import com.af.pxl.Projects.ProjectsUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 
-public class DrawingActivity extends AppCompatActivity implements AdaptivePixelSurface.OnSpecialToolUseListener{
+public class DrawingActivity extends AppCompatActivity implements AdaptivePixelSurfaceH.OnSpecialToolUseListener{
 
-    AdaptivePixelSurface aps;
+    AdaptivePixelSurfaceH aps;
     ToolPickView toolButton;
     AlertDialog toolPickDialog;
     ImageButton.OnClickListener onClickListener;
@@ -35,7 +34,8 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawing);
 
-        aps = (AdaptivePixelSurface) findViewById(R.id.aps);
+        aps = (AdaptivePixelSurfaceH) findViewById(R.id.aps);
+        aps.OK = true;
 
         if(getIntent().getStringExtra("projectToLoad")!=null){
             aps.setProject(ProjectsUtils.loadProject(getIntent().getStringExtra("projectToLoad")));
@@ -169,17 +169,17 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
             public void onItemClicked(int id) {
                 switch (id){
                     case  0:
-                        aps.setSymmetryEnabled(false, AdaptivePixelSurface.SymmetryType.HORIZONTAL);
+                        aps.setSymmetryEnabled(false, AdaptivePixelSurfaceH.SymmetryType.HORIZONTAL);
                         symmetry.setImageResource(R.drawable.symmetryoff);
                         symmetryModePickView.setVisibility(View.GONE);
                         break;
                     case 1:
-                        aps.setSymmetryEnabled(true, AdaptivePixelSurface.SymmetryType.HORIZONTAL);
+                        aps.setSymmetryEnabled(true, AdaptivePixelSurfaceH.SymmetryType.HORIZONTAL);
                         symmetry.setImageResource(R.drawable.symmetryh);
                         symmetryModePickView.setVisibility(View.GONE);
                         break;
                     case 2:
-                        aps.setSymmetryEnabled(true, AdaptivePixelSurface.SymmetryType.VERTICAL);
+                        aps.setSymmetryEnabled(true, AdaptivePixelSurfaceH.SymmetryType.VERTICAL);
                         symmetry.setImageResource(R.drawable.symmetryv);
                         symmetryModePickView.setVisibility(View.GONE);
                         break;
@@ -281,7 +281,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
 
     @Override
     public void onBackPressed() {
-        aps.cleanupWeReLeaving();
+        //aps.cleanupWeReLeaving();
         setResult(1);
         finish();
         super.onBackPressed();
