@@ -2,6 +2,8 @@ package com.af.pxl;
 
 import android.graphics.Matrix;
 import android.graphics.Path;
+import android.graphics.Rect;
+import android.graphics.RectF;
 
 
 /**
@@ -177,15 +179,11 @@ public class SuperPencilH {
         if(!aps.symmetry)
             return;
         if(aps.symmetryType== AdaptivePixelSurfaceH.SymmetryType.HORIZONTAL) {
-            float[] src = {0, 0, 0, aps.pixelHeight-1, aps.pixelWidth-1, 0, aps.pixelWidth-1, aps.pixelHeight-1};
-            float[] trgt = {aps.pixelWidth-1, 0, aps.pixelWidth-1, aps.pixelHeight-1, 0, 0, 0, aps.pixelHeight-1};
-            mirrorMatrix.setPolyToPoly(src, 0, trgt, 0, 4);
+            mirrorMatrix.setScale(-1f, 1f, (float) aps.pixelWidth/2f,(float)  aps.pixelHeight/2f);
             return;
         }
         if(aps.symmetryType == AdaptivePixelSurfaceH.SymmetryType.VERTICAL){
-            float[] src = {0, 0, 0, aps.pixelHeight-1, aps.pixelWidth-1, 0, aps.pixelWidth-1, aps.pixelHeight-1};
-            float[] trgt = {0, aps.pixelHeight-1, 0,0, aps.pixelWidth-1, aps.pixelHeight-1, aps.pixelWidth-1, 0};
-            mirrorMatrix.setPolyToPoly(src, 0, trgt, 0, 4);
+            mirrorMatrix.setScale(1f, -1f, (float) aps.pixelWidth/2f,(float)  aps.pixelHeight/2f);
         }
 
     }

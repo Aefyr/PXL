@@ -115,7 +115,7 @@ class CursorH {
         switch (aps.currentTool){
             case PENCIL:
             case ERASER:
-                aps.superPencil.move(currentX, currentY);
+                aps.superPencil.move((int)currentX, (int)currentY);
                 break;
             case FLOOD_FILL:
                 break;
@@ -131,7 +131,7 @@ class CursorH {
         switch (aps.currentTool){
             case PENCIL:
             case ERASER:
-                aps.superPencil.startDrawing(currentX, currentY);
+                aps.superPencil.startDrawing((int)currentX, (int)currentY);
                 break;
             case FLOOD_FILL:
                 updateCanvasXY();
@@ -199,7 +199,7 @@ class CursorH {
 
     private float[] p = {0, 0};
     private float canvasX, canvasY;
-    void updateCanvasXY(){
+    private void updateCanvasXY(){
         System.out.println("CanvasX="+canvasX+", CanvasY="+canvasY);
         p[0] = p[1] = 0;
         aps.pixelMatrix.mapPoints(p);
