@@ -6,6 +6,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.preference.PreferenceManager;
 import android.view.MotionEvent;
 
@@ -43,6 +45,14 @@ class CursorH {
         sensitivity = preferences.getInt(PreferencesFragment.CURSOR_SENSITIVITY, 9)/10f + 0.1f;
 
         matrix = new Matrix();
+
+        cursorPaint = new Paint();
+        cursorPaint.setStyle(Paint.Style.STROKE);
+        cursorPaint.setAntiAlias(false);
+        cursorPaint.setAlpha(opacity);
+        cursorPaint.setStrokeWidth(Utils.dpToPx(1, aps.getResources()));
+        cursorPreviewRect = new RectF();
+
         drawDefaultCursorImage();
     }
 
@@ -125,11 +135,11 @@ class CursorH {
                 break;
             case FLOOD_FILL:
                 updateCanvasXY();
-                aps.floodFill(canvasX, canvasY);
+                aps.floodFill((int) canvasX, (int) canvasY);
                 break;
             case COLOR_PICK:
                 updateCanvasXY();
-                aps.colorPick(canvasX, canvasY);
+                aps.colorPick((int) canvasX, (int) canvasY);
                 break;
             case COLOR_SWAP:
                 updateCanvasXY();
@@ -188,23 +198,90 @@ class CursorH {
     }
 
     private float[] p = {0, 0};
-    private int canvasX, canvasY;
+    private float canvasX, canvasY;
     void updateCanvasXY(){
+        System.out.println("CanvasX="+canvasX+", CanvasY="+canvasY);
         p[0] = p[1] = 0;
         aps.pixelMatrix.mapPoints(p);
-        canvasX = (int) ((currentX-p[0])/aps.pixelScale);
-        canvasY = (int) ((currentY-p[1])/aps.pixelScale);
+        canvasX = ((currentX-p[0])/aps.pixelScale);
+        canvasY =  ((currentY-p[1])/aps.pixelScale);
     }
 
     boolean offCanvasBounds(){
         return !(canvasX>=0&&canvasY>=0&&canvasX<aps.pixelWidth&&canvasY<aps.pixelHeight);
     }
 
-    int getCanvasX(){
+    void setPaintColor(int color){
+        cursorPaint.setColor(color);
+        if(aps.cursorMode)
+            aps.invalidate();
+    }
+
+    private RectF cursorPreviewRect;
+    private Paint cursorPaint;
+    void drawCursor(Canvas canvas){
+        p[0] = 0;
+        p[1] = 0;
+        aps.pixelMatrix.mapPoints(p);
+
+        float loX = p[0]%aps.pixelScale;
+        int bX = (int) Math.floor((currentX-loX)/aps.pixelScale);
+        float loY = p[1]%aps.pixelScale;
+        int bY = (int) Math.floor((currentY-loY)/aps.pixelScale);
+
+        updateCanvasXY();
+        //if(!offCanvasBounds())
+            //cursorPaint.setColor(Utils.invertColor(aps.pixelBitmap.getPixel((int) canvasX, (int) canvasY)));
+
+        cursorPreviewRect.set(bX*aps.pixelScale+loX, bY*aps.pixelScale+loY, bX*aps.pixelScale+loX+aps.pixelScale, bY*aps.pixelScale+loY+aps.pixelScale);
+
+        if(aps.paint.getStrokeWidth() > 1 && (aps.currentTool == AdaptivePixelSurfaceH.Tool.PENCIL || aps.currentTool == AdaptivePixelSurfaceH.Tool.ERASER)) {
+            int w = (int) aps.paint.getStrokeWidth();
+            if (w % 2 == 0) {
+                int a = w / 2;
+                float xM = (float) (canvasX - Math.floor(canvasX));
+                float yM = (float) (canvasY - Math.floor(canvasY));
+
+                if (xM <= 0.5f && yM <= 0.5f) {
+                    cursorPreviewRect.left -= aps.pixelScale * a;
+                    cursorPreviewRect.top -= aps.pixelScale * a;
+                    cursorPreviewRect.right += aps.pixelScale * (a - 1);
+                    cursorPreviewRect.bottom += aps.pixelScale * (a - 1);
+                } else if (xM > 0.5f && yM <= 0.5f) {
+                    cursorPreviewRect.left -= aps.pixelScale * (a - 1);
+                    cursorPreviewRect.top -= aps.pixelScale * a;
+                    cursorPreviewRect.right += aps.pixelScale * a;
+                    cursorPreviewRect.bottom += aps.pixelScale * (a - 1);
+                } else if (xM > 0.5f && yM > 0.5f) {
+                    cursorPreviewRect.left -= aps.pixelScale * (a - 1);
+                    cursorPreviewRect.top -= aps.pixelScale * (a - 1);
+                    cursorPreviewRect.right += aps.pixelScale * a;
+                    cursorPreviewRect.bottom += aps.pixelScale * a;
+                } else {
+                    cursorPreviewRect.left -= aps.pixelScale * a;
+                    cursorPreviewRect.top -= aps.pixelScale * (a - 1);
+                    cursorPreviewRect.right += aps.pixelScale * (a - 1);
+                    cursorPreviewRect.bottom += aps.pixelScale * a;
+                }
+
+            } else {
+                int a = (w - 1) / 2;
+                cursorPreviewRect.left -= aps.pixelScale * a;
+                cursorPreviewRect.top -= aps.pixelScale * a;
+                cursorPreviewRect.right += aps.pixelScale * a;
+                cursorPreviewRect.bottom += aps.pixelScale * a;
+            }
+        }
+
+        canvas.drawRect(cursorPreviewRect, cursorPaint);
+        canvas.drawBitmap(cursorPointerImage, matrix, cursorPaint);
+    }
+
+    float getCanvasX(){
         return canvasX;
     }
 
-    int getCanvasY(){
+    float getCanvasY(){
         return canvasY;
     }
 

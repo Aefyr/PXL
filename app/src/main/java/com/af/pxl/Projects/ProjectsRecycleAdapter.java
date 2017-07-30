@@ -93,6 +93,13 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
         notifyItemInserted(0);
     }
 
+    public void moveItem(int index, int newIndex){
+        if(index<0||index>=projects.size()||newIndex<0||newIndex>=projects.size())
+            return;
+        projects.add(newIndex, projects.remove(index));
+        notifyItemMoved(index, newIndex);
+    }
+
     public void removeItem(int index){
         projects.remove(index);
         notifyItemRemoved(index);

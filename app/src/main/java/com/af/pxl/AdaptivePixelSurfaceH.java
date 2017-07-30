@@ -12,6 +12,7 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Shader;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -109,6 +110,9 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
 
     //Setters
     void setTool(Tool tool){
+        if(currentTool == tool)
+            return;
+
         if(project.transparentBackground)
             paint.setXfermode(null);
         paint.setColor(currentColor);
@@ -133,10 +137,12 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
                     paint.setColor(Color.WHITE);
                 break;
         }
+        invalidate();
     }
 
     public void setColor(int color){
         currentColor = color;
+        cursor.setPaintColor(color);
         if(currentTool!= Tool.ERASER)
             paint.setColor(color);
     }
@@ -237,12 +243,12 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
 
 
 
-        while(x<limitX){
+        while(x<=limitX+1){
             c.drawLine(x, lOY - gridCellSize, x, limitY+gridCellSize, gridP);
             x+=gridCellSize;
         }
 
-        while(y<limitY){
+        while(y<=limitY+1){
             c.drawLine(lOX-gridCellSize, y, limitX+gridCellSize, y, gridP);
             y+=gridCellSize;
         }
@@ -281,6 +287,7 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
         paint.setColor(Color.WHITE);
         updateColorCircle(Color.WHITE);
         paint.setStrokeWidth(1);
+        paint.setStrokeCap(Paint.Cap.BUTT);
         paint.setStyle(Paint.Style.STROKE);
         paint.setTextSize(24);
         noAAPaint = new Paint(paint);
@@ -601,6 +608,8 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
     int screenRefreshRate=60;
     long deltaTime = 1;
 
+    RectF cursorPreviewRect;
+
     void ter(){
         Display display = ((WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         screenRefreshRate = (int) display.getRefreshRate();
@@ -614,6 +623,7 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
         textPaint.setStrokeWidth(2);
         textPaint.setAntiAlias(false);
         textPaint.setFilterBitmap(false);
+        cursorPreviewRect = new RectF();
     }
     @Override
     protected void onDraw(Canvas canvas) {
@@ -659,29 +669,16 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
         //Highlight the pixel we'll draw on with cursorPencil
         //TODO Maybe make "less than 1 pixel" offsets global variables
         if(cursorMode) {
-            canvas.drawBitmap(cursor.cursorPointerImage, cursor.matrix, cursorPaint);
-            p[0] = 0;
-            p[1] = 0;
-            pixelMatrix.mapPoints(p);
-
-            float loX = p[0]%pixelScale;
-            int bX = (int) Math.floor((cursor.getX()-loX)/pixelScale);
-            float loY = p[1]%pixelScale;
-            int bY = (int) Math.floor((cursor.getY()-loY)/pixelScale);
-
-            cursor.updateCanvasXY();
-            if(!cursor.offCanvasBounds())
-                cursorPaint.setColor(Utils.invertColor(pixelBitmap.getPixel(cursor.getCanvasX(), cursor.getCanvasY())));
-            canvas.drawRect(bX*pixelScale+loX, bY*pixelScale+loY, bX*pixelScale+loX+pixelScale, bY*pixelScale+loY+pixelScale, cursorPaint);
+            cursor.drawCursor(canvas);
         }
 
 
         //Draw FPS
         if(showFps){
             deltaTime = (long) Utils.clamp(deltaTime, 1, 1000);
-            String a = "???";
+            String a;
             if(1000/deltaTime>screenRefreshRate)
-                a = "SYNCHRONIZED fps";
+                a = screenRefreshRate+" fps";
             else
                 a = 1000/deltaTime+" fps.";
             paint.getTextBounds(a, 0, a.length(), bounds);

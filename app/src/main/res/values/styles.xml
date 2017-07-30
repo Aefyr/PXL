@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -18,9 +18,11 @@
     </style>
 
     <style name="PXLImageButton" parent="Widget.AppCompat.ImageButton">
-        <item name="android:background">@drawable/selector1</item>
+        <item name="android:background">@drawable/sketchbook_style_bg_selector_2</item>
         <item name="android:scaleType">centerCrop</item>
         <item name="android:padding">9dp</item>
+        <item name="android:elevation" tools:targetApi="lollipop">12dp</item>
+        <item name="android:layout_margin">8dp</item>
     </style>
 
     <style name="EditTextResolutionInput" parent="Widget.AppCompat.EditText">

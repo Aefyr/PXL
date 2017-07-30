@@ -7,4 +7,5 @@
     <color name="colorImageButtonBackgroundTint">#e0f7fa</color>
     <color name="colorAlmostBlack">#37474f</color>
     <color name="colorAlmostWhite">#fafafa</color>
+    <color name="colorNotSoWhite">#bdbdbd</color>
 </resources>

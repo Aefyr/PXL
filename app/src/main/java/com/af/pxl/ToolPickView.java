@@ -1,17 +1,21 @@
 package com.af.pxl;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Outline;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewOutlineProvider;
 import android.widget.RelativeLayout;
 
 /**
@@ -53,7 +57,20 @@ public class ToolPickView extends View {
             initialize();
             startGet = true;
         }
+        if(Build.VERSION.SDK_INT>=21){
+            setOutlineProvider(new ToolPickOutlineProvider());
+        }
         System.out.println("W:"+width+", H:"+height);
+    }
+
+    @TargetApi(21)
+    private class ToolPickOutlineProvider extends ViewOutlineProvider{
+
+        @Override
+        public void getOutline(View view, Outline outline) {
+
+            outline.setRoundRect(startWidth/12, -32, startWidth-startWidth/12, startHeight-startWidth/12, 25);
+        }
     }
 
     Bitmap[] tools;
@@ -102,12 +119,12 @@ public class ToolPickView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         //canvas.drawColor(Color.BLUE);
-
         if(toolsShown)
             drawTools(canvas);
 
         drawMainCircle(canvas);
         super.onDraw(canvas);
+
     }
 
     Paint cPaint;
@@ -117,31 +134,41 @@ public class ToolPickView extends View {
         cPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         cPaint.setStrokeWidth(startWidth/32f);
 
-        canvas.drawCircle((float)startWidth/2f, (float)startHeight/2f, (float) startWidth/2f-(float)startWidth/12f, cPaint);
+        //canvas.drawCircle((float)startWidth/2f, (float)startHeight/2f, (float) startWidth/2f-(float)startWidth/12f, cPaint);
+        //canvas.drawCircle(startWidth/4, startHeight/4, startWidth-startWidth/32f-startWidth/4, cPaint);
+        if(Build.VERSION.SDK_INT >= 21)
+            canvas.drawRoundRect(startWidth/12f, -32, startWidth-startWidth/12f, startHeight-startWidth/12f, 25, 25, cPaint);
+        else
+            canvas.drawRect(startWidth/12f, -32, startWidth-startWidth/12f, startHeight-startWidth/12f, cPaint);
+
 
         cPaint.setColor(circleBorderColor);
         cPaint.setStyle(Paint.Style.STROKE);
-        canvas.drawCircle((float)startWidth/2f, (float)startHeight/2f, (float) startWidth/2f-(float)startWidth/12f, cPaint);
-        canvas.drawBitmap(tools[currentTool],toolBitmapSizeReducedBy/2, toolBitmapSizeReducedBy/2, null);
+        //canvas.drawCircle((float)startWidth/2f, (float)startHeight/2f, (float) startWidth/2f-(float)startWidth/12f, cPaint);
+        //canvas.drawCircle(startWidth/4, startHeight/4, startWidth-startWidth/32f-startWidth/4, cPaint);
+        if(Build.VERSION.SDK_INT < 21)
+            canvas.drawRect(startWidth/12f, -32, startWidth-startWidth/12f, startHeight-startWidth/12f, cPaint);
+
+        canvas.drawBitmap(tools[currentTool],toolBitmapSizeReducedBy/2, toolBitmapSizeReducedBy/2  - startWidth/24f, null);
         //canvas.drawRect((float)startWidth/2f - 30f , (float)startHeight/2f - 30f, (float)startWidth/2f +30f, (float)startHeight/2f + 30f, cPaint);
     }
 
     void drawTools(Canvas canvas){
-        cPaint.setColor(barColor);
+        cPaint.setColor(circleColor);
         cPaint.setStrokeWidth(startWidth/32f);
         cPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
         if(Build.VERSION.SDK_INT>=21)
-            canvas.drawRoundRect(width/8f, startWidth/12f, width-width/8f, height - startWidth/64f, 100, 100, cPaint);
+            canvas.drawRoundRect(width/8f, startWidth/12f, width-width/8f, height - startWidth/64f, 50, 50, cPaint);
         else
             canvas.drawRect(width/8f, startWidth/12f + startWidth/2f, width-width/8f, height - startWidth/64f, cPaint);
 
 
-        cPaint.setColor(barBorderColor);
+        cPaint.setColor(barColor);
         cPaint.setStyle(Paint.Style.STROKE);
 
         if(Build.VERSION.SDK_INT>=21)
-            canvas.drawRoundRect(width/8f, startWidth/12f, width-width/8f, height - startWidth/64f, 100, 100, cPaint);
+            canvas.drawRoundRect(width/8f, startWidth/12f, width-width/8f, height - startWidth/64f, 50, 50, cPaint);
         else
             canvas.drawRect(width/8f, startWidth/12f + startWidth/2f, width-width/8f, height - startWidth/64f, cPaint);
 

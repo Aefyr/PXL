@@ -37,7 +37,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_drawing);
+        setContentView(R.layout.activity_drawing_alt);
 
         aps = (AdaptivePixelSurfaceH) findViewById(R.id.aps);
 
@@ -59,6 +59,20 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
             public void onClick(View view) {
                 //startTranslateActivity();
                 canvasWiseOptionsDialog();
+            }
+        });
+
+        findViewById(R.id.plus).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                aps.paint.setStrokeWidth(aps.paint.getStrokeWidth()+1);
+            }
+        });
+
+        findViewById(R.id.minus).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                aps.paint.setStrokeWidth(aps.paint.getStrokeWidth()-1);
             }
         });
 

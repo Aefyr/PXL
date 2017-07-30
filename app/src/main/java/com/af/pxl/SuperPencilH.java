@@ -26,9 +26,13 @@ public class SuperPencilH {
     private float sX, sY, nX, nY;
     private int moves;
 
+    private boolean hitBounds = false;
+
     void startDrawing(float x, float y){
         if(drawing)
             return;
+
+        hitBounds = false;
 
         sX = x;
         sY = y;
@@ -42,12 +46,14 @@ public class SuperPencilH {
 
         aps.canvasHistory.startHistoricalChange();
 
-        aps.pixelCanvas.drawPoint(sX, sY, aps.paint);
+        if(aps.paint.getStrokeWidth()==1||aps.cursorMode)
+            aps.pixelCanvas.drawPoint(sX, sY, aps.paint);
 
         if(aps.symmetry){
             calculateSymmetricalCanvasXY();
             mirroredPath.reset();
-            aps.pixelCanvas.drawPoint(aSX, aSY, aps.paint);
+            if(aps.paint.getStrokeWidth()==1||aps.cursorMode)
+                aps.pixelCanvas.drawPoint(aSX, aSY, aps.paint);
         }
 
         drawing = true;
@@ -97,17 +103,23 @@ public class SuperPencilH {
         path.lineTo(sX, sY);
         path.setLastPoint(sX, sY);
         aps.pixelCanvas.drawPath(path, aps.paint);
-        aps.pixelCanvas.drawPoint(sX, sY, aps.paint);
+        if(aps.paint.getStrokeWidth()==1)
+            aps.pixelCanvas.drawPoint(sX, sY, aps.paint);
 
         if(aps.symmetry){
             path.transform(mirrorMatrix, mirroredPath);
             aps.pixelCanvas.drawPath(mirroredPath, aps.paint);
             calculateSymmetricalCanvasXY();
-            aps.pixelCanvas.drawPoint(sX, sY, aps.paint);
+            if(aps.paint.getStrokeWidth()==1)
+                aps.pixelCanvas.drawPoint(sX, sY, aps.paint);
             mirroredPath.reset();
         }
 
-        aps.canvasHistory.completeHistoricalChange();
+        if(hitBounds)
+            aps.canvasHistory.completeHistoricalChange();
+        else
+            aps.canvasHistory.cancelHistoricalChange(false);
+
         path.reset();
         drawing = false;
         aps.invalidate();
@@ -138,6 +150,9 @@ public class SuperPencilH {
         sX = (sX-p[0])/aps.pixelScale;
         sY = (sY-p[1])/aps.pixelScale;
 
+        if(!hitBounds&&sX>0&&sX<aps.pixelWidth&&sY>0&&sY<aps.pixelHeight)
+            hitBounds = true;
+
     }
 
     private Path mirroredPath;
@@ -162,14 +177,14 @@ public class SuperPencilH {
         if(!aps.symmetry)
             return;
         if(aps.symmetryType== AdaptivePixelSurfaceH.SymmetryType.HORIZONTAL) {
-            float[] src = {0, 0, 0, aps.pixelHeight, aps.pixelWidth, 0, aps.pixelWidth, aps.pixelHeight};
-            float[] trgt = {aps.pixelWidth, 0, aps.pixelWidth, aps.pixelHeight, 0, 0, 0, aps.pixelHeight};
+            float[] src = {0, 0, 0, aps.pixelHeight-1, aps.pixelWidth-1, 0, aps.pixelWidth-1, aps.pixelHeight-1};
+            float[] trgt = {aps.pixelWidth-1, 0, aps.pixelWidth-1, aps.pixelHeight-1, 0, 0, 0, aps.pixelHeight-1};
             mirrorMatrix.setPolyToPoly(src, 0, trgt, 0, 4);
             return;
         }
         if(aps.symmetryType == AdaptivePixelSurfaceH.SymmetryType.VERTICAL){
-            float[] src = {0, 0, 0, aps.pixelHeight, aps.pixelWidth, 0, aps.pixelWidth, aps.pixelHeight};
-            float[] trgt = {0, aps.pixelHeight, 0,0, aps.pixelWidth, aps.pixelHeight, aps.pixelWidth, 0};
+            float[] src = {0, 0, 0, aps.pixelHeight-1, aps.pixelWidth-1, 0, aps.pixelWidth-1, aps.pixelHeight-1};
+            float[] trgt = {0, aps.pixelHeight-1, 0,0, aps.pixelWidth-1, aps.pixelHeight-1, aps.pixelWidth-1, 0};
             mirrorMatrix.setPolyToPoly(src, 0, trgt, 0, 4);
         }
 

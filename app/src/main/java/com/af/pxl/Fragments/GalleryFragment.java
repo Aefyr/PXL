@@ -79,8 +79,12 @@ public class GalleryFragment extends android.app.Fragment {
     private void openProject(String name, int index){
         Intent i = new Intent(getActivity(), DrawingActivity.class);
         i.putExtra("projectToLoad", name);
-        openedProjectIndex = index;
         startActivityForResult(i, DRAWING_REQUEST);
+
+        adapter.moveItem(index, 0);
+        recyclerView.scrollToPosition(0);
+        recyclerView.clearAnimation();
+        openedProjectIndex = 0;
         //getActivity().finish();
     }
 
