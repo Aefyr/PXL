@@ -62,20 +62,6 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
             }
         });
 
-        findViewById(R.id.plus).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                aps.paint.setStrokeWidth(aps.paint.getStrokeWidth()+1);
-            }
-        });
-
-        findViewById(R.id.minus).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                aps.paint.setStrokeWidth(aps.paint.getStrokeWidth()-1);
-            }
-        });
-
         BitmapFactory.Options op = new BitmapFactory.Options();
         op.inScaled = false;
         aps.cursor.setCursorPointerImage(BitmapFactory.decodeResource(getResources(), R.drawable.defaultcursor2, op));
@@ -134,6 +120,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
     private void initializeToolPicking(){
 
         toolButton = (ToolPickView) findViewById(R.id.currentTool);
+        toolButton.setToolSettingsManager(new ToolSettingsManager(this, aps));
 
         toolButton.setAps(aps);
     }

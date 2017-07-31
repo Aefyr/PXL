@@ -67,6 +67,17 @@
     <string name="canvas_options">Canvas Options</string>
     <string name="hisotory_size">History size is %d elements</string>
 
+    <!-- ToolSettingManager -->
+    <string name="lock_angles">Lock Angles</string>
+    <string name="lock_square">Lock to Square</string>
+    <string name="lock_circle">Lock to Circle</string>
+    <string name="tool_style">Style</string>
+    <string name="stroke_width">Size</string>
+    <string name="fill_shape">Fill</string>
+    <string name="style_round">Round</string>
+    <string name="style_square">Square</string>
+
+
     <!-- Preferences -->
     <string name="pixel_surface">PixelSurface</string>
     <string name="cursor">Cursor</string>

@@ -27,7 +27,7 @@ public class ToolPickView extends View {
     int startWidth, startHeight;
     boolean startGet = false;
 
-    int toolsCount = 5;
+    int toolsCount = 6;
     int currentTool = 0;
 
     int circleColor;
@@ -38,12 +38,20 @@ public class ToolPickView extends View {
     int toolBitmapSizeReducedBy;
     float offsetBetweenTools;
 
+    ToolSettingsManager manager;
+
     public ToolPickView(Context context) {
         super(context);
     }
 
     public ToolPickView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+    }
+
+    void setToolSettingsManager(ToolSettingsManager manager){
+        this.manager = manager;
+        manager.notifyToolPicked(AdaptivePixelSurfaceH.Tool.PENCIL);
+        manager.hide();
     }
 
     @Override
@@ -82,9 +90,10 @@ public class ToolPickView extends View {
         Resources res = getResources();
         tools[0] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.pencil), startWidth-toolBitmapSizeReducedBy, startWidth-toolBitmapSizeReducedBy, false);
         tools[1] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.eraser), startWidth-toolBitmapSizeReducedBy, startWidth-toolBitmapSizeReducedBy, false);
-        tools[2] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.fill), startWidth-toolBitmapSizeReducedBy, startWidth-toolBitmapSizeReducedBy, false);
+        tools[2] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.shapes), startWidth-toolBitmapSizeReducedBy, startWidth-toolBitmapSizeReducedBy, false);
         tools[3] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.colorpick), startWidth-toolBitmapSizeReducedBy, startWidth-toolBitmapSizeReducedBy, false);
-        tools[4] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.colorswap), startWidth-toolBitmapSizeReducedBy, startWidth-toolBitmapSizeReducedBy, false);
+        tools[4] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.fill), startWidth-toolBitmapSizeReducedBy, startWidth-toolBitmapSizeReducedBy, false);
+        tools[5] = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(res, R.drawable.colorswap), startWidth-toolBitmapSizeReducedBy, startWidth-toolBitmapSizeReducedBy, false);
         circleColor = Color.parseColor("#FFFAFAFA");
         barColor = Color.parseColor("#FFE0E0E0");
         circleBorderColor = Color.parseColor("#FFBDBDBD");
@@ -194,27 +203,46 @@ public class ToolPickView extends View {
         if(y<startYForToolsZone)
             hideTools();
         else {
+            if(currentTool == clickedItem)
+                return;
+
             currentTool = clickedItem;
             if(aps!=null){
                 switch (currentTool){
                     case 0:
                         aps.setTool(AdaptivePixelSurfaceH.Tool.PENCIL);
+                        manager.notifyToolPicked(AdaptivePixelSurfaceH.Tool.PENCIL);
+                        invalidate();
                         break;
                     case 1:
                         aps.setTool(AdaptivePixelSurfaceH.Tool.ERASER);
+                        manager.notifyToolPicked(AdaptivePixelSurfaceH.Tool.ERASER);
+                        invalidate();
                         break;
                     case 2:
-                        aps.setTool(AdaptivePixelSurfaceH.Tool.FLOOD_FILL);
+                        aps.setTool(AdaptivePixelSurfaceH.Tool.MULTISHAPE);
+                        manager.notifyToolPicked(AdaptivePixelSurfaceH.Tool.MULTISHAPE);
+                        invalidate();
                         break;
                     case 3:
                         aps.setTool(AdaptivePixelSurfaceH.Tool.COLOR_PICK);
+                        manager.notifyToolPicked(AdaptivePixelSurfaceH.Tool.COLOR_PICK);
+                        hideTools();
                         break;
                     case 4:
+                        aps.setTool(AdaptivePixelSurfaceH.Tool.FLOOD_FILL);
+                        manager.notifyToolPicked(AdaptivePixelSurfaceH.Tool.FLOOD_FILL);
+                        hideTools();
+                        break;
+                    case 5:
                         aps.setTool(AdaptivePixelSurfaceH.Tool.COLOR_SWAP);
+                        manager.notifyToolPicked(AdaptivePixelSurfaceH.Tool.COLOR_SWAP);
+                        hideTools();
                         break;
                 }
             }
-            hideTools();
+
+            //hideTools();
             System.out.println("ClickedItem=" + clickedItem);
         }
     }
@@ -225,6 +253,7 @@ public class ToolPickView extends View {
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) getLayoutParams();
         params.height += offsetBetweenTools*toolsCount+width*toolsCount;
         setLayoutParams(params);
+        manager.show();
         toolsShown = true;
     }
 
@@ -232,6 +261,7 @@ public class ToolPickView extends View {
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) getLayoutParams();
         params.height = startHeight;
         setLayoutParams(params);
+        manager.hide();
         toolsShown = false;
     }
 

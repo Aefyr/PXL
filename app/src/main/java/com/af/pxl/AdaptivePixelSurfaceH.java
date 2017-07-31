@@ -14,7 +14,6 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.Display;
@@ -43,6 +42,7 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
     Paint paint;
     private Paint cursorPaint;
     int currentColor;
+    int strokeWidth = 1;
 
     int pixelWidth = 128;
     int pixelHeight = 128;
@@ -57,7 +57,7 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
 
     //Tools and utils
     enum Tool {
-        PENCIL, FLOOD_FILL, COLOR_PICK, COLOR_SWAP, ERASER
+        PENCIL, FLOOD_FILL, COLOR_PICK, COLOR_SWAP, ERASER, MULTISHAPE
     }
     Tool currentTool = Tool.PENCIL;
 
@@ -67,6 +67,7 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
     CursorH cursor;
     boolean cursorMode = false;
     SuperPencilH superPencil;
+    MultiShapeH multiShape;
 
     //Symmetry
     boolean symmetry = false;
@@ -103,6 +104,7 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
 
         cursor = new CursorH(this);
         superPencil = new SuperPencilH(this);
+        multiShape = new MultiShapeH(this);
         initializePaints();
         ter();
     }
@@ -136,6 +138,9 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
                 }else
                     paint.setColor(Color.WHITE);
                 break;
+            case MULTISHAPE:
+                currentTool = Tool.MULTISHAPE;
+                break;
         }
         invalidate();
     }
@@ -145,6 +150,14 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
         cursor.setPaintColor(color);
         if(currentTool!= Tool.ERASER)
             paint.setColor(color);
+    }
+
+    public void setStrokeWidth(int width){
+        if(strokeWidth==width)
+            return;
+
+        strokeWidth = width;
+        paint.setStrokeWidth(width);
     }
 
     public void setColorCircle(ColorCircle colorCircle){
@@ -287,10 +300,11 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
         paint.setColor(Color.WHITE);
         updateColorCircle(Color.WHITE);
         paint.setStrokeWidth(1);
-        paint.setStrokeCap(Paint.Cap.BUTT);
+        paint.setStrokeCap(Paint.Cap.SQUARE);
         paint.setStyle(Paint.Style.STROKE);
         paint.setTextSize(24);
         noAAPaint = new Paint(paint);
+        //noAAPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
 
 
@@ -360,8 +374,10 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
         if(event.getPointerCount() != 1){
             if(cursorMode){
                 superPencil.cancel(cursor.getX(), cursor.getY());
+                multiShape.cancel(cursor.getX(), cursor.getY());
             }else {
                 superPencil.cancel(event.getX(), event.getY());
+                multiShape.cancel(event.getX(), event.getY());
             }
             touchToolWillBeUsedOnUpEvent = false;
 
@@ -480,6 +496,17 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
                             if(x<pixelWidth&&x>=0&&y<pixelHeight&&y>=0)
                                 onSpecialToolUseListener.onColorSwapToolUse(pixelBitmap.getPixel(x, y));
                         }
+                    }
+                    break;
+                case MULTISHAPE:
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        multiShape.startDrawing(event.getX(), event.getY());
+                    }
+                    if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                        multiShape.move(event.getX(), event.getY());
+                    }
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        multiShape.stopDrawing(event.getX(), event.getY());
                     }
                     break;
             }

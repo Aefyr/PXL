@@ -1,6 +1,7 @@
 package com.af.pxl;
 
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -13,6 +14,12 @@ import android.graphics.RectF;
 public class SuperPencilH {
     private AdaptivePixelSurfaceH aps;
     Matrix mirrorMatrix;
+    Style style = Style.SQUARE;
+    private float circleRadius = 1;
+
+    enum Style{
+        SQUARE, ROUND
+    }
 
     SuperPencilH(AdaptivePixelSurfaceH adaptivePixelSurface){
         aps = adaptivePixelSurface;
@@ -20,6 +27,22 @@ public class SuperPencilH {
         mirroredPath = new Path();
         mirrorMatrix = new Matrix();
     }
+
+    void setStyle(Style style){
+        if(this.style == style)
+            return;
+
+        this.style = style;
+        if(style == Style.SQUARE){
+            aps.paint.setStrokeCap(Paint.Cap.SQUARE);
+        }else
+            aps.paint.setStrokeCap(Paint.Cap.ROUND);
+    }
+
+    void setCircleRadius(int radius){
+        circleRadius = radius;
+    }
+
 
     boolean instaDots = true;
 
@@ -48,14 +71,24 @@ public class SuperPencilH {
 
         aps.canvasHistory.startHistoricalChange();
 
-        if(aps.paint.getStrokeWidth()==1||aps.cursorMode)
+        if(aps.strokeWidth==1)
             aps.pixelCanvas.drawPoint(sX, sY, aps.paint);
+
+        //STYLE
+        if(aps.cursorMode&&style==Style.SQUARE){
+            aps.pixelCanvas.drawPoint(sX, sY, aps.paint);
+        }
 
         if(aps.symmetry){
             calculateSymmetricalCanvasXY();
             mirroredPath.reset();
-            if(aps.paint.getStrokeWidth()==1||aps.cursorMode)
+            if(aps.paint.getStrokeWidth()==1)
                 aps.pixelCanvas.drawPoint(aSX, aSY, aps.paint);
+
+            //STYLE
+            if(aps.cursorMode&&style==Style.SQUARE){
+                aps.pixelCanvas.drawPoint(aSX, aSY, aps.paint);
+            }
         }
 
         drawing = true;
@@ -69,7 +102,7 @@ public class SuperPencilH {
         sY = y;
         calculateCanvasXY();
 
-        if(aps.cursorMode)
+        if(aps.cursorMode&&aps.paint.getStrokeWidth()<=4)
             path.lineTo(sX, sY);
         else
             path.quadTo(nX, nY, (sX+nX)/2f, (sY+nY)/2f);
@@ -77,14 +110,16 @@ public class SuperPencilH {
         nX = sX;
         nY = sY;
 
-        if(aps.cursorMode&&instaDots){
-            aps.pixelCanvas.drawPoint(sX, sY,aps.paint);
-        }
+        if(aps.cursorMode&&instaDots&&aps.strokeWidth==1)
+            aps.pixelCanvas.drawPoint(sX, sY, aps.paint);
+
 
         if(aps.symmetry){
             if(aps.cursorMode&&instaDots) {
                 calculateSymmetricalCanvasXY();
-                aps.pixelCanvas.drawPoint(aSX, aSY,aps.paint);
+
+                if(aps.cursorMode&&instaDots&&aps.strokeWidth==1)
+                    aps.pixelCanvas.drawPoint(aSX, aSY, aps.paint);
             }
             path.transform(mirrorMatrix, mirroredPath);
             aps.pixelCanvas.drawPath(mirroredPath, aps.paint);
@@ -102,19 +137,28 @@ public class SuperPencilH {
         sY = y;
         calculateCanvasXY();
 
-        path.lineTo(sX, sY);
+        //path.lineTo(sX, sY);
         path.setLastPoint(sX, sY);
         aps.pixelCanvas.drawPath(path, aps.paint);
-        if(aps.paint.getStrokeWidth()==1)
-            aps.pixelCanvas.drawPoint(sX, sY, aps.paint);
+
+        if(moves<10){
+            if(style==Style.SQUARE||aps.paint.getStrokeWidth()==1)
+                aps.pixelCanvas.drawPoint(sX, sY, aps.paint);
+            else if(style==Style.ROUND)
+                aps.pixelCanvas.drawCircle(sX, sY, circleRadius, aps.paint);
+        }
 
         if(aps.symmetry){
             path.transform(mirrorMatrix, mirroredPath);
             aps.pixelCanvas.drawPath(mirroredPath, aps.paint);
             calculateSymmetricalCanvasXY();
-            if(aps.paint.getStrokeWidth()==1)
-                aps.pixelCanvas.drawPoint(sX, sY, aps.paint);
-            mirroredPath.reset();
+            if(moves<10) {
+                if(style==Style.SQUARE||aps.paint.getStrokeWidth()==1)
+                    aps.pixelCanvas.drawPoint(aSX, aSY, aps.paint);
+                else if(style==Style.ROUND)
+                    aps.pixelCanvas.drawCircle(aSX, aSY, circleRadius, aps.paint);
+            }
+            mirroredPath.rewind();
         }
 
         if(hitBounds)
@@ -122,7 +166,7 @@ public class SuperPencilH {
         else
             aps.canvasHistory.cancelHistoricalChange(false);
 
-        path.reset();
+        path.rewind();
         drawing = false;
         aps.invalidate();
     }
@@ -141,7 +185,7 @@ public class SuperPencilH {
                 mirroredPath.reset();
             path.reset();
             drawing = false;
-            aps.canvasHistory.cancelHistoricalChange(true);
+            aps.canvasHistory.cancelHistoricalChange(hitBounds);
         }
     }
 

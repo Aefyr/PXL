@@ -115,11 +115,14 @@ class CursorH {
         switch (aps.currentTool){
             case PENCIL:
             case ERASER:
-                aps.superPencil.move((int)currentX, (int)currentY);
+                aps.superPencil.move(currentX, currentY);
                 break;
             case FLOOD_FILL:
                 break;
             case COLOR_PICK:
+                break;
+            case MULTISHAPE:
+                aps.multiShape.move(currentX, currentY);
                 break;
         }
 
@@ -131,7 +134,7 @@ class CursorH {
         switch (aps.currentTool){
             case PENCIL:
             case ERASER:
-                aps.superPencil.startDrawing((int)currentX, (int)currentY);
+                aps.superPencil.startDrawing(currentX, currentY);
                 break;
             case FLOOD_FILL:
                 updateCanvasXY();
@@ -145,6 +148,9 @@ class CursorH {
                 updateCanvasXY();
                 if(canvasX<aps.pixelWidth&&canvasX>=0&&canvasY<aps.pixelHeight&&canvasY>=0)
                     aps.onSpecialToolUseListener.onColorSwapToolUse(aps.pixelBitmap.getPixel((int)canvasX, (int)canvasY));
+                break;
+            case MULTISHAPE:
+                aps.multiShape.startDrawing(currentX, currentY);
                 break;
         }
     }
@@ -160,6 +166,9 @@ class CursorH {
             case COLOR_PICK:
                 break;
             case COLOR_SWAP:
+                break;
+            case MULTISHAPE:
+                aps.multiShape.stopDrawing(currentX, currentY);
                 break;
         }
     }
@@ -213,6 +222,7 @@ class CursorH {
 
     void setPaintColor(int color){
         cursorPaint.setColor(color);
+        cursorPaint.setAlpha(opacity);
         if(aps.cursorMode)
             aps.invalidate();
     }
@@ -229,14 +239,15 @@ class CursorH {
         float loY = p[1]%aps.pixelScale;
         int bY = (int) Math.floor((currentY-loY)/aps.pixelScale);
 
-        updateCanvasXY();
+        //updateCanvasXY();
         //if(!offCanvasBounds())
             //cursorPaint.setColor(Utils.invertColor(aps.pixelBitmap.getPixel((int) canvasX, (int) canvasY)));
 
         cursorPreviewRect.set(bX*aps.pixelScale+loX, bY*aps.pixelScale+loY, bX*aps.pixelScale+loX+aps.pixelScale, bY*aps.pixelScale+loY+aps.pixelScale);
 
-        if(aps.paint.getStrokeWidth() > 1 && (aps.currentTool == AdaptivePixelSurfaceH.Tool.PENCIL || aps.currentTool == AdaptivePixelSurfaceH.Tool.ERASER)) {
-            int w = (int) aps.paint.getStrokeWidth();
+        if(aps.strokeWidth > 1 && (aps.currentTool == AdaptivePixelSurfaceH.Tool.PENCIL || aps.currentTool == AdaptivePixelSurfaceH.Tool.ERASER)) {
+            int w = (int) aps.strokeWidth;
+            updateCanvasXY();
             if (w % 2 == 0) {
                 int a = w / 2;
                 float xM = (float) (canvasX - Math.floor(canvasX));

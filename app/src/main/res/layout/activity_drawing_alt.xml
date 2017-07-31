@@ -20,7 +20,7 @@
         android:layout_height="58dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/round_rect_background"
+        android:background="@drawable/halfround_rect_background"
         android:elevation="12dp"
         android:orientation="horizontal"
         android:padding="3dp"
@@ -136,20 +136,21 @@
         android:text="Move"
         app:srcCompat="@drawable/tempsplash" />
 
-    <Button
-        android:id="@+id/minus"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_above="@+id/TMP"
-        android:layout_alignParentEnd="true"
-        android:text="-" />
+    <FrameLayout
+        android:id="@+id/toolSettings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/topButtons"
+        android:layout_margin="4dp"
+        android:layout_toEndOf="@+id/currentTool"
+        android:layout_toStartOf="@+id/color"
+        android:background="@drawable/full_round_rect_bg"
+        android:clickable="true"
+        android:descendantFocusability="blocksDescendants"
+        android:elevation="12dp"
+        android:padding="8dp"
+        android:visibility="gone">
 
-    <Button
-        android:id="@+id/plus"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_above="@+id/minus"
-        android:layout_alignParentEnd="true"
-        android:text="+" />
+    </FrameLayout>
 
 </RelativeLayout>

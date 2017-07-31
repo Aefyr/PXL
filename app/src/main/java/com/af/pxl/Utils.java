@@ -52,6 +52,18 @@ public class Utils {
         return (float) (Math.sqrt(Math.pow(x1-x2, 2)+ Math.pow(y1-y2, 2)));
     }
 
+    public static float[] signedVector2Distance(float x1, float y1, float x2, float y2){
+        float distance = (float) (Math.sqrt(Math.pow(x1-x2, 2)+ Math.pow(y1-y2, 2)));
+
+        float[] d = new float[]{distance, distance};
+        if(x2<x1)
+            d[0] = -d[0];
+        if(y2<y1)
+            d[1] = -d[1];
+
+        return d;
+    }
+
     public static int invertColor(int color){
         return Color.rgb(255-Color.red(color), 255-Color.green(color), 255 - Color.blue(color));
     }
