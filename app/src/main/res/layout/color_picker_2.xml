@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_alignStart="@+id/colorPickerVal"
+        android:layout_below="@+id/colorPickerVal"
+        android:gravity="center|start"
+        android:paddingEnd="1dp"
+        android:paddingStart="1dp"
+        android:text="V"
+        android:textSize="14sp" />
+
+    <SeekBar
+        android:id="@+id/seekBarVal"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_alignTop="@+id/textView8"
+        android:layout_marginTop="8dp"
+        android:layout_toEndOf="@+id/textView8"
+        android:layout_toStartOf="@+id/editTextVal"
+        android:max="100"
+        android:progress="50" />
+
+    <EditText
+        android:id="@+id/editTextVal"
+        android:layout_width="40dp"
+        android:layout_height="48dp"
+        android:layout_alignEnd="@+id/colorPickerVal"
+        android:layout_alignTop="@+id/textView8"
+        android:digits="1234567890"
+        android:ems="4"
+        android:gravity="center"
+        android:inputType="numberDecimal"
+        android:maxLength="3"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:text="100" />
+
+    <com.af.pxl.ColorPickerViewH
+        android:id="@+id/colorPickerVal"
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_alignEnd="@+id/ll"
+        android:layout_alignStart="@+id/ll"
+        android:layout_below="@+id/textView7"
+        android:layout_marginTop="8dp" />
+
+    <LinearLayout
+        android:id="@+id/ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:orientation="horizontal">
+
+        <com.af.pxl.ColorRect
+            android:id="@+id/oldColor"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_weight="0.5" />
+
+        <com.af.pxl.ColorRect
+            android:id="@+id/newColor"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_weight="0.5" />
+
+    </LinearLayout>
+
+    <com.af.pxl.ColorPickerViewH
+        android:id="@+id/colorPickerHue"
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_alignEnd="@+id/ll"
+        android:layout_alignStart="@+id/ll"
+        android:layout_below="@+id/ll"
+        android:layout_marginTop="8dp" />
+
+    <SeekBar
+        android:id="@+id/seekBarHue"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_alignTop="@+id/textView4"
+        android:layout_marginTop="8dp"
+        android:layout_toEndOf="@+id/textView4"
+        android:layout_toStartOf="@+id/editTextSat"
+        android:max="360"
+        android:progress="180" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_alignStart="@+id/colorPickerHue"
+        android:layout_below="@+id/colorPickerHue"
+        android:gravity="center|start"
+        android:paddingEnd="1dp"
+        android:paddingStart="1dp"
+        android:text="H"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_alignStart="@+id/colorPickerSat"
+        android:layout_below="@+id/colorPickerSat"
+        android:gravity="center|start"
+        android:paddingEnd="1dp"
+        android:paddingStart="1dp"
+        android:text="S"
+        android:textSize="14sp" />
+
+    <SeekBar
+        android:id="@+id/seekBarSat"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_alignTop="@+id/textView7"
+        android:layout_marginTop="8dp"
+        android:layout_toEndOf="@+id/textView7"
+        android:layout_toStartOf="@+id/editTextHue"
+        android:max="100"
+        android:progress="50" />
+
+    <EditText
+        android:id="@+id/editTextHue"
+        android:layout_width="40dp"
+        android:layout_height="48dp"
+        android:layout_alignEnd="@+id/colorPickerHue"
+        android:layout_alignTop="@+id/textView4"
+        android:digits="1234567890"
+        android:ems="4"
+        android:gravity="center"
+        android:inputType="numberDecimal"
+        android:maxLength="3"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:text="100" />
+
+    <com.af.pxl.ColorPickerViewH
+        android:id="@+id/colorPickerSat"
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_alignEnd="@+id/ll"
+        android:layout_alignStart="@+id/ll"
+        android:layout_below="@+id/textView4"
+        android:layout_marginTop="8dp" />
+
+    <EditText
+        android:id="@+id/editTextSat"
+        android:layout_width="40dp"
+        android:layout_height="48dp"
+        android:layout_alignEnd="@+id/colorPickerSat"
+        android:layout_alignTop="@+id/textView7"
+        android:digits="1234567890"
+        android:ems="4"
+        android:gravity="center"
+        android:inputType="numberDecimal"
+        android:maxLength="3"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:text="100" />
+
+</RelativeLayout>

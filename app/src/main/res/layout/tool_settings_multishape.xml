@@ -4,7 +4,7 @@
     android:id="@+id/multishapeSettings"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_alignParentTop="true">
 
     <ImageButton
         android:id="@+id/rectTool"
@@ -13,6 +13,7 @@
         android:layout_height="48dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:visibility="visible"
         app:srcCompat="@drawable/square" />
 
     <ImageButton
@@ -23,6 +24,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="7dp"
         android:layout_toEndOf="@+id/rectTool"
+        android:visibility="visible"
         app:srcCompat="@drawable/circle" />
 
     <ImageButton
@@ -33,6 +35,7 @@
         android:layout_alignParentTop="true"
         android:layout_toStartOf="@+id/rectTool"
         android:background="@drawable/full_round_rect_bg_dark"
+        android:visibility="visible"
         app:srcCompat="@drawable/line" />
 
     <Switch
@@ -49,13 +52,13 @@
         android:id="@+id/lockedSwitch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/shapeToolSeekbar"
+        android:layout_below="@+id/cornersRoundingSeekBar"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
         android:paddingBottom="4dp"
         android:paddingTop="4dp"
         android:text="@string/lock_angles"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
     <TextView
         android:id="@+id/shapeToolSizeText"
@@ -64,15 +67,70 @@
         android:layout_below="@+id/rectTool"
         android:layout_centerHorizontal="false"
         android:layout_marginTop="8dp"
-        android:text="@string/stroke_width" />
+        android:text="@string/stroke_width"
+        android:visibility="visible" />
 
     <SeekBar
-        android:id="@+id/shapeToolSeekbar"
+        android:id="@+id/shapeToolSizeSeekbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/shapeToolSizeText"
         android:layout_centerHorizontal="true"
         android:max="15"
         android:paddingBottom="4dp"
-        android:paddingTop="4dp" />
+        android:paddingTop="4dp"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/roundingText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/shapeToolSizeSeekbar"
+        android:layout_marginTop="8dp"
+        android:text="Corners Rounding:"
+        android:visibility="gone" />
+
+    <SeekBar
+        android:id="@+id/cornersRoundingSeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/roundingText"
+        android:max="16"
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/toolStyleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/shapeFillSwitch"
+        android:layout_marginTop="8dp"
+        android:text="@string/tool_style" />
+
+    <RadioGroup
+        android:id="@+id/toolStyleRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolStyleText"
+        android:orientation="horizontal"
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp">
+
+        <RadioButton
+            android:id="@+id/toolStyleRadioButtonRound"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/style_round" />
+
+        <RadioButton
+            android:id="@+id/toolStyleRadioButtonSquare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:checked="true"
+            android:text="@string/style_square" />
+    </RadioGroup>
+
 </RelativeLayout>

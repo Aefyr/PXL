@@ -149,7 +149,7 @@
         android:descendantFocusability="blocksDescendants"
         android:elevation="12dp"
         android:padding="8dp"
-        android:visibility="gone">
+        android:visibility="visible">
 
     </FrameLayout>
 

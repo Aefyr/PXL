@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
+import com.af.pxl.ColorPickerH;
 import com.af.pxl.R;
 import com.af.pxl.ColorPicker;
 
@@ -22,7 +23,7 @@ public class PaletteManager {
     private TextView paletteName;
     private PaletteView3 paletteView;
     private boolean dialogShown;
-    private ColorPicker colorPicker;
+    private ColorPickerH colorPicker;
     private Palette2 currentPalette;
     private boolean first = true;
 
@@ -71,7 +72,7 @@ public class PaletteManager {
         paletteManagerDialog.findViewById(R.id.pvEdit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final AlertDialog colorEditDialog = new AlertDialog.Builder(a).setView(R.layout.color_picker).setPositiveButton(a.getString(R.string.done), new DialogInterface.OnClickListener() {
+                final AlertDialog colorEditDialog = new AlertDialog.Builder(a).setView(R.layout.color_picker_2).setPositiveButton(a.getString(R.string.done), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         currentPalette.editColor(currentPalette.getSelectedColorIndex(), colorPicker.getColor());
@@ -79,7 +80,7 @@ public class PaletteManager {
                     }
                 }).setNegativeButton(a.getString(R.string.cancel), null).setTitle(a.getString(R.string.edit_color)).create();
                 colorEditDialog.show();
-                colorPicker = new ColorPicker(colorEditDialog.getWindow(), currentPalette.getSelectedColor());
+                colorPicker = new ColorPickerH(colorEditDialog.getWindow(), currentPalette.getSelectedColor());
             }
         });
 

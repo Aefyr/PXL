@@ -85,7 +85,7 @@
     <string name="lock_circle">Круг</string>
     <string name="lock_square">Квадрат</string>
     <string name="pencil">Карандаш</string>
-    <string name="stroke_width">Размер</string>
+    <string name="stroke_width">Размер: %dpx</string>
     <string name="style_round">Закругленный</string>
     <string name="style_square">Прямой</string>
     <string name="title_activity_main">PXL!</string>

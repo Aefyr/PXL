@@ -64,6 +64,13 @@ public class Utils {
         return d;
     }
 
+    public static float vector2Angle(float x1, float y1, float x2, float y2){
+        float angle = (float) Math.toDegrees(Math.acos((x1*x2+y1*y2)/(Math.sqrt((x1*x1+y1*y1))*(Math.sqrt((x2*x2+y2*y2))))));
+        if(x2<x1)
+            angle=-angle;
+        return angle;
+    }
+
     public static int invertColor(int color){
         return Color.rgb(255-Color.red(color), 255-Color.green(color), 255 - Color.blue(color));
     }
@@ -129,6 +136,28 @@ public class Utils {
         }
 
     }
+
+    public static String colorToHex(int color){
+        String r = Integer.toHexString(Color.red(color)).toUpperCase();
+        if(r.length()==1)
+            r = "0"+r;
+        String g = Integer.toHexString(Color.green(color)).toUpperCase();
+        if(g.length()==1)
+            g = "0"+g;
+        String b = Integer.toHexString(Color.blue(color)).toUpperCase();
+        if(b.length()==1)
+            b = "0"+b;
+        return r+g+b;
+    }
+
+    public static String correctHexColor(String hexColor){
+        if(hexColor.length()<6){
+            while(hexColor.length()!=6)
+                hexColor+="0";
+        }
+        return hexColor;
+    }
+
 
 
 }
