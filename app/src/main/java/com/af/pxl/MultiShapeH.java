@@ -1,6 +1,8 @@
 package com.af.pxl;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
@@ -32,7 +34,11 @@ public class MultiShapeH {
 
     private AdaptivePixelSurfaceH aps;
 
-    Bitmap backupBitmap;
+    private Bitmap backupBitmap;
+    private Bitmap shapeBitmap;
+    private Canvas shapeCanvas;
+
+    private static final float[] angles = {0, 30, 45, 60, 90, 120, 135, 150, 180};
 
 
     MultiShapeH(AdaptivePixelSurfaceH aps){
@@ -41,6 +47,9 @@ public class MultiShapeH {
         overlayPaint = new Paint();
         overlayPaint.setAntiAlias(false);
         overlayPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
+
+        shapeBitmap = Bitmap.createBitmap(aps.pixelWidth, aps.pixelHeight, Bitmap.Config.ARGB_8888);
+        shapeCanvas = new Canvas(shapeBitmap);
     }
 
     void startDrawing(float x, float y){
@@ -55,6 +64,7 @@ public class MultiShapeH {
         if(fill&&(shape==Shape.CIRCLE||shape==Shape.RECT))
             aps.paint.setStyle(Paint.Style.FILL);
 
+        shapeCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
         backupBitmap = aps.pixelBitmap.copy(Bitmap.Config.ARGB_8888, false);
         aps.canvasHistory.startHistoricalChange();
         drawing = true;
@@ -68,22 +78,26 @@ public class MultiShapeH {
             return;
 
         calculateCanvasXY(x, y);
+        shapeCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
         switch (shape){
             case LINE:
                 aps.pixelCanvas.drawBitmap(backupBitmap, 0, 0, overlayPaint);
                 //path.rewind();
                 if(!locked)
-                    aps.pixelCanvas.drawLine(startX, startY, sX, sY, aps.paint);
+                    shapeCanvas.drawLine(startX, startY, sX, sY, aps.paint);
                 else {
                     float d = Utils.vector2Distance(startX, startY, sX, sY);
 
-                    //tan30deg = 1:1.73
-                    float aA = d;
-                    float aX = d*0.865f;
-                    float aY = d/2;
-                    aps.pixelCanvas.drawLine(startX, startY, startX+aX,startY+aY, aps.paint);
-                    float a = +Utils.vector2Angle(0, -1, sX-startX, sY-startY);
+                    int lockedAngle = (int) Utils.getClosestNumber(Math.abs(Utils.vector2Angle(0, -1, sX-startX, sY-startY)), angles);
 
+                    float sinA = (float) Math.abs(d*Math.sin(Math.toRadians(lockedAngle)));
+                    float cosA = (float) Math.abs((d*Math.cos(Math.toRadians(lockedAngle))));
+
+                    shapeCanvas.drawLine(startX, startY, sX-startX>0?startX+sinA:startX-sinA, lockedAngle<90?startY-cosA:startY+cosA, aps.paint);
+
+
+                    float a = Utils.vector2Angle(0, -1, sX-startX, sY-startY);
+                    System.out.println("Angle="+a+", closest locked angle="+lockedAngle+String.format(" cosLockedAngle: %f, sinLockedAngle: %f", (d*Math.cos(Math.toRadians(lockedAngle))),(d*Math.cos(Math.toRadians(lockedAngle)))));
                 }
                     //path.moveTo(startX, startY);
                     //path.lineTo(sX, sY);
@@ -94,10 +108,10 @@ public class MultiShapeH {
                 //path.rewind();
                 if(!locked) {
                     if (rounding > 0 && Build.VERSION.SDK_INT >= 21)
-                        aps.pixelCanvas.drawRoundRect(startX<sX?startX:sX, startY<sY?startY:sY, startX<sX?sX:startX, startY<sY?sY:startY, rounding, rounding, aps.paint);
+                        shapeCanvas.drawRoundRect(startX<sX?startX:sX, startY<sY?startY:sY, startX<sX?sX:startX, startY<sY?sY:startY, rounding, rounding, aps.paint);
                         //path.addRoundRect(startX, startY, sX, sY, rounding, rounding, Path.Direction.CW);
                     else
-                        aps.pixelCanvas.drawRect(startX, startY, sX, sY, aps.paint);
+                        shapeCanvas.drawRect(startX, startY, sX, sY, aps.paint);
                         //path.addRect(startX, startY, sX, sY, Path.Direction.CW);
                 } else {
                     d = Utils.signedVector2Distance(startX, startY, sX, sY);
@@ -119,19 +133,23 @@ public class MultiShapeH {
                 aps.pixelCanvas.drawBitmap(backupBitmap, 0, 0, overlayPaint);
                 //path.rewind();
                 if(!locked&& Build.VERSION.SDK_INT>=21)
-                    aps.pixelCanvas.drawOval(startX, startY, sX, sY, aps.paint);
+                    shapeCanvas.drawOval(startX, startY, sX, sY, aps.paint);
                     //path.addOval(startX, startY, sX, sY, Path.Direction.CW);
                 else if(locked&&Build.VERSION.SDK_INT>=21){
                     d = Utils.signedVector2Distance(startX, startY, sX, sY);
-                    aps.pixelCanvas.drawOval(startX, startY, startX+d[0], startY+d[1], aps.paint);
+                    shapeCanvas.drawOval(startX, startY, startX+d[0], startY+d[1], aps.paint);
                     //path.addOval(startX, startY, startX+d[0], startY+d[1], Path.Direction.CW);
                 }else {
-                    aps.pixelCanvas.drawCircle(startX, startY, Utils.vector2Distance(startX, startY, sX, sY), aps.paint);
+                    shapeCanvas.drawCircle(startX, startY, Utils.vector2Distance(startX, startY, sX, sY), aps.paint);
                     //path.addCircle(startX, startY, Utils.vector2Distance(startX, startY, sX, sY), Path.Direction.CW);
                 }
                 //aps.pixelCanvas.drawPath(path, aps.paint);
                 break;
         }
+        aps.pixelCanvas.drawBitmap(shapeBitmap,0, 0, aps.noAAPaint);
+        if(aps.symmetry)
+            aps.pixelCanvas.drawBitmap(shapeBitmap, aps.superPencil.mirrorMatrix, aps.noAAPaint);
+
         moves++;
         aps.invalidate();
     }

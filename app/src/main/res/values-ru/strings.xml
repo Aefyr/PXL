@@ -89,5 +89,6 @@
     <string name="style_round">Закругленный</string>
     <string name="style_square">Прямой</string>
     <string name="title_activity_main">PXL!</string>
-    <string name="tool_style">Стиль</string>
+    <string name="tool_style">Стиль концов линии</string>
+    <string name="corners_rounding">Закругление углов: %d</string>
 </resources>

@@ -71,6 +71,25 @@ public class Utils {
         return angle;
     }
 
+    public static float getClosestNumber(float x, float[] ascendingNumbers){
+        int i = 0;
+
+        if(x<ascendingNumbers[i])
+            return ascendingNumbers[i];
+
+        do{
+            i++;
+        }while(i<ascendingNumbers.length&&ascendingNumbers[i]<x);
+
+        if(i==ascendingNumbers.length-1)
+            return ascendingNumbers[i];
+
+        if(ascendingNumbers[i]-x>x-ascendingNumbers[i-1])
+            return ascendingNumbers[i-1];
+        else
+            return ascendingNumbers[i];
+    }
+
     public static int invertColor(int color){
         return Color.rgb(255-Color.red(color), 255-Color.green(color), 255 - Color.blue(color));
     }

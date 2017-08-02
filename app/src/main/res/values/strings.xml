@@ -41,7 +41,7 @@
     <string name="select_resolution">Select resolution of exported image</string>
     <string name="share">Share</string>
     <string name="exporting">Exporting image</string>
-    <string name="storage_permissions_denied">Sorry, but I can\'t save image without the permission to use storage</string>
+    <string name="storage_permissions_denied">Impossible to save image without storage access</string>
     <string name="create">Create</string>
 
     <!--gallery_item-->
@@ -50,7 +50,7 @@
 
     <!-- BitmapsMergeActivity -->
     <string name="live_preview">Live Preview</string>
-    <string name="moving_image_tip">You also can move image by dragging it!</string>
+    <string name="moving_image_tip">You can also drag the image!</string>
 
 
     <!-- Projects options -->
@@ -71,7 +71,7 @@
     <string name="lock_angles">Lock Angles</string>
     <string name="lock_square">Lock to Square</string>
     <string name="lock_circle">Lock to Circle</string>
-    <string name="tool_style">Style</string>
+    <string name="tool_style">Cap Style</string>
     <string name="stroke_width">Size: %dpx</string>
     <string name="fill_shape">Fill</string>
     <string name="style_round">Round</string>

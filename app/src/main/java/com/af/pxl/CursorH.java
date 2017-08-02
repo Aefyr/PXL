@@ -239,15 +239,15 @@ class CursorH {
         float loY = p[1]%aps.pixelScale;
         int bY = (int) Math.floor((currentY-loY)/aps.pixelScale);
 
-        //updateCanvasXY();
-        //if(!offCanvasBounds())
-            //cursorPaint.setColor(Utils.invertColor(aps.pixelBitmap.getPixel((int) canvasX, (int) canvasY)));
+        updateCanvasXY();
+        if(!offCanvasBounds())
+            cursorPaint.setColor(Utils.invertColor(aps.pixelBitmap.getPixel((int) canvasX, (int) canvasY)));
 
         cursorPreviewRect.set(bX*aps.pixelScale+loX, bY*aps.pixelScale+loY, bX*aps.pixelScale+loX+aps.pixelScale, bY*aps.pixelScale+loY+aps.pixelScale);
 
-        if(aps.strokeWidth > 1 && (aps.currentTool == AdaptivePixelSurfaceH.Tool.PENCIL || aps.currentTool == AdaptivePixelSurfaceH.Tool.ERASER)) {
-            int w = (int) aps.strokeWidth;
-            updateCanvasXY();
+        if(aps.strokeWidth > 1 && (aps.currentTool == AdaptivePixelSurfaceH.Tool.PENCIL || aps.currentTool == AdaptivePixelSurfaceH.Tool.ERASER||aps.currentTool== AdaptivePixelSurfaceH.Tool.MULTISHAPE)) {
+            int w = aps.strokeWidth;
+            //updateCanvasXY();
             if (w % 2 == 0) {
                 int a = w / 2;
                 float xM = (float) (canvasX - Math.floor(canvasX));

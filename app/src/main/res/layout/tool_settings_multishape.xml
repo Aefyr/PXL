@@ -87,7 +87,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/shapeToolSizeSeekbar"
         android:layout_marginTop="8dp"
-        android:text="Corners Rounding:"
+        android:text="@string/corners_rounding"
         android:visibility="gone" />
 
     <SeekBar

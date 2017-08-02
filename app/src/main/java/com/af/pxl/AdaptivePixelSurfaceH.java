@@ -104,7 +104,6 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
 
         cursor = new CursorH(this);
         superPencil = new SuperPencilH(this);
-        multiShape = new MultiShapeH(this);
         initializePaints();
         ter();
     }
@@ -200,6 +199,7 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
         this.pixelHeight = pixelBitmap.getHeight();
         pixelCanvas = new Canvas(pixelBitmap);
         canvasHistory = new CanvasHistoryH(this, project, CanvasHistoryH.ADAPTIVE_SIZE);
+        multiShape = new MultiShapeH(this);
         setPalette(PaletteUtils.loadPalette(project.palette));
         if(project.transparentBackground){
             SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(getContext());
