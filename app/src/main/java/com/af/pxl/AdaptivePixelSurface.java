@@ -569,7 +569,7 @@ public class AdaptivePixelSurface extends SurfaceView implements SurfaceHolder.C
             return;
         if(!palette.colorPickToolWasUsed(pickedColor)){
             //Set LiveColor to pickedColor
-            /*setColor(pickedColor);
+            /*setCurrentColor(pickedColor);
             updateColorCircle(pickedColor);
             palette.editColor(palette.getSelectedColorIndex(), pickedColor);*/
         }

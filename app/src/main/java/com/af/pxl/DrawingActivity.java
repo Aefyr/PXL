@@ -5,8 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,15 +12,16 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 
-import com.af.pxl.Palettes.PaletteManager;
+import com.af.pxl.Palettes.PaletteManagerH;
 import com.af.pxl.Palettes.PalettePickerActivity;
 import com.af.pxl.Palettes.PaletteUtils;
 import com.af.pxl.Projects.ProjectsUtils;
 
 import java.io.File;
 
-public class DrawingActivity extends AppCompatActivity implements AdaptivePixelSurfaceH.OnSpecialToolUseListener{
+public class DrawingActivity extends AppCompatActivity implements AdaptivePixelSurfaceH.OnSpecialToolUseListener, PaletteManagerH.OnPaletteChangeRequestListener{
 
     AdaptivePixelSurfaceH aps;
     ToolPickView toolButton;
@@ -32,7 +31,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
     ImageButton undoButton;
     ImageButton redoButton;
 
-    ColorCircle colorPickButton;
+    PaletteManagerH pm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,13 +44,27 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
             aps.setProject(ProjectsUtils.loadProject(getIntent().getStringExtra("projectToLoad")));
         }
 
-        aps.setColorCircle((ColorCircle)findViewById(R.id.color));
+
         aps.setOnSpecialToolUseListener(this);
+        aps.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if(toolButton.shown()) {
+                    toolButton.hideTools();
+                    return (!aps.cursorMode);
+                }
+                if(pm.shown()) {
+                    pm.hide();
+                    return (!aps.cursorMode);
+                }
+
+                return false;
+            }
+        });
 
         initializeImageButtonsOCL();
         initializeToolPicking();
         initializeCursor();
-        tempColorPickInitialize();
         tempInitializeButtons();
 
         findViewById(R.id.TMP).setOnClickListener(new View.OnClickListener() {
@@ -69,6 +82,9 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
 
         //PALETTES
         PaletteUtils.initialize(this);
+
+         pm = new PaletteManagerH((RelativeLayout)findViewById(R.id.paletteBar), (ColorCircle)findViewById(R.id.currentColor), aps, this);
+        aps.setColorManager(pm);
     }
 
     private void canvasWiseOptionsDialog(){
@@ -104,18 +120,6 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         super.onBackPressed();
     }*/
 
-    private PaletteManager paletteManager;
-    void tempColorPickInitialize(){
-        colorPickButton = (ColorCircle) findViewById(R.id.color);
-        colorPickButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(paletteManager == null)
-                    paletteManager = new PaletteManager();
-                paletteManager.showPaletteManagerDialog(DrawingActivity.this, aps.palette);
-            }
-        });
-    }
 
     private void initializeToolPicking(){
 
@@ -280,7 +284,8 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         if(requestCode == PalettePickerActivity.REQUEST_CODE_PICK_PALETTE){
             if(resultCode==1){
                 aps.setPalette(PaletteUtils.loadPalette(data.getStringExtra("pickedPalette")));
-                paletteManager.setPalette(aps.palette);
+                //paletteManager.setPalette(aps.palette);
+                pm.setPalette(aps.palette);
             }else if(resultCode == 0){
             }
         }
@@ -353,5 +358,11 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
     }
 
 
-
+    @Override
+    public void onPaletteChangeRequest() {
+        Intent pickerIntent = new Intent(DrawingActivity.this, PalettePickerActivity.class);
+        pickerIntent.putExtra("pickerMode", true);
+        pickerIntent.putExtra("currentPalette", aps.palette.getName());
+        startActivityForResult(pickerIntent, PalettePickerActivity.REQUEST_CODE_PICK_PALETTE);
+    }
 }

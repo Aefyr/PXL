@@ -21,7 +21,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:background="@drawable/halfround_rect_background"
-        android:elevation="12dp"
+        android:elevation="@dimen/default_elevation"
         android:orientation="horizontal"
         android:padding="3dp"
         android:paddingTop="0dp"
@@ -90,7 +90,7 @@
         app:srcCompat="@drawable/clear" />
 
     <com.af.pxl.ColorCircle
-        android:id="@+id/color"
+        android:id="@+id/currentColor"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_alignParentEnd="true"
@@ -114,7 +114,7 @@
         android:layout_width="72dp"
         android:layout_height="72dp"
         android:layout_marginStart="8dp"
-        android:elevation="12dp" />
+        android:elevation="@dimen/default_elevation" />
 
     <com.af.pxl.SymmetryModePickView
         android:id="@+id/emve"
@@ -141,16 +141,90 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/topButtons"
-        android:layout_margin="4dp"
+        android:layout_marginEnd="@dimen/tool_setting_layout_margin_end"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
         android:layout_toEndOf="@+id/currentTool"
-        android:layout_toStartOf="@+id/color"
         android:background="@drawable/full_round_rect_bg"
         android:clickable="true"
         android:descendantFocusability="blocksDescendants"
         android:elevation="12dp"
         android:padding="8dp"
-        android:visibility="visible">
+        android:visibility="gone">
 
     </FrameLayout>
+
+    <RelativeLayout
+        android:id="@+id/paletteBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/topButtons"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/full_round_rect_bg"
+        android:elevation="12dp"
+        android:padding="4dp"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/changePalette"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:text="@string/select_palette" />
+
+        <TextView
+            android:id="@+id/paletteName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/changePalette"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:gravity="center"
+            android:paddingStart="8dp"
+            android:text="Default"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/paletteRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/paletteName"
+            android:paddingTop="4dp">
+
+        </android.support.v7.widget.RecyclerView>
+
+        <Button
+            android:id="@+id/editColor"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="64dp"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/paletteRecycler"
+            android:text="@string/pick_color" />
+
+        <Button
+            android:id="@+id/addColor"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="64dp"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/paletteRecycler"
+            android:text="@string/add_to_palette" />
+
+        <com.af.pxl.ColorCircle
+            android:id="@+id/colorCircle"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_alignParentBottom="false"
+            android:layout_alignTop="@+id/editColor"
+            android:layout_centerHorizontal="true"
+            android:elevation="@dimen/default_elevation" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

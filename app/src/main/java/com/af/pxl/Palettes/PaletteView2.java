@@ -74,7 +74,7 @@ public class PaletteView2 extends View implements Palette2.OnPaletteChangeListen
 
         }
 
-        //Outline selected color
+        //Outline selected currentColor
         currentX = gapBetweenColors + (palette.getSelectedColorIndex()%maxColorsPerLine)*(sizeOfColorX+gapBetweenColors);
         currentY = gapBetweenColors + (int) (Math.floor(palette.getSelectedColorIndex()/maxColorsPerLine)*(sizeOfColorY+gapBetweenColors));
         p.setColor(Utils.invertColor(palette.getSelectedColor()));
@@ -141,7 +141,7 @@ public class PaletteView2 extends View implements Palette2.OnPaletteChangeListen
             y-=gapBetweenColors;
         int clickedColorId = (int) (x/(sizeOfColorX+gapBetweenColors)) + ((int) (y/(sizeOfColorY+gapBetweenColors)))*maxColorsPerLine;
         palette.setSelectedColor(clickedColorId);
-        System.out.println("Clicked color index="+clickedColorId+", btw y="+(int) (y/(sizeOfColorY+gapBetweenColors)));
+        System.out.println("Clicked currentColor index="+clickedColorId+", btw y="+(int) (y/(sizeOfColorY+gapBetweenColors)));
     }
 
 

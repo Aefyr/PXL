@@ -23,6 +23,7 @@ import android.view.WindowManager;
 
 import com.af.pxl.Fragments.PreferencesFragment;
 import com.af.pxl.Palettes.Palette2;
+import com.af.pxl.Palettes.PaletteManagerH;
 import com.af.pxl.Palettes.PaletteUtils;
 import com.af.pxl.Projects.Project;
 
@@ -78,7 +79,7 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
     }
 
     //Rest
-    ColorCircle colorCircle;
+    PaletteManagerH colorManager;
     Palette2 palette;
 
     public AdaptivePixelSurfaceH(Context context) {
@@ -159,9 +160,8 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
         paint.setStrokeWidth(width);
     }
 
-    public void setColorCircle(ColorCircle colorCircle){
-        this.colorCircle = colorCircle;
-        updateColorCircle(paint.getColor());
+    public void setColorManager(PaletteManagerH manager){
+        this.colorManager = manager;
     }
 
     public void setPalette(Palette2 palette){
@@ -226,6 +226,10 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
         projectReady = true;
     }
 
+    public Palette2 getPalette(){
+        return palette;
+    }
+
     //Utility methods
     Paint gridP;
     float[] p = {0, 0};
@@ -272,8 +276,8 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
     //Updaters
 
     private void updateColorCircle(int color){
-        if(colorCircle!=null){
-            colorCircle.setColor(color);
+        if(colorManager !=null){
+            colorManager.setCurrentColor(color);
         }
     }
 
@@ -600,7 +604,7 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
             return;
         if(!palette.colorPickToolWasUsed(pickedColor)){
             //Set LiveColor to pickedColor
-            /*setColor(pickedColor);
+            /*setCurrentColor(pickedColor);
             updateColorCircle(pickedColor);
             palette.editColor(palette.getSelectedColorIndex(), pickedColor);*/
         }

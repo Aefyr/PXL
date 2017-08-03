@@ -79,7 +79,7 @@ public class PaletteUtils {
                 c = reader.read();
             }
             String[] colors = builder.toString().split(",");
-            System.out.println("last color: "+colors[colors.length-1]);
+            System.out.println("last currentColor: "+colors[colors.length-1]);
 
             Palette2 palette = new Palette2(name, 16, Integer.parseInt(colors[0]), true);
             ArrayList<Integer> paletteColors = palette.getColors();

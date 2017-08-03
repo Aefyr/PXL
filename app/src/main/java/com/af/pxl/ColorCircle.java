@@ -1,5 +1,9 @@
 package com.af.pxl;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -36,6 +40,44 @@ public class ColorCircle extends View {
         borderColor = Color.parseColor("#ffb0bec5");
         p.setColor(color);
         //p.setAntiAlias(true);
+    }
+
+    private boolean animated = false;
+    private ObjectAnimator animator1;
+    private ObjectAnimator animator12;
+    private ObjectAnimator animator2;
+    private ObjectAnimator animator22;
+    public void enableAnimations(){
+        animator1 = ObjectAnimator.ofFloat(this, View.SCALE_X, 1.1f);
+        animator1.setDuration(100);
+
+        animator12 = ObjectAnimator.ofFloat(this, View.SCALE_Y, 1.1f);
+        animator12.setDuration(100);
+
+        animator1.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                animator2.start();
+                animator22.start();
+            }
+        });
+
+        animator2 = ObjectAnimator.ofFloat(this, View.SCALE_X, 1f);
+        animator2.setDuration(100);
+
+        animator22 = ObjectAnimator.ofFloat(this, View.SCALE_Y, 1f);
+        animator22.setDuration(100);
+
+        animated = true;
+    }
+
+    public void animation(){
+        if(!animated)
+            return;
+
+        animator1.start();
+        animator12.start();
     }
 
     @Override

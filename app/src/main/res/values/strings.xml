@@ -24,6 +24,9 @@
     <string name="incorrect_palette_name">Palette name is already in use or incorrect!\n(You may use only letters, digits and spaces)</string>
     <string name="create_new_palette">Create New Palette</string>
     <string name="enter_name">Enter name</string>
+    <string name="pick_color">Pick Color</string>
+    <string name="add_to_palette">Add to Palette</string>
+    <string name="add_to_palette_hint">Click on the color in palette you want to replace with current color!</string>
 
     <!-- Projects -->
     <string name="project">Project</string>

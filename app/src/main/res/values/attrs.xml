@@ -15,4 +15,5 @@
         <attr name="bitmapSize" format="dimension"/>
         <attr name="gapSize" format="dimension"/>
     </declare-styleable>
+
 </resources>

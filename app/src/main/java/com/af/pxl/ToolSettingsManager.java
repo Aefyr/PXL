@@ -18,7 +18,7 @@ import android.widget.TextView;
  * Created by Aefyr on 31.07.2017.
  */
 
-public class ToolSettingsManager {
+class ToolSettingsManager {
 
     private FrameLayout toolSettingsWindowLayout;
     private AdaptivePixelSurfaceH aps;
@@ -158,8 +158,6 @@ public class ToolSettingsManager {
     private RadioGroup shapeCapStyles;
     private TextView roundingText;
     private SeekBar roundingSeekBar;
-
-    private boolean fillShapes = false;
 
     private void initializeMultishapeView(){
         multishapeView = LayoutInflater.from(c).inflate(R.layout.tool_settings_multishape, toolSettingsWindowLayout, false);

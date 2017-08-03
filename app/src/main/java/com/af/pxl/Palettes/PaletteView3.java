@@ -77,7 +77,7 @@ public class PaletteView3 extends View implements Palette2.OnPaletteChangeListen
         noAAPaint.setColor(Color.BLACK);
         canvas.drawRect(0, 0, getWidth(), getHeight(), noAAPaint);
 
-        //Draw selected color outline
+        //Draw selected currentColor outline
         if(palette==null)
             return;
         int selectedColorId = palette.getSelectedColorIndex();
@@ -109,7 +109,7 @@ public class PaletteView3 extends View implements Palette2.OnPaletteChangeListen
         int column = (int) (x/colorSizeX);
         int row = (int) (y/colorSizeY);
         int id = row*4+column;
-        System.out.println("PV3: Clicked color with id "+id);
+        System.out.println("PV3: Clicked currentColor with id "+id);
         if(id<palette.getSize()) {
             palette.setSelectedColor(id);
             invalidate();

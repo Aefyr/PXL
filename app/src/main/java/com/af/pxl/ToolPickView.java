@@ -258,6 +258,8 @@ public class ToolPickView extends View {
     }
 
     void hideTools(){
+        if(!toolsShown)
+            return;
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) getLayoutParams();
         params.height = startHeight;
         setLayoutParams(params);
@@ -265,17 +267,13 @@ public class ToolPickView extends View {
         toolsShown = false;
     }
 
+    boolean shown(){
+        return toolsShown;
+    }
+
     AdaptivePixelSurfaceH aps;
 
     void setAps(final AdaptivePixelSurfaceH aps){
         this.aps = aps;
-        aps.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if(toolsShown)
-                    hideTools();
-                return aps.onTouchEvent(motionEvent);
-            }
-        });
     }
 }

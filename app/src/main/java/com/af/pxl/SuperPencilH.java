@@ -11,8 +11,7 @@ import android.graphics.RectF;
  * Created by Aefyr on 02.07.2017.
  */
 
-public class SuperPencilH {
-    private AdaptivePixelSurfaceH aps;
+public class SuperPencilH extends ToolH{
     Matrix mirrorMatrix;
     Style style = Style.SQUARE;
     private float circleRadius = 1;
@@ -46,22 +45,17 @@ public class SuperPencilH {
 
     boolean instaDots = true;
 
-    private boolean drawing = false;
     private Path path;
-    private float sX, sY, nX, nY;
-    private int moves;
+    private float nX, nY;
 
-    private boolean hitBounds = false;
-
+    @Override
     void startDrawing(float x, float y){
         if(drawing)
             return;
 
         hitBounds = false;
 
-        sX = x;
-        sY = y;
-        calculateCanvasXY();
+        calculateCanvasXY(x, y);
 
         moves = 0;
         path.reset();
@@ -94,13 +88,12 @@ public class SuperPencilH {
         drawing = true;
     }
 
+    @Override
     void move(float x, float y){
         if(!drawing)
             return;
 
-        sX = x;
-        sY = y;
-        calculateCanvasXY();
+        calculateCanvasXY(x, y);
 
         if(aps.cursorMode&&aps.paint.getStrokeWidth()<=4)
             path.lineTo(sX, sY);
@@ -130,12 +123,12 @@ public class SuperPencilH {
         aps.invalidate();
     }
 
+    @Override
     void stopDrawing(float x, float y){
         if(!drawing)
             return;
-        sX = x;
-        sY = y;
-        calculateCanvasXY();
+
+        calculateCanvasXY(x, y);
 
         //path.lineTo(sX, sY);
         path.setLastPoint(sX, sY);
@@ -171,6 +164,7 @@ public class SuperPencilH {
         aps.invalidate();
     }
 
+    @Override
     void cancel(float x, float y){
         if(!drawing)
             return;
@@ -187,18 +181,6 @@ public class SuperPencilH {
             drawing = false;
             aps.canvasHistory.cancelHistoricalChange(hitBounds);
         }
-    }
-
-    float[] p = {0,0};
-    private void calculateCanvasXY(){
-        p[0] = p[1] = 0;
-        aps.pixelMatrix.mapPoints(p);
-        sX = (sX-p[0])/aps.pixelScale;
-        sY = (sY-p[1])/aps.pixelScale;
-
-        if(!hitBounds&&sX>0&&sX<aps.pixelWidth&&sY>0&&sY<aps.pixelHeight)
-            hitBounds = true;
-
     }
 
     private Path mirroredPath;

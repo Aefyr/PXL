@@ -81,7 +81,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/toolButton"
-        android:text="Get color" />
+        android:text="Get currentColor" />
 
     <Button
         android:id="@+id/button2"

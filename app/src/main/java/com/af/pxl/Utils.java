@@ -94,6 +94,10 @@ public class Utils {
         return Color.rgb(255-Color.red(color), 255-Color.green(color), 255 - Color.blue(color));
     }
 
+    public static int lerpColor(int color1, int color2, float a){
+        return Color.RED;
+    }
+
     public static void toaster(Context context, String message){
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }

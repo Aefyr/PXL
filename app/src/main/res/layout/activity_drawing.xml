@@ -70,7 +70,7 @@
         app:srcCompat="@drawable/clear" />
 
     <com.af.pxl.ColorCircle
-        android:id="@+id/color"
+        android:id="@+id/currentColor"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_alignParentEnd="true" />

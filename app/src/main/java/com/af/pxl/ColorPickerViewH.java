@@ -109,7 +109,7 @@ public class ColorPickerViewH extends View {
         if(paint != null && event.getAction() == MotionEvent.ACTION_DOWN) {
             float[] newColor = color.clone();
             newColor[0] = event.getX()/realWidth * 360;
-            paint.setColor(Color.HSVToColor(newColor));
+            paint.setCurrentColor(Color.HSVToColor(newColor));
         }
         return true;
     }*/
@@ -136,7 +136,7 @@ public class ColorPickerViewH extends View {
 
                 drawingColor[modeInt] = x;
 
-                p.setColor(Color.HSVToColor(drawingColor));
+                p.setCurrentColor(Color.HSVToColor(drawingColor));
                 canvas.drawRect(currentGrade, 0, currentGrade += pixelsPerGrade, canvas.getHeight(), p);
                 //System.out.println("x=" + x);
             }*/
@@ -156,7 +156,7 @@ public class ColorPickerViewH extends View {
             //Old Method, ~2 ms
             /*for (float y = 0; y <= 1; y += 0.01f) {
                 drawingColor[modeInt] = y;
-                p.setColor(Color.HSVToColor(drawingColor));
+                p.setCurrentColor(Color.HSVToColor(drawingColor));
                 canvas.drawRect(currentGrade, 0, currentGrade += pixelsPerGrade, canvas.getHeight(), p);
             }*/
 

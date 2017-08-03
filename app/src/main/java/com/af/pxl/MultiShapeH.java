@@ -13,7 +13,7 @@ import android.os.Build;
  * Created by Aefyr on 31.07.2017.
  */
 
-public class MultiShapeH {
+public class MultiShapeH extends ToolH{
     enum Shape{
         LINE, RECT, CIRCLE
     }
@@ -25,14 +25,7 @@ public class MultiShapeH {
     boolean fill = false;
     int rounding = 0;
 
-    private boolean drawing = false;
-    private float sX, sY;
-    private float startX, startY;
-    private int moves;
 
-    private boolean hitBounds = false;
-
-    private AdaptivePixelSurfaceH aps;
 
     private Bitmap backupBitmap;
     private Bitmap shapeBitmap;
@@ -52,6 +45,7 @@ public class MultiShapeH {
         shapeCanvas = new Canvas(shapeBitmap);
     }
 
+    @Override
     void startDrawing(float x, float y){
         if(drawing)
             return;
@@ -73,6 +67,7 @@ public class MultiShapeH {
 
     float[] d;
 
+    @Override
     void move(float x, float y){
         if(!drawing)
             return;
@@ -154,6 +149,7 @@ public class MultiShapeH {
         aps.invalidate();
     }
 
+    @Override
     void stopDrawing(float x, float y){
         if(!drawing)
             return;
@@ -169,6 +165,7 @@ public class MultiShapeH {
         drawing = false;
     }
 
+    @Override
     void cancel(float x, float y){
         if(!drawing)
             return;
@@ -186,17 +183,5 @@ public class MultiShapeH {
         aps.paint.setStyle(Paint.Style.STROKE);
 
         drawing = false;
-    }
-
-    float[] p = {0,0};
-    private void calculateCanvasXY(float x, float y){
-        p[0] = p[1] = 0;
-        aps.pixelMatrix.mapPoints(p);
-        sX = (x-p[0])/aps.pixelScale;
-        sY = (y-p[1])/aps.pixelScale;
-
-        if(!hitBounds&&sX>0&&sX<aps.pixelWidth&&sY>0&&sY<aps.pixelHeight)
-            hitBounds = true;
-
     }
 }

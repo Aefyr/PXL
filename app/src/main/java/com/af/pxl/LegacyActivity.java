@@ -173,7 +173,7 @@ public class LegacyActivity extends AppCompatActivity {
                 (d.findViewById(R.id.colorPickButton)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        pixelSurface2.paint.setColor(Color.HSVToColor(colorPicker.color));
+                        pixelSurface2.paint.setCurrentColor(Color.HSVToColor(colorPicker.color));
                         d.cancel();
                         colorPicker = null;
                     }
@@ -243,7 +243,7 @@ public class LegacyActivity extends AppCompatActivity {
                 ((Button)d.findViewById(R.id.colorPickButton)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        canvasView.pixelPaint.setColor(Color.HSVToColor(colorPicker.color));
+                        canvasView.pixelPaint.setCurrentColor(Color.HSVToColor(colorPicker.color));
                         canvasView.drawThread.requestUpdate();
                         d.cancel();
                     }

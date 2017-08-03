@@ -19,7 +19,7 @@ public class ColorRect extends View {
         super(context, attrs);
     }
 
-    void setColor(int color){
+    public void setColor(int color){
         this.color = color;
         invalidate();
     }

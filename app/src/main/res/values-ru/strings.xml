@@ -91,4 +91,7 @@
     <string name="title_activity_main">PXL!</string>
     <string name="tool_style">Стиль концов линии</string>
     <string name="corners_rounding">Закругление углов: %d</string>
+    <string name="add_to_palette">Добавить в палитру</string>
+    <string name="pick_color">Выбор цвета</string>
+    <string name="add_to_palette_hint">Нажмите на цвет в палитре, который вы хотите заменить на текущий цвет!</string>
 </resources>
