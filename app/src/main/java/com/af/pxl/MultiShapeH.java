@@ -110,15 +110,16 @@ public class MultiShapeH extends ToolH{
                         //path.addRect(startX, startY, sX, sY, Path.Direction.CW);
                 } else {
                     d = Utils.signedVector2Distance(startX, startY, sX, sY);
+                    float aX = (float) (startX+Math.sqrt(Math.pow(d[0], 2)/2f)*Math.signum(d[0]));
+                    float aY = (float) (startY+Math.sqrt(Math.pow(d[1], 2)/2f)*Math.signum(d[1]));
 
                     if (rounding > 0 && Build.VERSION.SDK_INT >= 21) {
-                        float aX = startX+d[0];
-                        float aY = startY+d[1];
-                        aps.pixelCanvas.drawRoundRect(startX < aX ? startX : aX, startY < aY ? startY : aY, startX < aX ? aX : startX, startY < aY ? aY : startY, rounding, rounding, aps.paint);
+
+                        shapeCanvas.drawRoundRect(startX < aX ? startX : aX, startY < aY ? startY : aY, startX < aX ? aX : startX, startY < aY ? aY : startY, rounding, rounding, aps.paint);
                         //aps.pixelCanvas.drawRoundRect(startX, startY, startX+d[0], startY+d[1], rounding, rounding, aps.paint);
                         //path.addRoundRect(startX, startY, startX+d[0], startY+d[1], rounding, rounding, Path.Direction.CW);
                     }else
-                        aps.pixelCanvas.drawRect(startX, startY, startX+d[0], startY+d[1], aps.paint);
+                        shapeCanvas.drawRect(startX, startY, aX, aY, aps.paint);
                         //path.addRect(startX, startY, startX+d[0], startY+d[1], Path.Direction.CW);
 
                 }

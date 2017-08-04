@@ -18,6 +18,7 @@
     </string-array>
 
     <string-array name="canvas_options_array">
+        <item>Очистить холст</item>
         <item>Смещение пикселей</item>
         <item>Наложить изображение</item>
         <item>Центрировать холст</item>

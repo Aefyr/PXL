@@ -39,6 +39,7 @@ public class ColorCircle extends View {
         color = Color.WHITE;
         borderColor = Color.parseColor("#ffb0bec5");
         p.setColor(color);
+        p.setAntiAlias(true);
         //p.setAntiAlias(true);
     }
 

@@ -60,6 +60,7 @@
             android:background="@drawable/sketchbook_style_button_selector"
             android:elevation="0dp"
             app:srcCompat="@drawable/normal2" />
+
     </LinearLayout>
 
     <ImageButton
@@ -69,6 +70,8 @@
         android:layout_height="52dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
+        android:alpha="0.5"
+        android:background="@drawable/full_round_rect_bg"
         app:srcCompat="@drawable/undo" />
 
     <ImageButton
@@ -78,16 +81,9 @@
         android:layout_height="52dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
+        android:alpha="0.5"
+        android:background="@drawable/full_round_rect_bg"
         app:srcCompat="@drawable/redo" />
-
-    <ImageButton
-        android:id="@+id/clear"
-        style="@style/PXLImageButton"
-        android:layout_width="52dp"
-        android:layout_height="52dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        app:srcCompat="@drawable/clear" />
 
     <com.af.pxl.ColorCircle
         android:id="@+id/currentColor"
@@ -101,7 +97,7 @@
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/clear"
+        android:layout_above="@+id/TMP"
         android:layout_centerHorizontal="true"
         android:background="@drawable/selector2"
         android:text="@string/cursor_action"
@@ -129,10 +125,10 @@
     <ImageButton
         android:id="@+id/TMP"
         style="@style/PXLImageButton"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
         android:text="Move"
         app:srcCompat="@drawable/tempsplash" />
 
@@ -159,7 +155,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/topButtons"
-        android:layout_centerHorizontal="true"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
@@ -207,20 +202,12 @@
             android:layout_below="@+id/paletteRecycler"
             android:text="@string/pick_color" />
 
-        <Button
-            android:id="@+id/addColor"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
-            android:layout_width="wrap_content"
-            android:layout_height="64dp"
-            android:layout_alignParentEnd="true"
-            android:layout_below="@+id/paletteRecycler"
-            android:text="@string/add_to_palette" />
-
         <com.af.pxl.ColorCircle
             android:id="@+id/colorCircle"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_alignParentBottom="false"
+            android:layout_alignParentEnd="true"
             android:layout_alignTop="@+id/editColor"
             android:layout_centerHorizontal="true"
             android:elevation="@dimen/default_elevation" />

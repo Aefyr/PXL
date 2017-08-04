@@ -43,7 +43,7 @@ class ToolSettingsManager {
                     case R.id.toolStyleRadioButtonSquare:
                         if(currentTool == AdaptivePixelSurfaceH.Tool.MULTISHAPE)
                             pencilCapStyles.check(R.id.toolStyleRadioButtonSquare);
-                        else
+                        else if(shapeCapStyles!=null)
                             shapeCapStyles.check(R.id.toolStyleRadioButtonSquare);
 
                         ToolSettingsManager.this.aps.superPencil.setStyle(SuperPencilH.Style.SQUARE);
@@ -51,7 +51,7 @@ class ToolSettingsManager {
                     case R.id.toolStyleRadioButtonRound:
                         if(currentTool == AdaptivePixelSurfaceH.Tool.MULTISHAPE)
                             pencilCapStyles.check(R.id.toolStyleRadioButtonRound);
-                        else
+                        else if(shapeCapStyles!=null)
                             shapeCapStyles.check(R.id.toolStyleRadioButtonRound);
 
                         ToolSettingsManager.this.aps.superPencil.setStyle(SuperPencilH.Style.ROUND);
@@ -164,6 +164,9 @@ class ToolSettingsManager {
 
         toolStyleText = (TextView) multishapeView.findViewById(R.id.toolStyleText);
         shapeCapStyles = (RadioGroup) multishapeView.findViewById(R.id.toolStyleRadioGroup);
+
+        if(aps.superPencil.style== SuperPencilH.Style.ROUND)
+            shapeCapStyles.check(R.id.toolStyleRadioButtonRound);
 
         shapeCapStyles.setOnCheckedChangeListener(radioListener);
 

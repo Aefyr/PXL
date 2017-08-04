@@ -16,7 +16,7 @@
         android:paddingEnd="1dp"
         android:paddingStart="1dp"
         android:text="V"
-        android:textSize="14sp" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
     <SeekBar
         android:id="@+id/seekBarVal"
@@ -105,7 +105,7 @@
         android:paddingEnd="1dp"
         android:paddingStart="1dp"
         android:text="H"
-        android:textSize="14sp" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
     <TextView
         android:id="@+id/textView7"
@@ -117,7 +117,7 @@
         android:paddingEnd="1dp"
         android:paddingStart="1dp"
         android:text="S"
-        android:textSize="14sp" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
     <SeekBar
         android:id="@+id/seekBarSat"

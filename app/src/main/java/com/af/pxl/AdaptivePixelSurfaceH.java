@@ -170,14 +170,13 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
 
         this.palette = palette;
         palette.addOnPaletteChangeListener(this);
-        setColor(palette.getSelectedColor());
-        updateColorCircle(palette.getSelectedColor());
+        //setColor(palette.getSelectedColor());
     }
 
     @Override
     public void onColorSelection(int selectedColor) {
-        setColor(selectedColor);
-        updateColorCircle(selectedColor);
+        //setColor(selectedColor);
+        //updateColorCircle(selectedColor);
     }
 
     @Override
@@ -275,12 +274,6 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
 
     //Updaters
 
-    private void updateColorCircle(int color){
-        if(colorManager !=null){
-            colorManager.setCurrentColor(color);
-        }
-    }
-
     //Initializers?
     //TODO Add ability to create custom CursorPencil pointers
 
@@ -302,7 +295,6 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
         paint.setAntiAlias(false);
         paint.setFilterBitmap(false);
         paint.setColor(Color.WHITE);
-        updateColorCircle(Color.WHITE);
         paint.setStrokeWidth(1);
         paint.setStrokeCap(Paint.Cap.SQUARE);
         paint.setStyle(Paint.Style.STROKE);
@@ -600,14 +592,15 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
         if(x<0||x>=pixelWidth||y<0||y>=pixelHeight)
             return;
         int pickedColor = pixelBitmap.getPixel(x, y);
-        if(pickedColor==0)
+        colorManager.setCurrentColor(pickedColor);
+        /*if(pickedColor==0)
             return;
         if(!palette.colorPickToolWasUsed(pickedColor)){
             //Set LiveColor to pickedColor
             /*setCurrentColor(pickedColor);
             updateColorCircle(pickedColor);
-            palette.editColor(palette.getSelectedColorIndex(), pickedColor);*/
-        }
+            palette.editColor(palette.getSelectedColorIndex(), pickedColor);
+        }*/
     }
 
     void clearCanvas(){

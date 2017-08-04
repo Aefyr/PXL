@@ -28,7 +28,6 @@ public class PaletteManagerH {
     private Palette2 palette;
     private ColorSelectionRecycleAdapter adapter;
     private ColorCircle colorCircleCur;
-    private Button addColor;
     private TextView paletteName;
     private ColorPickerH colorPicker;
 
@@ -50,21 +49,10 @@ public class PaletteManagerH {
         colorCircleMain = mainColorCircle;
         palette = aps.getPalette();
         colorCircleCur = (ColorCircle) paletteLayoutRoot.findViewById(R.id.colorCircle);
-        addColor = (Button) paletteLayoutRoot.findViewById(R.id.addColor);
         paletteName = (TextView) paletteLayoutRoot.findViewById(R.id.paletteName);
         paletteName.setText(palette.getName());
 
         setCurrentColor(palette.getSelectedColor());
-
-        addColor.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(addMode)
-                    cancelAddMode();
-                else
-                    enterAddMode();
-            }
-        });
 
         colorCircleMain.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,6 +79,7 @@ public class PaletteManagerH {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         setCurrentColor(colorPicker.getColor());
                         colorPicker = null;
+                        hide();
                     }
                 }).setNegativeButton(aps.getResources().getString(R.string.cancel), null).setTitle(aps.getResources().getString(R.string.edit_color)).create();
                 colorEditDialog.show();
@@ -108,17 +97,17 @@ public class PaletteManagerH {
             public void onColorClick(int index) {
                 if(!addMode) {
                     setCurrentColor(palette.getColor(index));
-                    aps.setColor(palette.getColor(index));
+                    hide();
                 }else {
                     palette.editColor(index, currentColor);
                     adapter.notifyItemChanged(index);
-                    cancelAddMode();
                 }
             }
 
             @Override
             public void onColorLongClick(int index) {
-
+                palette.editColor(index, currentColor);
+                adapter.notifyItemChanged(index);
             }
         });
     }
@@ -126,22 +115,12 @@ public class PaletteManagerH {
     public void setPalette(Palette2 palette){
         this.palette = palette;
         adapter.setPalette(palette);
-        setCurrentColor(palette.getSelectedColor());
         paletteName.setText(palette.getName());
     }
 
-    private void enterAddMode(){
-        Utils.toaster(aps.getContext(), aps.getResources().getString(R.string.add_to_palette_hint));
-        addColor.setText(aps.getResources().getString(R.string.cancel));
-        addMode = true;
-    }
-
-    private void cancelAddMode(){
-        addColor.setText(aps.getResources().getString(R.string.add_to_palette));
-        addMode = false;
-    }
 
     public void setCurrentColor(int color){
+        aps.setColor(color);
         this.currentColor = color;
         colorCircleMain.setColor(color);
         colorCircleCur.setColor(color);
@@ -156,7 +135,6 @@ public class PaletteManagerH {
         if(!shown)
             return;
 
-        cancelAddMode();
         layout.setVisibility(View.GONE);
         shown = false;
     }
