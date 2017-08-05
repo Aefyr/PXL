@@ -2,12 +2,10 @@ package com.af.pxl;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +16,7 @@ import com.af.pxl.Fragments.GalleryFragment;
 import com.af.pxl.Fragments.PalettesFragment;
 import com.af.pxl.Fragments.PreferencesFragment;
 import com.af.pxl.Palettes.PaletteUtils;
+import com.af.pxl.TCA.TutorialActivity;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -29,6 +28,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private NavigationView navigationView;
+    private ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        actionBar = getSupportActionBar();
 
         //Fragments
         fragmentManager = getFragmentManager();
@@ -101,10 +102,11 @@ public class MainActivity extends AppCompatActivity
             loadFragment(FRAGMENT.TEST);
         } else if (id == R.id.nav_community) {
             loadFragment(FRAGMENT.PREFERENCES);
-        } else if (id == R.id.nav_settings) {
+        } else if (id == R.id.nav_about) {
 
-        } else if (id == R.id.nav_donate) {
-
+        } else if (id == R.id.nav_tutorial) {
+            Intent tut = new Intent(MainActivity.this, TutorialActivity.class);
+            startActivity(tut);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -122,7 +124,8 @@ public class MainActivity extends AppCompatActivity
                     //fragmentManager.beginTransaction().add(R.id.container, gallery, "Gallery").commit();
                     System.out.println("created gallery");
                 }
-                    fragmentManager.beginTransaction().replace(R.id.container, gallery, "Gallery").commit();
+                fragmentManager.beginTransaction().replace(R.id.container, gallery, "Gallery").commit();
+                actionBar.setTitle(getString(R.string.projects));
                 break;
             case TEST:
                 PalettesFragment palettes = (PalettesFragment) fragmentManager.findFragmentByTag("Palettes");
@@ -131,7 +134,8 @@ public class MainActivity extends AppCompatActivity
                     //fragmentManager.beginTransaction().add(R.id.container, test, "Test").commit();
                     System.out.println("created test");
                 }
-                    fragmentManager.beginTransaction().replace(R.id.container, palettes, "Palettes").commit();
+                fragmentManager.beginTransaction().replace(R.id.container, palettes, "Palettes").commit();
+                actionBar.setTitle(getString(R.string.palettes));
                 break;
             case PREFERENCES:
                 PreferencesFragment preferences = (PreferencesFragment) fragmentManager.findFragmentByTag("Preferences");
@@ -141,6 +145,7 @@ public class MainActivity extends AppCompatActivity
                     System.out.println("created test");
                 }
                 fragmentManager.beginTransaction().replace(R.id.container, preferences, "Preferences").commit();
+                actionBar.setTitle(getString(R.string.title_activity_settings));
                 break;
         }
     }

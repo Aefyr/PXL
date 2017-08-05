@@ -16,6 +16,12 @@
     <string name="cursor_action">PXL!</string>
     <string name="error">Internal error</string>
 
+    <!-- Misc -->
+    <string name="misc">Other</string>
+    <string name="feedback">Feedback</string>
+    <string name="tutorial">Tutorial</string>
+    <string name="about">About</string>
+
 
     <!-- Palettes -->
     <string name="select_palette">Select Palette</string>
@@ -27,6 +33,7 @@
     <string name="pick_color">Pick Color</string>
     <string name="add_to_palette">Add to Palette</string>
     <string name="add_to_palette_hint">Click on the color in palette you want to replace with current color!</string>
+    <string name="color_edit_hint">Click color to edit it!</string>
 
     <!-- Projects -->
     <string name="project">Project</string>

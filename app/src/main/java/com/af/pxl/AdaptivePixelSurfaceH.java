@@ -57,7 +57,7 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
     int realWidth, realHeight;
 
     //Tools and utils
-    enum Tool {
+    public enum Tool {
         PENCIL, FLOOD_FILL, COLOR_PICK, COLOR_SWAP, ERASER, MULTISHAPE
     }
     Tool currentTool = Tool.PENCIL;
@@ -111,7 +111,7 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
 
 
     //Setters
-    void setTool(Tool tool){
+    public void setTool(Tool tool){
         if(currentTool == tool)
             return;
 

@@ -2,26 +2,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="8dp">
 
     <com.af.pxl.Palettes.PaletteView3
         android:id="@+id/pv2"
         android:layout_width="256dp"
         android:layout_height="256dp"
-        android:layout_below="@+id/paletteName"
+        android:layout_below="@+id/textView3"
         android:layout_centerHorizontal="true"
         app:gapBetweenColors="8dp"
         app:sizeOfColorX="48dp"
         app:sizeOfColorY="48dp" />
-
-    <Button
-        android:id="@+id/pvEdit"
-        style="@style/Widget.AppCompat.Button.Borderless.Colored"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/pv2"
-        android:text="@string/edit_color" />
 
     <Button
         android:id="@+id/pvDone"
@@ -29,30 +21,31 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
         android:layout_below="@+id/pv2"
+        android:layout_marginTop="8dp"
         android:text="@string/done" />
 
     <TextView
         android:id="@+id/paletteName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
         android:gravity="center_vertical"
         android:padding="8dp"
-        android:paddingStart="8dp"
         android:text="Palette Name"
         android:textColor="@color/colorAccent"
         android:textSize="24sp"
         android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/pvSelectPalette"
-        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+    <TextView
+        android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/select_palette"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_above="@+id/pv2" />
+        android:layout_below="@+id/paletteName"
+        android:layout_centerHorizontal="true"
+        android:padding="4dp"
+        android:text="@string/color_edit_hint" />
+
 </RelativeLayout>

@@ -8,4 +8,5 @@
     <color name="colorAlmostBlack">#37474f</color>
     <color name="colorAlmostWhite">#fafafa</color>
     <color name="colorNotSoWhite">#bdbdbd</color>
+    <color name="colorTutorialText">#263238</color>
 </resources>

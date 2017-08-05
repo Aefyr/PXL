@@ -4,8 +4,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Shader;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -25,6 +27,7 @@ public class PaletteView3 extends View implements Palette2.OnPaletteChangeListen
     Paint noAAPaint;
     float colorSizeX;
     float colorSizeY;
+    LinearGradient gradient;
 
     public PaletteView3(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -47,6 +50,12 @@ public class PaletteView3 extends View implements Palette2.OnPaletteChangeListen
             colors[i] = palette.getColor(i);
         }
         bitmap.setPixels(colors, 0, 4, 0, 0, 4, 4);
+
+        float[] positions = new float[16];
+        for(int i = 0; i<16; i++){
+            positions[i]= ((float) i/16f);
+        }
+        gradient = new LinearGradient(0,0,getWidth(),getHeight(),colors, positions, Shader.TileMode.REPEAT);
     }
 
     void initialize(){
@@ -71,14 +80,17 @@ public class PaletteView3 extends View implements Palette2.OnPaletteChangeListen
         super.onDraw(canvas);
 
         //Draw palette
+        noAAPaint.setShader(null);
         canvas.drawBitmap(bitmap, scaleMatrix, noAAPaint);
 
         //Draw whole palette outline
         noAAPaint.setColor(Color.BLACK);
+        noAAPaint.setShader(gradient);
+
         canvas.drawRect(0, 0, getWidth(), getHeight(), noAAPaint);
 
         //Draw selected currentColor outline
-        if(palette==null)
+        /*if(palette==null)
             return;
         int selectedColorId = palette.getSelectedColorIndex();
         if(selectedColorId == -1)
@@ -90,7 +102,7 @@ public class PaletteView3 extends View implements Palette2.OnPaletteChangeListen
 
         noAAPaint.setColor(Utils.invertColor(palette.getSelectedColor()));
         canvas.drawRect(widthMultiplier*colorSizeX+colorSizeX/4, heightMultiplier*colorSizeY+colorSizeY/4, (widthMultiplier+1)*colorSizeX-colorSizeX/4, (heightMultiplier+1)*colorSizeY-colorSizeY/4, noAAPaint);
-
+        */
 
     }
 
@@ -105,14 +117,24 @@ public class PaletteView3 extends View implements Palette2.OnPaletteChangeListen
         return super.onTouchEvent(event);
     }
 
+    public interface OnColorClickListener{
+        void onColorClick(int positionInPalette);
+    }
+
+    private OnColorClickListener listener;
+
+    public void setOnColorClickListener(OnColorClickListener listener){
+        this.listener = listener;
+    }
+
     void calculateClickedColor(float x, float y){
         int column = (int) (x/colorSizeX);
         int row = (int) (y/colorSizeY);
         int id = row*4+column;
         System.out.println("PV3: Clicked currentColor with id "+id);
         if(id<palette.getSize()) {
-            palette.setSelectedColor(id);
-            invalidate();
+            if(listener!=null)
+                listener.onColorClick(id);
         }
     }
 

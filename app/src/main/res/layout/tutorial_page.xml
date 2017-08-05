@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/tutotialImage"
+        android:layout_width="360dp"
+        android:layout_height="360dp"
+        app:srcCompat="@drawable/full_round_rect_bg_dark" />
+
+    <TextView
+        android:id="@+id/tutotialTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="Bilinear Interpolation"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:textColor="@color/colorTutorialText" />
+
+    <TextView
+        android:id="@+id/tutorialText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:padding="8dp"
+        android:text='Some very useful text, like "DO YOU KNOW WHAT BILINEAR INTERPOLATION IS?"'
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textColor="@color/colorTutorialText" />
+</LinearLayout>

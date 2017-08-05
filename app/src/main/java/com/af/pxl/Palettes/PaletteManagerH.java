@@ -15,6 +15,7 @@ import com.af.pxl.ColorCircle;
 import com.af.pxl.ColorPickerH;
 import com.af.pxl.ColorRect;
 import com.af.pxl.R;
+import com.af.pxl.Tools.ToolPickRecyclerAdapter;
 import com.af.pxl.Utils;
 
 /**
@@ -41,6 +42,11 @@ public class PaletteManagerH {
         void onPaletteChangeRequest();
     }
     private OnPaletteChangeRequestListener listener;
+
+    private OnVisibilityChangedListener vListener;
+    public interface OnVisibilityChangedListener{
+        void onVisibilityChanged(boolean visible);
+    }
 
     public  PaletteManagerH(RelativeLayout paletteLayoutRoot, ColorCircle mainColorCircle, AdaptivePixelSurfaceH apsH, final OnPaletteChangeRequestListener listener){
         this.listener = listener;
@@ -126,9 +132,14 @@ public class PaletteManagerH {
         colorCircleCur.setColor(color);
     }
 
+    public void setOnVisibilityChangedListener(OnVisibilityChangedListener listener){
+        vListener = listener;
+    }
+
     private void show(){
         layout.setVisibility(View.VISIBLE);
         shown = true;
+        listenerEvent();
     }
 
     public void hide(){
@@ -137,6 +148,12 @@ public class PaletteManagerH {
 
         layout.setVisibility(View.GONE);
         shown = false;
+        listenerEvent();
+    }
+
+    private void listenerEvent(){
+        if(listener!=null)
+            vListener.onVisibilityChanged(shown);
     }
 
     public boolean shown(){

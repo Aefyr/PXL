@@ -43,6 +43,7 @@
             android:name=".Palettes.PalettePickerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoStatusBar" />
+        <activity android:name=".TCA.TutorialActivity"></activity>
     </application>
 
 </manifest>

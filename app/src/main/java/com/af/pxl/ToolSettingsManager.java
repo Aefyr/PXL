@@ -18,7 +18,7 @@ import android.widget.TextView;
  * Created by Aefyr on 31.07.2017.
  */
 
-class ToolSettingsManager {
+public class ToolSettingsManager {
 
     private FrameLayout toolSettingsWindowLayout;
     private AdaptivePixelSurfaceH aps;
@@ -29,7 +29,7 @@ class ToolSettingsManager {
     private String roundingS;
     private RadioGroup.OnCheckedChangeListener radioListener;
 
-    ToolSettingsManager(Activity drawingActivity, AdaptivePixelSurfaceH aps){
+    public ToolSettingsManager(Activity drawingActivity, AdaptivePixelSurfaceH aps){
         this.aps = aps;
         toolSettingsWindowLayout = (FrameLayout) drawingActivity.findViewById(R.id.toolSettings);
         c = drawingActivity;
@@ -61,16 +61,16 @@ class ToolSettingsManager {
         };
     }
 
-    void hide(){
+    public void hide(){
         toolSettingsWindowLayout.setVisibility(View.GONE);
     }
 
-    void show(){
+    public void show(){
         if(currentTool== AdaptivePixelSurfaceH.Tool.PENCIL||currentTool== AdaptivePixelSurfaceH.Tool.ERASER||currentTool== AdaptivePixelSurfaceH.Tool.MULTISHAPE)
             toolSettingsWindowLayout.setVisibility(View.VISIBLE);
     }
 
-    void notifyToolPicked(AdaptivePixelSurfaceH.Tool tool){
+    public boolean notifyToolPicked(AdaptivePixelSurfaceH.Tool tool){
         currentTool = tool;
         switch (currentTool){
 
@@ -78,17 +78,18 @@ class ToolSettingsManager {
             case PENCIL:
                 pencilSetup();
                 show();
-                break;
+                return false;
             case FLOOD_FILL:
             case COLOR_PICK:
             case COLOR_SWAP:
                 hide();
-                break;
+                return true;
             case MULTISHAPE:
                 multishapeSetup();
                 show();
-                break;
+                return false;
         }
+        return true;
     }
 
     private View pencilView;

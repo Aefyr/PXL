@@ -110,7 +110,41 @@
         android:layout_width="72dp"
         android:layout_height="72dp"
         android:layout_marginStart="8dp"
-        android:elevation="@dimen/default_elevation" />
+        android:elevation="@dimen/default_elevation"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/toolPicker"
+        android:layout_width="92dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:elevation="16dp"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/toolButton"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/halfround_rect_background"
+            android:elevation="@dimen/default_elevation"
+            android:padding="8dp"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/pencil" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/toolsRecycler"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="-17dp"
+            android:background="@drawable/halfround_rect_background"
+            android:elevation="6dp"
+            android:visibility="gone" />
+    </LinearLayout>
 
     <com.af.pxl.SymmetryModePickView
         android:id="@+id/emve"
@@ -138,9 +172,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/topButtons"
         android:layout_marginEnd="@dimen/tool_setting_layout_margin_end"
-        android:layout_marginStart="4dp"
+        android:layout_marginStart="-4dp"
         android:layout_marginTop="4dp"
-        android:layout_toEndOf="@+id/currentTool"
+        android:layout_toEndOf="@+id/toolPicker"
         android:background="@drawable/full_round_rect_bg"
         android:clickable="true"
         android:descendantFocusability="blocksDescendants"

@@ -5,11 +5,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -20,13 +20,14 @@ import com.af.pxl.Palettes.PaletteManagerH;
 import com.af.pxl.Palettes.PalettePickerActivity;
 import com.af.pxl.Palettes.PaletteUtils;
 import com.af.pxl.Projects.ProjectsUtils;
+import com.af.pxl.Tools.ToolPickRecyclerAdapter;
+import com.af.pxl.Tools.ToolPreview;
 
 import java.io.File;
 
 public class DrawingActivity extends AppCompatActivity implements AdaptivePixelSurfaceH.OnSpecialToolUseListener, PaletteManagerH.OnPaletteChangeRequestListener, CanvasHistoryH.OnHistoryAvailabilityChangeListener{
 
     AdaptivePixelSurfaceH aps;
-    ToolPickView toolButton;
     AlertDialog toolPickDialog;
     ImageButton.OnClickListener onClickListener;
     Button cursorAction;
@@ -34,6 +35,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
     ImageButton redoButton;
 
     PaletteManagerH pm;
+    ToolPickRecyclerAdapter toolPicker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,12 +53,12 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         aps.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                if(toolButton.shown()) {
-                    toolButton.hideTools();
-                    return (!aps.cursorMode);
-                }
                 if(pm.shown()) {
                     pm.hide();
+                    return (!aps.cursorMode);
+                }
+                if(toolPicker.shown()){
+                    toolPicker.hide();
                     return (!aps.cursorMode);
                 }
 
@@ -88,6 +90,23 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
 
         pm = new PaletteManagerH((RelativeLayout)findViewById(R.id.paletteBar), (ColorCircle)findViewById(R.id.currentColor), aps, this);
         aps.setColorManager(pm);
+
+        pm.setOnVisibilityChangedListener(new PaletteManagerH.OnVisibilityChangedListener() {
+            @Override
+            public void onVisibilityChanged(boolean visible) {
+                if(visible)
+                    toolPicker.hide();
+            }
+        });
+
+        toolPicker.setOnVisibilityChangedListener(new ToolPickRecyclerAdapter.OnVisibilityChangedListener() {
+            @Override
+            public void onVisibilityChanged(boolean visible) {
+                if(visible)
+                    pm.hide();
+            }
+        });
+
     }
 
     private void canvasWiseOptionsDialog(){
@@ -129,10 +148,19 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
 
     private void initializeToolPicking(){
 
-        toolButton = (ToolPickView) findViewById(R.id.currentTool);
-        toolButton.setToolSettingsManager(new ToolSettingsManager(this, aps));
+        RecyclerView toolRV = (RecyclerView) findViewById(R.id.toolsRecycler);
+        toolRV.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        toolButton.setAps(aps);
+        ToolPreview[] previews = new ToolPreview[6];
+        previews[0] = new ToolPreview(R.drawable.pencil, AdaptivePixelSurfaceH.Tool.PENCIL);
+        previews[1] = new ToolPreview(R.drawable.eraser, AdaptivePixelSurfaceH.Tool.ERASER);
+        previews[2] = new ToolPreview(R.drawable.shapes, AdaptivePixelSurfaceH.Tool.MULTISHAPE);
+        previews[3] = new ToolPreview(R.drawable.fill, AdaptivePixelSurfaceH.Tool.FLOOD_FILL);
+        previews[4] = new ToolPreview(R.drawable.colorpick, AdaptivePixelSurfaceH.Tool.COLOR_PICK);
+        previews[5] = new ToolPreview(R.drawable.colorswap, AdaptivePixelSurfaceH.Tool.COLOR_SWAP);
+
+        toolPicker = new ToolPickRecyclerAdapter(this, previews, aps, (ImageButton)findViewById(R.id.toolButton), toolRV, new ToolSettingsManager(this, aps));
+        toolRV.setAdapter(toolPicker);
     }
 
     private void initializeImageButtonsOCL(){
