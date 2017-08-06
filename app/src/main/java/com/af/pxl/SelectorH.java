@@ -58,6 +58,7 @@ public class SelectorH extends ToolH {
                 aps.canvasHistory.cancelHistoricalChange(false);
             sessionStarted = false;
             drawing =false;
+            aps.onSpecialToolUseListener.onSelectionOptionsVisibilityChanged(false);
         }
 
         moves = 0;
@@ -141,6 +142,7 @@ public class SelectorH extends ToolH {
                 sessionStarted = true;
                 aps.pixelCanvas.drawBitmap(selectedPart, offsetX, offsetY, aps.noAAPaint);
                 aps.invalidate();
+                aps.onSpecialToolUseListener.onSelectionOptionsVisibilityChanged(true);
             }
             System.out.println("Now has selection");
         }
@@ -159,6 +161,7 @@ public class SelectorH extends ToolH {
         selection.set(0, 0, 0, 0);
         drawing = false;
         aps.invalidate();
+        aps.onSpecialToolUseListener.onSelectionOptionsVisibilityChanged(false);
     }
 
     void copy(){
@@ -176,6 +179,7 @@ public class SelectorH extends ToolH {
         sessionStarted = false;
         drawing =false;
         aps.invalidate();
+        aps.onSpecialToolUseListener.onSelectionOptionsVisibilityChanged(false);
     }
 
     void drawSelection(Canvas c, Matrix pixelMatrix){

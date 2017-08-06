@@ -771,5 +771,6 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
     }
     public interface OnSpecialToolUseListener{
         void onColorSwapToolUse(int color);
+        void onSelectionOptionsVisibilityChanged(boolean visible);
     }
 }

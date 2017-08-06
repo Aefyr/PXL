@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.af.pxl.Palettes.PaletteManagerH;
@@ -107,6 +108,8 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                     pm.hide();
             }
         });
+
+        selectionOptions = (LinearLayout) findViewById(R.id.selectionOptions);
 
         findViewById(R.id.cloneSelection).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -388,6 +391,17 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
     public void onColorSwapToolUse(int color) {
         System.out.println("Swapping color: "+color);
         startColorSwapActivity(color);
+    }
+
+
+    LinearLayout selectionOptions;
+    //Selection assist
+    @Override
+    public void onSelectionOptionsVisibilityChanged(boolean visible) {
+        if(visible)
+            selectionOptions.setVisibility(View.VISIBLE);
+        else
+            selectionOptions.setVisibility(View.GONE);
     }
 
     private void startColorSwapActivity(int colorToSwap){
