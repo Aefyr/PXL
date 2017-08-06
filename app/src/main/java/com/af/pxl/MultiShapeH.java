@@ -18,7 +18,7 @@ public class MultiShapeH extends ToolH{
         LINE, RECT, CIRCLE
     }
 
-    private Paint overlayPaint;
+    Paint overlayPaint;
     //Path path;
     Shape shape = Shape.LINE;
     boolean locked = false;
@@ -51,6 +51,7 @@ public class MultiShapeH extends ToolH{
             return;
 
         moves = 0;
+        hitBounds = false;
         calculateCanvasXY(x, y);
         startX = sX;
         startY = sY;
@@ -128,12 +129,42 @@ public class MultiShapeH extends ToolH{
             case CIRCLE:
                 aps.pixelCanvas.drawBitmap(backupBitmap, 0, 0, overlayPaint);
                 //path.rewind();
-                if(!locked&& Build.VERSION.SDK_INT>=21)
-                    shapeCanvas.drawOval(startX, startY, sX, sY, aps.paint);
+                if(!locked&& Build.VERSION.SDK_INT>=21) {
+                    float x1 = sX >= 0 ? startX : sX;
+                    float x2 = sX >= 0 ? sX : startX;
+                    float y1 = sY >= 0 ? startY : sY;
+                    float y2 = sY >= 0 ? sY : startY;
+                    if(startX>aps.pixelWidth){
+                        float t = x1;
+                        x1 = x2;
+                        x2 = t;
+                    }
+                    if(startY>aps.pixelHeight){
+                        float t = y1;
+                        y1 = y2;
+                        y2 = t;
+                    }
+                    shapeCanvas.drawOval(x1,y1 ,x2 , y2, aps.paint);
                     //path.addOval(startX, startY, sX, sY, Path.Direction.CW);
-                else if(locked&&Build.VERSION.SDK_INT>=21){
+                }else if(locked&&Build.VERSION.SDK_INT>=21){
                     d = Utils.signedVector2Distance(startX, startY, sX, sY);
-                    shapeCanvas.drawOval(startX, startY, startX+d[0], startY+d[1], aps.paint);
+
+                    float x1 = startX+d[0] >= 0 ? startX : startX+d[0];
+                    float x2 = startX+d[0] >= 0 ? startX+d[0] : startX;
+                    float y1 = startY+d[1] >= 0 ? startY : startY+d[1];
+                    float y2 = startY+d[1] >= 0 ? startY+d[1] : startY;
+                    if(startX>aps.pixelWidth){
+                        float t = x1;
+                        x1 = x2;
+                        x2 = t;
+                    }
+                    if(startY>aps.pixelHeight){
+                        float t = y1;
+                        y1 = y2;
+                        y2 = t;
+                    }
+
+                    shapeCanvas.drawOval(x1, y1, x2, y2, aps.paint);
                     //path.addOval(startX, startY, startX+d[0], startY+d[1], Path.Direction.CW);
                 }else {
                     shapeCanvas.drawCircle(startX, startY, Utils.vector2Distance(startX, startY, sX, sY), aps.paint);

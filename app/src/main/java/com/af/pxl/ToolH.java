@@ -4,7 +4,7 @@ package com.af.pxl;
  * Created by Aefyr on 03.08.2017.
  */
 
-class ToolH {
+abstract class ToolH {
 
     protected boolean drawing = false;
     protected float sX, sY;
@@ -15,21 +15,17 @@ class ToolH {
 
     protected AdaptivePixelSurfaceH aps;
 
-    void startDrawing(float x, float y){
+    abstract void startDrawing(float x, float y);
 
-    }
 
-    void move(float x, float y){
+    abstract void move(float x, float y);
 
-    }
 
-    void stopDrawing(float x, float y){
+    abstract void stopDrawing(float x, float y);
 
-    }
 
-    void cancel(float x, float y){
+    abstract void cancel(float x, float y);
 
-    }
 
     protected float[] p = {0,0};
     protected void calculateCanvasXY(float x, float y){

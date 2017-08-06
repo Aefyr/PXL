@@ -34,6 +34,7 @@
     <string name="add_to_palette">Add to Palette</string>
     <string name="add_to_palette_hint">Click on the color in palette you want to replace with current color!</string>
     <string name="color_edit_hint">Click color to edit it!</string>
+    <string name="extracted">Extracted</string>
 
     <!-- Projects -->
     <string name="project">Project</string>

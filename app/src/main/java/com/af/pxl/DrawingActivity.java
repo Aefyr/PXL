@@ -75,7 +75,8 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         findViewById(R.id.TMP).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //startTranslateActivity();
+                if(aps.currentTool== AdaptivePixelSurfaceH.Tool.SELECTOR)
+                    aps.selector.cancel(0, 0);
                 canvasWiseOptionsDialog();
             }
         });
@@ -104,6 +105,20 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
             public void onVisibilityChanged(boolean visible) {
                 if(visible)
                     pm.hide();
+            }
+        });
+
+        findViewById(R.id.cloneSelection).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                aps.selector.copy();
+            }
+        });
+
+        findViewById(R.id.deleteSelection).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                aps.selector.delete();
             }
         });
 
@@ -151,13 +166,14 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         RecyclerView toolRV = (RecyclerView) findViewById(R.id.toolsRecycler);
         toolRV.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        ToolPreview[] previews = new ToolPreview[6];
+        ToolPreview[] previews = new ToolPreview[7];
         previews[0] = new ToolPreview(R.drawable.pencil, AdaptivePixelSurfaceH.Tool.PENCIL);
         previews[1] = new ToolPreview(R.drawable.eraser, AdaptivePixelSurfaceH.Tool.ERASER);
         previews[2] = new ToolPreview(R.drawable.shapes, AdaptivePixelSurfaceH.Tool.MULTISHAPE);
         previews[3] = new ToolPreview(R.drawable.fill, AdaptivePixelSurfaceH.Tool.FLOOD_FILL);
         previews[4] = new ToolPreview(R.drawable.colorpick, AdaptivePixelSurfaceH.Tool.COLOR_PICK);
         previews[5] = new ToolPreview(R.drawable.colorswap, AdaptivePixelSurfaceH.Tool.COLOR_SWAP);
+        previews[6] = new ToolPreview(R.drawable.selection, AdaptivePixelSurfaceH.Tool.SELECTOR);
 
         toolPicker = new ToolPickRecyclerAdapter(this, previews, aps, (ImageButton)findViewById(R.id.toolButton), toolRV, new ToolSettingsManager(this, aps));
         toolRV.setAdapter(toolPicker);

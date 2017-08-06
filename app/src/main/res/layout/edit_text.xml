@@ -11,7 +11,8 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Some Text!"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:maxLength="64" />
 
     <Button
         android:id="@+id/okButton"

@@ -248,4 +248,32 @@
 
     </RelativeLayout>
 
+    <LinearLayout
+        android:id="@+id/selectionOptions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/deleteSelection"
+            style="@style/PXLImageButton"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/clear" />
+
+        <ImageButton
+            android:id="@+id/cloneSelection"
+            style="@style/PXLImageButton"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_above="@+id/deleteSelection"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/cogwheel" />
+    </LinearLayout>
+
 </RelativeLayout>

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.media.MediaScannerConnection;
 import android.provider.MediaStore;
 import android.util.TypedValue;
@@ -46,6 +48,10 @@ public class Utils {
         if(x<min)return min;
         if(x>max) return max;
         return x;
+    }
+
+    static boolean doesRectContains(Rect rect, int x, int y){
+        return rect.right>rect.left?(x<=rect.right&&x>=rect.left):(x<=rect.left&&x>=rect.right)&&rect.bottom>rect.top?(y<=rect.bottom&&y>=rect.top):(y<=rect.top&&y>=rect.bottom);
     }
 
     public static float vector2Distance(float x1, float y1, float x2, float y2){
@@ -96,6 +102,14 @@ public class Utils {
 
     public static int lerpColor(int color1, int color2, float a){
         return Color.RED;
+    }
+
+    public static float colorsDifference(int color1, int color2){
+        return (Math.abs(Color.red(color1)-Color.red(color2))/255f+Math.abs(Color.blue(color1)-Color.blue(color2))/255f+Math.abs(Color.blue(color1)-Color.blue(color2))/255f)/3f;
+    }
+
+    public static int averageColor(int color1, int color2){
+        return Color.rgb((Color.red(color1)+Color.red(color2))/2, (Color.green(color1)+Color.green(color2))/2, (Color.blue(color1)+Color.blue(color2))/2);
     }
 
     public static void toaster(Context context, String message){

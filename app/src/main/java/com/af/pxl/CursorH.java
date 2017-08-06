@@ -124,6 +124,8 @@ class CursorH {
             case MULTISHAPE:
                 aps.multiShape.move(currentX, currentY);
                 break;
+            case SELECTOR:
+                aps.selector.move(currentX, currentY);
         }
 
         aps.invalidate();
@@ -152,6 +154,8 @@ class CursorH {
             case MULTISHAPE:
                 aps.multiShape.startDrawing(currentX, currentY);
                 break;
+            case SELECTOR:
+                aps.selector.startDrawing(currentX, currentY);
         }
     }
 
@@ -170,6 +174,8 @@ class CursorH {
             case MULTISHAPE:
                 aps.multiShape.stopDrawing(currentX, currentY);
                 break;
+            case SELECTOR:
+                aps.selector.stopDrawing(currentX, currentY);
         }
     }
 

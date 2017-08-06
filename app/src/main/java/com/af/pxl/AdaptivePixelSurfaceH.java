@@ -58,7 +58,7 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
 
     //Tools and utils
     public enum Tool {
-        PENCIL, FLOOD_FILL, COLOR_PICK, COLOR_SWAP, ERASER, MULTISHAPE
+        PENCIL, FLOOD_FILL, COLOR_PICK, COLOR_SWAP, ERASER, MULTISHAPE, SELECTOR
     }
     Tool currentTool = Tool.PENCIL;
 
@@ -69,6 +69,7 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
     boolean cursorMode = false;
     SuperPencilH superPencil;
     MultiShapeH multiShape;
+    SelectorH selector;
 
     //Symmetry
     boolean symmetry = false;
@@ -115,6 +116,9 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
         if(currentTool == tool)
             return;
 
+        if(currentTool==Tool.SELECTOR)
+            selector.cancel(0, 0);
+
         if(project.transparentBackground)
             paint.setXfermode(null);
         paint.setColor(currentColor);
@@ -140,6 +144,9 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
                 break;
             case MULTISHAPE:
                 currentTool = Tool.MULTISHAPE;
+                break;
+            case SELECTOR:
+                currentTool = Tool.SELECTOR;
                 break;
         }
         invalidate();
@@ -199,6 +206,7 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
         pixelCanvas = new Canvas(pixelBitmap);
         canvasHistory = new CanvasHistoryH(this, project, CanvasHistoryH.ADAPTIVE_SIZE);
         multiShape = new MultiShapeH(this);
+        selector = new SelectorH(this);
         setPalette(PaletteUtils.loadPalette(project.palette));
         if(project.transparentBackground){
             SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -371,9 +379,11 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
             if(cursorMode){
                 superPencil.cancel(cursor.getX(), cursor.getY());
                 multiShape.cancel(cursor.getX(), cursor.getY());
+                selector.cancel(cursor.getX(), cursor.getY());
             }else {
                 superPencil.cancel(event.getX(), event.getY());
                 multiShape.cancel(event.getX(), event.getY());
+                selector.cancel(event.getX(), event.getY());
             }
             touchToolWillBeUsedOnUpEvent = false;
 
@@ -503,6 +513,17 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
                     }
                     if (event.getAction() == MotionEvent.ACTION_UP) {
                         multiShape.stopDrawing(event.getX(), event.getY());
+                    }
+                    break;
+                case SELECTOR:
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        selector.startDrawing(event.getX(), event.getY());
+                    }
+                    if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                        selector.move(event.getX(), event.getY());
+                    }
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        selector.stopDrawing(event.getX(), event.getY());
                     }
                     break;
             }
@@ -688,6 +709,9 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
         if(gridEnabled) {
             drawGrid(canvas);
         }
+
+        if(currentTool == Tool.SELECTOR)
+            selector.drawSelection(canvas, pixelMatrix);
 
 
         //Highlight the pixel we'll draw on with cursorPencil

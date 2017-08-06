@@ -146,6 +146,9 @@ public class CanvasHistoryH {
         if(past.size()==0)
             return;
 
+        if(aps.currentTool== AdaptivePixelSurfaceH.Tool.SELECTOR)
+            aps.selector.cancel(0, 0);
+
         int[] pixels = new int[arraySize];
 
         bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
@@ -172,6 +175,9 @@ public class CanvasHistoryH {
     void redoHistoricalChange(){
         if(future.size()==0)
             return;
+
+        if(aps.currentTool== AdaptivePixelSurfaceH.Tool.SELECTOR)
+            aps.selector.cancel(0, 0);
 
         int[] pixels = new int[arraySize];
         bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
