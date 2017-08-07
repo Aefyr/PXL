@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
     tools:context="com.af.pxl.ColorSwapActivity">
 
     <com.af.pxl.PixelImageView
@@ -31,7 +32,8 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
-        android:text="@string/live_preview" />
+        android:text="@string/live_preview"
+        android:textColor="@color/colorAlmostWhite" />
 
     <Button
         android:id="@+id/csCancel"

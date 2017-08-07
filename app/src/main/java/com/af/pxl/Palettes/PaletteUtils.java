@@ -22,7 +22,6 @@ public class PaletteUtils {
 
     static String palettesPath;
     static final String EXTENSION = ".pxlpalette";
-    private static final String DEFAULT_PALETTE = "-16711680,-65280,-255";
 
     public static void initialize(Context c){
         palettesPath = c.getFilesDir()+"/palettes";

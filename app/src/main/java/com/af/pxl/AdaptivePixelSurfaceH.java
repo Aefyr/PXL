@@ -107,7 +107,7 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
         cursor = new CursorH(this);
         superPencil = new SuperPencilH(this);
         initializePaints();
-        ter();
+        cursorPreviewRect = new RectF();
     }
 
 
@@ -313,10 +313,10 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
 
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        backgroundColor = preferences.getInt(PreferencesFragment.BACKGROUND_COLOR, Color.GRAY);
+        backgroundColor = preferences.getInt(PreferencesFragment.BACKGROUND_COLOR, -3343361);
         //Grid paint
         gridP = new Paint();
-        gridP.setColor(preferences.getInt(PreferencesFragment.GRID_COLOR, Color.BLACK));
+        gridP.setColor(preferences.getInt(PreferencesFragment.GRID_COLOR, -11183637));
         gridP.setStyle(Paint.Style.STROKE);
         gridP.setStrokeWidth(1f);
 
@@ -430,6 +430,7 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
                 float d = scaleAnchorY;
                 scaleAnchorX = a;
                 scaleAnchorY = b;
+
                 matrixOffsetX += (a - c)*(pixelScale-1);
                 matrixOffsetY += (b - d)*(pixelScale-1);
             }
@@ -646,30 +647,10 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
     boolean scaleChanged = false;
     boolean translateChanged = true;
 
-
-    boolean showFps = true;
-    Paint textPaint;
-    Rect bounds;
-    int screenRefreshRate=60;
     long deltaTime = 1;
 
     RectF cursorPreviewRect;
 
-    void ter(){
-        Display display = ((WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-        screenRefreshRate = (int) display.getRefreshRate();
-        System.out.println("refreshRate="+screenRefreshRate);
-        bounds = new Rect();
-        textPaint = new Paint();
-        textPaint.setColor(Color.GREEN);
-        textPaint.setTextAlign(Paint.Align.LEFT);
-        textPaint.setTextSize(50);
-        textPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-        textPaint.setStrokeWidth(2);
-        textPaint.setAntiAlias(false);
-        textPaint.setFilterBitmap(false);
-        cursorPreviewRect = new RectF();
-    }
     @Override
     protected void onDraw(Canvas canvas) {
         long start = System.currentTimeMillis();
@@ -720,18 +701,6 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
             cursor.drawCursor(canvas);
         }
 
-
-        //Draw FPS
-        if(showFps){
-            deltaTime = (long) Utils.clamp(deltaTime, 1, 1000);
-            String a;
-            if(1000/deltaTime>screenRefreshRate)
-                a = screenRefreshRate+" fps";
-            else
-                a = 1000/deltaTime+" fps.";
-            paint.getTextBounds(a, 0, a.length(), bounds);
-            canvas.drawText(a, getWidth()-bounds.width()*3, bounds.height()*2+256, textPaint);
-        }
 
         deltaTime = System.currentTimeMillis() - start;
         System.out.println("Canvas drawn in "+deltaTime+" ms");

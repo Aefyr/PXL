@@ -9,6 +9,12 @@
     <string name="fill_action">Fill!</string>
     <string name="colorpick_action">Pick!</string>
 
+    <!-- Tutorials-related -->
+    <string name="tutorial_prompt">Want to see the tutorial?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="tutorial_hint">You can always revisit the tutorial from the navigation drawer!</string>
+
     <!-- Commons -->
     <string name="ok">OK</string>
     <string name="done">Done</string>
@@ -30,7 +36,7 @@
     <string name="incorrect_palette_name">Palette name is already in use or incorrect!\n(You may use only letters, digits and spaces)</string>
     <string name="create_new_palette">Create New Palette</string>
     <string name="enter_name">Enter name</string>
-    <string name="pick_color">Pick Color</string>
+    <string name="pick_color">Edit Current Color</string>
     <string name="add_to_palette">Add to Palette</string>
     <string name="add_to_palette_hint">Click on the color in palette you want to replace with current color!</string>
     <string name="color_edit_hint">Click color to edit it!</string>

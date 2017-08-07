@@ -1,7 +1,10 @@
 package com.af.pxl.Palettes;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -17,12 +20,16 @@ import android.widget.EditText;
 import com.af.pxl.R;
 import com.af.pxl.Utils;
 
+import java.io.FileNotFoundException;
+
 public class PalettePickerActivity extends AppCompatActivity {
 
     PalettePickRecyclerAdapter adapter;
-    public static int REQUEST_CODE_PICK_PALETTE = 932;
+    public static final int REQUEST_CODE_PICK_PALETTE = 932;
     private String currentPaletteName;
     private boolean currentPaletteNameChanged = false;
+
+    private static final int IMPORT_IMAGE = 223;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +49,43 @@ public class PalettePickerActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                createPalette();
+                String [] items = getResources().getStringArray(R.array.palette_creation_options);
+                new AlertDialog.Builder(PalettePickerActivity.this).setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if(i==0)
+                            createPalette();
+                        else
+                            importImage();
+                    }
+                }).create().show();
             }
         });
+    }
+
+    private void importImage(){
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), IMPORT_IMAGE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==IMPORT_IMAGE&&resultCode== Activity.RESULT_OK){
+            Bitmap importedImage;
+            try {
+                importedImage = BitmapFactory.decodeStream(getContentResolver().openInputStream(data.getData()));
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                Utils.toaster(this, getString(R.string.error));
+                return;
+            }
+
+            adapter.addItem(PaletteMaker.heyPaletteMaker(importedImage, getResources()).getName(), PalettePickRecyclerAdapter.AUTO_POSITION);
+        }
     }
 
     private void initializePaletteItemsInteractions(final boolean pickerMode){
