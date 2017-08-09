@@ -12,7 +12,7 @@
     <!-- Tutorials-related -->
     <string name="tutorial_prompt">Want to see the tutorial?</string>
     <string name="yes">Yes</string>
-    <string name="no">No</string>
+    <string name="no">Nope</string>
     <string name="tutorial_hint">You can always revisit the tutorial from the navigation drawer!</string>
 
     <!-- Commons -->
@@ -58,7 +58,7 @@
     <string name="select_resolution">Select resolution of exported image</string>
     <string name="share">Share</string>
     <string name="exporting">Exporting image</string>
-    <string name="storage_permissions_denied">Impossible to save image without storage access</string>
+    <string name="storage_permissions_denied">Can\'t access gallery without permission to use storage!</string>
     <string name="create">Create</string>
 
     <!--gallery_item-->

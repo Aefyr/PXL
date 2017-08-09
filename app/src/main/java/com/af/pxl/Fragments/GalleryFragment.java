@@ -102,7 +102,7 @@ public class GalleryFragment extends android.app.Fragment {
                            importImage();
                    }
                }).create();
-                newProjectOptionPick.show();;
+                newProjectOptionPick.show();
             }
         });
     }
@@ -165,6 +165,11 @@ public class GalleryFragment extends android.app.Fragment {
     }
 
     private void importImage(){
+        if(!Utils.checkPermissions(getActivity())){
+            actionAfter = 1;
+            requestPermissions();
+            return;
+        }
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -259,7 +264,8 @@ public class GalleryFragment extends android.app.Fragment {
                 exportTask.execute(exportTask.createParams(project, forShare, resolutionMultiplier));
             }
         }).create();
-        if(!checkPermissions()){
+        if(!Utils.checkPermissions(getActivity())){
+            actionAfter = 0;
             requestPermissions();
             return;
         }
@@ -334,17 +340,8 @@ public class GalleryFragment extends android.app.Fragment {
     }
 
     final static int STORAGE_PERMISSIONS_REQUEST = 3232;
-    boolean permissionsGranted = false;
-    private boolean checkPermissions(){
-        if(permissionsGranted)
-            return true;
-        if(Build.VERSION.SDK_INT>=23) {
-            if(getContext().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED&&(getContext().checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED))
-                permissionsGranted = true;
-        }else
-            permissionsGranted = true;
-        return permissionsGranted;
-    }
+    int actionAfter = 0;
+
     private void requestPermissions(){
         if(Build.VERSION.SDK_INT >=23) {
             requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSIONS_REQUEST);
@@ -356,8 +353,15 @@ public class GalleryFragment extends android.app.Fragment {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(requestCode==STORAGE_PERMISSIONS_REQUEST){
             if(grantResults[0]==PackageManager.PERMISSION_GRANTED && grantResults[1]==PackageManager.PERMISSION_GRANTED) {
-                Utils.toaster(getActivity(), "Yay, we got permissions!");
-                exportResolutionPickDialog.show();
+                switch (actionAfter){
+                    case 0:
+                        exportResolutionPickDialog.show();
+                        break;
+                    case 1:
+                        importImage();
+                        break;
+                }
+
             }
             else {
                 new AlertDialog.Builder(getActivity()).setMessage(getString(R.string.storage_permissions_denied)).setPositiveButton(getString(R.string.ok), null).show();

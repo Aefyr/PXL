@@ -32,7 +32,7 @@
     <string name="select_resolution">Выберите разрешение экспортированного изображения</string>
     <string name="share">Поделиться</string>
     <string name="exporting">Идёт экспорт изображения</string>
-    <string name="storage_permissions_denied">Невозможно сохранить изображение без доступа к памяти!</string>
+    <string name="storage_permissions_denied">Невозможно получить доступ к галерее без доступа к памяти!</string>
 
     <!--gallery_item-->
     <string name="size">Размер</string>
@@ -94,4 +94,14 @@
     <string name="add_to_palette">Добавить в палитру</string>
     <string name="pick_color">Выбор текущего цвета</string>
     <string name="add_to_palette_hint">Нажмите на цвет в палитре, который вы хотите заменить на текущий цвет!</string>
+    <string name="about">О приложении</string>
+    <string name="color_edit_hint">Нажмите на цвет, чтобы изменить его!</string>
+    <string name="extracted">Из изображения</string>
+    <string name="feedback">Обратная связь</string>
+    <string name="misc">Другое</string>
+    <string name="no">Нет</string>
+    <string name="tutorial">Обучение</string>
+    <string name="tutorial_hint">Вы всегда можете заново запустить обучение из боковой панели!</string>
+    <string name="tutorial_prompt">Хотите пройти обучение?</string>
+    <string name="yes">Да</string>
 </resources>

@@ -16,14 +16,14 @@ public class Palette2 {
     private int capacity;
     private int selectedColorIndex;
     private String name;
-    File directory;
+    private File directory;
 
     public interface OnPaletteChangeListener{
         void onColorSelection(int selectedColor);
         void onPaletteChanged();
     }
 
-    ArrayList<OnPaletteChangeListener> listeners;
+    private ArrayList<OnPaletteChangeListener> listeners;
 
     public Palette2(String name, int capacity, int initialColor, boolean wasLoaded){
         this.name = name;
@@ -133,10 +133,8 @@ public class Palette2 {
     }
 
     private void listenerEvent(){
-        System.out.println("LISTENERS COUNT: "+listeners.size());
         for(int i = 0; i<listeners.size(); i++) {
             listeners.get(i).onPaletteChanged();
-            System.out.println("LISTENERS COUNT: "+listeners.size()+", i="+i);
         }
     }
 

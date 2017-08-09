@@ -75,7 +75,7 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
     boolean symmetry = false;
     SymmetryType symmetryType = SymmetryType.HORIZONTAL;
 
-    enum SymmetryType{
+    public enum SymmetryType{
         HORIZONTAL, VERTICAL
     }
 
@@ -191,10 +191,18 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
 
     }
 
-    void setSymmetryEnabled(boolean enabled, SymmetryType type){
+    public void setSymmetryEnabled(boolean enabled, SymmetryType type){
         symmetry = enabled;
         symmetryType = type;
         superPencil.symmetryUpdate();
+    }
+
+    public SymmetryType getSymmetryType(){
+        return  symmetryType;
+    }
+
+    public boolean isSymmetryEnabled(){
+        return  symmetry;
     }
 
     Paint trans;

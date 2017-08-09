@@ -291,6 +291,7 @@ class CursorH {
         }
 
         canvas.drawRect(cursorPreviewRect, cursorPaint);
+        cursorPaint.setAlpha(opacity);
         canvas.drawBitmap(cursorPointerImage, matrix, cursorPaint);
     }
 

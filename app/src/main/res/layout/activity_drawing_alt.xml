@@ -146,16 +146,6 @@
             android:visibility="gone" />
     </LinearLayout>
 
-    <com.af.pxl.SymmetryModePickView
-        android:id="@+id/emve"
-        android:layout_width="52dp"
-        android:layout_height="52dp"
-        android:layout_alignStart="@+id/topButtons"
-        android:layout_below="@+id/topButtons"
-        android:layout_marginStart="47dp"
-        app:bitmapSize="52dp"
-        app:gapSize="4dp" />
-
     <ImageButton
         android:id="@+id/TMP"
         style="@style/PXLImageButton"
@@ -277,6 +267,46 @@
             android:elevation="4dp"
             app:srcCompat="@drawable/clear" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/symmetrySwitcher"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/topButtons"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/full_round_rect_bg"
+        android:elevation="@dimen/default_elevation"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <ImageButton
+            android:id="@+id/symmetryN"
+            style="@style/PXLImageButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:elevation="16dp"
+            app:srcCompat="@drawable/symmetryoff" />
+
+        <ImageButton
+            android:id="@+id/symmetryH"
+            style="@style/PXLImageButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:elevation="16dp"
+            app:srcCompat="@drawable/symmetryh" />
+
+        <ImageButton
+            android:id="@+id/symmetryV"
+            style="@style/PXLImageButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:elevation="16dp"
+            app:srcCompat="@drawable/symmetryv" />
     </LinearLayout>
 
 </RelativeLayout>

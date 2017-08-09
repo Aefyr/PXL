@@ -2,12 +2,14 @@ package com.af.pxl;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.media.MediaScannerConnection;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.util.TypedValue;
 import android.widget.Toast;
@@ -193,6 +195,18 @@ public class Utils {
                 hexColor+="0";
         }
         return hexColor;
+    }
+
+    private static boolean permissionsGranted;
+    public static boolean checkPermissions(Context c){
+        if(permissionsGranted)
+            return true;
+        if(Build.VERSION.SDK_INT>=23) {
+            if(c.checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED&&(c.checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED))
+                permissionsGranted = true;
+        }else
+            permissionsGranted = true;
+        return permissionsGranted;
     }
 
 

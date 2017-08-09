@@ -3,8 +3,11 @@ package com.af.pxl;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,6 +24,7 @@ import com.af.pxl.Palettes.PaletteManagerH;
 import com.af.pxl.Palettes.PalettePickerActivity;
 import com.af.pxl.Palettes.PaletteUtils;
 import com.af.pxl.Projects.ProjectsUtils;
+import com.af.pxl.Tools.SymmetrySwitcher;
 import com.af.pxl.Tools.ToolPickRecyclerAdapter;
 import com.af.pxl.Tools.ToolPreview;
 
@@ -37,6 +41,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
 
     PaletteManagerH pm;
     ToolPickRecyclerAdapter toolPicker;
+    SymmetrySwitcher symmetrySwitcher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,19 +101,27 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         pm.setOnVisibilityChangedListener(new PaletteManagerH.OnVisibilityChangedListener() {
             @Override
             public void onVisibilityChanged(boolean visible) {
-                if(visible)
+                if(visible) {
                     toolPicker.hide();
+                    symmetrySwitcher.hide();
+                }
             }
         });
 
         toolPicker.setOnVisibilityChangedListener(new ToolPickRecyclerAdapter.OnVisibilityChangedListener() {
             @Override
             public void onVisibilityChanged(boolean visible) {
-                if(visible)
+                if(visible) {
                     pm.hide();
+                    symmetrySwitcher.hide();
+                }
             }
         });
 
+
+
+
+        //Selection
         selectionOptions = (LinearLayout) findViewById(R.id.selectionOptions);
 
         findViewById(R.id.cloneSelection).setOnClickListener(new View.OnClickListener() {
@@ -122,6 +135,19 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
             @Override
             public void onClick(View view) {
                 aps.selector.delete();
+            }
+        });
+
+        //Symmetry
+        symmetrySwitcher = new SymmetrySwitcher((ImageButton) findViewById(R.id.symmetry),(LinearLayout) findViewById(R.id.symmetrySwitcher), aps);
+
+        symmetrySwitcher.setOnVisibilityChangedListener(new SymmetrySwitcher.OnVisibilityChangedListener() {
+            @Override
+            public void onVisibilityChanged(boolean visible) {
+                if(visible){
+                    pm.hide();
+                    toolPicker.hide();
+                }
             }
         });
 
@@ -196,9 +222,11 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                         if(aps.cursorMode) {
                             cursorToggle.setImageResource(R.drawable.cursor3);
                             cursorAction.setVisibility(View.VISIBLE);
+                            System.out.println("VISIBLE");
                         } else {
                             cursorToggle.setImageResource(R.drawable.normal2);
                             cursorAction.setVisibility(View.GONE);
+                            System.out.println("GONE :0");
                         }
                         break;
                 }
@@ -235,43 +263,6 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                 else
                     grid.setImageResource(R.drawable.gridoff);
 
-            }
-        });
-
-        //Symmetry
-        final SymmetryModePickView symmetryModePickView = (SymmetryModePickView) findViewById(R.id.emve);
-        final ImageButton symmetry = (ImageButton) findViewById(R.id.symmetry);
-
-        symmetryModePickView.setOnItemClickedListener(new SymmetryModePickView.OnItemClickedListener() {
-            @Override
-            public void onItemClicked(int id) {
-                switch (id){
-                    case  0:
-                        aps.setSymmetryEnabled(false, AdaptivePixelSurfaceH.SymmetryType.HORIZONTAL);
-                        symmetry.setImageResource(R.drawable.symmetryoff);
-                        symmetryModePickView.setVisibility(View.GONE);
-                        break;
-                    case 1:
-                        aps.setSymmetryEnabled(true, AdaptivePixelSurfaceH.SymmetryType.HORIZONTAL);
-                        symmetry.setImageResource(R.drawable.symmetryh);
-                        symmetryModePickView.setVisibility(View.GONE);
-                        break;
-                    case 2:
-                        aps.setSymmetryEnabled(true, AdaptivePixelSurfaceH.SymmetryType.VERTICAL);
-                        symmetry.setImageResource(R.drawable.symmetryv);
-                        symmetryModePickView.setVisibility(View.GONE);
-                        break;
-                }
-            }
-        });
-
-        symmetry.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(symmetryModePickView.getVisibility()==View.GONE)
-                    symmetryModePickView.setVisibility(View.VISIBLE);
-                else
-                    symmetryModePickView.setVisibility(View.GONE);
             }
         });
 
@@ -381,7 +372,25 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         super.onBackPressed();
     }
 
+    final static int STORAGE_PERMISSIONS_REQUEST = 3232;
+    private void requestPermissions(){
+        if(Build.VERSION.SDK_INT >=23) {
+            requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSIONS_REQUEST);
+        }
+    }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode==STORAGE_PERMISSIONS_REQUEST){
+            if(grantResults[0]== PackageManager.PERMISSION_GRANTED && grantResults[1]==PackageManager.PERMISSION_GRANTED) {
+                mergeTool();
+            }
+            else {
+                new AlertDialog.Builder(this).setMessage(getString(R.string.storage_permissions_denied)).setPositiveButton(getString(R.string.ok), null).show();
+            }
+        }
+    }
 
 
     //Special tools
@@ -432,6 +441,10 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
     //Merge
     static final int IMPORT_IMAGE = 13322;
     private void mergeTool(){
+        if(!Utils.checkPermissions(this)){
+            requestPermissions();
+            return;
+        }
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
