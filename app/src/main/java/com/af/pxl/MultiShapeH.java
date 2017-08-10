@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.os.Build;
@@ -19,7 +18,6 @@ public class MultiShapeH extends ToolH{
     }
 
     Paint overlayPaint;
-    //Path path;
     Shape shape = Shape.LINE;
     boolean locked = false;
     boolean fill = false;
@@ -36,7 +34,6 @@ public class MultiShapeH extends ToolH{
 
     MultiShapeH(AdaptivePixelSurfaceH aps){
         this.aps = aps;
-        //path = new Path();
         overlayPaint = new Paint();
         overlayPaint.setAntiAlias(false);
         overlayPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
@@ -78,7 +75,6 @@ public class MultiShapeH extends ToolH{
         switch (shape){
             case LINE:
                 aps.pixelCanvas.drawBitmap(backupBitmap, 0, 0, overlayPaint);
-                //path.rewind();
                 if(!locked)
                     shapeCanvas.drawLine(startX, startY, sX, sY, aps.paint);
                 else {
@@ -90,25 +86,15 @@ public class MultiShapeH extends ToolH{
                     float cosA = (float) Math.abs((d*Math.cos(Math.toRadians(lockedAngle))));
 
                     shapeCanvas.drawLine(startX, startY, sX-startX>0?startX+sinA:startX-sinA, lockedAngle<90?startY-cosA:startY+cosA, aps.paint);
-
-
-                    float a = Utils.vector2Angle(0, -1, sX-startX, sY-startY);
-                    System.out.println("Angle="+a+", closest locked angle="+lockedAngle+String.format(" cosLockedAngle: %f, sinLockedAngle: %f", (d*Math.cos(Math.toRadians(lockedAngle))),(d*Math.cos(Math.toRadians(lockedAngle)))));
                 }
-                    //path.moveTo(startX, startY);
-                    //path.lineTo(sX, sY);
-                //aps.pixelCanvas.drawPath(path, aps.paint);
                 break;
             case RECT:
                 aps.pixelCanvas.drawBitmap(backupBitmap, 0, 0, overlayPaint);
-                //path.rewind();
                 if(!locked) {
                     if (rounding > 0 && Build.VERSION.SDK_INT >= 21)
                         shapeCanvas.drawRoundRect(startX<sX?startX:sX, startY<sY?startY:sY, startX<sX?sX:startX, startY<sY?sY:startY, rounding, rounding, aps.paint);
-                        //path.addRoundRect(startX, startY, sX, sY, rounding, rounding, Path.Direction.CW);
                     else
                         shapeCanvas.drawRect(startX, startY, sX, sY, aps.paint);
-                        //path.addRect(startX, startY, sX, sY, Path.Direction.CW);
                 } else {
                     d = Utils.signedVector2Distance(startX, startY, sX, sY);
                     float aX = (float) (startX+Math.sqrt(Math.pow(d[0], 2)/2f)*Math.signum(d[0]));
@@ -117,18 +103,13 @@ public class MultiShapeH extends ToolH{
                     if (rounding > 0 && Build.VERSION.SDK_INT >= 21) {
 
                         shapeCanvas.drawRoundRect(startX < aX ? startX : aX, startY < aY ? startY : aY, startX < aX ? aX : startX, startY < aY ? aY : startY, rounding, rounding, aps.paint);
-                        //aps.pixelCanvas.drawRoundRect(startX, startY, startX+d[0], startY+d[1], rounding, rounding, aps.paint);
-                        //path.addRoundRect(startX, startY, startX+d[0], startY+d[1], rounding, rounding, Path.Direction.CW);
                     }else
                         shapeCanvas.drawRect(startX, startY, aX, aY, aps.paint);
-                        //path.addRect(startX, startY, startX+d[0], startY+d[1], Path.Direction.CW);
 
                 }
-                //aps.pixelCanvas.drawPath(path, aps.paint);
                 break;
             case CIRCLE:
                 aps.pixelCanvas.drawBitmap(backupBitmap, 0, 0, overlayPaint);
-                //path.rewind();
                 if(!locked&& Build.VERSION.SDK_INT>=21) {
                     float x1 = sX >= 0 ? startX : sX;
                     float x2 = sX >= 0 ? sX : startX;
@@ -145,7 +126,6 @@ public class MultiShapeH extends ToolH{
                         y2 = t;
                     }
                     shapeCanvas.drawOval(x1,y1 ,x2 , y2, aps.paint);
-                    //path.addOval(startX, startY, sX, sY, Path.Direction.CW);
                 }else if(locked&&Build.VERSION.SDK_INT>=21){
                     d = Utils.signedVector2Distance(startX, startY, sX, sY);
 
@@ -165,12 +145,9 @@ public class MultiShapeH extends ToolH{
                     }
 
                     shapeCanvas.drawOval(x1, y1, x2, y2, aps.paint);
-                    //path.addOval(startX, startY, startX+d[0], startY+d[1], Path.Direction.CW);
-                }else {
+                }else
                     shapeCanvas.drawCircle(startX, startY, Utils.vector2Distance(startX, startY, sX, sY), aps.paint);
-                    //path.addCircle(startX, startY, Utils.vector2Distance(startX, startY, sX, sY), Path.Direction.CW);
-                }
-                //aps.pixelCanvas.drawPath(path, aps.paint);
+
                 break;
         }
         aps.pixelCanvas.drawBitmap(shapeBitmap,0, 0, aps.noAAPaint);
@@ -185,8 +162,6 @@ public class MultiShapeH extends ToolH{
     void stopDrawing(float x, float y){
         if(!drawing)
             return;
-
-        //path.rewind();
 
         if(hitBounds&&moves>=2)
             aps.canvasHistory.completeHistoricalChange();

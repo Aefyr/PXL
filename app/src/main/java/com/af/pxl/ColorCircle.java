@@ -43,44 +43,6 @@ public class ColorCircle extends View {
         //p.setAntiAlias(true);
     }
 
-    private boolean animated = false;
-    private ObjectAnimator animator1;
-    private ObjectAnimator animator12;
-    private ObjectAnimator animator2;
-    private ObjectAnimator animator22;
-    public void enableAnimations(){
-        animator1 = ObjectAnimator.ofFloat(this, View.SCALE_X, 1.1f);
-        animator1.setDuration(100);
-
-        animator12 = ObjectAnimator.ofFloat(this, View.SCALE_Y, 1.1f);
-        animator12.setDuration(100);
-
-        animator1.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                animator2.start();
-                animator22.start();
-            }
-        });
-
-        animator2 = ObjectAnimator.ofFloat(this, View.SCALE_X, 1f);
-        animator2.setDuration(100);
-
-        animator22 = ObjectAnimator.ofFloat(this, View.SCALE_Y, 1f);
-        animator22.setDuration(100);
-
-        animated = true;
-    }
-
-    public void animation(){
-        if(!animated)
-            return;
-
-        animator1.start();
-        animator12.start();
-    }
-
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);

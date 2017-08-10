@@ -38,10 +38,6 @@ public class SuperPencilH extends ToolH{
             aps.paint.setStrokeCap(Paint.Cap.ROUND);
     }
 
-    void setCircleRadius(int radius){
-        circleRadius = radius;
-    }
-
 
     boolean instaDots = true;
 

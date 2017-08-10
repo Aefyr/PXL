@@ -50,7 +50,6 @@ public class SelectorH extends ToolH {
 
 
         if(hasSelection&&(!selection.contains((int)sX, (int) sY)||(sX<0||sY<0||sX>=aps.pixelWidth||sY>=aps.pixelHeight))) {
-            //System.out.println(String.format("Rect left: %d, Rect right: %d, Rect top: %d, Rect bottom: %d", selection.left, selection.right, selection.top, selection.bottom));
             hasSelection = false;
             if(offsetX!=0||offsetY!=0) {
                 aps.canvasHistory.completeHistoricalChange();
@@ -144,7 +143,6 @@ public class SelectorH extends ToolH {
                 aps.invalidate();
                 aps.onSpecialToolUseListener.onSelectionOptionsVisibilityChanged(true);
             }
-            System.out.println("Now has selection");
         }
         drawing = false;
     }

@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * Created by Aefyr on 28.06.2017.
  */
 
-public class CanvasHistoryH {
+class CanvasHistoryH {
     private AdaptivePixelSurfaceH aps;
 
     private ArrayDeque<int[]> past;
@@ -30,12 +30,12 @@ public class CanvasHistoryH {
 
     private File projectBitmap;
 
-    public interface OnHistoryAvailabilityChangeListener {
+    interface OnHistoryAvailabilityChangeListener {
         void pastAvailabilityChanged(boolean available);
         void futureAvailabilityChanged(boolean available);
     }
 
-    public CanvasHistoryH(AdaptivePixelSurfaceH aps, Bitmap bitmap, int size){
+    CanvasHistoryH(AdaptivePixelSurfaceH aps, Bitmap bitmap, int size){
         this.aps = aps;
         this.bitmap = bitmap;
         this.size = size;
@@ -45,7 +45,7 @@ public class CanvasHistoryH {
         listeners = new ArrayList<>();
     }
 
-    public CanvasHistoryH(AdaptivePixelSurfaceH aps, Project project, int size){
+   CanvasHistoryH(AdaptivePixelSurfaceH aps, Project project, int size){
         this.aps = aps;
         if(size==ADAPTIVE_SIZE) {
             autoSize();
@@ -71,7 +71,7 @@ public class CanvasHistoryH {
         Utils.toaster(aps.getContext(), String.format(aps.getContext().getString(R.string.hisotory_size), this.size));
     }
 
-    public void setOnHistoryAvailabilityChangeListener(OnHistoryAvailabilityChangeListener listener){
+    void setOnHistoryAvailabilityChangeListener(OnHistoryAvailabilityChangeListener listener){
         listeners.add(listener);
     }
 
@@ -108,7 +108,6 @@ public class CanvasHistoryH {
     }
 
     void completeHistoricalChange(){
-        System.out.println("HSIZE="+past.size());
         if(historicalChangeInProgress) {
             if (past.size() == size) {
                 past.removeLast();
@@ -134,11 +133,13 @@ public class CanvasHistoryH {
     }
 
     void cancelHistoricalChange(boolean canvasWasChanged){
-        if(canvasWasChanged) {
-            bitmap.setPixels(temp, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-            aps.invalidate();
+        if(historicalChangeInProgress) {
+            if (canvasWasChanged) {
+                bitmap.setPixels(temp, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+                aps.invalidate();
+            }
+            historicalChangeInProgress = false;
         }
-        historicalChangeInProgress = false;
     }
 
 

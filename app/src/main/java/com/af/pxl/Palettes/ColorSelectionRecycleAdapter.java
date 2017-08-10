@@ -53,11 +53,10 @@ public class ColorSelectionRecycleAdapter extends RecyclerView.Adapter<ColorSele
         public ViewHolder(View itemView) {
             super(itemView);
             colorCircle = (ColorCircle) itemView.findViewById(R.id.colorCircle);
-            colorCircle.enableAnimations();
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    colorCircle.animation();
                     if(listener!=null)
                         listener.onColorClick(getAdapterPosition());
                 }

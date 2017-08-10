@@ -35,7 +35,6 @@ public class ColorSwapper {
 
         bitmap.setPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
         deltaTime = System.currentTimeMillis() - start;
-        System.out.println("Boom, swapped "+pixelsToSwap.size()+" pixels in "+deltaTime+" ms!");
     }
 
     long getDeltaTime(){

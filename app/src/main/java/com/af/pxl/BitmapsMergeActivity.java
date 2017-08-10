@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -32,8 +33,8 @@ public class BitmapsMergeActivity extends AppCompatActivity {
     private Bitmap image;
     private Canvas bC;
     private Matrix m;
-    int offsetX;
-    int offsetY;
+    private int offsetX;
+    private int offsetY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,33 +43,42 @@ public class BitmapsMergeActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         mode = intent.getIntExtra("mode", 999);
-        String path = intent.getStringExtra("path");
-        image = BitmapFactory.decodeFile(path);
+
         if(mode == MODE_TRANSLATE) {
             transparentBackground = intent.getBooleanExtra("transparentBackground", false);
         }else if(mode == MODE_MERGE) {
             try {
+                BitmapFactory.Options sizeCheckOptions = new BitmapFactory.Options();
+                sizeCheckOptions.inJustDecodeBounds = true;
+
+                BitmapFactory.decodeStream(getContentResolver().openInputStream(Uri.parse(intent.getStringExtra("uri"))), new Rect(0,0,0,0), sizeCheckOptions);
+                if(sizeCheckOptions.outHeight>512||sizeCheckOptions.outWidth>512){
+                    AlertDialog errorDialog = new AlertDialog.Builder(this).setMessage(getString(R.string.imported_bitmap_too_big)).setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialogInterface) {
+                            cancelled();
+                        }
+                    }).setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            cancelled();
+                        }
+                    }).create();
+                    errorDialog.show();
+                    return;
+                }
+
                 o = BitmapFactory.decodeStream(getContentResolver().openInputStream(Uri.parse(intent.getStringExtra("uri"))));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 Utils.toaster(this, getString(R.string.error));
                 finish();
             }
-            if(o.getHeight()>512||o.getWidth()>512){
-                AlertDialog errorDialog = new AlertDialog.Builder(this).setMessage(getString(R.string.imported_bitmap_too_big)).setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialogInterface) {
-                        cancelled();
-                    }
-                }).setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        cancelled();
-                    }
-                }).create();
-                errorDialog.show();
-            }
+
         }
+
+        String path = intent.getStringExtra("path");
+        image = BitmapFactory.decodeFile(path);
 
         piv = (PixelImageView) findViewById(R.id.pxlImageView);
 

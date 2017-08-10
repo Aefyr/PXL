@@ -40,7 +40,10 @@ public class PixelImageView extends View{
         TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.PixelImageView, 0, 0);
 
         try {
-            bitmap = BitmapFactory.decodeResource(getResources(), a.getResourceId(R.styleable.PixelImageView_image, R.drawable.pencil));
+            BitmapFactory.Options noInterpolationOptions = new BitmapFactory.Options();
+            noInterpolationOptions.inScaled = false;
+
+            bitmap = BitmapFactory.decodeResource(getResources(), a.getResourceId(R.styleable.PixelImageView_image, R.drawable.pencil), noInterpolationOptions);
             autoResize = a.getBoolean(R.styleable.PixelImageView_autoResizeToMax, false);
             backgroundColor = a.getColor(R.styleable.PixelImageView_imageBackground, Color.TRANSPARENT);
         }finally {

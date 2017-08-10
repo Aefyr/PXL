@@ -28,8 +28,7 @@ class CursorH {
 
     private float sensitivity = 1f;
 
-    Bitmap cursorPointerImage;
-    private Canvas cursorPointerImageCanvas;
+    private Bitmap cursorPointerImage;
 
     interface OnCursorChangeListener{
         void onCursorEnabled(boolean enabled);
@@ -52,24 +51,10 @@ class CursorH {
         cursorPaint.setAlpha(opacity);
         cursorPaint.setStrokeWidth(Utils.dpToPx(1, aps.getResources()));
         cursorPreviewRect = new RectF();
-
-        drawDefaultCursorImage();
-    }
-
-    private void drawDefaultCursorImage(){
-        cursorPointerImage = Bitmap.createBitmap(pixelSize, pixelSize, Bitmap.Config.ARGB_8888);
-        cursorPointerImageCanvas = new Canvas(cursorPointerImage);
-        Paint paint = new Paint();
-        paint.setColor(Color.MAGENTA);
-        paint.setStrokeWidth(8);
-        cursorPointerImageCanvas.drawLine(0, 0, 0, pixelSize, paint);
-        cursorPointerImageCanvas.drawLine(0, pixelSize, pixelSize, pixelSize, paint);
-        calculateMatrix();
     }
 
     void setCursorPointerImage(Bitmap bitmap){
         cursorPointerImage = bitmap;
-        System.out.println("SIZE="+cursorPointerImage.getWidth());
         calculateMatrix();
         if(aps.cursorMode)
             aps.invalidate();
@@ -222,7 +207,7 @@ class CursorH {
         canvasY =  ((currentY-p[1])/aps.pixelScale);
     }
 
-    boolean offCanvasBounds(){
+    private boolean offCanvasBounds(){
         return !(canvasX>=0&&canvasY>=0&&canvasX<aps.pixelWidth&&canvasY<aps.pixelHeight);
     }
 
@@ -253,7 +238,7 @@ class CursorH {
 
         if(aps.strokeWidth > 1 && (aps.currentTool == AdaptivePixelSurfaceH.Tool.PENCIL || aps.currentTool == AdaptivePixelSurfaceH.Tool.ERASER||aps.currentTool== AdaptivePixelSurfaceH.Tool.MULTISHAPE)) {
             int w = aps.strokeWidth;
-            //updateCanvasXY();
+
             if (w % 2 == 0) {
                 int a = w / 2;
                 float xM = (float) (canvasX - Math.floor(canvasX));
@@ -293,14 +278,6 @@ class CursorH {
         canvas.drawRect(cursorPreviewRect, cursorPaint);
         cursorPaint.setAlpha(opacity);
         canvas.drawBitmap(cursorPointerImage, matrix, cursorPaint);
-    }
-
-    float getCanvasX(){
-        return canvasX;
-    }
-
-    float getCanvasY(){
-        return canvasY;
     }
 
 }
