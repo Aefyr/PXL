@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
-    tools:context="com.af.pxl.BitmapsMergeActivity">
+    tools:context="com.aefyr.pxl.BitmapsMergeActivity">
 
-    <com.af.pxl.PixelImageView
+    <com.aefyr.pxl.PixelImageView
         android:id="@+id/pxlImageView"
         android:layout_width="340dp"
         android:layout_height="340dp"

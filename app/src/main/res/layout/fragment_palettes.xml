@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorAlmostBlack"
-    tools:context="com.af.pxl.Fragments.PalettesFragment">
+    tools:context="com.aefyr.pxl.Fragments.PalettesFragment">
 
     <!-- TODO: Update blank fragment layout -->
 

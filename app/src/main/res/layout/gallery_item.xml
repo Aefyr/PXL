@@ -18,7 +18,7 @@
         android:textSize="18sp"
         android:textStyle="bold" />
 
-    <com.af.pxl.PixelImageView
+    <com.aefyr.pxl.PixelImageView
         android:id="@+id/preview"
         android:layout_width="144dp"
         android:layout_height="144dp"

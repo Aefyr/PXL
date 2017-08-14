@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.af.pxl.LegacyActivity">
+    tools:context="com.aefyr.pxl.LegacyActivity">
 
-    <com.af.pxl.CanvasView
+    <com.aefyr.pxl.CanvasView
         android:id="@+id/canvasView"
         android:layout_width="400dp"
         android:layout_height="400dp"
@@ -21,7 +21,7 @@
         android:layout_below="@+id/canvasView"
         android:text="Symmetry" />
 
-    <com.af.pxl.ColorPickerView
+    <com.aefyr.pxl.ColorPickerView
         android:id="@+id/colorPicker"
         android:layout_width="match_parent"
         android:layout_height="24dp"
@@ -44,7 +44,7 @@
         android:layout_toEndOf="@+id/symmetrySwitch"
         android:text="Show Grid" />
 
-    <com.af.pxl.PaletteView
+    <com.aefyr.pxl.PaletteView
         android:id="@+id/pal"
         android:layout_width="match_parent"
         android:layout_height="72dp"

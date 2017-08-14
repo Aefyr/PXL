@@ -3,7 +3,7 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.af.pxl.PixelSurface2
+    <com.aefyr.pxl.PixelSurface2
         android:id="@+id/pixelSurface"
         android:layout_width="400dp"
         android:layout_height="400dp"

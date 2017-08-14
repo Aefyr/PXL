@@ -97,7 +97,7 @@
 
 
     <!-- Preferences -->
-    <string name="pixel_surface">PixelSurface</string>
+    <string name="pixel_surface">Canvas</string>
     <string name="cursor">Cursor</string>
     <string name="select_background_color">Select Background Color</string>
     <string name="select_grid_color">Select Grid Color</string>
@@ -105,6 +105,12 @@
     <string name="cursor_opacity">Cursor Opacity</string>
     <string name="select_cursor_image">Select Cursor Image</string>
     <string name="trans_canvas_bg">Transparent Canvas Background</string>
+    <string name="category_other">Other</string>
+    <string name="restore_default_palettes">Restore default palettes</string>
+    <string name="palettes_restored">Default palettes were restored</string>
+
+    <!--- Tutorial -->
+    <string name="close">Close</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

@@ -58,7 +58,7 @@
     <string name="hisotory_size">Размер истории - %d</string>
 
     <!-- Preferences -->
-    <string name="pixel_surface">PixelSurface</string>
+    <string name="pixel_surface">Холст</string>
     <string name="cursor">Курсор</string>
     <string name="select_background_color">Выбрать цвет фона</string>
     <string name="select_grid_color">Выбрать цвет сетки</string>
@@ -104,4 +104,8 @@
     <string name="tutorial_hint">Вы всегда можете заново запустить обучение из боковой панели!</string>
     <string name="tutorial_prompt">Хотите пройти обучение?</string>
     <string name="yes">Да</string>
+    <string name="category_other">Разное</string>
+    <string name="close">Закрыть</string>
+    <string name="palettes_restored">Стандартные палитры восстановлены</string>
+    <string name="restore_default_palettes">Восстановить стандартные палитры</string>
 </resources>

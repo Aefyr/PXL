@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
 
-    <com.af.pxl.AdaptivePixelSurfaceH
+    <com.aefyr.pxl.AdaptivePixelSurfaceH
         android:id="@+id/aps"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -85,7 +85,7 @@
         android:background="@drawable/full_round_rect_bg"
         app:srcCompat="@drawable/redo" />
 
-    <com.af.pxl.ColorCircle
+    <com.aefyr.pxl.ColorCircle
         android:id="@+id/currentColor"
         android:layout_width="64dp"
         android:layout_height="64dp"
@@ -105,7 +105,7 @@
         android:textSize="24sp"
         android:visibility="gone" />
 
-    <com.af.pxl.ToolPickView
+    <com.aefyr.pxl.ToolPickView
         android:id="@+id/currentTool"
         android:layout_width="72dp"
         android:layout_height="72dp"
@@ -226,7 +226,7 @@
             android:layout_below="@+id/paletteRecycler"
             android:text="@string/pick_color" />
 
-        <com.af.pxl.ColorCircle
+        <com.aefyr.pxl.ColorCircle
             android:id="@+id/colorCircle"
             android:layout_width="64dp"
             android:layout_height="64dp"

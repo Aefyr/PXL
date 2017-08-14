@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.af.pxl">
+    package="com.aefyr.pxl">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -12,21 +12,21 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LegacyActivity" />
+        <activity android:name="com.aefyr.pxl.LegacyActivity" />
         <activity
-            android:name=".DrawingActivity"
+            android:name="com.aefyr.pxl.DrawingActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoStatusBar" />
         <activity
-            android:name=".ColorSwapActivity"
+            android:name="com.aefyr.pxl.ColorSwapActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoStatusBar" />
         <activity
-            android:name=".BitmapsMergeActivity"
+            android:name="com.aefyr.pxl.BitmapsMergeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoStatusBar" />
         <activity
-            android:name=".MainActivity"
+            android:name="com.aefyr.pxl.MainActivity"
             android:label="@string/title_activity_main"
             android:screenOrientation="portrait"
             android:theme="@style/SplashScreen">
@@ -37,13 +37,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".TestActivity"
+            android:name="com.aefyr.pxl.TestActivity"
             android:theme="@style/OverlayActivity" />
         <activity
-            android:name=".Palettes.PalettePickerActivity"
+            android:name="com.aefyr.pxl.Palettes.PalettePickerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoStatusBar" />
-        <activity android:name=".TCA.TutorialActivity"></activity>
+        <activity android:name="com.aefyr.pxl.TCA.TutorialActivity"></activity>
     </application>
 
 </manifest>

@@ -5,15 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
-    tools:context="com.af.pxl.ColorSwapActivity">
+    tools:context="com.aefyr.pxl.ColorSwapActivity">
 
-    <com.af.pxl.PixelImageView
+    <com.aefyr.pxl.PixelImageView
         android:id="@+id/pxlImageView"
         android:layout_width="290dp"
         android:layout_height="290dp"
         android:layout_below="@+id/livePreviewSwitch"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"
+        android:background="@drawable/tile_background" />
 
     <Button
         android:id="@+id/colorPickButton"
