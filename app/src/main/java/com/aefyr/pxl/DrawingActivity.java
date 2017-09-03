@@ -20,13 +20,13 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.aefyr.pxl.Palettes.PaletteManagerH;
-import com.aefyr.pxl.Palettes.PalettePickerActivity;
-import com.aefyr.pxl.Palettes.PaletteUtils;
-import com.aefyr.pxl.Projects.ProjectsUtils;
-import com.aefyr.pxl.Tools.SymmetrySwitcher;
-import com.aefyr.pxl.Tools.ToolPickRecyclerAdapter;
-import com.aefyr.pxl.Tools.ToolPreview;
+import com.aefyr.pxl.palettes.PaletteManagerH;
+import com.aefyr.pxl.palettes.PalettePickerActivity;
+import com.aefyr.pxl.palettes.PaletteUtils;
+import com.aefyr.pxl.projects.ProjectsUtils;
+import com.aefyr.pxl.tools.SymmetrySwitcher;
+import com.aefyr.pxl.tools.ToolPickRecyclerAdapter;
+import com.aefyr.pxl.tools.ToolPreview;
 
 import java.io.File;
 
@@ -336,11 +336,9 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
 
         //Pick palette
         if(requestCode == PalettePickerActivity.REQUEST_CODE_PICK_PALETTE){
-            if(resultCode==1){
-                aps.setPalette(PaletteUtils.loadPalette(data.getStringExtra("pickedPalette")));
-                //paletteManager.setPalette(aps.palette);
-                pm.setPalette(aps.palette);
-            }else if(resultCode == 0){
+            if(resultCode==1)
+                pm.setPalette(PaletteUtils.loadPalette(data.getStringExtra("pickedPalette")));
+            else if(resultCode == 0){
             }
         }
 
@@ -452,7 +450,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
     public void onPaletteChangeRequest() {
         Intent pickerIntent = new Intent(DrawingActivity.this, PalettePickerActivity.class);
         pickerIntent.putExtra("pickerMode", true);
-        pickerIntent.putExtra("currentPalette", aps.palette.getName());
+        pickerIntent.putExtra("currentPalette", pm.getPalette().getName());
         startActivityForResult(pickerIntent, PalettePickerActivity.REQUEST_CODE_PICK_PALETTE);
     }
 

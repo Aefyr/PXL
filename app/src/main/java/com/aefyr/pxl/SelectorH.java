@@ -7,7 +7,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 
-import com.aefyr.pxl.Tools.NotRetardedRect;
+import com.aefyr.pxl.tools.NotRetardedRect;
 
 import java.util.HashSet;
 

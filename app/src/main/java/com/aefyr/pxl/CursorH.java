@@ -9,7 +9,7 @@ import android.graphics.RectF;
 import android.preference.PreferenceManager;
 import android.view.MotionEvent;
 
-import com.aefyr.pxl.Fragments.PreferencesFragment;
+import com.aefyr.pxl.fragments.PreferencesFragment;
 
 /**
  * Created by Aefyr on 02.07.2017.

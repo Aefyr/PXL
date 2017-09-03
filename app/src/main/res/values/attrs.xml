@@ -1,19 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="PaletteView2">
-        <attr name="sizeOfColorX" format="dimension" />
-        <attr name="sizeOfColorY" format="dimension" />
-        <attr name="gapBetweenColors" format="dimension" />
-    </declare-styleable>
-
     <declare-styleable name="PixelImageView">
         <attr name="image" format="reference"/>
         <attr name="imageBackground" format="color"/>
         <attr name="autoResizeToMax" format="boolean" />
-    </declare-styleable>
-    <declare-styleable name="SymmetryModePickView">
-        <attr name="bitmapSize" format="dimension"/>
-        <attr name="gapSize" format="dimension"/>
     </declare-styleable>
 
 </resources>

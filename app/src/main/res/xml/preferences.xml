@@ -2,23 +2,23 @@
 <PreferenceScreen xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="@string/pixel_surface">
-        <com.aefyr.pxl.Preferences.ColorPickPreference
+        <com.aefyr.pxl.preferences.ColorPickPreference
             android:title="@string/select_background_color" android:key="background_color" android:layout="@layout/pref_generic_color_pick" android:defaultValue="-3343361"/>
-        <com.aefyr.pxl.Preferences.ColorPickPreference
+        <com.aefyr.pxl.preferences.ColorPickPreference
             android:defaultValue="-11183637"
             android:key="grid_color"
             android:layout="@layout/pref_generic_color_pick"
             android:title="@string/select_grid_color" />
-        <com.aefyr.pxl.Preferences.TransparentColorBackgroundPreference
+        <com.aefyr.pxl.preferences.TransparentColorBackgroundPreference
             android:title="@string/trans_canvas_bg" android:key="trans_background" android:layout="@layout/pref_trans_background" android:defaultValue="111"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/cursor">
-        <com.aefyr.pxl.Preferences.CursorSensitivityPreference
+        <com.aefyr.pxl.preferences.CursorSensitivityPreference
             android:defaultValue="9"
             android:key="cursor_sensitivity"
             android:layout="@layout/pref_cursor_sensitivity_seekbar"
             android:title="@string/cursor_sensitivity" />
-        <com.aefyr.pxl.Preferences.CursorOpacityPreference
+        <com.aefyr.pxl.preferences.CursorOpacityPreference
             android:defaultValue="255"
             android:key="cursor_opacity"
             android:layout="@layout/pref_cursor_opacity_seekbar"

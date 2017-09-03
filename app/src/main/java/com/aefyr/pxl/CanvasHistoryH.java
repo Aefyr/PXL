@@ -2,7 +2,7 @@ package com.aefyr.pxl;
 
 import android.graphics.Bitmap;
 
-import com.aefyr.pxl.Projects.Project;
+import com.aefyr.pxl.projects.Project;
 
 import java.io.File;
 import java.io.FileOutputStream;

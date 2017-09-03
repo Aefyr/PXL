@@ -5,15 +5,12 @@
     android:layout_height="match_parent"
     android:padding="8dp">
 
-    <com.aefyr.pxl.Palettes.PaletteView3
+    <com.aefyr.pxl.palettes.PaletteView3
         android:id="@+id/pv2"
         android:layout_width="256dp"
         android:layout_height="256dp"
         android:layout_below="@+id/textView3"
-        android:layout_centerHorizontal="true"
-        app:gapBetweenColors="8dp"
-        app:sizeOfColorX="48dp"
-        app:sizeOfColorY="48dp" />
+        android:layout_centerHorizontal="true"/>
 
     <Button
         android:id="@+id/pvDone"

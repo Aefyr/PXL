@@ -18,11 +18,11 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.aefyr.pxl.Fragments.PreferencesFragment;
-import com.aefyr.pxl.Palettes.Palette2;
-import com.aefyr.pxl.Palettes.PaletteManagerH;
-import com.aefyr.pxl.Palettes.PaletteUtils;
-import com.aefyr.pxl.Projects.Project;
+import com.aefyr.pxl.fragments.PreferencesFragment;
+import com.aefyr.pxl.palettes.Palette2;
+import com.aefyr.pxl.palettes.PaletteManagerH;
+import com.aefyr.pxl.palettes.PaletteUtils;
+import com.aefyr.pxl.projects.Project;
 
 import java.util.ArrayDeque;
 
@@ -30,7 +30,7 @@ import java.util.ArrayDeque;
  * Created by Aefyr on 27.06.2017.
  */
 
-public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteChangeListener {
+public class AdaptivePixelSurfaceH extends View {
 
     Project project;
     boolean projectReady = false;
@@ -59,7 +59,6 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
     }
     Tool currentTool = Tool.PENCIL;
 
-
     CanvasHistoryH canvasHistory;
 
     CursorH cursor;
@@ -78,7 +77,6 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
 
     //Rest
     PaletteManagerH colorManager;
-    Palette2 palette;
 
     public AdaptivePixelSurfaceH(Context context) {
         super(context);
@@ -168,24 +166,8 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
         this.colorManager = manager;
     }
 
-    public void setPalette(Palette2 palette){
-        if(!palette.getName().equals(project.palette))
-            project.setPalette(palette);
-
-        this.palette = palette;
-        palette.addOnPaletteChangeListener(this);
-        //setColor(palette.getSelectedColor());
-    }
-
-    @Override
-    public void onColorSelection(int selectedColor) {
-        //setColor(selectedColor);
-        //updateColorCircle(selectedColor);
-    }
-
-    @Override
-    public void onPaletteChanged() {
-
+    public Project getProject(){
+        return project;
     }
 
     public void setSymmetryEnabled(boolean enabled, SymmetryType type){
@@ -212,7 +194,6 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
         canvasHistory = new CanvasHistoryH(this, project, CanvasHistoryH.ADAPTIVE_SIZE);
         multiShape = new MultiShapeH(this);
         selector = new SelectorH(this);
-        setPalette(PaletteUtils.loadPalette(project.palette));
         if(project.transparentBackground){
             SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(getContext());
             int bg = p.getInt(PreferencesFragment.TRANSPARENT_CANVAS_BACKGROUND_COLOR, 111);
@@ -236,10 +217,6 @@ public class AdaptivePixelSurfaceH extends View implements Palette2.OnPaletteCha
 
         }
         projectReady = true;
-    }
-
-    public Palette2 getPalette(){
-        return palette;
     }
 
     //Utility methods

@@ -40,7 +40,7 @@
             android:name="com.aefyr.pxl.TestActivity"
             android:theme="@style/OverlayActivity" />
         <activity
-            android:name="com.aefyr.pxl.Palettes.PalettePickerActivity"
+            android:name="com.aefyr.pxl.palettes.PalettePickerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoStatusBar" />
         <activity android:name="com.aefyr.pxl.TCA.TutorialActivity"></activity>

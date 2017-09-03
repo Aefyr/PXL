@@ -16,11 +16,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.aefyr.pxl.Fragments.GalleryFragment;
-import com.aefyr.pxl.Fragments.PalettesFragment;
-import com.aefyr.pxl.Fragments.PreferencesFragment;
-import com.aefyr.pxl.Palettes.PaletteMaker;
-import com.aefyr.pxl.Palettes.PaletteUtils;
+import com.aefyr.pxl.fragments.GalleryFragment;
+import com.aefyr.pxl.fragments.PalettesFragment;
+import com.aefyr.pxl.fragments.PreferencesFragment;
+import com.aefyr.pxl.palettes.PaletteMaker;
+import com.aefyr.pxl.palettes.PaletteUtils;
 import com.aefyr.pxl.TCA.TutorialActivity;
 
 public class MainActivity extends AppCompatActivity
