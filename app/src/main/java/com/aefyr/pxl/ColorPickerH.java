@@ -8,6 +8,9 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.SeekBar;
 
+import com.aefyr.pxl.views.ColorPickerViewH;
+import com.aefyr.pxl.views.ColorRect;
+
 /**
  * Created by Aefyr on 17.06.2017.
  */
@@ -28,12 +31,12 @@ public class ColorPickerH {
     private TextWatcher SWatcher;
     private TextWatcher VWatcher;
 
-    private ColorRect newColorCircle;
-    private ColorRect oldColorCircle;
+    private ColorRect newColorPreview;
+    private ColorRect oldColorPreview;
 
-    float[] color = {0,0,0};
+    float[] color = {0, 0, 0};
 
-    public ColorPickerH(ColorPickerViewH hueView, SeekBar hueBar, ColorPickerViewH saturationView, SeekBar saturationBar, ColorPickerViewH valueView, SeekBar valueBar, ColorRect newColorCircle, int currentColor){
+    public ColorPickerH(ColorPickerViewH hueView, SeekBar hueBar, ColorPickerViewH saturationView, SeekBar saturationBar, ColorPickerViewH valueView, SeekBar valueBar, ColorRect newColorPreview, int currentColor) {
         this.hueView = hueView;
         this.hueBar = hueBar;
         this.saturationView = saturationView;
@@ -41,21 +44,21 @@ public class ColorPickerH {
         this.valueView = valueView;
         this.valueBar = valueBar;
 
-        this.newColorCircle = newColorCircle;
+        this.newColorPreview = newColorPreview;
 
         setStartColor(currentColor);
         initialize();
     }
 
-    public ColorPickerH(Window colorPickerView, int startColor){
+    public ColorPickerH(Window colorPickerView, int startColor) {
         hueView = (ColorPickerViewH) colorPickerView.findViewById(R.id.colorPickerHue);
         hueBar = (SeekBar) colorPickerView.findViewById(R.id.seekBarHue);
         saturationView = (ColorPickerViewH) colorPickerView.findViewById(R.id.colorPickerSat);
         saturationBar = (SeekBar) colorPickerView.findViewById(R.id.seekBarSat);
         valueView = (ColorPickerViewH) colorPickerView.findViewById(R.id.colorPickerVal);
         valueBar = (SeekBar) colorPickerView.findViewById(R.id.seekBarVal);
-        newColorCircle = (ColorRect) colorPickerView.findViewById(R.id.newColor);
-        oldColorCircle = (ColorRect) colorPickerView.findViewById(R.id.oldColor);
+        newColorPreview = (ColorRect) colorPickerView.findViewById(R.id.newColor);
+        oldColorPreview = (ColorRect) colorPickerView.findViewById(R.id.oldColor);
 
         editTextHue = (EditText) colorPickerView.findViewById(R.id.editTextHue);
         editTextSat = (EditText) colorPickerView.findViewById(R.id.editTextSat);
@@ -65,21 +68,21 @@ public class ColorPickerH {
         initialize();
     }
 
-    private void setStartColor(int startColor){
-        oldColorCircle.setColor(startColor);
+    private void setStartColor(int startColor) {
+        oldColorPreview.setColor(startColor);
 
         Color.colorToHSV(startColor, color);
         hueBar.setProgress((int) color[0]);
-        saturationBar.setProgress((int)(color[1]*100));
-        valueBar.setProgress((int)(color[2]*100));
+        saturationBar.setProgress((int) (color[1] * 100));
+        valueBar.setProgress((int) (color[2] * 100));
 
-        editTextHue.setText((int) color[0]+"");
-        editTextSat.setText((int) (color[1]*100f)+"");
-        editTextVal.setText((int) (color[2]*100f)+"");
+        editTextHue.setText(String.valueOf((int) color[0]));
+        editTextSat.setText(String.valueOf((int) (color[1] * 100f)));
+        editTextVal.setText(String.valueOf((int) (color[2] * 100f)));
     }
 
-    private void initialize(){
-        newColorCircle.setColor(Color.HSVToColor(color));
+    private void initialize() {
+        newColorPreview.setColor(Color.HSVToColor(color));
         hueView.color = saturationView.color = valueView.color = color;
 
         hueView.setMode(ColorPickerViewH.Mode.HUE);
@@ -90,21 +93,18 @@ public class ColorPickerH {
         SeekBar.OnSeekBarChangeListener onSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                if(seekBar == hueBar){
+                if (seekBar == hueBar) {
                     color[0] = i;
-                    editTextHue.setText(i+"");
+                    editTextHue.setText(String.valueOf(i));
                     editTextHue.setSelection(editTextHue.length());
-                    updateColorViews(true, true, true);
-                }else if (seekBar == saturationBar){
-                    color[1] = (float)i * 0.01f;
-                    editTextSat.setText(i+"");
+                } else if (seekBar == saturationBar) {
+                    color[1] = (float) i * 0.01f;
+                    editTextSat.setText(String.valueOf(i));
                     editTextSat.setSelection(editTextSat.length());
-                    updateColorViews(false, true, true);
-                }else if(seekBar == valueBar){
-                    color[2] = (float)i * 0.01f;
-                    editTextVal.setText(i+"");
+                } else if (seekBar == valueBar) {
+                    color[2] = (float) i * 0.01f;
+                    editTextVal.setText(String.valueOf(i));
                     editTextVal.setSelection(editTextVal.length());
-                    updateColorViews(false, true, true);
                 }
 
             }
@@ -132,7 +132,8 @@ public class ColorPickerH {
     }
 
     private static final String hexColorPattern = "[0123456789AaBbCcDdEeFf]*";
-    private void createWatchers(){
+
+    private void createWatchers() {
 
         HWatcher = new TextWatcher() {
             @Override
@@ -147,7 +148,7 @@ public class ColorPickerH {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                int newVal = checkHSVEditableValue(editable, 360);
+                int newVal = checkValue(editable, 360);
 
 
                 color[0] = newVal;
@@ -169,9 +170,9 @@ public class ColorPickerH {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                int newVal = checkHSVEditableValue(editable, 100);
+                int newVal = checkValue(editable, 100);
 
-                color[1] = newVal*0.01f;
+                color[1] = newVal * 0.01f;
                 saturationBar.setProgress(newVal);
                 updateColorViews(false, true, true);
             }
@@ -190,10 +191,10 @@ public class ColorPickerH {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                int newVal = checkHSVEditableValue(editable, 100);
+                int newVal = checkValue(editable, 100);
 
 
-                color[2] = newVal*0.01f;
+                color[2] = newVal * 0.01f;
                 valueBar.setProgress(newVal);
                 updateColorViews(false, true, true);
             }
@@ -201,19 +202,19 @@ public class ColorPickerH {
 
     }
 
-    private int checkHSVEditableValue(Editable editable, int maxValue){
+    private int checkValue(Editable editable, int maxValue) {
         int newVal = 0;
 
-        if(editable.length()==0){
+        if (editable.length() == 0) {
             editable.replace(0, editable.length(), "0");
-        }else
+        } else
             newVal = Integer.parseInt(editable.toString());
 
-        if(editable.length()>0&&newVal>maxValue) {
-            editable.replace(0, editable.length(), maxValue+"");
+        if (editable.length() > 0 && newVal > maxValue) {
+            editable.replace(0, editable.length(), maxValue + "");
             newVal = 360;
-        }else if(editable.length()>1){
-            if(editable.charAt(0)=='0')
+        } else if (editable.length() > 1) {
+            if (editable.charAt(0) == '0')
                 editable.replace(0, 1, "");
         }
 
@@ -221,22 +222,22 @@ public class ColorPickerH {
     }
 
 
-    private void updateColorViews(boolean h, boolean s, boolean v){
-        if(h)
+    private void updateColorViews(boolean h, boolean s, boolean v) {
+        if (h)
             hueView.invalidate();
-        if(s)
+        if (s)
             saturationView.invalidate();
-        if(v)
+        if (v)
             valueView.invalidate();
 
-        newColorCircle.setColor(Color.HSVToColor(color));
-        if(livePreview){
+        newColorPreview.setColor(Color.HSVToColor(color));
+        if (livePreview) {
             applyColorSwap();
             listener.onLivePreviewUpdate();
         }
     }
 
-    public int getColor(){
+    public int getColor() {
         return Color.HSVToColor(color);
     }
 
@@ -245,25 +246,25 @@ public class ColorPickerH {
     private OnLivePreviewUpdateListener listener;
     private ColorSwapper colorSwapper;
 
-    void useColorSwap(Bitmap bitmap, int colorToSwap, OnLivePreviewUpdateListener listener){
+    void useColorSwap(Bitmap bitmap, int colorToSwap, OnLivePreviewUpdateListener listener) {
         this.listener = listener;
         colorSwapper = new ColorSwapper(bitmap, colorToSwap);
     }
 
-    void setLivePreviewEnabled(boolean enabled){
+    void setLivePreviewEnabled(boolean enabled) {
         livePreview = enabled;
     }
 
-    void applyColorSwap(){
+    void applyColorSwap() {
         colorSwapper.swapColor(Color.HSVToColor(color));
     }
 
-    boolean isLivePreviewAcceptable(){
+    boolean isLivePreviewAcceptable() {
         applyColorSwap();
         return colorSwapper.getDeltaTime() <= 60;
     }
 
-    interface OnLivePreviewUpdateListener{
+    interface OnLivePreviewUpdateListener {
         void onLivePreviewUpdate();
     }
 }

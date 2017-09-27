@@ -15,7 +15,7 @@ import com.aefyr.pxl.ToolSettingsManager;
  * Created by Aefyr on 05.08.2017.
  */
 
-public class ToolPickRecyclerAdapter extends RecyclerView.Adapter<ToolPickRecyclerAdapter.ViewHolder>{
+public class ToolPickRecyclerAdapter extends RecyclerView.Adapter<ToolPickRecyclerAdapter.ViewHolder> {
 
     private AdaptivePixelSurfaceH aps;
     private ToolPreview[] tools;
@@ -26,15 +26,16 @@ public class ToolPickRecyclerAdapter extends RecyclerView.Adapter<ToolPickRecycl
     private boolean shown = false;
 
     private OnVisibilityChangedListener listener;
-    public interface OnVisibilityChangedListener{
+
+    public interface OnVisibilityChangedListener {
         void onVisibilityChanged(boolean visible);
     }
 
-    public ToolPickRecyclerAdapter(Context c, ToolPreview[] tools, AdaptivePixelSurfaceH aps, ImageButton currentTool, final RecyclerView recyclerView, final ToolSettingsManager manager){
+    public ToolPickRecyclerAdapter(Context c, ToolPreview[] tools, AdaptivePixelSurfaceH aps, ImageButton currentTool, final RecyclerView recyclerView, final ToolSettingsManager manager) {
         this.aps = aps;
         this.tools = tools;
         inflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.recyclerView =recyclerView;
+        this.recyclerView = recyclerView;
         this.currentTool = currentTool;
         this.manager = manager;
         manager.notifyToolPicked(AdaptivePixelSurfaceH.Tool.PENCIL);
@@ -43,7 +44,7 @@ public class ToolPickRecyclerAdapter extends RecyclerView.Adapter<ToolPickRecycl
         currentTool.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!shown)
+                if (!shown)
                     show();
                 else
                     hide();
@@ -51,30 +52,30 @@ public class ToolPickRecyclerAdapter extends RecyclerView.Adapter<ToolPickRecycl
         });
     }
 
-    public void setOnVisibilityChangedListener(OnVisibilityChangedListener listener){
+    public void setOnVisibilityChangedListener(OnVisibilityChangedListener listener) {
         this.listener = listener;
     }
 
-    public void show(){
+    public void show() {
         recyclerView.setVisibility(View.VISIBLE);
         manager.show();
         shown = true;
         listenerEvent();
     }
 
-    public void hide(){
+    public void hide() {
         recyclerView.setVisibility(View.GONE);
         manager.hide();
-        shown =false;
+        shown = false;
         listenerEvent();
     }
 
-    private void listenerEvent(){
-        if(listener!=null)
+    private void listenerEvent() {
+        if (listener != null)
             listener.onVisibilityChanged(shown);
     }
 
-    public boolean shown(){
+    public boolean shown() {
         return shown;
     }
 
@@ -93,7 +94,7 @@ public class ToolPickRecyclerAdapter extends RecyclerView.Adapter<ToolPickRecycl
         return tools.length;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
         private ImageButton icon;
 
         public ViewHolder(View itemView) {
@@ -106,7 +107,7 @@ public class ToolPickRecyclerAdapter extends RecyclerView.Adapter<ToolPickRecycl
 
                     aps.setTool(tools[getAdapterPosition()].tool);
                     currentTool.setImageResource(tools[getAdapterPosition()].toolIconId);
-                    if(manager.notifyToolPicked(tools[getAdapterPosition()].tool))
+                    if (manager.notifyToolPicked(tools[getAdapterPosition()].tool))
                         hide();
                 }
             });

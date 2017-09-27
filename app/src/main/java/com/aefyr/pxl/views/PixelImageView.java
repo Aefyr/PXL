@@ -1,4 +1,4 @@
-package com.aefyr.pxl;
+package com.aefyr.pxl.views;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -16,11 +16,13 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
+import com.aefyr.pxl.R;
+
 /**
  * Created by Aefyr on 12.07.2017.
  */
 
-public class PixelImageView extends View{
+public class PixelImageView extends View {
 
     Matrix scaleMatrix;
     private Paint p;
@@ -31,7 +33,7 @@ public class PixelImageView extends View{
     private boolean r = false;
     private OnSizeChangedListener onSizeChangedListener;
 
-    interface OnSizeChangedListener{
+    public interface OnSizeChangedListener {
         void onSizeChanged(int width, int height);
     }
 
@@ -46,14 +48,14 @@ public class PixelImageView extends View{
             bitmap = BitmapFactory.decodeResource(getResources(), a.getResourceId(R.styleable.PixelImageView_image, R.drawable.pencil), noInterpolationOptions);
             autoResize = a.getBoolean(R.styleable.PixelImageView_autoResizeToMax, false);
             backgroundColor = a.getColor(R.styleable.PixelImageView_imageBackground, Color.TRANSPARENT);
-        }finally {
+        } finally {
             a.recycle();
         }
 
         initialize();
     }
 
-    private void initialize(){
+    private void initialize() {
         scaleMatrix = new Matrix();
         p = new Paint();
         p.setAntiAlias(false);
@@ -62,39 +64,40 @@ public class PixelImageView extends View{
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        if(autoResize&&!r){
+        if (autoResize && !r) {
             resize();
             r = true;
         }
         calculateMatrix();
-        if(onSizeChangedListener!=null)
+        if (onSizeChangedListener != null)
             onSizeChangedListener.onSizeChanged(w, h);
     }
 
 
     private Bitmap bitmap;
-    public void setImageBitmap(Bitmap bitmap){
+
+    public void setImageBitmap(Bitmap bitmap) {
         this.bitmap = bitmap;
         calculateMatrix();
     }
 
-    private void calculateMatrix(){
+    private void calculateMatrix() {
         scaleMatrix.reset();
-        float scaleX = (float) getWidth()/(float)bitmap.getWidth();
-        float scaleY = (float)getHeight()/(float)bitmap.getHeight();
-        pixelScale = scaleX>scaleY?scaleY:scaleX;
+        float scaleX = (float) getWidth() / (float) bitmap.getWidth();
+        float scaleY = (float) getHeight() / (float) bitmap.getHeight();
+        pixelScale = scaleX > scaleY ? scaleY : scaleX;
         scaleMatrix.setScale(pixelScale, pixelScale);
-        float offsetX = (getWidth()-(bitmap.getWidth()*pixelScale))*0.5f;
-        float offsetY = (getHeight()-(bitmap.getHeight()*pixelScale))*0.5f;
+        float offsetX = (getWidth() - (bitmap.getWidth() * pixelScale)) * 0.5f;
+        float offsetY = (getHeight() - (bitmap.getHeight() * pixelScale)) * 0.5f;
         scaleMatrix.postTranslate(offsetX, offsetY);
     }
 
-    private void resize(){
-        WindowManager wm = (WindowManager)  getContext().getSystemService(Context.WINDOW_SERVICE);
+    private void resize() {
+        WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
         Display d = wm.getDefaultDisplay();
         Point p = new Point();
         d.getSize(p);
-        int max = p.y>p.x?p.x:p.y;
+        int max = p.y > p.x ? p.x : p.y;
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) getLayoutParams();
         params.height = max;
         params.width = max;
@@ -104,16 +107,16 @@ public class PixelImageView extends View{
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if(backgroundColor!=0)
+        if (backgroundColor != 0)
             canvas.drawColor(backgroundColor);
         canvas.drawBitmap(bitmap, scaleMatrix, p);
     }
 
-    float getPixelScale(){
+    public float getPixelScale() {
         return pixelScale;
     }
 
-    void setOnSizeChangedListener(OnSizeChangedListener onSizeChangedListener){
+    public void setOnSizeChangedListener(OnSizeChangedListener onSizeChangedListener) {
         this.onSizeChangedListener = onSizeChangedListener;
     }
 }

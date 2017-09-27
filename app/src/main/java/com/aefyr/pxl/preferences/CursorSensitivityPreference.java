@@ -29,8 +29,8 @@ public class CursorSensitivityPreference extends Preference {
     protected void onBindView(View view) {
         super.onBindView(view);
         oneDigitAfterPoint = new DecimalFormat("##.#");
-        seekBar  = ((SeekBar)view.findViewById(R.id.cursorSensSeekbar));
-        sensitivity = (TextView)view.findViewById(R.id.cursorSensValue);
+        seekBar = ((SeekBar) view.findViewById(R.id.cursorSensSeekbar));
+        sensitivity = (TextView) view.findViewById(R.id.cursorSensValue);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -59,16 +59,17 @@ public class CursorSensitivityPreference extends Preference {
     @Override
     protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
         super.onSetInitialValue(restorePersistedValue, defaultValue);
-        if(restorePersistedValue){
+        if (restorePersistedValue) {
             currentSensitivity = getPersistedInt(9);
-        }else {
+        } else {
             currentSensitivity = (int) defaultValue;
         }
 
     }
 
     private TextView sensitivity;
-    private void updateText(){
-        sensitivity.setText(oneDigitAfterPoint.format(0.1f+currentSensitivity/10f)+"x");
+
+    private void updateText() {
+        sensitivity.setText(oneDigitAfterPoint.format(0.1f + currentSensitivity / 10f) + "x");
     }
 }

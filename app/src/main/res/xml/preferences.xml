@@ -10,7 +10,7 @@
             android:layout="@layout/pref_generic_color_pick"
             android:title="@string/select_grid_color" />
         <com.aefyr.pxl.preferences.TransparentColorBackgroundPreference
-            android:title="@string/trans_canvas_bg" android:key="trans_background" android:layout="@layout/pref_trans_background" android:defaultValue="111"/>
+            android:title="@string/trans_canvas_bg" android:key="trans_background" android:layout="@layout/pref_trans_background" android:defaultValue="1"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/cursor">
         <com.aefyr.pxl.preferences.CursorSensitivityPreference

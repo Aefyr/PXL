@@ -24,7 +24,7 @@ public class PalettePreviewView extends View {
         initialize();
     }
 
-    private void initialize(){
+    private void initialize() {
         palettePreviewBitmap = Bitmap.createBitmap(4, 4, Bitmap.Config.ARGB_8888);
         scaleMatrix = new Matrix();
         noAAPaint = new Paint();
@@ -34,7 +34,7 @@ public class PalettePreviewView extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        scaleMatrix.setScale((float) w/4f, (float) h/4f);
+        scaleMatrix.setScale((float) w / 4f, (float) h / 4f);
         invalidate();
     }
 
@@ -44,9 +44,9 @@ public class PalettePreviewView extends View {
         canvas.drawBitmap(palettePreviewBitmap, scaleMatrix, noAAPaint);
     }
 
-    public void setPalette(Palette2 palette){
+    public void setPalette(Palette2 palette) {
         int[] colors = new int[16];
-        for(int i = 0;i<16;i++){
+        for (int i = 0; i < 16; i++) {
             colors[i] = palette.getColor(i);
         }
         palettePreviewBitmap.setPixels(colors, 0, 4, 0, 0, 4, 4);

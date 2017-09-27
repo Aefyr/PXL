@@ -6,39 +6,39 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.aefyr.pxl.ColorCircle;
 import com.aefyr.pxl.R;
+import com.aefyr.pxl.views.ColorCircle;
 
 /**
  * Created by Aefyr on 03.08.2017.
  */
 
-public class ColorSelectionRecycleAdapter extends RecyclerView.Adapter<ColorSelectionRecycleAdapter.ViewHolder>{
+public class ColorSelectionRecyclerAdapter extends RecyclerView.Adapter<ColorSelectionRecyclerAdapter.ViewHolder> {
 
     private Palette2 palette;
     private LayoutInflater inflater;
     private OnColorInteractionListener listener;
 
-    public ColorSelectionRecycleAdapter(Context c, Palette2 palette){
+    public ColorSelectionRecyclerAdapter(Context c, Palette2 palette) {
         this.palette = palette;
         inflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    public void setOnColorInteractionListener(OnColorInteractionListener listener){
+    public void setOnColorInteractionListener(OnColorInteractionListener listener) {
         this.listener = listener;
     }
 
     @Override
-    public ColorSelectionRecycleAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ColorSelectionRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new ViewHolder(inflater.inflate(R.layout.palette_picker_color_item, null));
     }
 
     @Override
-    public void onBindViewHolder(ColorSelectionRecycleAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(ColorSelectionRecyclerAdapter.ViewHolder holder, int position) {
         holder.colorCircle.setColor(palette.getColor(position));
     }
 
-    public void setPalette(Palette2 palette){
+    public void setPalette(Palette2 palette) {
         this.palette = palette;
         notifyDataSetChanged();
     }
@@ -48,8 +48,9 @@ public class ColorSelectionRecycleAdapter extends RecyclerView.Adapter<ColorSele
         return palette.getSize();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder {
         private ColorCircle colorCircle;
+
         public ViewHolder(View itemView) {
             super(itemView);
             colorCircle = (ColorCircle) itemView.findViewById(R.id.colorCircle);
@@ -57,7 +58,7 @@ public class ColorSelectionRecycleAdapter extends RecyclerView.Adapter<ColorSele
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(listener!=null)
+                    if (listener != null)
                         listener.onColorClick(getAdapterPosition());
                 }
             });
@@ -65,7 +66,7 @@ public class ColorSelectionRecycleAdapter extends RecyclerView.Adapter<ColorSele
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    if(listener!=null){
+                    if (listener != null) {
                         listener.onColorLongClick(getAdapterPosition());
                         return true;
                     }
@@ -75,8 +76,9 @@ public class ColorSelectionRecycleAdapter extends RecyclerView.Adapter<ColorSele
         }
     }
 
-    public interface OnColorInteractionListener{
+    public interface OnColorInteractionListener {
         void onColorClick(int index);
+
         void onColorLongClick(int index);
     }
 }

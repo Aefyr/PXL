@@ -7,7 +7,7 @@
     android:background="@color/colorPrimaryDark"
     tools:context="com.aefyr.pxl.BitmapsMergeActivity">
 
-    <com.aefyr.pxl.PixelImageView
+    <com.aefyr.pxl.views.PixelImageView
         android:id="@+id/pxlImageView"
         android:layout_width="340dp"
         android:layout_height="340dp"
@@ -65,7 +65,7 @@
         android:id="@+id/done"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:text="@string/done" />
@@ -83,7 +83,7 @@
         android:id="@+id/cancel"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:text="@string/cancel" />

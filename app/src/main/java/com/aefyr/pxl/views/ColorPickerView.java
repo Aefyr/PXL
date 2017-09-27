@@ -1,4 +1,4 @@
-package com.aefyr.pxl;
+package com.aefyr.pxl.views;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -14,15 +14,16 @@ import android.view.View;
  * Created by Aefyr on 13.06.2017.
  */
 
-public class ColorPickerViewH extends View {
+public class ColorPickerView extends View {
 
-    float [] color = {1,1,1};
+    public float[] color = {1, 1, 1};
     Paint p;
     float realWidth;
 
+
     LinearGradient gradient;
 
-    Mode currentMode;
+    MODE currentMode;
     float grades;
     int modeInt;
 
@@ -30,33 +31,31 @@ public class ColorPickerViewH extends View {
     float[] positions;
 
 
-
-    public enum Mode {
+    public enum MODE {
         HUE, SATURATION, VIBRANCE
     }
 
 
-    public ColorPickerViewH(Context context) {
+    public ColorPickerView(Context context) {
         super(context);
         initialize();
     }
 
-    public ColorPickerViewH(Context context, @Nullable AttributeSet attrs) {
+    public ColorPickerView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initialize();
     }
 
-    void initialize(){
-        setMode(Mode.HUE);
+    void initialize() {
+        setMode(MODE.HUE);
         p = new Paint();
         p.setStyle(Paint.Style.FILL_AND_STROKE);
         p.setColor(Color.HSVToColor(color));
-
     }
 
-    public void setMode(Mode mode){
+    public void setMode(MODE mode) {
         currentMode = mode;
-        if(currentMode == Mode.HUE){
+        if (currentMode == MODE.HUE) {
             modeInt = 0;
             grades = 360;
             colors = new int[361];
@@ -64,17 +63,17 @@ public class ColorPickerViewH extends View {
 
             float[] d = color.clone();
             d[1] = d[2] = 1;
-            for(int x = 0; x<=360; x++){
+            for (int x = 0; x <= 360; x++) {
                 d[0] = (float) x;
                 colors[x] = Color.HSVToColor(d);
-                positions[x] = (float)x/360f;
+                positions[x] = (float) x / 360f;
             }
-        }else if(currentMode == Mode.SATURATION){
+        } else if (currentMode == MODE.SATURATION) {
             modeInt = 1;
             grades = 100;
             colors = null;
             positions = null;
-        }else if(currentMode == Mode.VIBRANCE){
+        } else if (currentMode == MODE.VIBRANCE) {
             modeInt = 2;
             grades = 100;
             colors = null;
@@ -84,40 +83,41 @@ public class ColorPickerViewH extends View {
     }
 
 
-
     @Override
-    public void onSizeChanged(int w, int h, int oldw, int oldh){
+    public void onSizeChanged(int w, int h, int oldw, int oldh) {
         realWidth = w;
-        if(modeInt==0) {
+        if (modeInt == 0) {
             gradient = new LinearGradient(0, 0, getWidth(), getHeight(), colors, positions, Shader.TileMode.CLAMP);
+            p.setShader(gradient);
         }
-        p.setStrokeWidth(realWidth / grades);
     }
 
+    /*@Override
+    public boolean onTouchEvent(MotionEvent event){
+        if(paint != null && event.getAction() == MotionEvent.ACTION_DOWN) {
+            float[] newColor = color.clone();
+            newColor[0] = event.getX()/realWidth * 360;
+            paint.setCurrentColor(Color.HSVToColor(newColor));
+        }
+        return true;
+    }*/
+
     @Override
-    public void onDraw(Canvas canvas){
+    public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if(currentMode == Mode.HUE) {
-            p.setShader(gradient);
-            canvas.drawRect(0,0,canvas.getWidth(), canvas.getHeight(), p);
-        }else {
+        if (currentMode == MODE.HUE)
+            canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), p);
+        else {
             float[] color1 = color.clone();
             color1[modeInt] = 0;
             float[] color2 = color.clone();
             color2[modeInt] = 1;
-            gradient = new LinearGradient(0,0, canvas.getWidth(), canvas.getHeight(), Color.HSVToColor(color1), Color.HSVToColor(color2), Shader.TileMode.CLAMP);
+            gradient = new LinearGradient(0, 0, canvas.getWidth(), canvas.getHeight(), Color.HSVToColor(color1), Color.HSVToColor(color2), Shader.TileMode.CLAMP);
 
             p.setShader(gradient);
-            canvas.drawRect(0,0,canvas.getWidth(), canvas.getHeight(), p);
 
-
+            canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), p);
         }
-
-        int x = Math.round(((float) canvas.getWidth()/grades)*(modeInt==0?color[modeInt]:color[modeInt]*100));
-        p.setShader(null);
-        p.setColor(Utils.invertColor(Color.HSVToColor(color)));
-
-        canvas.drawLine(x, 0, x, canvas.getHeight(), p);
     }
 }

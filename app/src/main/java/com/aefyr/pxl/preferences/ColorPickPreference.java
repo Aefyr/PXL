@@ -10,9 +10,9 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
 
-import com.aefyr.pxl.ColorCircle;
 import com.aefyr.pxl.ColorPicker;
 import com.aefyr.pxl.R;
+import com.aefyr.pxl.views.ColorCircle;
 
 /**
  * Created by Aefyr on 29.07.2017.
@@ -31,7 +31,7 @@ public class ColorPickPreference extends Preference implements Preference.OnPref
     @Override
     protected void onBindView(View view) {
         super.onBindView(view);
-        ((TextView)view.findViewById(R.id.preferenceName)).setText(getTitle());
+        ((TextView) view.findViewById(R.id.preferenceName)).setText(getTitle());
         colorCircle = (ColorCircle) view.findViewById(R.id.colorCircle);
         colorCircle.setColor(currentColor);
     }
@@ -55,9 +55,9 @@ public class ColorPickPreference extends Preference implements Preference.OnPref
     @Override
     protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
         super.onSetInitialValue(restorePersistedValue, defaultValue);
-        if(restorePersistedValue){
+        if (restorePersistedValue) {
             currentColor = getPersistedInt(currentColor);
-        }else {
+        } else {
             currentColor = (int) defaultValue;
         }
     }

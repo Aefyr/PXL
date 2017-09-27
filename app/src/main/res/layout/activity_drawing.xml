@@ -85,7 +85,7 @@
         android:background="@drawable/full_round_rect_bg"
         app:srcCompat="@drawable/redo" />
 
-    <com.aefyr.pxl.ColorCircle
+    <com.aefyr.pxl.views.ColorCircle
         android:id="@+id/currentColor"
         android:layout_width="64dp"
         android:layout_height="64dp"
@@ -103,14 +103,6 @@
         android:text="@string/cursor_action"
         android:textColor="@color/colorAccent"
         android:textSize="24sp"
-        android:visibility="gone" />
-
-    <com.aefyr.pxl.ToolPickView
-        android:id="@+id/currentTool"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:layout_marginStart="8dp"
-        android:elevation="@dimen/default_elevation"
         android:visibility="gone" />
 
     <LinearLayout
@@ -226,7 +218,7 @@
             android:layout_below="@+id/paletteRecycler"
             android:text="@string/pick_color" />
 
-        <com.aefyr.pxl.ColorCircle
+        <com.aefyr.pxl.views.ColorCircle
             android:id="@+id/colorCircle"
             android:layout_width="64dp"
             android:layout_height="64dp"

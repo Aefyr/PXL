@@ -10,11 +10,13 @@ import android.graphics.Matrix;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.aefyr.pxl.views.PixelImageView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -44,15 +46,15 @@ public class BitmapsMergeActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mode = intent.getIntExtra("mode", 999);
 
-        if(mode == MODE_TRANSLATE) {
+        if (mode == MODE_TRANSLATE) {
             transparentBackground = intent.getBooleanExtra("transparentBackground", false);
-        }else if(mode == MODE_MERGE) {
+        } else if (mode == MODE_MERGE) {
             try {
                 BitmapFactory.Options sizeCheckOptions = new BitmapFactory.Options();
                 sizeCheckOptions.inJustDecodeBounds = true;
 
-                BitmapFactory.decodeStream(getContentResolver().openInputStream(Uri.parse(intent.getStringExtra("uri"))), new Rect(0,0,0,0), sizeCheckOptions);
-                if(sizeCheckOptions.outHeight>512||sizeCheckOptions.outWidth>512){
+                BitmapFactory.decodeStream(getContentResolver().openInputStream(Uri.parse(intent.getStringExtra("uri"))), new Rect(0, 0, 0, 0), sizeCheckOptions);
+                if (sizeCheckOptions.outHeight > 512 || sizeCheckOptions.outWidth > 512) {
                     AlertDialog errorDialog = new AlertDialog.Builder(this).setMessage(getString(R.string.imported_bitmap_too_big)).setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialogInterface) {
@@ -83,7 +85,6 @@ public class BitmapsMergeActivity extends AppCompatActivity {
         piv = (PixelImageView) findViewById(R.id.pxlImageView);
 
 
-
         b = Bitmap.createBitmap(image.getWidth(), image.getHeight(), Bitmap.Config.ARGB_8888);
         bC = new Canvas(b);
         m = new Matrix();
@@ -94,12 +95,12 @@ public class BitmapsMergeActivity extends AppCompatActivity {
         redraw();
     }
 
-    private void setupButtons(){
+    private void setupButtons() {
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 boolean needRedraw = true;
-                switch (view.getId()){
+                switch (view.getId()) {
                     case R.id.ibu:
                         offsetY--;
                         break;
@@ -121,7 +122,7 @@ public class BitmapsMergeActivity extends AppCompatActivity {
                         needRedraw = false;
                         break;
                 }
-                if(needRedraw)
+                if (needRedraw)
                     redraw();
             }
         };
@@ -135,15 +136,15 @@ public class BitmapsMergeActivity extends AppCompatActivity {
         findViewById(R.id.cancel).setOnClickListener(onClickListener);
     }
 
-    void redraw(){
+    void redraw() {
         m.setTranslate(offsetX, offsetY);
-        if(mode == MODE_TRANSLATE) {
+        if (mode == MODE_TRANSLATE) {
             if (!transparentBackground)
                 bC.drawColor(Color.WHITE);
             else
                 bC.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
             bC.drawBitmap(image, m, null);
-        }else if(mode == MODE_MERGE){
+        } else if (mode == MODE_MERGE) {
             bC.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
             bC.drawBitmap(image, 0, 0, null);
             bC.drawBitmap(o, m, null);
@@ -152,7 +153,7 @@ public class BitmapsMergeActivity extends AppCompatActivity {
     }
 
 
-    private void done(){
+    private void done() {
         File p = new File(getFilesDir(), "td.pxl");
         Utils.saveBitmap(b, p);
         Intent i = new Intent();
@@ -161,7 +162,7 @@ public class BitmapsMergeActivity extends AppCompatActivity {
         finish();
     }
 
-    private void cancelled(){
+    private void cancelled() {
         setResult(0);
         finish();
     }
@@ -176,7 +177,8 @@ public class BitmapsMergeActivity extends AppCompatActivity {
     private float pX, pY;
     private int t = 8;
     private int prevPointerCount = 0;
-    private void setupTouch(){
+
+    private void setupTouch() {
         piv.setOnSizeChangedListener(new PixelImageView.OnSizeChangedListener() {
             @Override
             public void onSizeChanged(int width, int height) {
@@ -189,50 +191,50 @@ public class BitmapsMergeActivity extends AppCompatActivity {
                 float x = 0;
                 float y = 0;
                 int pointerCount = motionEvent.getPointerCount();
-                if(pointerCount > 1){
-                    for(int p = 0; p<pointerCount;p++){
-                        x+=motionEvent.getX(p);
-                        y+=motionEvent.getY(p);
+                if (pointerCount > 1) {
+                    for (int p = 0; p < pointerCount; p++) {
+                        x += motionEvent.getX(p);
+                        y += motionEvent.getY(p);
                     }
-                    x/=pointerCount;
-                    y/=pointerCount;
-                }else {
+                    x /= pointerCount;
+                    y /= pointerCount;
+                } else {
                     x = motionEvent.getX();
                     y = motionEvent.getY();
                 }
 
-                if(prevPointerCount!=pointerCount){
+                if (prevPointerCount != pointerCount) {
                     pX = x;
                     pY = y;
                 }
 
-                if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     pX = x;
                     pY = y;
                     return true;
                 }
 
-                if(motionEvent.getAction()==MotionEvent.ACTION_MOVE){
-                    cX+=x-pX;
-                    cY+=y-pY;
+                if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
+                    cX += x - pX;
+                    cY += y - pY;
 
-                    if(cX>t){
-                        offsetX+=cX/t;
+                    if (cX > t) {
+                        offsetX += cX / t;
                         redraw();
                         cX = 0;
                     }
-                    if(cX<-t){
-                        offsetX+=cX/t;
+                    if (cX < -t) {
+                        offsetX += cX / t;
                         redraw();
                         cX = 0;
                     }
-                    if(cY>t){
-                        offsetY+=cY/t;
+                    if (cY > t) {
+                        offsetY += cY / t;
                         redraw();
                         cY = 0;
                     }
-                    if(cY<-t){
-                        offsetY+=cY/t;
+                    if (cY < -t) {
+                        offsetY += cY / t;
                         redraw();
                         cY = 0;
                     }

@@ -66,16 +66,16 @@ public class CursorOpacityPreference extends Preference {
     @Override
     protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
         super.onSetInitialValue(restorePersistedValue, defaultValue);
-        if(restorePersistedValue){
+        if (restorePersistedValue) {
             currentOpacity = getPersistedInt(255);
-        }else {
+        } else {
             currentOpacity = (int) defaultValue;
         }
     }
 
-    private void updateValueAndPreview(){
-        float alpha = currentOpacity/255f;
-        value.setText(twoDigitsAfterPoint.format(alpha*100)+"%");
+    private void updateValueAndPreview() {
+        float alpha = currentOpacity / 255f;
+        value.setText(twoDigitsAfterPoint.format(alpha * 100) + "%");
         preview.setAlpha(alpha);
     }
 }

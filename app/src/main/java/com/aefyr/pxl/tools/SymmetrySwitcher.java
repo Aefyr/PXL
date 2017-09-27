@@ -25,11 +25,12 @@ public class SymmetrySwitcher {
     private boolean shown;
 
     private OnVisibilityChangedListener vListener;
-    public interface OnVisibilityChangedListener{
+
+    public interface OnVisibilityChangedListener {
         void onVisibilityChanged(boolean visible);
     }
 
-    public SymmetrySwitcher(ImageButton symmetryButton, LinearLayout layout, AdaptivePixelSurfaceH aps){
+    public SymmetrySwitcher(ImageButton symmetryButton, LinearLayout layout, AdaptivePixelSurfaceH aps) {
         this.aps = aps;
 
         s = symmetryButton;
@@ -37,7 +38,7 @@ public class SymmetrySwitcher {
         symmetryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(shown)
+                if (shown)
                     hide();
                 else
                     show();
@@ -52,7 +53,7 @@ public class SymmetrySwitcher {
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                switch (view.getId()){
+                switch (view.getId()) {
                     case R.id.symmetryN:
                         setSymmetry(false, AdaptivePixelSurfaceH.SymmetryType.HORIZONTAL);
                         break;
@@ -74,40 +75,42 @@ public class SymmetrySwitcher {
     }
 
 
-
-    private void setSymmetry(boolean enabled, AdaptivePixelSurfaceH.SymmetryType type){
-        if(enabled==aps.isSymmetryEnabled()&&type==aps.getSymmetryType()) {
+    private void setSymmetry(boolean enabled, AdaptivePixelSurfaceH.SymmetryType type) {
+        if (enabled == aps.isSymmetryEnabled() && type == aps.getSymmetryType()) {
             hide();
             return;
         }
 
         aps.setSymmetryEnabled(enabled, type);
 
-        if(!enabled){
+        if (!enabled) {
             dark(no);
             normal(h, v);
             s.setImageResource(R.drawable.symmetryoff);
+            Utils.toaster(aps.getContext(), aps.getResources().getString(R.string.symmetry_none));
             hide();
             return;
         }
-        switch (type){
+        switch (type) {
             case HORIZONTAL:
                 dark(h);
                 normal(v, no);
                 s.setImageResource(R.drawable.symmetryh);
+                Utils.toaster(aps.getContext(), aps.getResources().getString(R.string.symmetry_h));
                 break;
             case VERTICAL:
                 dark(v);
                 normal(h, no);
                 s.setImageResource(R.drawable.symmetryv);
+                Utils.toaster(aps.getContext(), aps.getResources().getString(R.string.symmetry_v));
                 break;
         }
 
         hide();
     }
 
-    public void hide(){
-        if(!shown)
+    public void hide() {
+        if (!shown)
             return;
 
         layout.setVisibility(View.GONE);
@@ -115,41 +118,41 @@ public class SymmetrySwitcher {
         listenerEvent();
     }
 
-    public void show(){
-        if(shown)
+    public void show() {
+        if (shown)
             return;
         layout.setVisibility(View.VISIBLE);
         shown = true;
         listenerEvent();
     }
 
-    public boolean shown(){
+    public boolean shown() {
         return shown;
     }
 
-    private void dark(ImageButton... buttons){
-        for(ImageButton b: buttons) {
+    private void dark(ImageButton... buttons) {
+        for (ImageButton b : buttons) {
             b.setBackgroundResource(R.drawable.full_round_rect_bg_dark);
 
-            if(Build.VERSION.SDK_INT>=21)
+            if (Build.VERSION.SDK_INT >= 21)
                 b.setElevation(0);
         }
     }
 
-    private void normal(ImageButton... buttons){
-        for(ImageButton b: buttons) {
+    private void normal(ImageButton... buttons) {
+        for (ImageButton b : buttons) {
             b.setBackgroundResource(R.drawable.sketchbook_style_bg_selector_2);
-            if(Build.VERSION.SDK_INT>=21)
+            if (Build.VERSION.SDK_INT >= 21)
                 b.setElevation(Utils.dpToPx(18, aps.getResources()));
         }
     }
 
-    public void setOnVisibilityChangedListener(OnVisibilityChangedListener listener){
+    public void setOnVisibilityChangedListener(OnVisibilityChangedListener listener) {
         vListener = listener;
     }
 
-    private void listenerEvent(){
-        if(vListener!=null)
+    private void listenerEvent() {
+        if (vListener != null)
             vListener.onVisibilityChanged(shown);
     }
 }

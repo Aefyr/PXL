@@ -55,7 +55,7 @@
 
     <!-- Drawing Activity -->
     <string name="canvas_options">Холст</string>
-    <string name="hisotory_size">Размер истории - %d</string>
+    <string name="history_size">Размер истории - %d</string>
 
     <!-- Preferences -->
     <string name="pixel_surface">Холст</string>
@@ -108,4 +108,7 @@
     <string name="close">Закрыть</string>
     <string name="palettes_restored">Стандартные палитры восстановлены</string>
     <string name="restore_default_palettes">Восстановить стандартные палитры</string>
+    <string name="symmetry_h">Горизонтальная Симметрия</string>
+    <string name="symmetry_none">Симметрия Отключена</string>
+    <string name="symmetry_v">Вертикальная Симметрия</string>
 </resources>

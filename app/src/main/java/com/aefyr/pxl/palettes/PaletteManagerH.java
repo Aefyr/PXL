@@ -10,10 +10,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aefyr.pxl.AdaptivePixelSurfaceH;
-import com.aefyr.pxl.ColorCircle;
 import com.aefyr.pxl.ColorPickerH;
 import com.aefyr.pxl.R;
 import com.aefyr.pxl.Utils;
+import com.aefyr.pxl.views.ColorCircle;
 
 /**
  * Created by Aefyr on 03.08.2017.
@@ -24,7 +24,7 @@ public class PaletteManagerH {
     private AdaptivePixelSurfaceH aps;
     private ColorCircle colorCircleMain;
     private Palette2 palette;
-    private ColorSelectionRecycleAdapter adapter;
+    private ColorSelectionRecyclerAdapter adapter;
     private ColorCircle colorCircleCur;
     private TextView paletteName;
     private ColorPickerH colorPicker;
@@ -33,17 +33,19 @@ public class PaletteManagerH {
 
     private int currentColor = Color.RED;
 
-    public interface OnPaletteChangeRequestListener{
+    public interface OnPaletteChangeRequestListener {
         void onPaletteChangeRequest();
     }
+
     private OnPaletteChangeRequestListener listener;
 
     private OnVisibilityChangedListener vListener;
-    public interface OnVisibilityChangedListener{
+
+    public interface OnVisibilityChangedListener {
         void onVisibilityChanged(boolean visible);
     }
 
-    public  PaletteManagerH(RelativeLayout paletteLayoutRoot, ColorCircle mainColorCircle, AdaptivePixelSurfaceH apsH, final OnPaletteChangeRequestListener listener){
+    public PaletteManagerH(RelativeLayout paletteLayoutRoot, ColorCircle mainColorCircle, AdaptivePixelSurfaceH apsH, final OnPaletteChangeRequestListener listener) {
         this.listener = listener;
         layout = paletteLayoutRoot;
         aps = apsH;
@@ -59,7 +61,7 @@ public class PaletteManagerH {
         colorCircleMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!shown)
+                if (!shown)
                     show();
                 else
                     hide();
@@ -90,11 +92,11 @@ public class PaletteManagerH {
         });
 
         RecyclerView recycler = (RecyclerView) paletteLayoutRoot.findViewById(R.id.paletteRecycler);
-        recycler.setLayoutManager(new GridLayoutManager(paletteLayoutRoot.getContext(), (int) (Utils.getScreenWidth(paletteLayoutRoot.getResources())/Utils.dpToPx(64, paletteLayoutRoot.getResources()))));
-        adapter = new ColorSelectionRecycleAdapter(paletteLayoutRoot.getContext(), palette);
+        recycler.setLayoutManager(new GridLayoutManager(paletteLayoutRoot.getContext(), (int) (Utils.getScreenWidth(paletteLayoutRoot.getResources()) / Utils.dpToPx(64, paletteLayoutRoot.getResources()))));
+        adapter = new ColorSelectionRecyclerAdapter(paletteLayoutRoot.getContext(), palette);
         recycler.setAdapter(adapter);
 
-        adapter.setOnColorInteractionListener(new ColorSelectionRecycleAdapter.OnColorInteractionListener() {
+        adapter.setOnColorInteractionListener(new ColorSelectionRecyclerAdapter.OnColorInteractionListener() {
             @Override
             public void onColorClick(int index) {
                 setCurrentColor(palette.getColor(index));
@@ -109,37 +111,37 @@ public class PaletteManagerH {
         });
     }
 
-    public void setPalette(Palette2 palette){
+    public void setPalette(Palette2 palette) {
         this.palette = palette;
         aps.getProject().setPalette(palette);
         adapter.setPalette(palette);
         paletteName.setText(palette.getName());
     }
 
-    public Palette2 getPalette(){
+    public Palette2 getPalette() {
         return palette;
     }
 
 
-    public void setCurrentColor(int color){
+    public void setCurrentColor(int color) {
         aps.setColor(color);
         this.currentColor = color;
         colorCircleMain.setColor(color);
         colorCircleCur.setColor(color);
     }
 
-    public void setOnVisibilityChangedListener(OnVisibilityChangedListener listener){
+    public void setOnVisibilityChangedListener(OnVisibilityChangedListener listener) {
         vListener = listener;
     }
 
-    private void show(){
+    private void show() {
         layout.setVisibility(View.VISIBLE);
         shown = true;
         listenerEvent();
     }
 
-    public void hide(){
-        if(!shown)
+    public void hide() {
+        if (!shown)
             return;
 
         layout.setVisibility(View.GONE);
@@ -147,12 +149,12 @@ public class PaletteManagerH {
         listenerEvent();
     }
 
-    private void listenerEvent(){
-        if(listener!=null)
+    private void listenerEvent() {
+        if (listener != null)
             vListener.onVisibilityChanged(shown);
     }
 
-    public boolean shown(){
+    public boolean shown() {
         return shown;
     }
 

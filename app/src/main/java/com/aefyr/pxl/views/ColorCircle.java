@@ -1,4 +1,4 @@
-package com.aefyr.pxl;
+package com.aefyr.pxl.views;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -12,6 +12,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewOutlineProvider;
 
+import com.aefyr.pxl.Utils;
+
 /**
  * Created by Aefyr on 02.07.2017.
  */
@@ -20,6 +22,7 @@ public class ColorCircle extends View {
     private Paint p;
     int color;
     int borderColor;
+
     public ColorCircle(Context context) {
         super(context);
         initialize();
@@ -30,7 +33,7 @@ public class ColorCircle extends View {
         initialize();
     }
 
-    void initialize(){
+    void initialize() {
         p = new Paint();
         color = Color.WHITE;
         borderColor = Color.parseColor("#ffb0bec5");
@@ -48,16 +51,16 @@ public class ColorCircle extends View {
     }
 
     @TargetApi(21)
-    private class ColorCircleOutlineProvider extends ViewOutlineProvider{
+    private class ColorCircleOutlineProvider extends ViewOutlineProvider {
 
         @Override
         public void getOutline(View view, Outline outline) {
-            int x =getWidth()/12;
-            outline.setOval(x, x, getWidth()-x, getHeight()-x);
+            int x = getWidth() / 12;
+            outline.setOval(x, x, getWidth() - x, getHeight() - x);
         }
     }
 
-    public void setColor(int color){
+    public void setColor(int color) {
         this.color = color;
         invalidate();
     }
@@ -69,8 +72,8 @@ public class ColorCircle extends View {
         int y = canvas.getHeight();
         p.setColor(color);
         p.setStyle(Paint.Style.FILL_AND_STROKE);
-        p.setStrokeWidth(x/32);
-        canvas.drawCircle(x/2, y/2, x/2f-x/12f, p);
+        p.setStrokeWidth(x / 32);
+        canvas.drawCircle(x / 2, y / 2, x / 2f - x / 12f, p);
 
         if (Build.VERSION.SDK_INT < 21) {
             p.setColor(Utils.invertColor(color));

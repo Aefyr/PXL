@@ -10,7 +10,7 @@ public class ToolPreview {
     int toolIconId;
     AdaptivePixelSurfaceH.Tool tool;
 
-    public ToolPreview(int toolIconRes, AdaptivePixelSurfaceH.Tool tool){
+    public ToolPreview(int toolIconRes, AdaptivePixelSurfaceH.Tool tool) {
         this.toolIconId = toolIconRes;
         this.tool = tool;
     }

@@ -10,9 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.aefyr.pxl.palettes.PaletteMaker;
 import com.aefyr.pxl.R;
 import com.aefyr.pxl.Utils;
+import com.aefyr.pxl.palettes.PaletteMaker;
 
 /**
  * A simple {@link Fragment} subclass.

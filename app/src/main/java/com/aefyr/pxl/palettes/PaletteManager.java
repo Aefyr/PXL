@@ -14,7 +14,7 @@ import com.aefyr.pxl.R;
  * Created by Aefyr on 25.07.2017.
  */
 
-public class PaletteManager{
+public class PaletteManager {
     private AlertDialog paletteManagerDialog;
     private TextView paletteName;
     private PaletteView3 paletteView;
@@ -26,17 +26,17 @@ public class PaletteManager{
     OnCloseListener listener;
     Context c;
 
-    public interface OnCloseListener{
+    public interface OnCloseListener {
         void onClose();
     }
 
-    public void showPaletteManagerDialog(final AppCompatActivity a, final Palette2 palette){
-        if(paletteManagerDialog==null) {
+    public void showPaletteManagerDialog(final AppCompatActivity a, final Palette2 palette) {
+        if (paletteManagerDialog == null) {
             paletteManagerDialog = new AlertDialog.Builder(a).setView(R.layout.palette).create();
         }
 
         paletteManagerDialog.show();
-        if(first) {
+        if (first) {
             paletteName = (TextView) paletteManagerDialog.findViewById(R.id.paletteName);
             paletteView = (PaletteView3) paletteManagerDialog.findViewById(R.id.pv2);
 
@@ -46,7 +46,7 @@ public class PaletteManager{
                     colorPicker(positionInPalette);
                 }
             });
-            if(listener!=null){
+            if (listener != null) {
                 paletteManagerDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                     @Override
                     public void onCancel(DialogInterface dialogInterface) {
@@ -70,7 +70,7 @@ public class PaletteManager{
 
     }
 
-    private void colorPicker(final int position){
+    private void colorPicker(final int position) {
         final AlertDialog colorEditDialog = new AlertDialog.Builder(c).setView(R.layout.color_picker_2).setPositiveButton(c.getString(R.string.done), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -83,32 +83,33 @@ public class PaletteManager{
     }
 
 
-    public void setPalette(Palette2 palette){
-        if(!dialogShown)
+    public void setPalette(Palette2 palette) {
+        if (!dialogShown)
             return;
         paletteChanged(palette);
 
     }
 
 
-    private void paletteChanged(Palette2 newPalette){
+    private void paletteChanged(Palette2 newPalette) {
         currentPalette = newPalette;
         paletteName.setText(currentPalette.getName());
         paletteView.setPalette(currentPalette);
     }
 
-    public void closeDialog(){
-        if(!dialogShown)
+    public void closeDialog() {
+        if (!dialogShown)
             return;
         paletteManagerDialog.cancel();
     }
 
-    public void setOnCloseListener(OnCloseListener listener){
+    public void setOnCloseListener(OnCloseListener listener) {
         this.listener = listener;
     }
 
     private boolean hideSelectPaletteOption;
-    public void hideSelectPaletteOption(boolean a){
+
+    public void hideSelectPaletteOption(boolean a) {
         hideSelectPaletteOption = a;
     }
 }

@@ -7,8 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.aefyr.pxl.PixelImageView;
 import com.aefyr.pxl.R;
+import com.aefyr.pxl.views.PixelImageView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,23 +27,24 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
     private OnProjectClickListener onProjectClickListener;
     SimpleDateFormat simpleDateFormat;
 
-    public interface OnProjectClickListener{
+    public interface OnProjectClickListener {
         void onProjectClick(Project project, int id);
+
         void onProjectLongClick(int id, Project project);
     }
 
-    public void setOnProjectClickListener(OnProjectClickListener listener){
+    public void setOnProjectClickListener(OnProjectClickListener listener) {
         onProjectClickListener = listener;
     }
 
-    public ProjectsRecycleAdapter(Context c, ArrayList<Project> projects){
+    public ProjectsRecycleAdapter(Context c, ArrayList<Project> projects) {
         inflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         simpleDateFormat = new SimpleDateFormat("dd.MM.yy HH:mm");
         this.projects = projects;
         Collections.sort(projects, new LastModifiedComparator());
     }
 
-    public void setItems(ArrayList<Project> projects){
+    public void setItems(ArrayList<Project> projects) {
         this.projects = projects;
         notifyDataSetChanged();
     }
@@ -79,48 +80,49 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
 
     @Override
     public int getItemCount() {
-        if(projects==null)
+        if (projects == null)
             return 0;
         return projects.size();
     }
 
-    public Project getItem(int index){
+    public Project getItem(int index) {
         return projects.get(index);
     }
 
-    public void addItem(Project project){
+    public void addItem(Project project) {
         projects.add(0, project);
         notifyItemInserted(0);
     }
 
-    public void moveItem(int index, int newIndex){
-        if(index<0||index>=projects.size()||newIndex<0||newIndex>=projects.size())
+    public void moveItem(int index, int newIndex) {
+        if (index < 0 || index >= projects.size() || newIndex < 0 || newIndex >= projects.size())
             return;
         projects.add(newIndex, projects.remove(index));
         notifyItemMoved(index, newIndex);
     }
 
-    public void removeItem(int index){
+    public void removeItem(int index) {
         projects.remove(index);
         notifyItemRemoved(index);
     }
 
-    private class LastModifiedComparator implements Comparator<Project>{
+    private class LastModifiedComparator implements Comparator<Project> {
         @Override
         public int compare(Project project, Project t1) {
-            if(project.projectDirectory.lastModified()<t1.projectDirectory.lastModified())
+            if (project.projectDirectory.lastModified() < t1.projectDirectory.lastModified())
                 return 1;
-            if(project.projectDirectory.lastModified()>t1.projectDirectory.lastModified())
+            if (project.projectDirectory.lastModified() > t1.projectDirectory.lastModified())
                 return -1;
             return 0;
         }
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder {
         private PixelImageView preview;
         private TextView name;
         private TextView resolution;
         private TextView lastModified;
+
         public ViewHolder(View itemView) {
             super(itemView);
             preview = (PixelImageView) itemView.findViewById(R.id.preview);

@@ -16,19 +16,19 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.aefyr.pxl.TCA.TutorialActivity;
 import com.aefyr.pxl.fragments.GalleryFragment;
 import com.aefyr.pxl.fragments.PalettesFragment;
 import com.aefyr.pxl.fragments.PreferencesFragment;
 import com.aefyr.pxl.palettes.PaletteMaker;
 import com.aefyr.pxl.palettes.PaletteUtils;
-import com.aefyr.pxl.TCA.TutorialActivity;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private android.app.FragmentManager fragmentManager;
 
-    private enum FRAGMENT{
+    private enum FRAGMENT {
         GALLERY, TEST, PREFERENCES
     }
 
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if(preferences.getBoolean("first_start", true)){
+        if (preferences.getBoolean("first_start", true)) {
             preferences.edit().putBoolean("first_start", false).apply();
             PaletteUtils.initialize(this);
             PaletteUtils.defaultPalette();
@@ -141,11 +141,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     // FIXME: 17.07.2017 This is retarded
-    void loadFragment(FRAGMENT fragment){
-        switch (fragment){
+    void loadFragment(FRAGMENT fragment) {
+        switch (fragment) {
             case GALLERY:
                 GalleryFragment gallery = (GalleryFragment) fragmentManager.findFragmentByTag("Gallery");
-                if(gallery==null){
+                if (gallery == null) {
                     gallery = new GalleryFragment();
                     //fragmentManager.beginTransaction().add(R.id.container, gallery, "Gallery").commit();
                     System.out.println("created gallery");
@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case TEST:
                 PalettesFragment palettes = (PalettesFragment) fragmentManager.findFragmentByTag("Palettes");
-                if(palettes==null){
+                if (palettes == null) {
                     palettes = new PalettesFragment();
                     //fragmentManager.beginTransaction().add(R.id.container, test, "Test").commit();
                     System.out.println("created test");
@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case PREFERENCES:
                 PreferencesFragment preferences = (PreferencesFragment) fragmentManager.findFragmentByTag("Preferences");
-                if(preferences==null){
+                if (preferences == null) {
                     preferences = new PreferencesFragment();
                     //fragmentManager.beginTransaction().add(R.id.container, test, "Test").commit();
                     System.out.println("created test");

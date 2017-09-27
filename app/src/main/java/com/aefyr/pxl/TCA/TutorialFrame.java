@@ -11,7 +11,7 @@ public class TutorialFrame {
     String text;
     int image;
 
-    public TutorialFrame(String title, String text, @DrawableRes int image){
+    public TutorialFrame(String title, String text, @DrawableRes int image) {
         this.title = title;
         this.text = text;
         this.image = image;

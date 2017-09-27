@@ -25,7 +25,7 @@ import com.aefyr.pxl.Utils;
 public class TransparentColorBackgroundPreference extends Preference {
 
     private Spinner optionsSpinner;
-    private int currentValue = 111;
+    private int currentValue = 1;
     private boolean firstSpinnerSelection = true;
 
     private Button colorPickButton;
@@ -53,7 +53,7 @@ public class TransparentColorBackgroundPreference extends Preference {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         optionsSpinner.setAdapter(adapter);
         optionsSpinner.setPrompt(getContext().getString(R.string.trans_canvas_bg));
-        switch (currentValue){
+        switch (currentValue) {
             case 111:
                 optionsSpinner.setSelection(0);
                 break;
@@ -70,19 +70,19 @@ public class TransparentColorBackgroundPreference extends Preference {
         optionsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if(firstSpinnerSelection){
+                if (firstSpinnerSelection) {
                     firstSpinnerSelection = false;
                     return;
                 }
-                switch (i){
+                switch (i) {
                     case 0:
                         colorConfig.setVisibility(View.GONE);
-                        currentValue = 111;
+                        currentValue = 1;
                         persistInt(currentValue);
                         break;
                     case 1:
                         colorConfig.setVisibility(View.GONE);
-                        currentValue = 322;
+                        currentValue = 2;
                         persistInt(currentValue);
                         break;
                     case 2:
@@ -101,12 +101,12 @@ public class TransparentColorBackgroundPreference extends Preference {
         });
     }
 
-    private void updateColor(){
+    private void updateColor() {
         colorPickButton.setBackgroundColor(currentValue);
         colorPickButton.setTextColor(Utils.invertColor(currentValue));
     }
 
-    void openColorEditDialog(){
+    void openColorEditDialog() {
         final AlertDialog colorEditDialog = new AlertDialog.Builder(getContext()).setView(R.layout.color_picker).setPositiveButton(getContext().getString(R.string.done), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -118,17 +118,17 @@ public class TransparentColorBackgroundPreference extends Preference {
         }).setNegativeButton(getContext().getString(R.string.cancel), null).setTitle(getContext().getString(R.string.edit_color)).create();
         colorEditDialog.show();
         int c = Color.WHITE;
-        if(currentValue<0)
+        if (currentValue < 0)
             c = currentValue;
-        colorPicker = new ColorPicker(colorEditDialog.getWindow(),c);
+        colorPicker = new ColorPicker(colorEditDialog.getWindow(), c);
     }
 
     @Override
     protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
         super.onSetInitialValue(restorePersistedValue, defaultValue);
-        if(restorePersistedValue){
+        if (restorePersistedValue) {
             currentValue = getPersistedInt(currentValue);
-        }else {
+        } else {
             currentValue = (int) defaultValue;
         }
     }

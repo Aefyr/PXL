@@ -24,7 +24,7 @@ public class PalettePickRecyclerAdapter extends RecyclerView.Adapter<PalettePick
     OnPaletteInteractionListener listener;
     public final static int AUTO_POSITION = 3221337;
 
-    public PalettePickRecyclerAdapter(Context c, ArrayList<String> paletteNames){
+    public PalettePickRecyclerAdapter(Context c, ArrayList<String> paletteNames) {
         inflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.paletteNames = paletteNames;
         Collections.sort(paletteNames);
@@ -45,14 +45,14 @@ public class PalettePickRecyclerAdapter extends RecyclerView.Adapter<PalettePick
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(listener!=null)
+                if (listener != null)
                     listener.onPaletteClick(getItem(holder.getAdapterPosition()), holder.getAdapterPosition());
             }
         });
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                if(listener==null)
+                if (listener == null)
                     return false;
                 listener.onPaletteLongClick(getItem(holder.getAdapterPosition()), holder.getAdapterPosition());
                 return true;
@@ -60,25 +60,27 @@ public class PalettePickRecyclerAdapter extends RecyclerView.Adapter<PalettePick
         });
     }
 
-    public void setOnPaletteInteractionListener(OnPaletteInteractionListener listener){
+    public void setOnPaletteInteractionListener(OnPaletteInteractionListener listener) {
         this.listener = listener;
     }
 
-    public Palette2 getItem(int index){
+    public Palette2 getItem(int index) {
         return PaletteUtils.loadPalette(paletteNames.get(index));
     }
 
-    public void addItem(String paletteName, int index){
-        if(index==AUTO_POSITION) {
+    public int addItem(String paletteName, int index) {
+        boolean autoPositioned = false;
+        if (index == AUTO_POSITION) {
             index = 0;
-            while(index<paletteNames.size()&&paletteName.compareTo(paletteNames.get(index))>0)
+            while (index < paletteNames.size() && paletteName.compareTo(paletteNames.get(index)) > 0)
                 index++;
         }
         paletteNames.add(index, paletteName);
         notifyItemInserted(index);
+        return index;
     }
 
-    public void removeItem(int index){
+    public void removeItem(int index) {
         paletteNames.remove(index);
         notifyItemRemoved(index);
     }
@@ -88,9 +90,10 @@ public class PalettePickRecyclerAdapter extends RecyclerView.Adapter<PalettePick
         return paletteNames.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder {
         private PalettePreviewView previewView;
         private TextView paletteName;
+
         public ViewHolder(View itemView) {
             super(itemView);
             previewView = (PalettePreviewView) itemView.findViewById(R.id.palettePreview);
@@ -98,17 +101,18 @@ public class PalettePickRecyclerAdapter extends RecyclerView.Adapter<PalettePick
         }
     }
 
-    public interface OnPaletteInteractionListener{
-        void onPaletteLongClick(Palette2 palette,int index);
+    public interface OnPaletteInteractionListener {
+        void onPaletteLongClick(Palette2 palette, int index);
+
         void onPaletteClick(Palette2 palette, int index);
     }
 
-    private class LastModifiedComparator implements Comparator<Palette2>{
+    private class LastModifiedComparator implements Comparator<Palette2> {
         @Override
         public int compare(Palette2 project, Palette2 t1) {
-            if(project.lastModified()<t1.lastModified())
+            if (project.lastModified() < t1.lastModified())
                 return 1;
-            if(project.lastModified()>t1.lastModified())
+            if (project.lastModified() > t1.lastModified())
                 return -1;
             return 0;
         }

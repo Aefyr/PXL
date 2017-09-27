@@ -4,11 +4,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+
+import com.aefyr.pxl.views.PixelImageView;
 
 import java.io.File;
 
@@ -16,6 +18,7 @@ public class ColorSwapActivity extends AppCompatActivity {
 
     PixelImageView pixelImageView;
     Bitmap image;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,18 +47,17 @@ public class ColorSwapActivity extends AppCompatActivity {
         Switch livePreviewSwitch = (Switch) findViewById(R.id.livePreviewSwitch);
 
         colorPicker.applyColorSwap();
-        if(colorPicker.isLivePreviewAcceptable()) {
+        if (colorPicker.isLivePreviewAcceptable()) {
             colorPicker.setLivePreviewEnabled(true);
             livePreviewSwitch.setChecked(true);
-        }
-        else colorPicker.setLivePreviewEnabled(false);
+        } else colorPicker.setLivePreviewEnabled(false);
 
 
         livePreviewSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 colorPicker.setLivePreviewEnabled(b);
-                if(b) {
+                if (b) {
                     colorPicker.applyColorSwap();
                     pixelImageView.invalidate();
                 }
@@ -84,7 +86,6 @@ public class ColorSwapActivity extends AppCompatActivity {
             }
         });
     }
-
 
 
     @Override

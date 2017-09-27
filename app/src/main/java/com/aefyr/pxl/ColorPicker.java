@@ -5,6 +5,9 @@ import android.graphics.Color;
 import android.view.Window;
 import android.widget.SeekBar;
 
+import com.aefyr.pxl.views.ColorCircle;
+import com.aefyr.pxl.views.ColorPickerView;
+
 /**
  * Created by Aefyr on 17.06.2017.
  */
@@ -21,9 +24,9 @@ public class ColorPicker {
     private ColorCircle newColorCircle;
     private ColorCircle oldColorCircle;
 
-    float[] color = {0,0,0};
+    float[] color = {0, 0, 0};
 
-    public ColorPicker(ColorPickerView hueView, SeekBar hueBar, ColorPickerView saturationView, SeekBar saturationBar, ColorPickerView valueView, SeekBar valueBar, ColorCircle newColorCircle, int currentColor){
+    public ColorPicker(ColorPickerView hueView, SeekBar hueBar, ColorPickerView saturationView, SeekBar saturationBar, ColorPickerView valueView, SeekBar valueBar, ColorCircle newColorCircle, int currentColor) {
         this.hueView = hueView;
         this.hueBar = hueBar;
         this.saturationView = saturationView;
@@ -37,7 +40,7 @@ public class ColorPicker {
         initialize();
     }
 
-    public ColorPicker(Window colorPickerView, int startColor){
+    public ColorPicker(Window colorPickerView, int startColor) {
         hueView = (ColorPickerView) colorPickerView.findViewById(R.id.colorPickerHue);
         hueBar = (SeekBar) colorPickerView.findViewById(R.id.seekBarHue);
         saturationView = (ColorPickerView) colorPickerView.findViewById(R.id.colorPickerSat);
@@ -52,16 +55,16 @@ public class ColorPicker {
     }
 
     //Hai, hai, this workflow sucks, but I gonna write a new ColorPicker analogue soon anyway
-    private void setStartColor(int startColor){
+    private void setStartColor(int startColor) {
         oldColorCircle.setColor(startColor);
 
         Color.colorToHSV(startColor, color);
         hueBar.setProgress((int) color[0]);
-        saturationBar.setProgress((int)(color[1]*100));
-        valueBar.setProgress((int)(color[2]*100));
+        saturationBar.setProgress((int) (color[1] * 100));
+        valueBar.setProgress((int) (color[2] * 100));
     }
 
-    private void initialize(){
+    private void initialize() {
         newColorCircle.setColor(Color.HSVToColor(color));
         saturationView.color = valueView.color = color;
 
@@ -72,12 +75,12 @@ public class ColorPicker {
         SeekBar.OnSeekBarChangeListener onSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                if(seekBar == hueBar){
+                if (seekBar == hueBar) {
                     color[0] = i;
-                }else if (seekBar == saturationBar){
-                    color[1] = (float)i * 0.01f;
-                }else if(seekBar == valueBar){
-                    color[2] = (float)i * 0.01f;
+                } else if (seekBar == saturationBar) {
+                    color[1] = (float) i * 0.01f;
+                } else if (seekBar == valueBar) {
+                    color[2] = (float) i * 0.01f;
                 }
 
                 updateColorViews();
@@ -101,17 +104,17 @@ public class ColorPicker {
     }
 
 
-    private void updateColorViews(){
+    private void updateColorViews() {
         saturationView.invalidate();
         valueView.invalidate();
         newColorCircle.setColor(Color.HSVToColor(color));
-        if(livePreview){
+        if (livePreview) {
             applyColorSwap();
             listener.onLivePreviewUpdate();
         }
     }
 
-    public int getColor(){
+    public int getColor() {
         return Color.HSVToColor(color);
     }
 
@@ -120,25 +123,25 @@ public class ColorPicker {
     private OnLivePreviewUpdateListener listener;
     private ColorSwapper colorSwapper;
 
-    void useColorSwap(Bitmap bitmap, int colorToSwap, OnLivePreviewUpdateListener listener){
+    void useColorSwap(Bitmap bitmap, int colorToSwap, OnLivePreviewUpdateListener listener) {
         this.listener = listener;
         colorSwapper = new ColorSwapper(bitmap, colorToSwap);
     }
 
-    void setLivePreviewEnabled(boolean enabled){
+    void setLivePreviewEnabled(boolean enabled) {
         livePreview = enabled;
     }
 
-    void applyColorSwap(){
+    void applyColorSwap() {
         colorSwapper.swapColor(Color.HSVToColor(color));
     }
 
-    boolean isLivePreviewAcceptable(){
+    boolean isLivePreviewAcceptable() {
         applyColorSwap();
         return colorSwapper.getDeltaTime() <= 60;
     }
 
-    interface OnLivePreviewUpdateListener{
+    interface OnLivePreviewUpdateListener {
         void onLivePreviewUpdate();
     }
 }

@@ -17,7 +17,7 @@ public class TutorialViewPagerAdapter extends PagerAdapter {
 
     TutorialFrame[] frames;
 
-    public TutorialViewPagerAdapter(TutorialFrame[] frames){
+    public TutorialViewPagerAdapter(TutorialFrame[] frames) {
         this.frames = frames;
     }
 
@@ -26,9 +26,9 @@ public class TutorialViewPagerAdapter extends PagerAdapter {
         LayoutInflater inflater = LayoutInflater.from(container.getContext());
         View page = inflater.inflate(R.layout.tutorial_page, null);
 
-        ((TextView)page.findViewById(R.id.tutotialTitle)).setText(frames[position].title);
-        ((TextView)page.findViewById(R.id.tutorialText)).setText(frames[position].text);
-        ((ImageView)page.findViewById(R.id.tutotialImage)).setImageResource(frames[position].image);
+        ((TextView) page.findViewById(R.id.tutotialTitle)).setText(frames[position].title);
+        ((TextView) page.findViewById(R.id.tutorialText)).setText(frames[position].text);
+        ((ImageView) page.findViewById(R.id.tutotialImage)).setImageResource(frames[position].image);
 
         container.addView(page);
 

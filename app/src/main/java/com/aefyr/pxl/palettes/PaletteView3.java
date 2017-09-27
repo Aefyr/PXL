@@ -34,8 +34,8 @@ public class PaletteView3 extends View implements Palette2.OnPaletteChangeListen
         initialize();
     }
 
-    public void setPalette(Palette2 palette){
-        if(this.palette!=null)
+    public void setPalette(Palette2 palette) {
+        if (this.palette != null)
             this.palette.removeOnPaletteChangedListener(this);
 
         this.palette = palette;
@@ -44,22 +44,22 @@ public class PaletteView3 extends View implements Palette2.OnPaletteChangeListen
         invalidate();
     }
 
-    private void loadColorsFromPalette(){
+    private void loadColorsFromPalette() {
         int[] colors = new int[16];
-        for(int i = 0;i<16;i++){
+        for (int i = 0; i < 16; i++) {
             colors[i] = palette.getColor(i);
         }
         bitmap.setPixels(colors, 0, 4, 0, 0, 4, 4);
 
         float[] positions = new float[16];
-        for(int i = 0; i<16; i++){
-            positions[i]= ((float) i/16f);
+        for (int i = 0; i < 16; i++) {
+            positions[i] = ((float) i / 16f);
         }
         float px = Utils.dpToPx(256, getResources());
-        gradient = new LinearGradient(0,0, px,px,colors, positions, Shader.TileMode.REPEAT);
+        gradient = new LinearGradient(0, 0, px, px, colors, positions, Shader.TileMode.REPEAT);
     }
 
-    void initialize(){
+    void initialize() {
         bitmap = Bitmap.createBitmap(4, 4, Bitmap.Config.ARGB_8888);
         scaleMatrix = new Matrix();
         noAAPaint = new Paint();
@@ -70,10 +70,10 @@ public class PaletteView3 extends View implements Palette2.OnPaletteChangeListen
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        colorSizeX = (float)w/4f;
-        colorSizeY = (float)h/4f;
+        colorSizeX = (float) w / 4f;
+        colorSizeY = (float) h / 4f;
         scaleMatrix.setScale(colorSizeX, colorSizeY);
-        noAAPaint.setStrokeWidth((int)colorSizeX/10);
+        noAAPaint.setStrokeWidth((int) colorSizeX / 10);
     }
 
     @Override
@@ -109,32 +109,32 @@ public class PaletteView3 extends View implements Palette2.OnPaletteChangeListen
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if(event.getAction()==MotionEvent.ACTION_DOWN)
+        if (event.getAction() == MotionEvent.ACTION_DOWN)
             return true;
-        if(event.getAction()==MotionEvent.ACTION_UP){
+        if (event.getAction() == MotionEvent.ACTION_UP) {
             calculateClickedColor(event.getX(), event.getY());
             return true;
         }
         return super.onTouchEvent(event);
     }
 
-    public interface OnColorClickListener{
+    public interface OnColorClickListener {
         void onColorClick(int positionInPalette);
     }
 
     private OnColorClickListener listener;
 
-    public void setOnColorClickListener(OnColorClickListener listener){
+    public void setOnColorClickListener(OnColorClickListener listener) {
         this.listener = listener;
     }
 
-    void calculateClickedColor(float x, float y){
-        int column = (int) (x/colorSizeX);
-        int row = (int) (y/colorSizeY);
-        int id = row*4+column;
-        System.out.println("PV3: Clicked currentColor with id "+id);
-        if(id<palette.getSize()) {
-            if(listener!=null)
+    void calculateClickedColor(float x, float y) {
+        int column = (int) (x / colorSizeX);
+        int row = (int) (y / colorSizeY);
+        int id = row * 4 + column;
+        System.out.println("PV3: Clicked currentColor with id " + id);
+        if (id < palette.getSize()) {
+            if (listener != null)
                 listener.onColorClick(id);
         }
     }
@@ -142,7 +142,7 @@ public class PaletteView3 extends View implements Palette2.OnPaletteChangeListen
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if(palette!=null)
+        if (palette != null)
             palette.removeOnPaletteChangedListener(this);
     }
 

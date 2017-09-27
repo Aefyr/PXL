@@ -12,8 +12,8 @@ import android.os.Build;
  * Created by Aefyr on 31.07.2017.
  */
 
-public class MultiShapeH extends ToolH{
-    enum Shape{
+public class MultiShapeH extends ToolH {
+    enum Shape {
         LINE, RECT, CIRCLE
     }
 
@@ -24,7 +24,6 @@ public class MultiShapeH extends ToolH{
     int rounding = 0;
 
 
-
     private Bitmap backupBitmap;
     private Bitmap shapeBitmap;
     private Canvas shapeCanvas;
@@ -32,7 +31,7 @@ public class MultiShapeH extends ToolH{
     private static final float[] angles = {0, 30, 45, 60, 90, 120, 135, 150, 180};
 
 
-    MultiShapeH(AdaptivePixelSurfaceH aps){
+    MultiShapeH(AdaptivePixelSurfaceH aps) {
         this.aps = aps;
         overlayPaint = new Paint();
         overlayPaint.setAntiAlias(false);
@@ -43,8 +42,8 @@ public class MultiShapeH extends ToolH{
     }
 
     @Override
-    void startDrawing(float x, float y){
-        if(drawing)
+    void startDrawing(float x, float y) {
+        if (drawing)
             return;
 
         moves = 0;
@@ -53,7 +52,7 @@ public class MultiShapeH extends ToolH{
         startX = sX;
         startY = sY;
 
-        if(fill&&(shape==Shape.CIRCLE||shape==Shape.RECT))
+        if (fill && (shape == Shape.CIRCLE || shape == Shape.RECT))
             aps.paint.setStyle(Paint.Style.FILL);
 
         shapeCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
@@ -66,92 +65,92 @@ public class MultiShapeH extends ToolH{
     float[] d;
 
     @Override
-    void move(float x, float y){
-        if(!drawing)
+    void move(float x, float y) {
+        if (!drawing)
             return;
 
         calculateCanvasXY(x, y);
         shapeCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-        switch (shape){
+        switch (shape) {
             case LINE:
                 aps.pixelCanvas.drawBitmap(backupBitmap, 0, 0, overlayPaint);
-                if(!locked)
+                if (!locked)
                     shapeCanvas.drawLine(startX, startY, sX, sY, aps.paint);
                 else {
                     float d = Utils.vector2Distance(startX, startY, sX, sY);
 
-                    int lockedAngle = (int) Utils.getClosestNumber(Math.abs(Utils.vector2Angle(0, -1, sX-startX, sY-startY)), angles);
+                    int lockedAngle = (int) Utils.getClosestNumber(Math.abs(Utils.vector2Angle(0, -1, sX - startX, sY - startY)), angles);
 
-                    float sinA = (float) Math.abs(d*Math.sin(Math.toRadians(lockedAngle)));
-                    float cosA = (float) Math.abs((d*Math.cos(Math.toRadians(lockedAngle))));
+                    float sinA = (float) Math.abs(d * Math.sin(Math.toRadians(lockedAngle)));
+                    float cosA = (float) Math.abs((d * Math.cos(Math.toRadians(lockedAngle))));
 
-                    shapeCanvas.drawLine(startX, startY, sX-startX>0?startX+sinA:startX-sinA, lockedAngle<90?startY-cosA:startY+cosA, aps.paint);
+                    shapeCanvas.drawLine(startX, startY, sX - startX > 0 ? startX + sinA : startX - sinA, lockedAngle < 90 ? startY - cosA : startY + cosA, aps.paint);
                 }
                 break;
             case RECT:
                 aps.pixelCanvas.drawBitmap(backupBitmap, 0, 0, overlayPaint);
-                if(!locked) {
+                if (!locked) {
                     if (rounding > 0 && Build.VERSION.SDK_INT >= 21)
-                        shapeCanvas.drawRoundRect(startX<sX?startX:sX, startY<sY?startY:sY, startX<sX?sX:startX, startY<sY?sY:startY, rounding, rounding, aps.paint);
+                        shapeCanvas.drawRoundRect(startX < sX ? startX : sX, startY < sY ? startY : sY, startX < sX ? sX : startX, startY < sY ? sY : startY, rounding, rounding, aps.paint);
                     else
                         shapeCanvas.drawRect(startX, startY, sX, sY, aps.paint);
                 } else {
                     d = Utils.signedVector2Distance(startX, startY, sX, sY);
-                    float aX = (float) (startX+Math.sqrt(Math.pow(d[0], 2)/2f)*Math.signum(d[0]));
-                    float aY = (float) (startY+Math.sqrt(Math.pow(d[1], 2)/2f)*Math.signum(d[1]));
+                    float aX = (float) (startX + Math.sqrt(Math.pow(d[0], 2) / 2f) * Math.signum(d[0]));
+                    float aY = (float) (startY + Math.sqrt(Math.pow(d[1], 2) / 2f) * Math.signum(d[1]));
 
                     if (rounding > 0 && Build.VERSION.SDK_INT >= 21) {
 
                         shapeCanvas.drawRoundRect(startX < aX ? startX : aX, startY < aY ? startY : aY, startX < aX ? aX : startX, startY < aY ? aY : startY, rounding, rounding, aps.paint);
-                    }else
+                    } else
                         shapeCanvas.drawRect(startX, startY, aX, aY, aps.paint);
 
                 }
                 break;
             case CIRCLE:
                 aps.pixelCanvas.drawBitmap(backupBitmap, 0, 0, overlayPaint);
-                if(!locked&& Build.VERSION.SDK_INT>=21) {
+                if (!locked && Build.VERSION.SDK_INT >= 21) {
                     float x1 = sX >= 0 ? startX : sX;
                     float x2 = sX >= 0 ? sX : startX;
                     float y1 = sY >= 0 ? startY : sY;
                     float y2 = sY >= 0 ? sY : startY;
-                    if(startX>aps.pixelWidth){
+                    if (startX > aps.pixelWidth) {
                         float t = x1;
                         x1 = x2;
                         x2 = t;
                     }
-                    if(startY>aps.pixelHeight){
+                    if (startY > aps.pixelHeight) {
                         float t = y1;
                         y1 = y2;
                         y2 = t;
                     }
-                    shapeCanvas.drawOval(x1,y1 ,x2 , y2, aps.paint);
-                }else if(locked&&Build.VERSION.SDK_INT>=21){
+                    shapeCanvas.drawOval(x1, y1, x2, y2, aps.paint);
+                } else if (locked && Build.VERSION.SDK_INT >= 21) {
                     d = Utils.signedVector2Distance(startX, startY, sX, sY);
 
-                    float x1 = startX+d[0] >= 0 ? startX : startX+d[0];
-                    float x2 = startX+d[0] >= 0 ? startX+d[0] : startX;
-                    float y1 = startY+d[1] >= 0 ? startY : startY+d[1];
-                    float y2 = startY+d[1] >= 0 ? startY+d[1] : startY;
-                    if(startX>aps.pixelWidth){
+                    float x1 = startX + d[0] >= 0 ? startX : startX + d[0];
+                    float x2 = startX + d[0] >= 0 ? startX + d[0] : startX;
+                    float y1 = startY + d[1] >= 0 ? startY : startY + d[1];
+                    float y2 = startY + d[1] >= 0 ? startY + d[1] : startY;
+                    if (startX > aps.pixelWidth) {
                         float t = x1;
                         x1 = x2;
                         x2 = t;
                     }
-                    if(startY>aps.pixelHeight){
+                    if (startY > aps.pixelHeight) {
                         float t = y1;
                         y1 = y2;
                         y2 = t;
                     }
 
                     shapeCanvas.drawOval(x1, y1, x2, y2, aps.paint);
-                }else
+                } else
                     shapeCanvas.drawCircle(startX, startY, Utils.vector2Distance(startX, startY, sX, sY), aps.paint);
 
                 break;
         }
-        aps.pixelCanvas.drawBitmap(shapeBitmap,0, 0, aps.noAAPaint);
-        if(aps.symmetry)
+        aps.pixelCanvas.drawBitmap(shapeBitmap, 0, 0, aps.noAAPaint);
+        if (aps.symmetry)
             aps.pixelCanvas.drawBitmap(shapeBitmap, aps.superPencil.mirrorMatrix, aps.noAAPaint);
 
         moves++;
@@ -159,11 +158,11 @@ public class MultiShapeH extends ToolH{
     }
 
     @Override
-    void stopDrawing(float x, float y){
-        if(!drawing)
+    void stopDrawing(float x, float y) {
+        if (!drawing)
             return;
 
-        if(hitBounds&&moves>=2)
+        if (hitBounds && moves >= 2)
             aps.canvasHistory.completeHistoricalChange();
         else
             aps.canvasHistory.cancelHistoricalChange(false);
@@ -173,16 +172,16 @@ public class MultiShapeH extends ToolH{
     }
 
     @Override
-    void cancel(float x, float y){
-        if(!drawing)
+    void cancel(float x, float y) {
+        if (!drawing)
             return;
 
-        if(aps.cursorMode) {
+        if (aps.cursorMode) {
             stopDrawing(x, y);
             return;
         }
 
-        if(moves<10)
+        if (moves < 10)
             aps.canvasHistory.cancelHistoricalChange(hitBounds);
         else
             stopDrawing(x, y);

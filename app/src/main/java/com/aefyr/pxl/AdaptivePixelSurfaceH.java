@@ -19,9 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.aefyr.pxl.fragments.PreferencesFragment;
-import com.aefyr.pxl.palettes.Palette2;
 import com.aefyr.pxl.palettes.PaletteManagerH;
-import com.aefyr.pxl.palettes.PaletteUtils;
 import com.aefyr.pxl.projects.Project;
 
 import java.util.ArrayDeque;
@@ -57,6 +55,7 @@ public class AdaptivePixelSurfaceH extends View {
     public enum Tool {
         PENCIL, FLOOD_FILL, COLOR_PICK, COLOR_SWAP, ERASER, MULTISHAPE, SELECTOR
     }
+
     Tool currentTool = Tool.PENCIL;
 
     CanvasHistoryH canvasHistory;
@@ -71,7 +70,7 @@ public class AdaptivePixelSurfaceH extends View {
     boolean symmetry = false;
     SymmetryType symmetryType = SymmetryType.HORIZONTAL;
 
-    public enum SymmetryType{
+    public enum SymmetryType {
         HORIZONTAL, VERTICAL
     }
 
@@ -88,7 +87,7 @@ public class AdaptivePixelSurfaceH extends View {
         initialize();
     }
 
-    private void initialize(){
+    private void initialize() {
         /*pixelBitmap = Bitmap.createBitmap(pixelWidth, pixelHeight, Bitmap.Config.ARGB_8888);
         pixelCanvas = new Canvas(pixelBitmap);*/
 
@@ -107,17 +106,17 @@ public class AdaptivePixelSurfaceH extends View {
 
 
     //Setters
-    public void setTool(Tool tool){
-        if(currentTool == tool)
+    public void setTool(Tool tool) {
+        if (currentTool == tool)
             return;
 
-        if(currentTool==Tool.SELECTOR)
+        if (currentTool == Tool.SELECTOR)
             selector.cancel(0, 0);
 
-        if(project.transparentBackground)
+        if (project.transparentBackground)
             paint.setXfermode(null);
         paint.setColor(currentColor);
-        switch (tool){
+        switch (tool) {
             case PENCIL:
                 currentTool = Tool.PENCIL;
                 break;
@@ -132,9 +131,9 @@ public class AdaptivePixelSurfaceH extends View {
                 break;
             case ERASER:
                 currentTool = Tool.ERASER;
-                if(project.transparentBackground){
+                if (project.transparentBackground) {
                     paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-                }else
+                } else
                     paint.setColor(Color.WHITE);
                 break;
             case MULTISHAPE:
@@ -147,45 +146,46 @@ public class AdaptivePixelSurfaceH extends View {
         invalidate();
     }
 
-    public void setColor(int color){
+    public void setColor(int color) {
         currentColor = color;
         cursor.setPaintColor(color);
-        if(currentTool!= Tool.ERASER)
+        if (currentTool != Tool.ERASER)
             paint.setColor(color);
     }
 
-    public void setStrokeWidth(int width){
-        if(strokeWidth==width)
+    public void setStrokeWidth(int width) {
+        if (strokeWidth == width)
             return;
 
         strokeWidth = width;
         paint.setStrokeWidth(width);
     }
 
-    public void setColorManager(PaletteManagerH manager){
+    public void setColorManager(PaletteManagerH manager) {
         this.colorManager = manager;
     }
 
-    public Project getProject(){
+    public Project getProject() {
         return project;
     }
 
-    public void setSymmetryEnabled(boolean enabled, SymmetryType type){
+    public void setSymmetryEnabled(boolean enabled, SymmetryType type) {
         symmetry = enabled;
         symmetryType = type;
         superPencil.symmetryUpdate();
     }
 
-    public SymmetryType getSymmetryType(){
-        return  symmetryType;
+    public SymmetryType getSymmetryType() {
+        return symmetryType;
     }
 
-    public boolean isSymmetryEnabled(){
-        return  symmetry;
+    public boolean isSymmetryEnabled() {
+        return symmetry;
     }
 
     Paint trans;
-    public void setProject(Project project){
+
+    public void setProject(Project project) {
         this.project = project;
         pixelBitmap = project.getBitmap(true);
         this.pixelWidth = pixelBitmap.getWidth();
@@ -194,14 +194,14 @@ public class AdaptivePixelSurfaceH extends View {
         canvasHistory = new CanvasHistoryH(this, project, CanvasHistoryH.ADAPTIVE_SIZE);
         multiShape = new MultiShapeH(this);
         selector = new SelectorH(this);
-        if(project.transparentBackground){
+        if (project.transparentBackground) {
             SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(getContext());
             int bg = p.getInt(PreferencesFragment.TRANSPARENT_CANVAS_BACKGROUND_COLOR, 111);
             trans = new Paint();
-            if(bg<0){
+            if (bg <= 0) {
                 trans.setColor(bg);
                 trans.setStyle(Paint.Style.FILL);
-            }else if(bg == 111) {
+            } else if (bg == 1) {
                 BitmapFactory.Options op = new BitmapFactory.Options();
                 op.inScaled = false;
                 op.inMutable = false;
@@ -209,10 +209,10 @@ public class AdaptivePixelSurfaceH extends View {
                 trans.setFilterBitmap(false);
                 trans.setAntiAlias(false);
                 trans.setStyle(Paint.Style.FILL);
-            }else if(bg == 322){
+            } else if (bg == 2) {
                 trans.setColor(gridP.getColor());
                 trans.setStyle(Paint.Style.STROKE);
-                trans.setStrokeWidth((int)Utils.dpToPx(1, getResources()));
+                trans.setStrokeWidth((int) Utils.dpToPx(1, getResources()));
             }
 
         }
@@ -222,18 +222,18 @@ public class AdaptivePixelSurfaceH extends View {
     //Utility methods
     Paint gridP;
     float[] p = {0, 0};
-    void drawGrid(Canvas c){
-        gridP.setStrokeWidth((int)Utils.clamp(pixelScale/20, 1, 999));
+
+    void drawGrid(Canvas c) {
+        gridP.setStrokeWidth((int) Utils.clamp(pixelScale / 20, 1, 999));
 
         p[0] = 0;
         p[1] = 0;
         pixelMatrix.mapPoints(p);
 
-        float gridCellSize = pixelScale * (int) Utils.clamp((8 * (1 - (pixelScale / (realWidth>realHeight?realHeight:realWidth / 64)))), 1, 8);
+        float gridCellSize = pixelScale * (int) Utils.clamp((8 * (1 - (pixelScale / (realWidth > realHeight ? realHeight : realWidth / 64)))), 1, 8);
 
-        float lOX = Utils.clamp(p[0]%gridCellSize, p[0], realWidth);
-        float lOY = Utils.clamp(p[1]%gridCellSize, p[1], realHeight);
-
+        float lOX = Utils.clamp(p[0] % gridCellSize, p[0], realWidth);
+        float lOY = Utils.clamp(p[1] % gridCellSize, p[1], realHeight);
 
         p[0] = pixelWidth;
         p[1] = pixelHeight;
@@ -245,18 +245,14 @@ public class AdaptivePixelSurfaceH extends View {
         float x = lOX;
         float y = lOY;
 
-
-
-
-
-        while(x<=limitX+1){
-            c.drawLine(x, lOY - gridCellSize, x, limitY+gridCellSize, gridP);
-            x+=gridCellSize;
+        while (x <= limitX + 1) {
+            c.drawLine(x, lOY - gridCellSize, x, limitY + gridCellSize, gridP);
+            x += gridCellSize;
         }
 
-        while(y<=limitY+1){
-            c.drawLine(lOX-gridCellSize, y, limitX+gridCellSize, y, gridP);
-            y+=gridCellSize;
+        while (y <= limitY + 1) {
+            c.drawLine(lOX - gridCellSize, y, limitX + gridCellSize, y, gridP);
+            y += gridCellSize;
         }
 
 
@@ -268,18 +264,21 @@ public class AdaptivePixelSurfaceH extends View {
     //TODO Add ability to create custom CursorPencil pointers
 
     private boolean gridEnabled = false;
-    boolean toggleGrid(){
+
+    boolean toggleGrid() {
         setGridEnabled(!gridEnabled);
         return gridEnabled;
     }
-    void setGridEnabled(boolean enabled){
+
+    void setGridEnabled(boolean enabled) {
         gridEnabled = enabled;
         invalidate();
     }
 
     Paint noAAPaint;
     private int backgroundColor = Color.GRAY;
-    void initializePaints(){
+
+    void initializePaints() {
         //Main paint
         paint = new Paint();
         paint.setAntiAlias(false);
@@ -315,7 +314,7 @@ public class AdaptivePixelSurfaceH extends View {
         realWidth = w;
         realHeight = h;
         cursor.setLimits(realWidth, realHeight);
-        if(!surfaceReady){
+        if (!surfaceReady) {
             th = (int) Utils.dpToPx(1, getResources());
             centerCanvas();
             cursor.center(realWidth, realHeight);
@@ -325,14 +324,11 @@ public class AdaptivePixelSurfaceH extends View {
     }
 
 
-
-    void centerCanvas(){
-        pixelScale = realWidth<realHeight?(float) realWidth/(float) pixelWidth:(float) realHeight/(float) pixelHeight;
-        matrixOffsetX = ((float)realWidth / 2f - (((float) pixelWidth * pixelScale) / 2f));
-        matrixOffsetY = ((float)realHeight / 2f - (((float) pixelHeight * pixelScale) / 2f));
+    public void centerCanvas() {
+        pixelScale = realWidth < realHeight ? (float) realWidth / (float) pixelWidth : (float) realHeight / (float) pixelHeight;
+        matrixOffsetX = ((float) realWidth / 2f - (((float) pixelWidth * pixelScale) / 2f));
+        matrixOffsetY = ((float) realHeight / 2f - (((float) pixelHeight * pixelScale) / 2f));
     }
-
-
 
 
     float prevCX, prevCY;
@@ -349,20 +345,21 @@ public class AdaptivePixelSurfaceH extends View {
 
     float lastX, lastY;
     boolean touchToolWillBeUsedOnUpEvent = false;
+
     //TODO Make method processEvent(float x, float y, int pointerId) in Tool class, and use a ArrayList of Paths or whatever that tool uses, so symmetry can be implemented on this level, just by sending mirrored coords with toolButton.pointers+1 as pointerId
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
         //Believe me, we really don't wanna interfere the flood fill algorithm
-        if(fillInProgress)
+        if (fillInProgress)
             return true;
 
-        if(event.getPointerCount() != 1){
-            if(cursorMode){
+        if (event.getPointerCount() != 1) {
+            if (cursorMode) {
                 superPencil.cancel(cursor.getX(), cursor.getY());
                 multiShape.cancel(cursor.getX(), cursor.getY());
                 selector.cancel(cursor.getX(), cursor.getY());
-            }else {
+            } else {
                 superPencil.cancel(event.getX(), event.getY());
                 multiShape.cancel(event.getX(), event.getY());
                 selector.cancel(event.getX(), event.getY());
@@ -370,60 +367,48 @@ public class AdaptivePixelSurfaceH extends View {
             touchToolWillBeUsedOnUpEvent = false;
 
 
-            midX = (event.getX(0)+event.getX(1))/2f;
-            midY = (event.getY(0)+event.getY(1))/2f;
+            midX = (event.getX(0) + event.getX(1)) / 2f;
+            midY = (event.getY(0) + event.getY(1)) / 2f;
 
             float dist = Utils.vector2Distance(event.getX(0), event.getY(0), event.getX(1), event.getY(1));
             float deltaDist = prevDist - dist;
 
-            if(prevPointerCount !=event.getPointerCount()){
+            if (prevPointerCount != event.getPointerCount()) {
                 prevCX = midX;
                 prevCY = midY;
                 deltaDist = 0;
             }
 
-            c+=deltaDist;
-            //System.out.println("distance="+dist);
+            c += deltaDist;
 
-            if(c>th){
-                pixelScale *= Math.pow(0.995f, Math.abs(c/th));
-                System.out.println("RESETED C WITH VALUE OF "+c);
+            if (c > th) {
+                pixelScale *= Math.pow(0.995f, Math.abs(c / th));
                 c = 0;
-            }else if(c<-th){
-                pixelScale *= Math.pow(1.005f, Math.abs(c/th));
-                System.out.println("RESETED C WITH VALUE OF "+c);
+            } else if (c < -th) {
+                pixelScale *= Math.pow(1.005f, Math.abs(c / th));
                 c = 0;
             }
 
-            pixelScale = Utils.clamp(pixelScale, 1f, realWidth/4);
+            pixelScale = Utils.clamp(pixelScale, 1f, realWidth / 4);
 
             prevDist = dist;
 
-            matrixOffsetX += midX-prevCX;
-            matrixOffsetY += midY-prevCY;
-            //matrixOffsetX = Utils.clamp(matrixOffsetX, (int)-pixelScale*pixelWidth, realWidth);
-            //matrixOffsetY = Utils.clamp(matrixOffsetX, (int)-pixelScale*pixelHeight, realHeight);
+            matrixOffsetX += midX - prevCX;
+            matrixOffsetY += midY - prevCY;
 
-            if(!anchorSet) {
+
+            if (!anchorSet) {
                 anchorSet = true;
-                float a = (midX - matrixOffsetX) / pixelScale + (1-1/pixelScale)* scaleAnchorX;
-                float b = (midY - matrixOffsetY) / pixelScale + (1-1/pixelScale)* scaleAnchorY;
+                float a = (midX - matrixOffsetX) / pixelScale + (1 - 1 / pixelScale) * scaleAnchorX;
+                float b = (midY - matrixOffsetY) / pixelScale + (1 - 1 / pixelScale) * scaleAnchorY;
                 float c = scaleAnchorX;
                 float d = scaleAnchorY;
                 scaleAnchorX = a;
                 scaleAnchorY = b;
 
-                matrixOffsetX += (a - c)*(pixelScale-1);
-                matrixOffsetY += (b - d)*(pixelScale-1);
+                matrixOffsetX += (a - c) * (pixelScale - 1);
+                matrixOffsetY += (b - d) * (pixelScale - 1);
             }
-            //scaleAnchorX = 128;
-            //scaleAnchorY = 64;
-
-            //System.out.println("scaleAnchorX="+ scaleAnchorX +", scaleAnchorY="+ scaleAnchorY);
-
-            //System.out.println("PixelSize="+pixelScale+", OffsetX="+matrixOffsetX +", OffsetY="+matrixOffsetY);
-
-            //System.out.println("Scale="+pixelScale);
 
             prevCX = midX;
             prevCY = midY;
@@ -435,9 +420,9 @@ public class AdaptivePixelSurfaceH extends View {
         }
         anchorSet = false;
 
-        if(cursorMode) {
+        if (cursorMode) {
             cursor.processMotionEvent(event);
-        }else {
+        } else {
             switch (currentTool) {
                 case PENCIL:
                 case ERASER:
@@ -452,10 +437,10 @@ public class AdaptivePixelSurfaceH extends View {
                     }
                     break;
                 case COLOR_PICK:
-                    if(event.getAction() == MotionEvent.ACTION_DOWN)
+                    if (event.getAction() == MotionEvent.ACTION_DOWN)
                         touchToolWillBeUsedOnUpEvent = true;
-                    else if(event.getAction() == MotionEvent.ACTION_UP){
-                        if(touchToolWillBeUsedOnUpEvent) {
+                    else if (event.getAction() == MotionEvent.ACTION_UP) {
+                        if (touchToolWillBeUsedOnUpEvent) {
                             p[0] = p[1] = 0;
                             pixelMatrix.mapPoints(p);
                             colorPick((int) ((event.getX() - p[0]) / pixelScale), (int) ((event.getY() - p[1]) / pixelScale));
@@ -463,26 +448,26 @@ public class AdaptivePixelSurfaceH extends View {
                     }
                     break;
                 case FLOOD_FILL:
-                    if(event.getAction() == MotionEvent.ACTION_DOWN)
+                    if (event.getAction() == MotionEvent.ACTION_DOWN)
                         touchToolWillBeUsedOnUpEvent = true;
-                    else if(event.getAction() == MotionEvent.ACTION_UP){
-                        if(touchToolWillBeUsedOnUpEvent) {
+                    else if (event.getAction() == MotionEvent.ACTION_UP) {
+                        if (touchToolWillBeUsedOnUpEvent) {
                             p[0] = p[1] = 0;
                             pixelMatrix.mapPoints(p);
                             floodFill((int) ((event.getX() - p[0]) / pixelScale), (int) ((event.getY() - p[1]) / pixelScale));
-                    }
+                        }
                     }
                     break;
                 case COLOR_SWAP:
-                    if(event.getAction() == MotionEvent.ACTION_DOWN)
+                    if (event.getAction() == MotionEvent.ACTION_DOWN)
                         touchToolWillBeUsedOnUpEvent = true;
-                    else if(event.getAction() == MotionEvent.ACTION_UP) {
+                    else if (event.getAction() == MotionEvent.ACTION_UP) {
                         if (touchToolWillBeUsedOnUpEvent) {
                             p[0] = p[1] = 0;
                             pixelMatrix.mapPoints(p);
                             int x = (int) ((event.getX() - p[0]) / pixelScale);
                             int y = (int) ((event.getY() - p[1]) / pixelScale);
-                            if(x<pixelWidth&&x>=0&&y<pixelHeight&&y>=0)
+                            if (x < pixelWidth && x >= 0 && y < pixelHeight && y >= 0)
                                 onSpecialToolUseListener.onColorSwapToolUse(pixelBitmap.getPixel(x, y));
                         }
                     }
@@ -513,74 +498,69 @@ public class AdaptivePixelSurfaceH extends View {
         }
 
 
-
         lastX = event.getX();
         lastY = event.getY();
         prevPointerCount = event.getPointerCount();
         return true;
     }
 
-    void setCursorModeEnabled(boolean enabled){
-        if(enabled == cursorMode)
+    void setCursorModeEnabled(boolean enabled) {
+        if (enabled == cursorMode)
             return;
 
-        if(cursorMode){
-            superPencil.cancel(cursor.getX(), cursor.getY());
-        }else {
-            superPencil.cancel(lastX, lastY);
-        }
         cursorMode = enabled;
         invalidate();
     }
 
     boolean fillInProgress = false;
-    void floodFill(int x, int y){
+
+    void floodFill(int x, int y) {
         int newC = paint.getColor();
-        if(x<0||x>=pixelWidth||y<0||y>=pixelHeight||pixelBitmap.getPixel(x,y)==newC)
+        if (x < 0 || x >= pixelWidth || y < 0 || y >= pixelHeight || pixelBitmap.getPixel(x, y) == newC)
             return;
 
         canvasHistory.startHistoricalChange();
         fillInProgress = true;
 
-        int oldC = pixelBitmap.getPixel(x,y);
+        int oldC = pixelBitmap.getPixel(x, y);
 
         long s = System.currentTimeMillis();
-        ArrayDeque<Pixel> p= new ArrayDeque<>();
+        ArrayDeque<Pixel> p = new ArrayDeque<>();
 
-        p.add(new Pixel(x,y));
+        p.add(new Pixel(x, y));
 
         Pixel p1;
         int x1, x2;
-        while(!p.isEmpty()){
+        while (!p.isEmpty()) {
             p1 = p.remove();
-            if(p1.x <0||p1.x>=pixelWidth||p1.y<0||p1.y>=pixelHeight||pixelBitmap.getPixel(p1.x, p1.y)!=oldC)
+            if (p1.x < 0 || p1.x >= pixelWidth || p1.y < 0 || p1.y >= pixelHeight || pixelBitmap.getPixel(p1.x, p1.y) != oldC)
                 continue;
             x1 = p1.x;
             x2 = p1.x;
 
-            while(x1<pixelWidth&&pixelBitmap.getPixel(x1, p1.y)==oldC)
+            while (x1 < pixelWidth && pixelBitmap.getPixel(x1, p1.y) == oldC)
                 x1++;
 
-            while(x2>=0&&pixelBitmap.getPixel(x2, p1.y)==oldC)
+            while (x2 >= 0 && pixelBitmap.getPixel(x2, p1.y) == oldC)
                 x2--;
 
             x2++;
 
 
-            for(int i2 = x2; i2<x1; i2++){
+            for (int i2 = x2; i2 < x1; i2++) {
                 pixelBitmap.setPixel(i2, p1.y, newC);
             }
 
-            if(p1.y>0&&p1.y<pixelHeight) {
+            if (p1.y > 0 && p1.y < pixelHeight) {
                 for (int i = x2; i < x1; i++) {
-                    if(pixelBitmap.getPixel(i, p1.y-1)==oldC)
-                        p.add(new Pixel(i, p1.y-1));
+                    if (pixelBitmap.getPixel(i, p1.y - 1) == oldC)
+                        p.add(new Pixel(i, p1.y - 1));
                 }
             }
-            if(p1.y>=0&&p1.y<pixelHeight-1) {
+            if (p1.y >= 0 && p1.y < pixelHeight - 1) {
                 for (int i = x2; i < x1; i++) {
-                    if(pixelBitmap.getPixel(i, p1.y+1)==oldC)
-                        p.add(new Pixel(i, p1.y+1));
+                    if (pixelBitmap.getPixel(i, p1.y + 1) == oldC)
+                        p.add(new Pixel(i, p1.y + 1));
                 }
             }
 
@@ -588,12 +568,12 @@ public class AdaptivePixelSurfaceH extends View {
 
         canvasHistory.completeHistoricalChange();
         fillInProgress = false;
-        System.out.println("Filled in "+(System.currentTimeMillis()-s)+" ms");
+        System.out.println("Filled in " + (System.currentTimeMillis() - s) + " ms");
         invalidate();
     }
 
-    void colorPick(int x, int y){
-        if(x<0||x>=pixelWidth||y<0||y>=pixelHeight)
+    void colorPick(int x, int y) {
+        if (x < 0 || x >= pixelWidth || y < 0 || y >= pixelHeight)
             return;
         int pickedColor = pixelBitmap.getPixel(x, y);
         colorManager.setCurrentColor(pickedColor);
@@ -607,9 +587,9 @@ public class AdaptivePixelSurfaceH extends View {
         }*/
     }
 
-    void clearCanvas(){
+    void clearCanvas() {
         canvasHistory.startHistoricalChange();
-        if(project.transparentBackground)
+        if (project.transparentBackground)
             pixelCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
         else
             pixelCanvas.drawColor(Color.WHITE);
@@ -620,7 +600,7 @@ public class AdaptivePixelSurfaceH extends View {
     class Pixel {
         int x, y;
 
-        Pixel(int x, int y){
+        Pixel(int x, int y) {
             this.x = x;
             this.y = y;
         }
@@ -640,11 +620,11 @@ public class AdaptivePixelSurfaceH extends View {
         canvas.drawColor(backgroundColor);
 
 
-        if(!projectReady)
+        if (!projectReady)
             return;
 
         //Recalculate matrix and grid if zoom or/and move were used
-        if(scaleChanged||translateChanged) {
+        if (scaleChanged || translateChanged) {
             pixelMatrix.reset();
             pixelMatrix.setScale(pixelScale, pixelScale, scaleAnchorX, scaleAnchorY);
             pixelMatrix.postTranslate(matrixOffsetX, matrixOffsetY);
@@ -654,7 +634,7 @@ public class AdaptivePixelSurfaceH extends View {
         }
 
         //Draw transparency tile
-        if(project.transparentBackground){
+        if (project.transparentBackground) {
             p[0] = p[1] = 0;
             pixelMatrix.mapPoints(p);
             float x1 = p[0];
@@ -669,23 +649,23 @@ public class AdaptivePixelSurfaceH extends View {
         canvas.drawBitmap(pixelBitmap, pixelMatrix, noAAPaint);
 
         //Draw grid
-        if(gridEnabled) {
+        if (gridEnabled) {
             drawGrid(canvas);
         }
 
-        if(currentTool == Tool.SELECTOR)
+        if (currentTool == Tool.SELECTOR)
             selector.drawSelection(canvas, pixelMatrix);
 
 
         //Highlight the pixel we'll draw on with cursorPencil
         //TODO Maybe make "less than 1 pixel" offsets global variables
-        if(cursorMode) {
+        if (cursorMode) {
             cursor.drawCursor(canvas);
         }
 
 
         deltaTime = System.currentTimeMillis() - start;
-        System.out.println("Canvas drawn in "+deltaTime+" ms");
+        System.out.println("Canvas drawn in " + deltaTime + " ms");
     }
 
     /*void writeStateToBundle(Bundle outState){
@@ -717,11 +697,14 @@ public class AdaptivePixelSurfaceH extends View {
     }*/
 
     OnSpecialToolUseListener onSpecialToolUseListener;
-    public void setOnSpecialToolUseListener(OnSpecialToolUseListener listener){
+
+    public void setOnSpecialToolUseListener(OnSpecialToolUseListener listener) {
         onSpecialToolUseListener = listener;
     }
-    public interface OnSpecialToolUseListener{
+
+    public interface OnSpecialToolUseListener {
         void onColorSwapToolUse(int color);
+
         void onSelectionOptionsVisibilityChanged(boolean visible);
     }
 }

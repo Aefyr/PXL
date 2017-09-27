@@ -1,8 +1,8 @@
 package com.aefyr.pxl.TCA;
 
+import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
@@ -18,7 +18,7 @@ public class TutorialActivity extends AppCompatActivity {
         final TutorialFrame[] frames = new TutorialFrame[3];
         frames[0] = new TutorialFrame("Frame Three!", "Frame One!", R.drawable.cogwheel);
         frames[1] = new TutorialFrame("Frame Three!", "Frame Two!", R.drawable.pencil);
-        frames[2] = new TutorialFrame("Frame Three!","Frame Three!", R.drawable.fill);
+        frames[2] = new TutorialFrame("Frame Three!", "Frame Three!", R.drawable.fill);
 
         ViewPager pager = (ViewPager) findViewById(R.id.viewPager);
 

@@ -29,11 +29,11 @@ import android.widget.EditText;
 import android.widget.Switch;
 
 import com.aefyr.pxl.DrawingActivity;
+import com.aefyr.pxl.R;
+import com.aefyr.pxl.Utils;
 import com.aefyr.pxl.projects.Project;
 import com.aefyr.pxl.projects.ProjectsRecycleAdapter;
 import com.aefyr.pxl.projects.ProjectsUtils;
-import com.aefyr.pxl.R;
-import com.aefyr.pxl.Utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -66,7 +66,8 @@ public class GalleryFragment extends android.app.Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.galleryRecycler);
         adapter = new ProjectsRecycleAdapter(getActivity(), ProjectsUtils.getProjects());
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), (int) (Utils.getScreenWidth(getResources())/Utils.dpToPx(180, getResources()))));
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), (int) (Utils.getScreenWidth(getResources()) / Utils.dpToPx(180, getResources()))));
+        recyclerView.setItemViewCacheSize(24);
 
         initializeFABOnClickListener(view);
         initializeOnProjectClickListener();
@@ -76,7 +77,8 @@ public class GalleryFragment extends android.app.Fragment {
 
     private static final int DRAWING_REQUEST = 1445;
     private int openedProjectIndex = 0;
-    private void openProject(String name, int index){
+
+    private void openProject(String name, int index) {
         Intent i = new Intent(getActivity(), DrawingActivity.class);
         i.putExtra("projectToLoad", name);
         startActivityForResult(i, DRAWING_REQUEST);
@@ -88,30 +90,30 @@ public class GalleryFragment extends android.app.Fragment {
         //getActivity().finish();
     }
 
-    private void initializeFABOnClickListener(View view){
+    private void initializeFABOnClickListener(View view) {
         final FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.floatingActionButton2);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               AlertDialog newProjectOptionPick = new AlertDialog.Builder(getActivity()).setItems(getResources().getStringArray(R.array.new_project_options), new DialogInterface.OnClickListener() {
-                   @Override
-                   public void onClick(DialogInterface dialogInterface, int i) {
-                       if(i==0)
-                           createNewProject();
-                       else if(i==1)
-                           importImage();
-                   }
-               }).create();
+                AlertDialog newProjectOptionPick = new AlertDialog.Builder(getActivity()).setItems(getResources().getStringArray(R.array.new_project_options), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (i == 0)
+                            createNewProject();
+                        else if (i == 1)
+                            importImage();
+                    }
+                }).create();
                 newProjectOptionPick.show();
             }
         });
     }
 
-    private void createNewProject(){
+    private void createNewProject() {
         final AlertDialog d = new AlertDialog.Builder(getActivity()).setView(R.layout.project_creation).create();
         d.show();
 
-        final EditText nameET = (EditText)d.findViewById(R.id.name);
+        final EditText nameET = (EditText) d.findViewById(R.id.name);
 
         TextWatcher resolutionLimiter = new TextWatcher() {
             @Override
@@ -126,16 +128,16 @@ public class GalleryFragment extends android.app.Fragment {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if(editable.length()==0)
+                if (editable.length() == 0)
                     return;
-                if(Integer.parseInt(editable.toString())>512)
-                    editable.replace(0, editable.length(), 512+"");
+                if (Integer.parseInt(editable.toString()) > 512)
+                    editable.replace(0, editable.length(), 512 + "");
             }
         };
 
 
-        final EditText widthET = (EditText)d.findViewById(R.id.width);
-        final EditText heightET = (EditText)d.findViewById(R.id.height);
+        final EditText widthET = (EditText) d.findViewById(R.id.width);
+        final EditText heightET = (EditText) d.findViewById(R.id.height);
 
         widthET.addTextChangedListener(resolutionLimiter);
         heightET.addTextChangedListener(resolutionLimiter);
@@ -145,19 +147,19 @@ public class GalleryFragment extends android.app.Fragment {
             public void onClick(View view) {
 
                 String name = nameET.getText().toString();
-                if(!ProjectsUtils.isNameAvailable(name)){
+                if (!ProjectsUtils.isNameAvailable(name)) {
                     Utils.toaster(getActivity(), getString(R.string.incorrect_project_name));
                     return;
                 }
 
-                if(widthET.getText().length()==0||heightET.getText().length()==0){
+                if (widthET.getText().length() == 0 || heightET.getText().length() == 0) {
                     Utils.toaster(getActivity(), getString(R.string.incorrect_width_or_height));
                     return;
                 }
 
                 int width = Integer.parseInt(widthET.getText().toString());
                 int height = Integer.parseInt(heightET.getText().toString());
-                adapter.addItem(ProjectsUtils.createNewProject(name, width, height, "Default", ((Switch)d.findViewById(R.id.transparentBackground)).isChecked()));
+                adapter.addItem(ProjectsUtils.createNewProject(name, width, height, "Default", ((Switch) d.findViewById(R.id.transparentBackground)).isChecked()));
                 d.dismiss();
                 recyclerView.scrollToPosition(0);
                 openProject(name, 0);
@@ -165,8 +167,8 @@ public class GalleryFragment extends android.app.Fragment {
         });
     }
 
-    private void importImage(){
-        if(!Utils.checkPermissions(getActivity())){
+    private void importImage() {
+        if (!Utils.checkPermissions(getActivity())) {
             actionAfter = 1;
             requestPermissions();
             return;
@@ -180,7 +182,7 @@ public class GalleryFragment extends android.app.Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==IMPORT_IMAGE&&resultCode== Activity.RESULT_OK){
+        if (requestCode == IMPORT_IMAGE && resultCode == Activity.RESULT_OK) {
             Bitmap importedImage;
             try {
                 importedImage = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(data.getData()));
@@ -190,7 +192,7 @@ public class GalleryFragment extends android.app.Fragment {
                 Utils.toaster(getActivity(), getString(R.string.error));
                 return;
             }
-            if(importedImage.getWidth()>512||importedImage.getHeight()>512){
+            if (importedImage.getWidth() > 512 || importedImage.getHeight() > 512) {
                 new AlertDialog.Builder(getActivity()).setMessage(getString(R.string.imported_bitmap_too_big)).setPositiveButton(getString(R.string.ok), null).show();
                 return;
             }
@@ -199,16 +201,16 @@ public class GalleryFragment extends android.app.Fragment {
             adapter.addItem(p);
             recyclerView.scrollToPosition(0);
             openProject(p.name, 0);
-        } else if(requestCode==DRAWING_REQUEST&&resultCode==1){
+        } else if (requestCode == DRAWING_REQUEST && resultCode == 1) {
             adapter.notifyItemChanged(openedProjectIndex);
         }
     }
 
-    private void initializeOnProjectClickListener(){
+    private void initializeOnProjectClickListener() {
         adapter.setOnProjectClickListener(new ProjectsRecycleAdapter.OnProjectClickListener() {
             @Override
             public void onProjectClick(Project project, int id) {
-                System.out.println("Clicked "+project.name);
+                System.out.println("Clicked " + project.name);
                 openProject(project.name, id);
             }
 
@@ -217,8 +219,8 @@ public class GalleryFragment extends android.app.Fragment {
                 AlertDialog optionsDialog = new AlertDialog.Builder(getActivity()).setTitle(project.name).setItems(getResources().getStringArray(R.array.project_options), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        switch (i){
-                            case 0 :
+                        switch (i) {
+                            case 0:
                                 exportProject(project, false);
                                 break;
                             case 1:
@@ -242,13 +244,14 @@ public class GalleryFragment extends android.app.Fragment {
     }
 
     AlertDialog exportResolutionPickDialog;
-    private void exportProject(final Project project, final boolean forShare){
-        String[] resolutionOptions = {project.pixelWidth+"x"+project.pixelHeight+" ("+getString(R.string.original)+")", project.pixelWidth*2+"x"+project.pixelHeight*2+" (x2)", project.pixelWidth*4+"x"+project.pixelHeight*4+" (x4)", project.pixelWidth*8+"x"+project.pixelHeight*8+" (x8)"};
+
+    private void exportProject(final Project project, final boolean forShare) {
+        String[] resolutionOptions = {project.pixelWidth + "x" + project.pixelHeight + " (" + getString(R.string.original) + ")", project.pixelWidth * 2 + "x" + project.pixelHeight * 2 + " (x2)", project.pixelWidth * 4 + "x" + project.pixelHeight * 4 + " (x4)", project.pixelWidth * 8 + "x" + project.pixelHeight * 8 + " (x8)"};
         exportResolutionPickDialog = new AlertDialog.Builder(getActivity()).setTitle(getString(R.string.select_resolution)).setItems(resolutionOptions, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 int resolutionMultiplier = 1;
-                switch (i){
+                switch (i) {
                     case 0:
                         break;
                     case 1:
@@ -265,7 +268,7 @@ public class GalleryFragment extends android.app.Fragment {
                 exportTask.execute(exportTask.createParams(project, forShare, resolutionMultiplier));
             }
         }).create();
-        if(!Utils.checkPermissions(getActivity())){
+        if (!Utils.checkPermissions(getActivity())) {
             actionAfter = 0;
             requestPermissions();
             return;
@@ -275,21 +278,22 @@ public class GalleryFragment extends android.app.Fragment {
     }
 
 
-    private class ExportTask extends AsyncTask<ExportTask.Params, Void, ExportTask.Params>{
+    private class ExportTask extends AsyncTask<ExportTask.Params, Void, ExportTask.Params> {
 
-        class Params{
+        class Params {
             Project project;
             boolean share;
             int resolutionMultiplier;
             File imagePath;
-            Params(Project p, boolean share, int resolutionMultiplier){
+
+            Params(Project p, boolean share, int resolutionMultiplier) {
                 this.project = p;
                 this.share = share;
                 this.resolutionMultiplier = resolutionMultiplier;
             }
         }
 
-        Params createParams(Project p, boolean share, int resolutionMultiplier){
+        Params createParams(Project p, boolean share, int resolutionMultiplier) {
             return new Params(p, share, resolutionMultiplier);
         }
 
@@ -299,7 +303,7 @@ public class GalleryFragment extends android.app.Fragment {
         protected void onPreExecute() {
             super.onPreExecute();
             progressDialog = new ProgressDialog(getContext(), ProgressDialog.STYLE_SPINNER);
-            progressDialog.setMessage(getString(R.string.exporting)+"...");
+            progressDialog.setMessage(getString(R.string.exporting) + "...");
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.setCancelable(false);
             progressDialog.show();
@@ -307,14 +311,14 @@ public class GalleryFragment extends android.app.Fragment {
 
         @Override
         protected Params doInBackground(Params... params) {
-            File exportDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/PXL");
-            if(!exportDir.exists())
+            File exportDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PXL");
+            if (!exportDir.exists())
                 exportDir.mkdirs();
-            if(params[0].share) {
+            if (params[0].share) {
                 File imagePath = new File(exportDir, params[0].project.name + ".png");
                 Utils.saveBitmap(Bitmap.createScaledBitmap(params[0].project.getBitmap(false), params[0].project.pixelWidth * params[0].resolutionMultiplier, params[0].project.pixelHeight * params[0].resolutionMultiplier, false), imagePath);
                 params[0].imagePath = imagePath;
-            }else {
+            } else {
                 File imagePath = new File(exportDir, params[0].project.name + ".png");
                 Utils.saveBitmap(Bitmap.createScaledBitmap(params[0].project.getBitmap(false), params[0].project.pixelWidth * params[0].resolutionMultiplier, params[0].project.pixelHeight * params[0].resolutionMultiplier, false), imagePath);
                 params[0].imagePath = imagePath;
@@ -327,14 +331,14 @@ public class GalleryFragment extends android.app.Fragment {
         protected void onPostExecute(Params params) {
             super.onPostExecute(params);
             progressDialog.dismiss();
-            if(params.share){
+            if (params.share) {
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
                 shareIntent.setType("image/*");
                 shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(params.imagePath));
                 startActivity(Intent.createChooser(shareIntent, getString(R.string.share)));
                 params.imagePath.deleteOnExit();
-            }else {
+            } else {
                 Utils.alternativeAddImageToGallery(getContext(), params.imagePath);
             }
         }
@@ -343,8 +347,8 @@ public class GalleryFragment extends android.app.Fragment {
     final static int STORAGE_PERMISSIONS_REQUEST = 3232;
     int actionAfter = 0;
 
-    private void requestPermissions(){
-        if(Build.VERSION.SDK_INT >=23) {
+    private void requestPermissions() {
+        if (Build.VERSION.SDK_INT >= 23) {
             requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSIONS_REQUEST);
         }
     }
@@ -352,9 +356,9 @@ public class GalleryFragment extends android.app.Fragment {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode==STORAGE_PERMISSIONS_REQUEST){
-            if(grantResults[0]==PackageManager.PERMISSION_GRANTED && grantResults[1]==PackageManager.PERMISSION_GRANTED) {
-                switch (actionAfter){
+        if (requestCode == STORAGE_PERMISSIONS_REQUEST) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                switch (actionAfter) {
                     case 0:
                         exportResolutionPickDialog.show();
                         break;
@@ -363,19 +367,18 @@ public class GalleryFragment extends android.app.Fragment {
                         break;
                 }
 
-            }
-            else {
+            } else {
                 new AlertDialog.Builder(getActivity()).setMessage(getString(R.string.storage_permissions_denied)).setPositiveButton(getString(R.string.ok), null).show();
             }
         }
     }
 
-    private void renameProject(final Project project, final int id){
+    private void renameProject(final Project project, final int id) {
         final AlertDialog renameDialog = new AlertDialog.Builder(getActivity()).setTitle(getString(R.string.rename_project)).setView(R.layout.edit_text).create();
         renameDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         renameDialog.show();
 
-        final EditText nameEditText = ((EditText)renameDialog.findViewById(R.id.editText));
+        final EditText nameEditText = ((EditText) renameDialog.findViewById(R.id.editText));
         nameEditText.setHint(getString(R.string.new_name));
         nameEditText.setText(project.name);
         nameEditText.setSelection(0, project.name.length());
@@ -384,11 +387,11 @@ public class GalleryFragment extends android.app.Fragment {
             @Override
             public void onClick(View view) {
                 String newName = nameEditText.getText().toString();
-                if(ProjectsUtils.isNameAvailable(newName)){
+                if (ProjectsUtils.isNameAvailable(newName)) {
                     ProjectsUtils.renameProject(project, newName);
                     adapter.notifyItemChanged(id);
                     renameDialog.dismiss();
-                }else {
+                } else {
                     Utils.toaster(getActivity(), getString(R.string.incorrect_project_name));
                 }
             }
@@ -396,12 +399,12 @@ public class GalleryFragment extends android.app.Fragment {
 
     }
 
-    private void duplicateProject(Project project){
+    private void duplicateProject(Project project) {
         adapter.addItem(ProjectsUtils.duplicateProject(project));
         recyclerView.scrollToPosition(0);
     }
 
-    private void deleteProject(final Project project, final int id){
+    private void deleteProject(final Project project, final int id) {
         AlertDialog deleteDialog = new AlertDialog.Builder(getActivity()).setTitle(project.name).setMessage(getString(R.string.delete_project)).setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {

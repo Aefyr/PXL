@@ -1,4 +1,4 @@
-package com.aefyr.pxl;
+package com.aefyr.pxl.views;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -19,7 +19,7 @@ public class ColorRect extends View {
         super(context, attrs);
     }
 
-    public void setColor(int color){
+    public void setColor(int color) {
         this.color = color;
         invalidate();
     }

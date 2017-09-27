@@ -41,6 +41,7 @@
     <string name="add_to_palette_hint">Click on the color in palette you want to replace with current color!</string>
     <string name="color_edit_hint">Click color to edit it!</string>
     <string name="extracted">Extracted</string>
+    <string name="extracting">Extracting…</string>
 
     <!-- Projects -->
     <string name="project">Project</string>
@@ -82,7 +83,10 @@
 
     <!-- Drawing Activity -->
     <string name="canvas_options">Canvas Options</string>
-    <string name="hisotory_size">History size is %d elements</string>
+    <string name="history_size">History size is %d elements</string>
+    <string name="symmetry_none">Symmetry Disabled</string>
+    <string name="symmetry_h">Horizontal Symmetry</string>
+    <string name="symmetry_v">Vertical Symmetry</string>
 
     <!-- ToolSettingManager -->
     <string name="lock_angles">Lock Angles</string>

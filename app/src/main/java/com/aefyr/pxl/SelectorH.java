@@ -7,7 +7,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 
-import com.aefyr.pxl.tools.NotRetardedRect;
+import com.aefyr.pxl.tools.RectP;
 
 import java.util.HashSet;
 
@@ -19,7 +19,7 @@ public class SelectorH extends ToolH {
 
     private boolean hasSelection;
     private boolean sessionStarted;
-    private NotRetardedRect selection;
+    private RectP selection;
     private Paint selectionPaint;
     private Bitmap sB;
     private Canvas sC;
@@ -31,7 +31,9 @@ public class SelectorH extends ToolH {
     private int offsetX, offsetY;
     private int pX, pY;
 
-    public SelectorH(AdaptivePixelSurfaceH aps){
+    private RectP canvasBounds;
+
+    public SelectorH(AdaptivePixelSurfaceH aps) {
         this.aps = aps;
         sB = Bitmap.createBitmap(aps.pixelWidth, aps.pixelHeight, Bitmap.Config.ARGB_8888);
         selectedPart = sB.copy(Bitmap.Config.ARGB_8888, true);
@@ -40,7 +42,8 @@ public class SelectorH extends ToolH {
         selectionPaint = new Paint();
         selectionPaint.setColor(Color.CYAN);
         selectionPaint.setAlpha(75);
-        selection = new NotRetardedRect();
+        selection = new RectP();
+        canvasBounds = new RectP(0, 0, aps.pixelWidth, aps.pixelHeight);
     }
 
     @Override
@@ -49,39 +52,40 @@ public class SelectorH extends ToolH {
         calculateCanvasXY(x, y);
 
 
-        if(hasSelection&&(!selection.contains((int)sX, (int) sY)||(sX<0||sY<0||sX>=aps.pixelWidth||sY>=aps.pixelHeight))) {
+        if (hasSelection && (!selection.contains((int) sX, (int) sY) || (sX < 0 || sY < 0 || sX >= aps.pixelWidth || sY >= aps.pixelHeight))) {
             hasSelection = false;
-            if(offsetX!=0||offsetY!=0) {
+            if (offsetX != 0 || offsetY != 0) {
                 aps.canvasHistory.completeHistoricalChange();
-            }else
+            } else
                 aps.canvasHistory.cancelHistoricalChange(false);
             sessionStarted = false;
-            drawing =false;
+            drawing = false;
             aps.onSpecialToolUseListener.onSelectionOptionsVisibilityChanged(false);
         }
 
         moves = 0;
 
-        if(!hasSelection) {
+        if (!hasSelection) {
             sessionStarted = false;
             startX = sX;
             startY = sY;
-            selection.set((int) startX, (int)startY, (int)sX, (int)sY);
+            selection.set((int) startX, (int) startY, (int) sX, (int) sY);
             aps.invalidate();
             drawing = true;
-        }else {
+        } else {
             pX = (int) sX;
             pY = (int) sY;
 
-            drawing =true;
+            drawing = true;
         }
     }
 
-    private class Pixel{
+    private class Pixel {
         int c;
         int x;
         int y;
-        Pixel(int x, int y, int c){
+
+        Pixel(int x, int y, int c) {
             this.x = x;
             this.y = y;
             this.c = c;
@@ -91,38 +95,38 @@ public class SelectorH extends ToolH {
     @Override
     void move(float x, float y) {
         calculateCanvasXY(x, y);
-        if(!drawing)
+        if (!drawing)
             return;
 
 
-        if(hasSelection){
+        if (hasSelection) {
 
             aps.pixelCanvas.drawBitmap(backup, 0, 0, aps.multiShape.overlayPaint);
-            offsetX+=(int)sX-pX;
-            offsetY+=(int)sY-pY;
-            selection.offset((int)sX-pX, (int)sY-pY);
+            offsetX += (int) sX - pX;
+            offsetY += (int) sY - pY;
+            selection.offset((int) sX - pX, (int) sY - pY);
 
             aps.pixelCanvas.drawBitmap(selectedPart, offsetX, offsetY, aps.noAAPaint);
 
             pX = (int) sX;
             pY = (int) sY;
             moves++;
-        }else {
-            selection.set(sX>startX?Math.round(startX):Math.round(sX), sY>startY?Math.round(startY):Math.round(sY), sX>startX?Math.round(sX):Math.round(startX), sY>startY?Math.round(sY):Math.round(startY));
+        } else {
+            selection.set(sX > startX ? Math.round(startX) : Math.round(sX), sY > startY ? Math.round(startY) : Math.round(sY), sX > startX ? Math.round(sX) : Math.round(startX), sY > startY ? Math.round(sY) : Math.round(startY));
         }
         aps.invalidate();
     }
 
     @Override
     void stopDrawing(float x, float y) {
-        if(!hasSelection&&selection.height()>0&&selection.width()>0) {
+        if (!hasSelection && selection.height() > 0 && selection.width() > 0 && canvasBounds.overlaps(selection)) {
             hasSelection = true;
-            if(!sessionStarted) {
+            if (!sessionStarted) {
                 aps.canvasHistory.startHistoricalChange();
                 offsetX = offsetY = 0;
                 HashSet<Pixel> pixels = new HashSet<>();
-                for (int i = Utils.clamp(selection.left<selection.right?selection.left:selection.right, 0, aps.pixelWidth - 1); i < aps.pixelWidth && i < (selection.left<selection.right?selection.right:selection.left); i++) {
-                    for (int i2 = Utils.clamp(selection.top<selection.bottom?selection.top:selection.bottom, 0, aps.pixelHeight - 1); i2 < aps.pixelHeight && i2 < (selection.top<selection.bottom?selection.bottom:selection.top); i2++) {
+                for (int i = Utils.clamp(selection.left < selection.right ? selection.left : selection.right, 0, aps.pixelWidth - 1); i < aps.pixelWidth && i < (selection.left < selection.right ? selection.right : selection.left); i++) {
+                    for (int i2 = Utils.clamp(selection.top < selection.bottom ? selection.top : selection.bottom, 0, aps.pixelHeight - 1); i2 < aps.pixelHeight && i2 < (selection.top < selection.bottom ? selection.bottom : selection.top); i2++) {
                         pixels.add(new Pixel(i, i2, aps.pixelBitmap.getPixel(i, i2)));
                     }
                 }
@@ -149,9 +153,9 @@ public class SelectorH extends ToolH {
 
     @Override
     void cancel(float x, float y) {
-        if(hasSelection&&(offsetX!=0||offsetY!=0))
+        if (hasSelection && (offsetX != 0 || offsetY != 0))
             aps.canvasHistory.completeHistoricalChange();
-        else if(offsetX==0&&offsetY==0){
+        else if (offsetX == 0 && offsetY == 0) {
             aps.canvasHistory.cancelHistoricalChange(sessionStarted);
         }
         sessionStarted = false;
@@ -162,31 +166,33 @@ public class SelectorH extends ToolH {
         aps.onSpecialToolUseListener.onSelectionOptionsVisibilityChanged(false);
     }
 
-    void copy(){
-        Canvas c= new Canvas(backup);
+
+    void copy() {
+        Canvas c = new Canvas(backup);
         c.drawBitmap(selectedPart, offsetX, offsetY, aps.noAAPaint);
         aps.pixelCanvas.drawBitmap(backup, 0, 0, aps.multiShape.overlayPaint);
         aps.invalidate();
     }
 
-    void delete(){
+    void delete() {
         aps.pixelCanvas.drawBitmap(backup, 0, 0, aps.multiShape.overlayPaint);
         hasSelection = false;
         selection.set(0, 0, 0, 0);
         aps.canvasHistory.completeHistoricalChange();
         sessionStarted = false;
-        drawing =false;
+        drawing = false;
         aps.invalidate();
         aps.onSpecialToolUseListener.onSelectionOptionsVisibilityChanged(false);
     }
 
-    void drawSelection(Canvas c, Matrix pixelMatrix){
+    void drawSelection(Canvas c, Matrix pixelMatrix) {
 
-        if(!drawing&&!hasSelection)
+        if (!drawing && !hasSelection)
             return;
 
         sC.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
         sC.drawRect(selection.left, selection.top, selection.right, selection.bottom, selectionPaint);
         c.drawBitmap(sB, pixelMatrix, aps.noAAPaint);
     }
+
 }

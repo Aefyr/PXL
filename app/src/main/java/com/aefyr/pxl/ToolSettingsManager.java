@@ -25,33 +25,33 @@ public class ToolSettingsManager {
     private AdaptivePixelSurfaceH.Tool currentTool;
     private Context c;
 
-    private String size;
-    private String roundingS;
+    private String TEXT_SIZE;
+    private String TEXT_ROUNDING;
     private RadioGroup.OnCheckedChangeListener radioListener;
 
-    public ToolSettingsManager(Activity drawingActivity, AdaptivePixelSurfaceH aps){
+    public ToolSettingsManager(Activity drawingActivity, AdaptivePixelSurfaceH aps) {
         this.aps = aps;
         toolSettingsWindowLayout = (FrameLayout) drawingActivity.findViewById(R.id.toolSettings);
         c = drawingActivity;
-        size = c.getString(R.string.stroke_width);
-        roundingS = c.getString(R.string.corners_rounding);
+        TEXT_SIZE = c.getString(R.string.stroke_width);
+        TEXT_ROUNDING = c.getString(R.string.corners_rounding);
 
         radioListener = new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
-                switch (i){
+                switch (i) {
                     case R.id.toolStyleRadioButtonSquare:
-                        if(currentTool == AdaptivePixelSurfaceH.Tool.MULTISHAPE)
+                        if (currentTool == AdaptivePixelSurfaceH.Tool.MULTISHAPE)
                             pencilCapStyles.check(R.id.toolStyleRadioButtonSquare);
-                        else if(shapeCapStyles!=null)
+                        else if (shapeCapStyles != null)
                             shapeCapStyles.check(R.id.toolStyleRadioButtonSquare);
 
                         ToolSettingsManager.this.aps.superPencil.setStyle(SuperPencilH.Style.SQUARE);
                         break;
                     case R.id.toolStyleRadioButtonRound:
-                        if(currentTool == AdaptivePixelSurfaceH.Tool.MULTISHAPE)
+                        if (currentTool == AdaptivePixelSurfaceH.Tool.MULTISHAPE)
                             pencilCapStyles.check(R.id.toolStyleRadioButtonRound);
-                        else if(shapeCapStyles!=null)
+                        else if (shapeCapStyles != null)
                             shapeCapStyles.check(R.id.toolStyleRadioButtonRound);
 
                         ToolSettingsManager.this.aps.superPencil.setStyle(SuperPencilH.Style.ROUND);
@@ -61,18 +61,18 @@ public class ToolSettingsManager {
         };
     }
 
-    public void hide(){
+    public void hide() {
         toolSettingsWindowLayout.setVisibility(View.GONE);
     }
 
-    public void show(){
-        if(currentTool== AdaptivePixelSurfaceH.Tool.PENCIL||currentTool== AdaptivePixelSurfaceH.Tool.ERASER||currentTool== AdaptivePixelSurfaceH.Tool.MULTISHAPE)
+    public void show() {
+        if (currentTool == AdaptivePixelSurfaceH.Tool.PENCIL || currentTool == AdaptivePixelSurfaceH.Tool.ERASER || currentTool == AdaptivePixelSurfaceH.Tool.MULTISHAPE)
             toolSettingsWindowLayout.setVisibility(View.VISIBLE);
     }
 
-    public boolean notifyToolPicked(AdaptivePixelSurfaceH.Tool tool){
+    public boolean notifyToolPicked(AdaptivePixelSurfaceH.Tool tool) {
         currentTool = tool;
-        switch (currentTool){
+        switch (currentTool) {
 
             case ERASER:
             case PENCIL:
@@ -93,23 +93,25 @@ public class ToolSettingsManager {
     }
 
     private View pencilView;
-    private void pencilSetup(){
+
+    private void pencilSetup() {
         toolSettingsWindowLayout.removeAllViews();
-        if(pencilView == null)
+        if (pencilView == null)
             initializePencilView();
         toolSettingsWindowLayout.addView(pencilView);
 
-        sizeBar.setProgress(strokeWidth-1);
+        sizeBar.setProgress(strokeWidth - 1);
     }
 
     private View multishapeView;
-    private void multishapeSetup(){
+
+    private void multishapeSetup() {
         toolSettingsWindowLayout.removeAllViews();
-        if(multishapeView == null)
+        if (multishapeView == null)
             initializeMultishapeView();
         toolSettingsWindowLayout.addView(multishapeView);
 
-        shapeSizeBar.setProgress(strokeWidth-1);
+        shapeSizeBar.setProgress(strokeWidth - 1);
     }
 
     private int strokeWidth = 1;
@@ -117,18 +119,19 @@ public class ToolSettingsManager {
     private TextView toolSizeText;
     private SeekBar sizeBar;
     private RadioGroup pencilCapStyles;
-    private void initializePencilView(){
+
+    private void initializePencilView() {
         pencilView = LayoutInflater.from(c).inflate(R.layout.tool_settings_pencil, toolSettingsWindowLayout, false);
 
-        toolSizeText  = (TextView) pencilView.findViewById(R.id.toolSizeText);
-        toolSizeText.setText(String.format(size, strokeWidth));
+        toolSizeText = (TextView) pencilView.findViewById(R.id.toolSizeText);
+        toolSizeText.setText(String.format(TEXT_SIZE, strokeWidth));
 
         sizeBar = (SeekBar) pencilView.findViewById(R.id.toolSizeSeekBar);
         sizeBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                strokeWidth = i+1;
-                toolSizeText.setText(String.format(size, strokeWidth));
+                strokeWidth = i + 1;
+                toolSizeText.setText(String.format(TEXT_SIZE, strokeWidth));
             }
 
             @Override
@@ -139,7 +142,7 @@ public class ToolSettingsManager {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 aps.setStrokeWidth(strokeWidth);
-                if(aps.cursorMode)
+                if (aps.cursorMode)
                     aps.invalidate();
             }
         });
@@ -160,13 +163,13 @@ public class ToolSettingsManager {
     private TextView roundingText;
     private SeekBar roundingSeekBar;
 
-    private void initializeMultishapeView(){
+    private void initializeMultishapeView() {
         multishapeView = LayoutInflater.from(c).inflate(R.layout.tool_settings_multishape, toolSettingsWindowLayout, false);
 
         toolStyleText = (TextView) multishapeView.findViewById(R.id.toolStyleText);
         shapeCapStyles = (RadioGroup) multishapeView.findViewById(R.id.toolStyleRadioGroup);
 
-        if(aps.superPencil.style== SuperPencilH.Style.ROUND)
+        if (aps.superPencil.style == SuperPencilH.Style.ROUND)
             shapeCapStyles.check(R.id.toolStyleRadioButtonRound);
 
         shapeCapStyles.setOnCheckedChangeListener(radioListener);
@@ -178,9 +181,9 @@ public class ToolSettingsManager {
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                switch (view.getId()){
+                switch (view.getId()) {
                     case R.id.lineTool:
-                        if(aps.multiShape.shape== MultiShapeH.Shape.LINE)
+                        if (aps.multiShape.shape == MultiShapeH.Shape.LINE)
                             return;
 
                         aps.multiShape.shape = MultiShapeH.Shape.LINE;
@@ -195,13 +198,13 @@ public class ToolSettingsManager {
                         shapeCapStyles.setVisibility(View.VISIBLE);
                         toolStyleText.setVisibility(View.VISIBLE);
 
-                        if(Build.VERSION.SDK_INT>=21) {
+                        if (Build.VERSION.SDK_INT >= 21) {
                             roundingText.setVisibility(View.GONE);
                             roundingSeekBar.setVisibility(View.GONE);
                         }
                         break;
                     case R.id.rectTool:
-                        if(aps.multiShape.shape== MultiShapeH.Shape.RECT)
+                        if (aps.multiShape.shape == MultiShapeH.Shape.RECT)
                             return;
 
                         aps.multiShape.shape = MultiShapeH.Shape.RECT;
@@ -216,13 +219,13 @@ public class ToolSettingsManager {
                         shapeCapStyles.setVisibility(View.GONE);
                         toolStyleText.setVisibility(View.GONE);
 
-                        if(Build.VERSION.SDK_INT>=21) {
+                        if (Build.VERSION.SDK_INT >= 21) {
                             roundingText.setVisibility(View.VISIBLE);
                             roundingSeekBar.setVisibility(View.VISIBLE);
                         }
                         break;
                     case R.id.circleTool:
-                        if(aps.multiShape.shape== MultiShapeH.Shape.CIRCLE)
+                        if (aps.multiShape.shape == MultiShapeH.Shape.CIRCLE)
                             return;
 
                         aps.multiShape.shape = MultiShapeH.Shape.CIRCLE;
@@ -236,11 +239,11 @@ public class ToolSettingsManager {
                         shapeCapStyles.setVisibility(View.GONE);
                         toolStyleText.setVisibility(View.GONE);
 
-                        if(Build.VERSION.SDK_INT>=21) {
+                        if (Build.VERSION.SDK_INT >= 21) {
                             lockedSwitch.setVisibility(View.VISIBLE);
                             roundingText.setVisibility(View.GONE);
                             roundingSeekBar.setVisibility(View.GONE);
-                        }else
+                        } else
                             lockedSwitch.setVisibility(View.GONE);
                         break;
                 }
@@ -260,17 +263,17 @@ public class ToolSettingsManager {
         });
 
         shapeSizeText = (TextView) multishapeView.findViewById(R.id.shapeToolSizeText);
-        shapeSizeText.setText(String.format(size, strokeWidth));
+        shapeSizeText.setText(String.format(TEXT_SIZE, strokeWidth));
 
         SeekBar.OnSeekBarChangeListener onSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                if(seekBar.getId()==R.id.shapeToolSizeSeekbar) {
+                if (seekBar.getId() == R.id.shapeToolSizeSeekbar) {
                     strokeWidth = i + 1;
-                    shapeSizeText.setText(String.format(size, strokeWidth));
-                }else {
+                    shapeSizeText.setText(String.format(TEXT_SIZE, strokeWidth));
+                } else {
                     rounding = i;
-                    roundingText.setText(String.format(roundingS, rounding));
+                    roundingText.setText(String.format(TEXT_ROUNDING, rounding));
                 }
             }
 
@@ -281,10 +284,10 @@ public class ToolSettingsManager {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                if(seekBar.getId()==R.id.shapeToolSizeSeekbar)
+                if (seekBar.getId() == R.id.shapeToolSizeSeekbar)
                     aps.setStrokeWidth(strokeWidth);
                 else
-                    aps.multiShape.rounding = rounding*2;
+                    aps.multiShape.rounding = rounding * 2;
             }
         };
 
@@ -303,7 +306,7 @@ public class ToolSettingsManager {
         roundingSeekBar = (SeekBar) multishapeView.findViewById(R.id.cornersRoundingSeekBar);
         roundingSeekBar.setOnSeekBarChangeListener(onSeekBarChangeListener);
         roundingText = (TextView) multishapeView.findViewById(R.id.roundingText);
-        roundingText.setText(String.format(roundingS, rounding));
+        roundingText.setText(String.format(TEXT_ROUNDING, rounding));
 
     }
 }
