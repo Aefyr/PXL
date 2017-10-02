@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentManager = getFragmentManager();
         PaletteUtils.initialize(this);
 
-        loadFragment(PXLFragment.GALLERY);
+        setFragment(PXLFragment.GALLERY);
         navigationView.setCheckedItem(R.id.nav_gallery);
     }
 
@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             navigationView.setCheckedItem(R.id.nav_community);
-            loadFragment(PXLFragment.PREFERENCES);
+            setFragment(PXLFragment.PREFERENCES);
             return true;
         }
 
@@ -127,11 +127,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.nav_gallery) {
-            loadFragment(PXLFragment.GALLERY);
+            setFragment(PXLFragment.GALLERY);
         } else if (id == R.id.nav_palettes) {
-            loadFragment(PXLFragment.PALETTES);
+            setFragment(PXLFragment.PALETTES);
         } else if (id == R.id.nav_community) {
-            loadFragment(PXLFragment.PREFERENCES);
+            setFragment(PXLFragment.PREFERENCES);
         } else if (id == R.id.nav_about) {
 
         } else if (id == R.id.nav_tutorial) {
@@ -144,8 +144,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    // FIXME: 17.07.2017 This is retarded
-    void loadFragment(PXLFragment pxlFragment) {
+    void setFragment(PXLFragment pxlFragment) {
         if (currentPxlFragment == pxlFragment)
             return;
 
