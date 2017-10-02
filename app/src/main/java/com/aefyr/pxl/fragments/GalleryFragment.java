@@ -65,9 +65,10 @@ public class GalleryFragment extends android.app.Fragment {
 
         recyclerView = (RecyclerView) view.findViewById(R.id.galleryRecycler);
         adapter = new ProjectsRecycleAdapter(getActivity(), ProjectsUtils.getProjects());
-        recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), (int) (Utils.getScreenWidth(getResources()) / Utils.dpToPx(180, getResources()))));
-        recyclerView.setItemViewCacheSize(24);
+        recyclerView.setItemViewCacheSize(16);
+        adapter.setHasStableIds(true);
+        recyclerView.setAdapter(adapter);
 
         initializeFABOnClickListener(view);
         initializeOnProjectClickListener();
@@ -215,7 +216,7 @@ public class GalleryFragment extends android.app.Fragment {
             }
 
             @Override
-            public void onProjectLongClick(final int id, final Project project) {
+            public void onLongProjectClick(final int id, final Project project) {
                 AlertDialog optionsDialog = new AlertDialog.Builder(getActivity()).setTitle(project.name).setItems(getResources().getStringArray(R.array.project_options), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

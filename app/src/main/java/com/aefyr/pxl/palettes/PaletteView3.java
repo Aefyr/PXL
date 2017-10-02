@@ -29,6 +29,7 @@ public class PaletteView3 extends View implements Palette2.OnPaletteChangeListen
     float colorSizeY;
     LinearGradient gradient;
 
+
     public PaletteView3(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initialize();
@@ -74,6 +75,7 @@ public class PaletteView3 extends View implements Palette2.OnPaletteChangeListen
         colorSizeY = (float) h / 4f;
         scaleMatrix.setScale(colorSizeX, colorSizeY);
         noAAPaint.setStrokeWidth((int) colorSizeX / 10);
+
     }
 
     @Override
@@ -89,6 +91,7 @@ public class PaletteView3 extends View implements Palette2.OnPaletteChangeListen
         noAAPaint.setShader(gradient);
 
         canvas.drawRect(0, 0, getWidth(), getHeight(), noAAPaint);
+
 
         //Draw selected currentColor outline
         /*if(palette==null)
@@ -112,7 +115,8 @@ public class PaletteView3 extends View implements Palette2.OnPaletteChangeListen
         if (event.getAction() == MotionEvent.ACTION_DOWN)
             return true;
         if (event.getAction() == MotionEvent.ACTION_UP) {
-            calculateClickedColor(event.getX(), event.getY());
+            if (Utils.inBounds(event.getX(), event.getY(), 0, 0, getWidth(), getHeight()))
+                calculateClickedColor(event.getX(), event.getY());
             return true;
         }
         return super.onTouchEvent(event);

@@ -13,6 +13,7 @@ public class SuperPencilH extends ToolH {
     Matrix mirrorMatrix;
     Style style = Style.SQUARE;
     private float circleRadius = 1;
+    private float highVelocityThreshold;
 
     enum Style {
         SQUARE, ROUND
@@ -23,6 +24,7 @@ public class SuperPencilH extends ToolH {
         path = new Path();
         mirroredPath = new Path();
         mirrorMatrix = new Matrix();
+        highVelocityThreshold = Utils.dpToPx(6, adaptivePixelSurface.getResources());
     }
 
     void setStyle(Style style) {
@@ -42,10 +44,16 @@ public class SuperPencilH extends ToolH {
     private Path path;
     private float nX, nY;
 
+    private float lX, lY;
+    private boolean highVelocity;
+
     @Override
     void startDrawing(float x, float y) {
         if (drawing)
             return;
+
+        lX = x;
+        lY = y;
 
         hitBounds = false;
 
@@ -87,9 +95,11 @@ public class SuperPencilH extends ToolH {
         if (!drawing)
             return;
 
+        highVelocity = Utils.vector2Distance(x, y, lX, lY) >= highVelocityThreshold;
+
         calculateCanvasXY(x, y);
 
-        if (aps.cursorMode && aps.paint.getStrokeWidth() <= 4)
+        if (aps.cursorMode && !highVelocity && aps.paint.getStrokeWidth() <= 4)
             path.lineTo(sX, sY);
         else
             path.quadTo(nX, nY, (sX + nX) / 2f, (sY + nY) / 2f);
@@ -97,7 +107,11 @@ public class SuperPencilH extends ToolH {
         nX = sX;
         nY = sY;
 
-        if (aps.cursorMode && instaDots && aps.strokeWidth == 1)
+        lX = x;
+        lY = y;
+
+
+        if (aps.cursorMode && !highVelocity && instaDots && aps.strokeWidth == 1)
             aps.pixelCanvas.drawPoint(sX, sY, aps.paint);
 
 
@@ -124,7 +138,6 @@ public class SuperPencilH extends ToolH {
 
         calculateCanvasXY(x, y);
 
-        //path.lineTo(sX, sY);
         path.setLastPoint(sX, sY);
         aps.pixelCanvas.drawPath(path, aps.paint);
 
@@ -207,5 +220,13 @@ public class SuperPencilH extends ToolH {
             mirrorMatrix.setScale(1f, -1f, (float) aps.pixelWidth / 2f, (float) aps.pixelHeight / 2f);
         }
 
+    }
+
+    @Override
+    protected void checkHitBounds() {
+        if (aps.paint.getStrokeWidth() == 1)
+            super.checkHitBounds();
+        else
+            hitBounds = true;
     }
 }

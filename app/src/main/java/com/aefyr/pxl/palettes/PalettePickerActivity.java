@@ -39,6 +39,7 @@ public class PalettePickerActivity extends AppCompatActivity {
         adapter = new PalettePickRecyclerAdapter(this, PaletteUtils.getSavedPalettes());
         recyclerView.setLayoutManager(new GridLayoutManager(this, (int) (Utils.getScreenWidth(getResources()) / Utils.dpToPx(130, getResources()))));
         recyclerView.setItemViewCacheSize(24);
+        adapter.setHasStableIds(true);
         recyclerView.setAdapter(adapter);
 
         currentPaletteName = getIntent().getStringExtra("currentPalette");
@@ -120,9 +121,9 @@ public class PalettePickerActivity extends AppCompatActivity {
     }
 
     private void initializePaletteItemsInteractions(final boolean pickerMode) {
-        adapter.setOnPaletteInteractionListener(new PalettePickRecyclerAdapter.OnPaletteInteractionListener() {
+        adapter.setOnPaletteClickListener(new PalettePickRecyclerAdapter.OnPaletteClickListener() {
             @Override
-            public void onPaletteLongClick(final Palette2 palette, final int index) {
+            public void onLongPaletteClick(final Palette2 palette, final int index) {
                 String[] options = getResources().getStringArray(R.array.palette_options);
                 AlertDialog optionsDialog = new AlertDialog.Builder(PalettePickerActivity.this).setTitle(palette.getName()).setItems(options, new DialogInterface.OnClickListener() {
                     @Override

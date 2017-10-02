@@ -6,7 +6,7 @@
     android:background="@color/colorAlmostBlack"
     tools:context="com.aefyr.pxl.fragments.GalleryFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <!-- TODO: Update blank pxlFragment layout -->
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/galleryRecycler"

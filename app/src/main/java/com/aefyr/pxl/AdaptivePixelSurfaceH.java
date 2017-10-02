@@ -21,6 +21,7 @@ import android.view.View;
 import com.aefyr.pxl.fragments.PreferencesFragment;
 import com.aefyr.pxl.palettes.PaletteManagerH;
 import com.aefyr.pxl.projects.Project;
+import com.aefyr.pxl.tools.RectP;
 
 import java.util.ArrayDeque;
 
@@ -181,6 +182,10 @@ public class AdaptivePixelSurfaceH extends View {
 
     public boolean isSymmetryEnabled() {
         return symmetry;
+    }
+
+    public RectP getBounds() {
+        return new RectP(0, 0, pixelWidth, pixelHeight);
     }
 
     Paint trans;

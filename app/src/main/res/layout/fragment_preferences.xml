@@ -6,7 +6,7 @@
     android:orientation="vertical"
     tools:context="com.aefyr.pxl.fragments.PreferencesFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <!-- TODO: Update blank pxlFragment layout -->
 
     <ListView
         android:id="@android:id/list"

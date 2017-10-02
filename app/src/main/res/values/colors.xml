@@ -9,4 +9,5 @@
     <color name="colorAlmostWhite">#fafafa</color>
     <color name="colorNotSoWhite">#bdbdbd</color>
     <color name="colorTutorialText">#263238</color>
+    <color name="colorPressedPaletteBG">#78909c</color>
 </resources>

@@ -25,6 +25,10 @@ public class RectP {
     }
 
     public boolean contains(int x, int y) {
+        return contains((float) x, (float) y);
+    }
+
+    public boolean contains(float x, float y) {
         return (right > left ? (x < right && x >= left) : (x < left && x >= right)) && (bottom > top ? (y < bottom && y >= top) : (y < top && y >= bottom));
     }
 

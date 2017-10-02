@@ -1,5 +1,7 @@
 package com.aefyr.pxl;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,14 +25,16 @@ import com.aefyr.pxl.fragments.PreferencesFragment;
 import com.aefyr.pxl.palettes.PaletteMaker;
 import com.aefyr.pxl.palettes.PaletteUtils;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private android.app.FragmentManager fragmentManager;
 
-    private enum FRAGMENT {
-        GALLERY, TEST, PREFERENCES
+    private enum PXLFragment {
+        UNINITIALIZED, GALLERY, PALETTES, PREFERENCES
     }
+
+    private Fragment currentFragment;
+    private PXLFragment currentPxlFragment = PXLFragment.UNINITIALIZED;
 
     private NavigationView navigationView;
     private ActionBar actionBar;
@@ -78,7 +82,7 @@ public class MainActivity extends AppCompatActivity
         fragmentManager = getFragmentManager();
         PaletteUtils.initialize(this);
 
-        loadFragment(FRAGMENT.GALLERY);
+        loadFragment(PXLFragment.GALLERY);
         navigationView.setCheckedItem(R.id.nav_gallery);
     }
 
@@ -109,7 +113,7 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             navigationView.setCheckedItem(R.id.nav_community);
-            loadFragment(FRAGMENT.PREFERENCES);
+            loadFragment(PXLFragment.PREFERENCES);
             return true;
         }
 
@@ -123,11 +127,11 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_gallery) {
-            loadFragment(FRAGMENT.GALLERY);
+            loadFragment(PXLFragment.GALLERY);
         } else if (id == R.id.nav_palettes) {
-            loadFragment(FRAGMENT.TEST);
+            loadFragment(PXLFragment.PALETTES);
         } else if (id == R.id.nav_community) {
-            loadFragment(FRAGMENT.PREFERENCES);
+            loadFragment(PXLFragment.PREFERENCES);
         } else if (id == R.id.nav_about) {
 
         } else if (id == R.id.nav_tutorial) {
@@ -141,38 +145,61 @@ public class MainActivity extends AppCompatActivity
     }
 
     // FIXME: 17.07.2017 This is retarded
-    void loadFragment(FRAGMENT fragment) {
-        switch (fragment) {
+    void loadFragment(PXLFragment pxlFragment) {
+        if (currentPxlFragment == pxlFragment)
+            return;
+
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+        if (currentFragment != null)
+            transaction.hide(currentFragment);
+
+        switch (pxlFragment) {
             case GALLERY:
-                GalleryFragment gallery = (GalleryFragment) fragmentManager.findFragmentByTag("Gallery");
+                Fragment gallery = fragmentManager.findFragmentByTag(FragmentTag.GALLERY);
                 if (gallery == null) {
                     gallery = new GalleryFragment();
-                    //fragmentManager.beginTransaction().add(R.id.container, gallery, "Gallery").commit();
+                    transaction.add(R.id.container, gallery, FragmentTag.GALLERY);
                     System.out.println("created gallery");
-                }
-                fragmentManager.beginTransaction().replace(R.id.container, gallery, "Gallery").commit();
+                } else
+                    transaction.show(gallery);
+
+                currentFragment = gallery;
                 actionBar.setTitle(getString(R.string.projects));
                 break;
-            case TEST:
-                PalettesFragment palettes = (PalettesFragment) fragmentManager.findFragmentByTag("Palettes");
+            case PALETTES:
+                Fragment palettes = fragmentManager.findFragmentByTag(FragmentTag.PALETTES);
                 if (palettes == null) {
                     palettes = new PalettesFragment();
-                    //fragmentManager.beginTransaction().add(R.id.container, test, "Test").commit();
-                    System.out.println("created test");
-                }
-                fragmentManager.beginTransaction().replace(R.id.container, palettes, "Palettes").commit();
+                    transaction.add(R.id.container, palettes, FragmentTag.PALETTES);
+                    System.out.println("created palettes");
+                } else
+                    transaction.show(palettes);
+
+                currentFragment = palettes;
                 actionBar.setTitle(getString(R.string.palettes));
                 break;
             case PREFERENCES:
-                PreferencesFragment preferences = (PreferencesFragment) fragmentManager.findFragmentByTag("Preferences");
-                if (preferences == null) {
-                    preferences = new PreferencesFragment();
-                    //fragmentManager.beginTransaction().add(R.id.container, test, "Test").commit();
-                    System.out.println("created test");
-                }
-                fragmentManager.beginTransaction().replace(R.id.container, preferences, "Preferences").commit();
+                Fragment prefs = fragmentManager.findFragmentByTag(FragmentTag.PREFS);
+                if (prefs == null) {
+                    prefs = new PreferencesFragment();
+                    transaction.add(R.id.container, prefs, FragmentTag.PREFS);
+                    System.out.println("created prefs");
+                } else
+                    transaction.show(prefs);
+
+                currentFragment = prefs;
                 actionBar.setTitle(getString(R.string.title_activity_settings));
                 break;
         }
+
+        transaction.commit();
+
+    }
+
+    private class FragmentTag {
+        private static final String GALLERY = "GALLERY";
+        private static final String PALETTES = "PALETTES";
+        private static final String PREFS = "PREFS";
     }
 }

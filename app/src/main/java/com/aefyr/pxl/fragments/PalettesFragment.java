@@ -56,6 +56,7 @@ public class PalettesFragment extends android.app.Fragment {
         adapter = new PalettePickRecyclerAdapter(getActivity(), PaletteUtils.getSavedPalettes());
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), (int) (Utils.getScreenWidth(getResources()) / Utils.dpToPx(130, getResources()))));
         recyclerView.setItemViewCacheSize(24);
+        adapter.setHasStableIds(true);
         recyclerView.setAdapter(adapter);
 
 
@@ -150,9 +151,9 @@ public class PalettesFragment extends android.app.Fragment {
                 adapter.notifyItemChanged(managedPaletteIndex);
             }
         });
-        adapter.setOnPaletteInteractionListener(new PalettePickRecyclerAdapter.OnPaletteInteractionListener() {
+        adapter.setOnPaletteClickListener(new PalettePickRecyclerAdapter.OnPaletteClickListener() {
             @Override
-            public void onPaletteLongClick(final Palette2 palette, final int index) {
+            public void onLongPaletteClick(final Palette2 palette, final int index) {
                 createAndShowOptionsDialog(palette, index);
             }
 

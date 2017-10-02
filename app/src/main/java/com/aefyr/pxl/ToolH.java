@@ -11,6 +11,7 @@ abstract class ToolH {
     protected float startX, startY;
     protected int moves;
 
+    protected boolean autoCheckHitBounds = true;
     protected boolean hitBounds = false;
 
     protected AdaptivePixelSurfaceH aps;
@@ -35,8 +36,13 @@ abstract class ToolH {
         sX = (x - p[0]) / aps.pixelScale;
         sY = (y - p[1]) / aps.pixelScale;
 
+        if (autoCheckHitBounds)
+            checkHitBounds();
+    }
+
+    protected void checkHitBounds() {
         if (!hitBounds && sX > 0 && sX < aps.pixelWidth && sY > 0 && sY < aps.pixelHeight)
             hitBounds = true;
-
     }
+
 }

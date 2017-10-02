@@ -15,22 +15,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by Aefyr on 19.07.2017.
  */
 
-public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycleAdapter.ViewHolder> {
+public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycleAdapter.ProjectViewHolder> {
 
     private LayoutInflater inflater;
     private ArrayList<Project> projects;
     private OnProjectClickListener onProjectClickListener;
-    SimpleDateFormat simpleDateFormat;
+    private SimpleDateFormat simpleDateFormat;
 
     public interface OnProjectClickListener {
         void onProjectClick(Project project, int id);
 
-        void onProjectLongClick(int id, Project project);
+        void onLongProjectClick(int id, Project project);
     }
 
     public void setOnProjectClickListener(OnProjectClickListener listener) {
@@ -39,7 +40,7 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
 
     public ProjectsRecycleAdapter(Context c, ArrayList<Project> projects) {
         inflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        simpleDateFormat = new SimpleDateFormat("dd.MM.yy HH:mm");
+        simpleDateFormat = new SimpleDateFormat("dd.MM.yy HH:mm", Locale.getDefault());
         this.projects = projects;
         Collections.sort(projects, new LastModifiedComparator());
     }
@@ -50,32 +51,18 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ProjectViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = inflater.inflate(R.layout.gallery_item, null, false);
-        return new ViewHolder(v);
+        return new ProjectViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-        Project p = getItem(position);
+    public void onBindViewHolder(final ProjectViewHolder holder, int position) {
+        Project p = getProject(position);
         holder.name.setText(p.name);
         holder.resolution.setText(p.getResolutionString());
         holder.preview.setImageBitmap(p.getBitmap(false));
-        holder.lastModified.setText(simpleDateFormat.format(new Date(getItem(position).lastModified)));
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onProjectClickListener.onProjectClick(getItem(holder.getAdapterPosition()), holder.getAdapterPosition());
-            }
-        });
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                onProjectClickListener.onProjectLongClick(holder.getAdapterPosition(), getItem(holder.getAdapterPosition()));
-                return true;
-            }
-        });
-
+        holder.lastModified.setText(simpleDateFormat.format(new Date(getProject(position).lastModified)));
     }
 
     @Override
@@ -85,7 +72,12 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
         return projects.size();
     }
 
-    public Project getItem(int index) {
+    @Override
+    public long getItemId(int position) {
+        return projects.get(position).lastModified;
+    }
+
+    private Project getProject(int index) {
         return projects.get(index);
     }
 
@@ -117,18 +109,36 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
         }
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ProjectViewHolder extends RecyclerView.ViewHolder {
         private PixelImageView preview;
         private TextView name;
         private TextView resolution;
         private TextView lastModified;
 
-        public ViewHolder(View itemView) {
+        private ProjectViewHolder(View itemView) {
             super(itemView);
             preview = (PixelImageView) itemView.findViewById(R.id.preview);
             name = (TextView) itemView.findViewById(R.id.name);
             resolution = (TextView) itemView.findViewById(R.id.resolution);
             lastModified = (TextView) itemView.findViewById(R.id.lastModified);
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    if (onProjectClickListener != null) {
+                        onProjectClickListener.onLongProjectClick(getAdapterPosition(), getProject(getAdapterPosition()));
+                        return true;
+                    }
+                    return false;
+                }
+            });
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (onProjectClickListener != null)
+                        onProjectClickListener.onProjectClick(getProject(getAdapterPosition()), getAdapterPosition());
+                }
+            });
         }
     }
 

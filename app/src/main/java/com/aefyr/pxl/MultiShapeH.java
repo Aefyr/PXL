@@ -8,11 +8,14 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.os.Build;
 
+import com.aefyr.pxl.tools.RectP;
+
 /**
  * Created by Aefyr on 31.07.2017.
  */
 
 public class MultiShapeH extends ToolH {
+
     enum Shape {
         LINE, RECT, CIRCLE
     }
@@ -32,6 +35,8 @@ public class MultiShapeH extends ToolH {
 
 
     MultiShapeH(AdaptivePixelSurfaceH aps) {
+        autoCheckHitBounds = false;
+
         this.aps = aps;
         overlayPaint = new Paint();
         overlayPaint.setAntiAlias(false);
@@ -39,6 +44,9 @@ public class MultiShapeH extends ToolH {
 
         shapeBitmap = Bitmap.createBitmap(aps.pixelWidth, aps.pixelHeight, Bitmap.Config.ARGB_8888);
         shapeCanvas = new Canvas(shapeBitmap);
+
+        canvasBounds = aps.getBounds();
+        shapeBounds = new RectP();
     }
 
     @Override
@@ -51,6 +59,8 @@ public class MultiShapeH extends ToolH {
         calculateCanvasXY(x, y);
         startX = sX;
         startY = sY;
+        cX = sX;
+        cY = sY;
 
         if (fill && (shape == Shape.CIRCLE || shape == Shape.RECT))
             aps.paint.setStyle(Paint.Style.FILL);
@@ -62,7 +72,7 @@ public class MultiShapeH extends ToolH {
 
     }
 
-    float[] d;
+    private float[] d;
 
     @Override
     void move(float x, float y) {
@@ -86,6 +96,8 @@ public class MultiShapeH extends ToolH {
 
                     shapeCanvas.drawLine(startX, startY, sX - startX > 0 ? startX + sinA : startX - sinA, lockedAngle < 90 ? startY - cosA : startY + cosA, aps.paint);
                 }
+                cX = sX;
+                cY = sY;
                 break;
             case RECT:
                 aps.pixelCanvas.drawBitmap(backupBitmap, 0, 0, overlayPaint);
@@ -94,6 +106,9 @@ public class MultiShapeH extends ToolH {
                         shapeCanvas.drawRoundRect(startX < sX ? startX : sX, startY < sY ? startY : sY, startX < sX ? sX : startX, startY < sY ? sY : startY, rounding, rounding, aps.paint);
                     else
                         shapeCanvas.drawRect(startX, startY, sX, sY, aps.paint);
+
+                    cX = sX;
+                    cY = sY;
                 } else {
                     d = Utils.signedVector2Distance(startX, startY, sX, sY);
                     float aX = (float) (startX + Math.sqrt(Math.pow(d[0], 2) / 2f) * Math.signum(d[0]));
@@ -105,6 +120,8 @@ public class MultiShapeH extends ToolH {
                     } else
                         shapeCanvas.drawRect(startX, startY, aX, aY, aps.paint);
 
+                    cX = aX;
+                    cY = aY;
                 }
                 break;
             case CIRCLE:
@@ -125,6 +142,9 @@ public class MultiShapeH extends ToolH {
                         y2 = t;
                     }
                     shapeCanvas.drawOval(x1, y1, x2, y2, aps.paint);
+
+                    cX = sX;
+                    cY = sY;
                 } else if (locked && Build.VERSION.SDK_INT >= 21) {
                     d = Utils.signedVector2Distance(startX, startY, sX, sY);
 
@@ -144,8 +164,15 @@ public class MultiShapeH extends ToolH {
                     }
 
                     shapeCanvas.drawOval(x1, y1, x2, y2, aps.paint);
-                } else
+
+                    cX = x1 == startX ? x2 : x1;
+                    cY = y1 == startY ? y2 : y1;
+                } else {
                     shapeCanvas.drawCircle(startX, startY, Utils.vector2Distance(startX, startY, sX, sY), aps.paint);
+
+                    cX = sX;
+                    cY = sY;
+                }
 
                 break;
         }
@@ -162,7 +189,9 @@ public class MultiShapeH extends ToolH {
         if (!drawing)
             return;
 
-        if (hitBounds && moves >= 2)
+        checkHitBounds();
+
+        if (hitBounds && moves >= 1)
             aps.canvasHistory.completeHistoricalChange();
         else
             aps.canvasHistory.cancelHistoricalChange(false);
@@ -181,13 +210,27 @@ public class MultiShapeH extends ToolH {
             return;
         }
 
-        if (moves < 10)
+        if (moves < 10) {
+            checkHitBounds();
             aps.canvasHistory.cancelHistoricalChange(hitBounds);
-        else
+        } else
             stopDrawing(x, y);
 
         aps.paint.setStyle(Paint.Style.STROKE);
 
         drawing = false;
+    }
+
+    private RectP canvasBounds;
+    private RectP shapeBounds;
+    private float cX, cY;
+
+    @Override
+    protected void checkHitBounds() {
+        if (aps.paint.getStrokeWidth() == 1 && (Build.VERSION.SDK_INT >= 21 || shape != Shape.CIRCLE)) {
+            shapeBounds.set((int) startX, (int) startY, (int) cX, (int) cY);
+            hitBounds = shapeBounds.overlaps(canvasBounds);
+        } else
+            hitBounds = true;
     }
 }
