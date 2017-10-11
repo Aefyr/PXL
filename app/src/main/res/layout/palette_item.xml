@@ -16,7 +16,7 @@
         android:orientation="vertical">
 
 
-        <com.aefyr.pxl.palettes.PalettePreviewView
+        <com.af.pxl.palettes.PalettePreviewView
             android:id="@+id/palettePreview"
             android:layout_width="108dp"
             android:layout_height="108dp"

@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
-    tools:context="com.aefyr.pxl.ColorSwapActivity">
+    tools:context="com.af.pxl.ColorSwapActivity">
 
-    <com.aefyr.pxl.views.PixelImageView
+    <com.af.pxl.views.PixelImageView
         android:id="@+id/pxlImageView"
         android:layout_width="290dp"
         android:layout_height="290dp"

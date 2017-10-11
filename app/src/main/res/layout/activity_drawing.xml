@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
 
-    <com.aefyr.pxl.AdaptivePixelSurfaceH
+    <com.af.pxl.AdaptivePixelSurfaceH
         android:id="@+id/aps"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -85,7 +85,7 @@
         android:background="@drawable/full_round_rect_bg"
         app:srcCompat="@drawable/redo" />
 
-    <com.aefyr.pxl.views.ColorCircle
+    <com.af.pxl.views.ColorCircle
         android:id="@+id/currentColor"
         android:layout_width="64dp"
         android:layout_height="64dp"
@@ -218,7 +218,7 @@
             android:layout_below="@+id/paletteRecycler"
             android:text="@string/pick_color" />
 
-        <com.aefyr.pxl.views.ColorCircle
+        <com.af.pxl.views.ColorCircle
             android:id="@+id/colorCircle"
             android:layout_width="64dp"
             android:layout_height="64dp"
