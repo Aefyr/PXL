@@ -5,6 +5,7 @@ import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
@@ -66,6 +67,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     new AlertDialog.Builder(MainActivity.this).setMessage(getString(R.string.tutorial_hint)).setPositiveButton(getString(R.string.ok), null).create().show();
                 }
             }).setCancelable(false).create().show();
+
+            if(Build.VERSION.SDK_INT<21) {
+                new AlertDialog.Builder(this).setTitle(getString(R.string.warn)).setMessage(getString(R.string.comp_mode)).setPositiveButton(getString(R.string.ok), null).setCancelable(false).create().show();
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

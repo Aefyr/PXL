@@ -2,6 +2,7 @@ package com.af.pxl;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.preference.PreferenceManager;
 import android.view.Window;
 import android.widget.SeekBar;
 
@@ -121,11 +122,11 @@ public class ColorPicker {
     //Color Swapping
     private boolean livePreview = false;
     private OnLivePreviewUpdateListener listener;
-    private ColorSwapper colorSwapper;
+    private ColorSwapperH colorSwapperH;
 
     void useColorSwap(Bitmap bitmap, int colorToSwap, OnLivePreviewUpdateListener listener) {
         this.listener = listener;
-        colorSwapper = new ColorSwapper(bitmap, colorToSwap);
+        colorSwapperH = new ColorSwapperH(hueView.getContext(), bitmap, colorToSwap, Color.HSVToColor(color), PreferenceManager.getDefaultSharedPreferences(hueView.getContext()).getBoolean("hardware_accelerated", true)?ColorSwapperH.MODE_HARDWARE_ACCELERATED:ColorSwapperH.MODE_NORMAL);
     }
 
     void setLivePreviewEnabled(boolean enabled) {
@@ -133,15 +134,18 @@ public class ColorPicker {
     }
 
     void applyColorSwap() {
-        colorSwapper.swapColor(Color.HSVToColor(color));
+        colorSwapperH.swapTo(Color.HSVToColor(color));
     }
 
     boolean isLivePreviewAcceptable() {
-        applyColorSwap();
-        return colorSwapper.getDeltaTime() <= 60;
+        return colorSwapperH.getDeltaTime() <= 80;
     }
 
     interface OnLivePreviewUpdateListener {
         void onLivePreviewUpdate();
+    }
+
+    void destroySwapperIfNeeded(){
+        colorSwapperH.destroy();
     }
 }

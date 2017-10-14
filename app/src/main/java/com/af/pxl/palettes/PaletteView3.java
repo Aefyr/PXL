@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.af.pxl.Utils;
+import com.af.pxl.custom.RectP;
 
 /**
  * Created by Aefyr on 22.07.2017.
@@ -21,13 +22,14 @@ import com.af.pxl.Utils;
 
 public class PaletteView3 extends View implements Palette2.OnPaletteChangeListener {
 
-    Palette2 palette;
-    Bitmap bitmap;
-    Matrix scaleMatrix;
-    Paint noAAPaint;
-    float colorSizeX;
-    float colorSizeY;
-    LinearGradient gradient;
+    private Palette2 palette;
+    private Bitmap bitmap;
+    private Matrix scaleMatrix;
+    private Paint noAAPaint;
+    private float colorSizeX;
+    private float colorSizeY;
+    private LinearGradient gradient;
+    private RectP bounds;
 
 
     public PaletteView3(Context context, @Nullable AttributeSet attrs) {
@@ -66,11 +68,13 @@ public class PaletteView3 extends View implements Palette2.OnPaletteChangeListen
         noAAPaint = new Paint();
         noAAPaint.setAntiAlias(false);
         noAAPaint.setStyle(Paint.Style.STROKE);
+        bounds = new RectP();
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+        bounds.set(0, 0, w, h);
         colorSizeX = (float) w / 4f;
         colorSizeY = (float) h / 4f;
         scaleMatrix.setScale(colorSizeX, colorSizeY);
@@ -115,7 +119,7 @@ public class PaletteView3 extends View implements Palette2.OnPaletteChangeListen
         if (event.getAction() == MotionEvent.ACTION_DOWN)
             return true;
         if (event.getAction() == MotionEvent.ACTION_UP) {
-            if (Utils.inBounds(event.getX(), event.getY(), 0, 0, getWidth(), getHeight()))
+            if (bounds.contains(event.getX(), event.getY()))
                 calculateClickedColor(event.getX(), event.getY());
             return true;
         }

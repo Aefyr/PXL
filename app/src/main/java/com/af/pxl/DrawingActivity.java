@@ -301,7 +301,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        //Color swap
+        //Color swapTo
         if (requestCode == 322) {
             //Success
             if (resultCode == 1) {

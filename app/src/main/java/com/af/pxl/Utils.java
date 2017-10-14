@@ -10,6 +10,7 @@ import android.graphics.Rect;
 import android.media.MediaScannerConnection;
 import android.os.Build;
 import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.util.TypedValue;
 import android.widget.Toast;
 
@@ -209,12 +210,8 @@ public class Utils {
         return permissionsGranted;
     }
 
-    public static boolean inBounds(int x, int y, int bX1, int bY1, int bX2, int bY2) {
-        return (x >= bX1) && (x < bX2) && (y >= bY1) && (y < bY2);
-    }
-
-    public static boolean inBounds(float x, float y, float bX1, float bY1, float bX2, float bY2) {
-        return (x >= bX1) && (x < bX2) && (y >= bY1) && (y < bY2);
+    public static AlertDialog easyAlert(Context c, CharSequence title, CharSequence message){
+        return new AlertDialog.Builder(c).setTitle(title).setMessage(message).setPositiveButton(c.getString(R.string.ok), null).create();
     }
 
 

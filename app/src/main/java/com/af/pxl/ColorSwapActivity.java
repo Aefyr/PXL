@@ -16,8 +16,9 @@ import java.io.File;
 
 public class ColorSwapActivity extends AppCompatActivity {
 
-    PixelImageView pixelImageView;
-    Bitmap image;
+    private PixelImageView pixelImageView;
+    private Bitmap image;
+    private ColorPicker colorPicker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +36,7 @@ public class ColorSwapActivity extends AppCompatActivity {
 
         int color = intent.getIntExtra("color", Color.RED);
 
-        final ColorPicker colorPicker = new ColorPicker(getWindow(), color);
+        colorPicker = new ColorPicker(getWindow(), color);
 
         colorPicker.useColorSwap(image, color, new ColorPicker.OnLivePreviewUpdateListener() {
             @Override
@@ -94,5 +95,11 @@ public class ColorSwapActivity extends AppCompatActivity {
         setResult(0);
         finish();
         super.onBackPressed();
+    }
+
+    @Override
+    protected void onDestroy() {
+        colorPicker.destroySwapperIfNeeded();
+        super.onDestroy();
     }
 }

@@ -5,6 +5,10 @@
     <string name="pencil">Pencil</string>
     <string name="fill">Flood Fill</string>
     <string name="colorpick">Color Picker</string>
+    <string name="color_swap">Color Swap</string>
+    <string name="eraser">Eraser</string>
+    <string name="selector">Selector</string>
+    <string name="multishape">Multishape</string>
     <string name="pencil_action">Draw!</string>
     <string name="fill_action">Fill!</string>
     <string name="colorpick_action">Pick!</string>
@@ -21,6 +25,7 @@
     <string name="cancel">Cancel</string>
     <string name="cursor_action">PXL!</string>
     <string name="error">Internal error</string>
+    <string name="comp_mode">On Android 4.4, PXL uses dark theme</string>
 
     <!-- Misc -->
     <string name="misc">Other</string>
@@ -41,7 +46,7 @@
     <string name="add_to_palette_hint">Click on the color in palette you want to replace with current color!</string>
     <string name="color_edit_hint">Click color to edit it!</string>
     <string name="extracted">Extracted</string>
-    <string name="extracting">Extracting…</string>
+    <string name="extracting">Extracting colors…</string>
 
     <!-- Projects -->
     <string name="project">Project</string>
@@ -112,9 +117,20 @@
     <string name="category_other">Other</string>
     <string name="restore_default_palettes">Restore default palettes</string>
     <string name="palettes_restored">Default palettes were restored</string>
+    <string name="performance">Performance</string>
+    <string name="hardware_acceleration">Hardware Acceleration</string>
+    <string name="warn">Warning</string>
+    <string name="hw_warn">Only disable hardware acceleration if the app crashes when you use one of the following tools:\n<b>Color Swapper</b>\n\nIf the tools listed above work fine, disabling acceleration will only make them much less effective</string>
 
     <!--- Tutorial -->
     <string name="close">Close</string>
+    <string name="tt_pencil">Just a pencil. Use tool settings panel to change the stroke width and line caps style</string>
+    <string name="tt_eraser">Works just like the pencil, but erases the color, hence changing it to white or transparent, if you enabled transparent background in project creation window</string>
+    <string name="tt_multishape">One tool, many shapes. Use tool settings panel to select the shape, stroke width and to configure shape-specific parameters like to lock ellipsis to circle or round rect\'s borders</string>
+    <string name="tt_fill">A normal flood fill. Use it to fill limited areas of the same color. If you need to change all pixels of the same color on the image, use the color swapper, it works much faster</string>
+    <string name="tt_color_pick">Sets the current color to the color you selected with it</string>
+    <string name="tt_color_swap">Swaps all the pixels of the selected color on the image to another color. It will open a live preview window on use, where you can alter the selected color in real time.\n\n<b>Warning:</b>\nThis will work super-slow on large pictures if you have disabled the hardware acceleration in settings</string>
+    <string name="tt_selector">Drag from one point to another to create a selection rect.\n\nTo move selected pixels, tap inside the selection rect and drag it.\n\nYou can use the \"Clone\" button on the left to create a clone of selection under it and the \"Clear\" button to delete the selected pixels.\n\nTo remove the selection, tap outside the selection rect.</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

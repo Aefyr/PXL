@@ -4,6 +4,7 @@ package com.af.pxl.fragments;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.SwitchPreference;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -49,6 +50,16 @@ public class PreferencesFragment extends PreferenceFragment {
                 PaletteMaker.generateDefaultPalettes(getActivity());
                 Utils.toaster(getActivity(), getString(R.string.palettes_restored));
                 return true;
+            }
+        });
+
+        findPreference("hardware_accelerated").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                if(!((SwitchPreference)preference).isChecked())
+                    Utils.easyAlert(getActivity(), getString(R.string.warn), getText(R.string.hw_warn)).show();
+
+                return false;
             }
         });
 

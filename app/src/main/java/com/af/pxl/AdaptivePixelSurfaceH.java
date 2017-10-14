@@ -21,7 +21,7 @@ import android.view.View;
 import com.af.pxl.fragments.PreferencesFragment;
 import com.af.pxl.palettes.PaletteManagerH;
 import com.af.pxl.projects.Project;
-import com.af.pxl.tools.RectP;
+import com.af.pxl.custom.RectP;
 
 import java.util.ArrayDeque;
 
