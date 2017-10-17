@@ -224,7 +224,6 @@ public class PalettePickerActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (currentPaletteNameChanged) {
-            System.out.println("HEY!");
             Intent result = new Intent();
             result.putExtra("pickedPalette", currentPaletteName);
             setResult(1, result);

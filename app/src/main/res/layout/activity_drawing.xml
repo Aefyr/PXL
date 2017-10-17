@@ -97,7 +97,7 @@
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/TMP"
+        android:layout_above="@+id/canvasOptions"
         android:layout_centerHorizontal="true"
         android:background="@drawable/selector2"
         android:text="@string/cursor_action"
@@ -139,7 +139,7 @@
     </LinearLayout>
 
     <ImageButton
-        android:id="@+id/TMP"
+        android:id="@+id/canvasOptions"
         style="@style/PXLImageButton"
         android:layout_width="52dp"
         android:layout_height="52dp"

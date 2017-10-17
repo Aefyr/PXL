@@ -34,7 +34,6 @@ import java.io.File;
 public class DrawingActivity extends AppCompatActivity implements AdaptivePixelSurfaceH.OnSpecialToolUseListener, PaletteManagerH.OnPaletteChangeRequestListener, CanvasHistoryH.OnHistoryAvailabilityChangeListener {
 
     AdaptivePixelSurfaceH aps;
-    AlertDialog toolPickDialog;
     ImageButton.OnClickListener onClickListener;
     Button cursorAction;
     ImageButton undoButton;
@@ -51,9 +50,8 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
 
         aps = (AdaptivePixelSurfaceH) findViewById(R.id.aps);
 
-        if (getIntent().getStringExtra("projectToLoad") != null) {
+        if (getIntent().getStringExtra("projectToLoad") != null)
             aps.setProject(ProjectsUtils.loadProject(getIntent().getStringExtra("projectToLoad")));
-        }
 
 
         aps.setOnSpecialToolUseListener(this);
@@ -78,82 +76,10 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         });
         aps.canvasHistory.setOnHistoryAvailabilityChangeListener(this);
 
-        initializeImageButtonsOCL();
-        initializeToolPicking();
-        initializeCursor();
         initializeButtons();
-
-        findViewById(R.id.TMP).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (aps.currentTool == AdaptivePixelSurfaceH.Tool.SELECTOR)
-                    aps.selector.cancel(0, 0);
-                canvasWiseOptionsDialog();
-            }
-        });
-
-        BitmapFactory.Options op = new BitmapFactory.Options();
-        op.inScaled = false;
-        aps.cursor.setCursorPointerImage(BitmapFactory.decodeResource(getResources(), R.drawable.defaultcursor2, op));
-
-
-        //PALETTES
+        initializeToolbar();
+        initializeCursor();
         PaletteUtils.initialize(this);
-
-        pm = new PaletteManagerH((RelativeLayout) findViewById(R.id.paletteBar), (ColorCircle) findViewById(R.id.currentColor), aps, this);
-        aps.setColorManager(pm);
-
-        pm.setOnVisibilityChangedListener(new PaletteManagerH.OnVisibilityChangedListener() {
-            @Override
-            public void onVisibilityChanged(boolean visible) {
-                if (visible) {
-                    toolPicker.hide();
-                    symmetrySwitcher.hide();
-                }
-            }
-        });
-
-        toolPicker.setOnVisibilityChangedListener(new ToolPickRecyclerAdapter.OnVisibilityChangedListener() {
-            @Override
-            public void onVisibilityChanged(boolean visible) {
-                if (visible) {
-                    pm.hide();
-                    symmetrySwitcher.hide();
-                }
-            }
-        });
-
-
-        //Selection
-        selectionOptions = (LinearLayout) findViewById(R.id.selectionOptions);
-
-        findViewById(R.id.cloneSelection).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                aps.selector.copy();
-            }
-        });
-
-        findViewById(R.id.deleteSelection).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                aps.selector.delete();
-            }
-        });
-
-        //Symmetry
-        symmetrySwitcher = new SymmetrySwitcher((ImageButton) findViewById(R.id.symmetry), (LinearLayout) findViewById(R.id.symmetrySwitcher), aps);
-
-        symmetrySwitcher.setOnVisibilityChangedListener(new SymmetrySwitcher.OnVisibilityChangedListener() {
-            @Override
-            public void onVisibilityChanged(boolean visible) {
-                if (visible) {
-                    pm.hide();
-                    toolPicker.hide();
-                }
-            }
-        });
-
     }
 
     private void canvasWiseOptionsDialog() {
@@ -184,8 +110,8 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
     }
 
 
-    private void initializeToolPicking() {
-
+    private void initializeToolbar() {
+        //Add tools to the tool selector
         RecyclerView toolRV = (RecyclerView) findViewById(R.id.toolsRecycler);
         toolRV.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
@@ -200,11 +126,73 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
 
         toolPicker = new ToolPickRecyclerAdapter(this, previews, aps, (ImageButton) findViewById(R.id.toolButton), toolRV, new ToolSettingsManager(this, aps));
         toolRV.setAdapter(toolPicker);
+
+        toolPicker.setOnVisibilityChangedListener(new ToolPickRecyclerAdapter.OnVisibilityChangedListener() {
+            @Override
+            public void onVisibilityChanged(boolean visible) {
+                if (visible) {
+                    pm.hide();
+                    symmetrySwitcher.hide();
+                }
+            }
+        });
+
+
+        //Set up palette manager
+        pm = new PaletteManagerH((RelativeLayout) findViewById(R.id.paletteBar), (ColorCircle) findViewById(R.id.currentColor), aps, this);
+        aps.setColorManager(pm);
+
+        pm.setOnVisibilityChangedListener(new PaletteManagerH.OnVisibilityChangedListener() {
+            @Override
+            public void onVisibilityChanged(boolean visible) {
+                if (visible) {
+                    toolPicker.hide();
+                    symmetrySwitcher.hide();
+                }
+            }
+        });
+
+
+        //Setup selection options
+        selectionOptions = (LinearLayout) findViewById(R.id.selectionOptions);
+
+        findViewById(R.id.cloneSelection).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                aps.selector.copy();
+            }
+        });
+
+        findViewById(R.id.deleteSelection).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                aps.selector.delete();
+            }
+        });
+
+
+        //Set up symmetry
+        symmetrySwitcher = new SymmetrySwitcher((ImageButton) findViewById(R.id.symmetry), (LinearLayout) findViewById(R.id.symmetrySwitcher), aps);
+
+        symmetrySwitcher.setOnVisibilityChangedListener(new SymmetrySwitcher.OnVisibilityChangedListener() {
+            @Override
+            public void onVisibilityChanged(boolean visible) {
+                if (visible) {
+                    pm.hide();
+                    toolPicker.hide();
+                }
+            }
+        });
     }
 
-    private void initializeImageButtonsOCL() {
+    private void initializeButtons() {
         final ImageButton cursorToggle = (ImageButton) findViewById(R.id.cursorMode);
-        onClickListener = new ImageButton.OnClickListener() {
+        final ImageButton canvasOptions = (ImageButton) findViewById(R.id.canvasOptions);
+        final ImageButton gridToggle = (ImageButton) findViewById(R.id.grid);
+        undoButton = (ImageButton) findViewById(R.id.undo);
+        redoButton = (ImageButton) findViewById(R.id.redo);
+
+        onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 switch (view.getId()) {
@@ -218,12 +206,35 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                             cursorAction.setVisibility(View.GONE);
                         }
                         break;
+                    case R.id.canvasOptions:
+                        if (aps.currentTool == AdaptivePixelSurfaceH.Tool.SELECTOR)
+                            aps.selector.cancel(0, 0);
+                        canvasWiseOptionsDialog();
+                        break;
+                    case R.id.grid:
+                        if (aps.toggleGrid())
+                            gridToggle.setImageResource(R.drawable.gridon);
+                        else
+                            gridToggle.setImageResource(R.drawable.gridoff);
+                        break;
+                    case R.id.undo:
+                        aps.canvasHistory.undoHistoricalChange();
+                        break;
+                    case R.id.redo:
+                        aps.canvasHistory.redoHistoricalChange();
                 }
             }
         };
+
+        cursorToggle.setOnClickListener(onClickListener);
+        canvasOptions.setOnClickListener(onClickListener);
+        gridToggle.setOnClickListener(onClickListener);
+        undoButton.setOnClickListener(onClickListener);
+        redoButton.setOnClickListener(onClickListener);
     }
 
     private void initializeCursor() {
+        //Set up cursor action button
         cursorAction = (Button) findViewById(R.id.cursorAction);
         cursorAction.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -236,42 +247,10 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
             }
         });
 
-        (findViewById(R.id.cursorMode)).setOnClickListener(onClickListener);
-    }
-
-
-    void initializeButtons() {
-
-        //Grid
-        final ImageButton grid = (ImageButton) findViewById(R.id.grid);
-        grid.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (aps.toggleGrid())
-                    grid.setImageResource(R.drawable.gridon);
-                else
-                    grid.setImageResource(R.drawable.gridoff);
-
-            }
-        });
-
-        //History
-        undoButton = (ImageButton) findViewById(R.id.undo);
-        undoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                aps.canvasHistory.undoHistoricalChange();
-            }
-        });
-
-        redoButton = (ImageButton) findViewById(R.id.redo);
-        redoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                aps.canvasHistory.redoHistoricalChange();
-            }
-        });
-
+        //Load cursor pointer image
+        BitmapFactory.Options op = new BitmapFactory.Options();
+        op.inScaled = false;
+        aps.cursor.setCursorPointerImage(BitmapFactory.decodeResource(getResources(), R.drawable.defaultcursor2, op));
     }
 
     @Override
@@ -331,8 +310,6 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         if (requestCode == PalettePickerActivity.REQUEST_CODE_PICK_PALETTE) {
             if (resultCode == 1)
                 pm.setPalette(PaletteUtils.loadPalette(data.getStringExtra("pickedPalette")));
-            else if (resultCode == 0) {
-            }
         }
 
         //Image Picker
