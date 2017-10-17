@@ -1,6 +1,8 @@
 package com.af.pxl;
 
 import android.graphics.Bitmap;
+import android.view.Gravity;
+import android.widget.Toast;
 
 import com.af.pxl.projects.Project;
 
@@ -69,7 +71,9 @@ class CanvasHistoryH {
         else
             this.size = 64;
 
-        Utils.toaster(aps.getContext(), String.format(aps.getContext().getString(R.string.history_size), this.size));
+        Toast toastInTheAir = Toast.makeText(aps.getContext(), String.format(aps.getContext().getString(R.string.history_size), this.size), Toast.LENGTH_SHORT);
+        toastInTheAir.setGravity(Gravity.CENTER, 0, 0);
+        toastInTheAir.show();
     }
 
     void setOnHistoryAvailabilityChangeListener(OnHistoryAvailabilityChangeListener listener) {
