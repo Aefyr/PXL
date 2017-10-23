@@ -25,6 +25,7 @@ import com.af.pxl.R;
 import com.af.pxl.Utils;
 import com.af.pxl.palettes.Palette2;
 import com.af.pxl.palettes.PaletteMaker;
+import com.af.pxl.palettes.PaletteMakerH;
 import com.af.pxl.palettes.PaletteManager;
 import com.af.pxl.palettes.PalettePickRecyclerAdapter;
 import com.af.pxl.palettes.PaletteUtils;
@@ -119,10 +120,14 @@ public class PalettesFragment extends android.app.Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IMPORT_IMAGE && resultCode == Activity.RESULT_OK) {
 
-            final ProgressDialog generationDialog = PaletteMaker.createGenerationProgressDialog(getActivity());
-            generationDialog.show();
+            //final ProgressDialog generationDialog = PaletteMaker.createGenerationProgressDialog(getActivity());
+            //generationDialog.show();
 
-            PaletteMaker.getInstance(getActivity()).extractPalette(getActivity(), data.getData(), new PaletteMaker.OnPaletteGenerationListener() {
+            PaletteMakerH paletteMakerH = new PaletteMakerH(getActivity());
+            recyclerView.smoothScrollToPosition(adapter.addItem(paletteMakerH.extractPalette3(data.getData()).getName(), PalettePickRecyclerAdapter.AUTO_POSITION));
+
+
+            /*PaletteMaker.getInstance(getActivity()).extractPalette(getActivity(), data.getData(), new PaletteMaker.OnPaletteGenerationListener() {
                 @Override
                 public void onPaletteGenerated(Palette2 palette) {
                     recyclerView.smoothScrollToPosition(adapter.addItem(palette.getName(), PalettePickRecyclerAdapter.AUTO_POSITION));
@@ -134,7 +139,7 @@ public class PalettesFragment extends android.app.Fragment {
                     generationDialog.dismiss();
                     Utils.toaster(getActivity(), getString(R.string.error));
                 }
-            });
+            });*/
 
 
         }

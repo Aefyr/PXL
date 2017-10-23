@@ -52,11 +52,9 @@ public class PaletteManagerH {
         colorCircleMain = mainColorCircle;
         palette = PaletteUtils.loadPalette(aps.getProject().palette);
         colorCircleCur = (ColorCircle) paletteLayoutRoot.findViewById(R.id.colorCircle);
-        setCurrentColor(palette.getSelectedColor());
+        setCurrentColor(palette.getColor(0));
         paletteName = (TextView) paletteLayoutRoot.findViewById(R.id.paletteName);
         paletteName.setText(palette.getName());
-
-        setCurrentColor(palette.getSelectedColor());
 
         colorCircleMain.setOnClickListener(new View.OnClickListener() {
             @Override

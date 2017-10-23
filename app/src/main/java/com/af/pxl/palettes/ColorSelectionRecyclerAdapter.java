@@ -45,7 +45,7 @@ public class ColorSelectionRecyclerAdapter extends RecyclerView.Adapter<ColorSel
 
     @Override
     public int getItemCount() {
-        return palette.getSize();
+        return 16;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

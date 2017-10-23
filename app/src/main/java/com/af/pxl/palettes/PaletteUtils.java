@@ -80,9 +80,9 @@ public class PaletteUtils {
             String[] colors = builder.toString().split(",");
             System.out.println("last currentColor: " + colors[colors.length - 1]);
 
-            Palette2 palette = new Palette2(name, 16, Integer.parseInt(colors[0]), true);
+            Palette2 palette = new Palette2(name, true);
             ArrayList<Integer> paletteColors = palette.getColors();
-            for (c = 1; c < colors.length; c++) {
+            for (c = 0; c < colors.length; c++) {
                 paletteColors.add(Integer.parseInt(colors[c]));
             }
 

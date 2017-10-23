@@ -13,8 +13,6 @@ public class Palette2 {
 
     private final static int[] defaultPaletteColors = {-1808, -465951, -4024696, -8972, -13238282, -9051393, -38808, -4486, -6226046, -10591253, -5153550, -29966, -16777216, -7418960, -11582910, -23716};
     private ArrayList<Integer> colors;
-    private int capacity;
-    private int selectedColorIndex;
     private String name;
     private File directory;
 
@@ -26,22 +24,19 @@ public class Palette2 {
 
     private ArrayList<OnPaletteChangeListener> listeners;
 
-    public Palette2(String name, int capacity, int initialColor, boolean wasLoaded) {
+    public Palette2(String name, boolean wasLoaded) {
         this.name = name;
-        colors = new ArrayList<>();
-        colors.add(initialColor);
+        colors = new ArrayList<>(16);
         directory = new File(PaletteUtils.palettesPath, name + PaletteUtils.EXTENSION);
         if (!wasLoaded)
             autoSave();
 
-        this.capacity = capacity;
         listeners = new ArrayList<>(2);
     }
 
     public Palette2(String name) {
         this.name = name;
-        this.capacity = 16;
-        colors = new ArrayList<>();
+        colors = new ArrayList<>(16);
         for (int color : defaultPaletteColors) {
             colors.add(color);
         }
@@ -49,21 +44,6 @@ public class Palette2 {
         listeners = new ArrayList<>(2);
     }
 
-    public int getSelectedColorIndex() {
-        return selectedColorIndex;
-    }
-
-    public int getSelectedColor() {
-        return colors.get(selectedColorIndex);
-    }
-
-    void setSelectedColor(int index) {
-        if (index >= colors.size() || index == selectedColorIndex)
-            return;
-        selectedColorIndex = index;
-        selectedColorChangedEvent(colors.get(index));
-
-    }
 
     public void editColor(int index, int newValue) {
         if (index >= colors.size() || newValue == colors.get(index))
@@ -80,30 +60,6 @@ public class Palette2 {
         return colors.get(index);
     }
 
-    public void addColor(int color) {
-        if (!isFull())
-            colors.add(color);
-        listenerEvent();
-        autoSave();
-    }
-
-    void removeColor(int index) {
-        if (index >= colors.size())
-            return;
-        colors.remove(index);
-        listenerEvent();
-    }
-
-    public boolean colorPickToolWasUsed(int pickedColor) {
-        int index = colors.indexOf(pickedColor);
-        if (index != -1) {
-            setSelectedColor(index);
-            return true;
-        }
-        editColor(selectedColorIndex, pickedColor);
-        return false;
-    }
-
     public String getName() {
         return name;
     }
@@ -116,12 +72,17 @@ public class Palette2 {
         return colors;
     }
 
-    int getSize() {
-        return colors.size();
+    void setColors(ArrayList<Integer> colors){
+        this.colors = colors;
+        autoSave();
     }
 
-    public boolean isFull() {
-        return colors.size() >= capacity;
+    void fillVoidColorsWithDefault(boolean autoSave){
+        for(int i = colors.size()-1;i<16;i++)
+            colors.add(defaultPaletteColors[i]);
+
+        if(autoSave)
+            autoSave();
     }
 
     public void addOnPaletteChangeListener(OnPaletteChangeListener listener) {

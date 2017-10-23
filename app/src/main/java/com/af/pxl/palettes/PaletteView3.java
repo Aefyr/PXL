@@ -141,7 +141,7 @@ public class PaletteView3 extends View implements Palette2.OnPaletteChangeListen
         int row = (int) (y / colorSizeY);
         int id = row * 4 + column;
         System.out.println("PV3: Clicked currentColor with id " + id);
-        if (id < palette.getSize()) {
+        if (id < 16) {
             if (listener != null)
                 listener.onColorClick(id);
         }

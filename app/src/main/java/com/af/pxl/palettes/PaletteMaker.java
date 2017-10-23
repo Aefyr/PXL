@@ -44,16 +44,19 @@ public class PaletteMaker {
         new PaletteGenerationTask().execute(new PaletteGeneratorParams(c, bitmapUri, listener));
     }
 
+    //I forgot how and why this works...
     private void tryAddingColor(int[] colors, int newColor) {
         float lowestDifference = 1f;
         int lowestColor = -1;
 
+        //Okay, here we get the lowest difference between new color and any palette color
         for (int c : colors) {
             float difference = Utils.colorsDifference(c, newColor);
             if (difference < lowestDifference)
                 lowestDifference = difference;
         }
 
+        //And here we find two colors in palette with lowest difference and if their difference is lower than our new color's with any other color, we replace one of them with new color
         for (int i = 0; i < colors.length; i++) {
             int c = colors[i];
             for (int a = 0; a < colors.length; a++) {
