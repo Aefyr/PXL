@@ -90,7 +90,6 @@ public class PaletteMakerH {
 
 
     private Bitmap createSampleSizedImage(Bitmap image, int maxSideSize, boolean recycleOriginal){
-        System.out.println(String.format("Got as %dx%d", image.getWidth(), image.getHeight()));
         if(image.getWidth()<maxSideSize&&image.getHeight()<maxSideSize)
             return image;
 
@@ -99,8 +98,6 @@ public class PaletteMakerH {
         boolean widthBigger = aspectRatio>1;
         int targetWidth = widthBigger? maxSideSize:(int)(maxSideSize*aspectRatio);
         int targetHeight = widthBigger? (int)(maxSideSize/aspectRatio):maxSideSize;
-
-        System.out.println(String.format("Returned as %dx%d", targetWidth, targetHeight));
 
         Bitmap sampleSizedImage = Bitmap.createScaledBitmap(image, targetWidth, targetHeight, false);
         if(recycleOriginal&&image!=sampleSizedImage)
