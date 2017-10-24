@@ -137,7 +137,7 @@ class Kmeans {
                 result.setPixel(x, y, this.clusters[lut[(w * y) + x]].getRGB());
             }
         }
-        Log.d("Kmeans", "Clustered to " + k + " clusters in " + loops + " loops in " + (System.currentTimeMillis() - start) + " ms.");
+        Log.d("Kmeans", String.format("Time taken: %d ms. Clusters: %d. Loops: %d", (System.currentTimeMillis()-start), k, loops));
         return result;
     }
 

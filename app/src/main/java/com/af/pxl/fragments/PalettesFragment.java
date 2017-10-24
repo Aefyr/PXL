@@ -120,11 +120,20 @@ public class PalettesFragment extends android.app.Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IMPORT_IMAGE && resultCode == Activity.RESULT_OK) {
 
-            //final ProgressDialog generationDialog = PaletteMaker.createGenerationProgressDialog(getActivity());
-            //generationDialog.show();
+            final ProgressDialog generationDialog = PaletteMakerH.createGenerationProgressDialog(getActivity());
+            generationDialog.show();
 
             PaletteMakerH paletteMakerH = new PaletteMakerH(getActivity());
-            recyclerView.smoothScrollToPosition(adapter.addItem(paletteMakerH.extractPalette3(data.getData()).getName(), PalettePickRecyclerAdapter.AUTO_POSITION));
+            paletteMakerH.createPaletteFromImage(data.getData(), new PaletteMakerH.PaletteGeneratorListener() {
+                @Override
+                public void onPaletteGenerated(Palette2 palette) {
+                    generationDialog.dismiss();
+                    recyclerView.smoothScrollToPosition(adapter.addItem(palette.getName(), PalettePickRecyclerAdapter.AUTO_POSITION));
+                    paletteManager.showPaletteManagerDialog((AppCompatActivity) getActivity(), palette);
+
+                }
+            });
+            //recyclerView.smoothScrollToPosition(adapter.addItem(paletteMakerH.extractPalette3(data.getData()).getName(), PalettePickRecyclerAdapter.AUTO_POSITION));
 
 
             /*PaletteMaker.getInstance(getActivity()).extractPalette(getActivity(), data.getData(), new PaletteMaker.OnPaletteGenerationListener() {

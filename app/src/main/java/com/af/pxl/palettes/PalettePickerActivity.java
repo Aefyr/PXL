@@ -101,20 +101,16 @@ public class PalettePickerActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IMPORT_IMAGE && resultCode == Activity.RESULT_OK) {
 
-            final ProgressDialog generationDialog = PaletteMaker.createGenerationProgressDialog(this);
+            final ProgressDialog generationDialog = PaletteMakerH.createGenerationProgressDialog(PalettePickerActivity.this);
             generationDialog.show();
 
-            PaletteMaker.getInstance(this).extractPalette(this, data.getData(), new PaletteMaker.OnPaletteGenerationListener() {
+            PaletteMakerH paletteMakerH = new PaletteMakerH(PalettePickerActivity.this);
+            paletteMakerH.createPaletteFromImage(data.getData(), new PaletteMakerH.PaletteGeneratorListener() {
                 @Override
                 public void onPaletteGenerated(Palette2 palette) {
+                    generationDialog.dismiss();
                     recyclerView.smoothScrollToPosition(adapter.addItem(palette.getName(), PalettePickRecyclerAdapter.AUTO_POSITION));
-                    generationDialog.dismiss();
-                }
 
-                @Override
-                public void onGenerationFailed() {
-                    generationDialog.dismiss();
-                    Utils.toaster(PalettePickerActivity.this, getString(R.string.error));
                 }
             });
         }
