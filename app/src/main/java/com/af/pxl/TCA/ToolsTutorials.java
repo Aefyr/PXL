@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.af.pxl.AdaptivePixelSurfaceH;
 import com.af.pxl.R;
-import com.af.pxl.Utils;
+import com.af.pxl.util.Utils;
 
 /**
  * Created by Aefyr on 14.10.2017.

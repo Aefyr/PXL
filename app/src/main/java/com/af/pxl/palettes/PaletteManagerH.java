@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.af.pxl.AdaptivePixelSurfaceH;
 import com.af.pxl.ColorPickerH;
 import com.af.pxl.R;
-import com.af.pxl.Utils;
+import com.af.pxl.util.Utils;
 import com.af.pxl.views.ColorCircle;
 
 /**

@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.af.pxl.R;
-import com.af.pxl.Utils;
+import com.af.pxl.util.Utils;
 import com.af.pxl.palettes.PaletteMaker;
 
 /**

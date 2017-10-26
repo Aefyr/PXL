@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.af.pxl.util.Utils;
 import com.af.pxl.views.PixelImageView;
 
 import java.io.File;

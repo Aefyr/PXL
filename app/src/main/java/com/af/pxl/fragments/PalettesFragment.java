@@ -22,9 +22,8 @@ import android.view.WindowManager;
 import android.widget.EditText;
 
 import com.af.pxl.R;
-import com.af.pxl.Utils;
+import com.af.pxl.util.Utils;
 import com.af.pxl.palettes.Palette2;
-import com.af.pxl.palettes.PaletteMaker;
 import com.af.pxl.palettes.PaletteMakerH;
 import com.af.pxl.palettes.PaletteManager;
 import com.af.pxl.palettes.PalettePickRecyclerAdapter;
@@ -124,7 +123,7 @@ public class PalettesFragment extends android.app.Fragment {
             generationDialog.show();
 
             PaletteMakerH paletteMakerH = new PaletteMakerH(getActivity());
-            paletteMakerH.createPaletteFromImage(data.getData(), new PaletteMakerH.PaletteGeneratorListener() {
+            paletteMakerH.createPaletteFromImage(data.getData(), new PaletteMakerH.PaletteGeneratonListener() {
                 @Override
                 public void onPaletteGenerated(Palette2 palette) {
                     generationDialog.dismiss();
@@ -200,14 +199,29 @@ public class PalettesFragment extends android.app.Fragment {
         optionsDialog.show();
     }
 
+    private AlertDialog creationDialog;
     private void createPalette() {
-        final AlertDialog creationDialog = new AlertDialog.Builder(getActivity()).setTitle(getString(R.string.create_new_palette)).setView(R.layout.edit_text).create();
+        creationDialog = new AlertDialog.Builder(getActivity()).setTitle(R.string.create_new_palette).setView(R.layout.edit_text_dialog_view).setPositiveButton(R.string.ok, null).setNegativeButton(R.string.cancel, null).create();
+        creationDialog.show();
+        creationDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String name = ((EditText)creationDialog.findViewById(R.id.dialogEditText)).getText().toString();
+                if (PaletteUtils.isNameAvailable(name)) {
+                    recyclerView.smoothScrollToPosition(adapter.addItem(new Palette2(name).getName(), PalettePickRecyclerAdapter.AUTO_POSITION));
+                    creationDialog.dismiss();
+                } else
+                    Utils.toaster(getActivity(), getString(R.string.incorrect_palette_name));
+            }
+        });
+        ((EditText)creationDialog.findViewById(R.id.dialogEditText)).setHint(R.string.enter_name);
+        /*final AlertDialog creationDialog = new AlertDialog.Builder(getActivity()).setView(R.layout.edit_text).setTitle(getString(R.string.create_new_palette)).create();
         creationDialog.show();
         final EditText paletteNameET = (EditText) creationDialog.findViewById(R.id.editText);
         paletteNameET.setHint(getString(R.string.enter_name));
-        creationDialog.findViewById(R.id.okButton).setOnClickListener(new View.OnClickListener() {
+        creationDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(DialogInterface dialog, int which) {
                 String paletteName = paletteNameET.getText().toString();
                 if (PaletteUtils.isNameAvailable(paletteName)) {
                     recyclerView.smoothScrollToPosition(adapter.addItem(new Palette2(paletteName).getName(), PalettePickRecyclerAdapter.AUTO_POSITION));
@@ -216,7 +230,7 @@ public class PalettesFragment extends android.app.Fragment {
                     Utils.toaster(getActivity(), getString(R.string.incorrect_palette_name));
                 }
             }
-        });
+        });*/
     }
 
     private void renamePalette(final Palette2 palette, final int id) {

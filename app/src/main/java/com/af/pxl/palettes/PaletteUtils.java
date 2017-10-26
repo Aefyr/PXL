@@ -3,7 +3,7 @@ package com.af.pxl.palettes;
 import android.content.Context;
 
 import com.af.pxl.R;
-import com.af.pxl.Utils;
+import com.af.pxl.util.Utils;
 
 import java.io.File;
 import java.io.FileReader;

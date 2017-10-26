@@ -9,7 +9,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 
 import com.af.pxl.R;
-import com.af.pxl.Utils;
+import com.af.pxl.util.Utils;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;

@@ -13,7 +13,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.af.pxl.Utils;
+import com.af.pxl.util.Utils;
 import com.af.pxl.custom.RectP;
 
 /**

@@ -27,6 +27,7 @@ import com.af.pxl.projects.ProjectsUtils;
 import com.af.pxl.tools.SymmetrySwitcher;
 import com.af.pxl.tools.ToolPickRecyclerAdapter;
 import com.af.pxl.tools.ToolPreview;
+import com.af.pxl.util.Utils;
 import com.af.pxl.views.ColorCircle;
 
 import java.io.File;

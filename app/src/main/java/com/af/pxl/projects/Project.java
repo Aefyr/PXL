@@ -15,6 +15,7 @@ import java.io.IOException;
  */
 
 public class Project {
+    public String id;
     public File projectDirectory;
     public String name;
     long lastModified;
@@ -27,7 +28,7 @@ public class Project {
 
 
     public Project(File projectDirectory) {
-        name = projectDirectory.getName();
+        id = projectDirectory.getName();
         this.projectDirectory = projectDirectory;
         lastModified = projectDirectory.lastModified();
         loadMeta();
@@ -82,7 +83,7 @@ public class Project {
     }
 
     private void parseMeta(String rawMeta) {
-        String[] metaValues = rawMeta.split(",");
+        String[] metaValues = rawMeta.split("]\\|\\[");
         if (metaValues.length == 0)
             return;
         pixelWidth = Integer.parseInt(metaValues[0]);
@@ -95,5 +96,8 @@ public class Project {
         if (metaValues.length == 3)
             return;
         transparentBackground = Boolean.parseBoolean(metaValues[3]);
+        if(metaValues.length == 4)
+            return;
+        name = metaValues[4];
     }
 }

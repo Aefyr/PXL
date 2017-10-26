@@ -6,7 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 
 import com.af.pxl.R;
-import com.af.pxl.Utils;
+import com.af.pxl.util.Utils;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -21,6 +21,7 @@ public class ProjectsUtils {
     private static String projectsFolderDirectory;
     private static String projectDuplicatePostfix;
     private static final String PROJECT_NAME_VALIDITY_PATTERN = "\\w+[A-Za-zА-Яа-я_0-9\\s]*";
+    private static final String META_SEPARATOR = "]|[";
 
     public static void initialize(Context c) {
         projectsFolderDirectory = c.getFilesDir() + "/projects";
@@ -46,8 +47,8 @@ public class ProjectsUtils {
         return projects;
     }
 
-    public static Project loadProject(String projectName) {
-        File f = new File(projectsFolderDirectory + "/" + projectName);
+    public static Project loadProject(String projectId) {
+        File f = new File(projectsFolderDirectory + "/" + projectId);
         return new Project(f);
     }
 
@@ -71,7 +72,7 @@ public class ProjectsUtils {
     }
 
     public static Project createNewProject(String name, int pixelWidth, int pixelHeight, String palette, boolean transparentBackground) {
-        File newProjectDirectory = new File(projectsFolderDirectory + "/" + name);
+        File newProjectDirectory = new File(projectsFolderDirectory + "/" + generateId());
         System.out.println("mkdirs=" + newProjectDirectory.mkdir());
 
         File meta = new File(newProjectDirectory, ".pxlmeta");
@@ -81,7 +82,7 @@ public class ProjectsUtils {
             e.printStackTrace();
         }
         try (FileWriter fileWrite = new FileWriter(meta)) {
-            fileWrite.write(pixelWidth + "," + pixelHeight + "," + palette + "," + transparentBackground);
+            fileWrite.write(pixelWidth + META_SEPARATOR + pixelHeight + META_SEPARATOR + palette + META_SEPARATOR + transparentBackground + META_SEPARATOR + name);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -139,5 +140,9 @@ public class ProjectsUtils {
 
         Utils.copyFileOrDirectory(project.projectDirectory, new File(projectsFolderDirectory + "/" + newProjectName));
         return loadProject(newProjectName);
+    }
+
+    static String generateId(){
+        return String.valueOf(System.currentTimeMillis());
     }
 }

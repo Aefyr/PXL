@@ -1,4 +1,4 @@
-package com.af.pxl;
+package com.af.pxl.util;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -13,6 +13,8 @@ import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.util.TypedValue;
 import android.widget.Toast;
+
+import com.af.pxl.R;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,14 +48,10 @@ public class Utils {
         return x;
     }
 
-    static int clamp(int x, int min, int max) {
+    public static int clamp(int x, int min, int max) {
         if (x < min) return min;
         if (x > max) return max;
         return x;
-    }
-
-    static boolean doesRectContains(Rect rect, int x, int y) {
-        return rect.right > rect.left ? (x <= rect.right && x >= rect.left) : (x <= rect.left && x >= rect.right) && rect.bottom > rect.top ? (y <= rect.bottom && y >= rect.top) : (y <= rect.top && y >= rect.bottom);
     }
 
     public static float vector2Distance(float x1, float y1, float x2, float y2) {
@@ -118,7 +116,7 @@ public class Utils {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
-    static void setBitmapPixelsFromOtherBitmap(Bitmap bitmap, Bitmap otherBitmap) {
+    public static void setBitmapPixelsFromOtherBitmap(Bitmap bitmap, Bitmap otherBitmap) {
         int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
         otherBitmap.getPixels(pixels, 0, otherBitmap.getWidth(), 0, 0, otherBitmap.getWidth(), otherBitmap.getHeight());
         bitmap.setPixels(pixels, 0, otherBitmap.getWidth(), 0, 0, otherBitmap.getWidth(), otherBitmap.getHeight());

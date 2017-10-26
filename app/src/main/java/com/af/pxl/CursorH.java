@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.view.MotionEvent;
 
 import com.af.pxl.fragments.PreferencesFragment;
+import com.af.pxl.util.Utils;
 
 /**
  * Created by Aefyr on 02.07.2017.

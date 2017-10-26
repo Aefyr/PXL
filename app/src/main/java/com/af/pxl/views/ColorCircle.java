@@ -12,7 +12,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewOutlineProvider;
 
-import com.af.pxl.Utils;
+import com.af.pxl.util.Utils;
 
 /**
  * Created by Aefyr on 02.07.2017.

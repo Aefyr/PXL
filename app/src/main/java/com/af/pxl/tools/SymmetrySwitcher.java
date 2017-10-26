@@ -9,7 +9,7 @@ import android.widget.Toast;
 
 import com.af.pxl.AdaptivePixelSurfaceH;
 import com.af.pxl.R;
-import com.af.pxl.Utils;
+import com.af.pxl.util.Utils;
 
 /**
  * Created by Aefyr on 09.08.2017.

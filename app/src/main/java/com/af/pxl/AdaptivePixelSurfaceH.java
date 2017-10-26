@@ -22,6 +22,7 @@ import com.af.pxl.fragments.PreferencesFragment;
 import com.af.pxl.palettes.PaletteManagerH;
 import com.af.pxl.projects.Project;
 import com.af.pxl.custom.RectP;
+import com.af.pxl.util.Utils;
 
 import java.util.ArrayDeque;
 

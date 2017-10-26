@@ -20,6 +20,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +31,7 @@ import android.widget.Switch;
 
 import com.af.pxl.DrawingActivity;
 import com.af.pxl.R;
-import com.af.pxl.Utils;
+import com.af.pxl.util.Utils;
 import com.af.pxl.projects.Project;
 import com.af.pxl.projects.ProjectsRecycleAdapter;
 import com.af.pxl.projects.ProjectsUtils;
@@ -79,9 +80,9 @@ public class GalleryFragment extends android.app.Fragment {
     private static final int DRAWING_REQUEST = 1445;
     private int openedProjectIndex = 0;
 
-    private void openProject(String name, int index) {
+    private void openProject(String id, int index) {
         Intent i = new Intent(getActivity(), DrawingActivity.class);
-        i.putExtra("projectToLoad", name);
+        i.putExtra("projectToLoad", id);
         startActivityForResult(i, DRAWING_REQUEST);
 
         adapter.moveItem(index, 0);
@@ -148,10 +149,10 @@ public class GalleryFragment extends android.app.Fragment {
             public void onClick(View view) {
 
                 String name = nameET.getText().toString();
-                if (!ProjectsUtils.isNameAvailable(name)) {
+                /*if (!ProjectsUtils.isNameAvailable(name)) {
                     Utils.toaster(getActivity(), getString(R.string.incorrect_project_name));
                     return;
-                }
+                }*/
 
                 if (widthET.getText().length() == 0 || heightET.getText().length() == 0) {
                     Utils.toaster(getActivity(), getString(R.string.incorrect_width_or_height));
@@ -160,10 +161,11 @@ public class GalleryFragment extends android.app.Fragment {
 
                 int width = Integer.parseInt(widthET.getText().toString());
                 int height = Integer.parseInt(heightET.getText().toString());
-                adapter.addItem(ProjectsUtils.createNewProject(name, width, height, "Default", ((Switch) d.findViewById(R.id.transparentBackground)).isChecked()));
+                Project newProject = ProjectsUtils.createNewProject(name, width, height, "Default", ((Switch) d.findViewById(R.id.transparentBackground)).isChecked());
+                adapter.addItem(newProject);
                 d.dismiss();
                 recyclerView.scrollToPosition(0);
-                openProject(name, 0);
+                openProject(newProject.id, 0);
             }
         });
     }
@@ -201,7 +203,7 @@ public class GalleryFragment extends android.app.Fragment {
             importedImage.recycle();
             adapter.addItem(p);
             recyclerView.scrollToPosition(0);
-            openProject(p.name, 0);
+            openProject(p.id, 0);
         } else if (requestCode == DRAWING_REQUEST && resultCode == 1) {
             adapter.notifyItemChanged(openedProjectIndex);
         }
@@ -212,7 +214,7 @@ public class GalleryFragment extends android.app.Fragment {
             @Override
             public void onProjectClick(Project project, int id) {
                 System.out.println("Clicked " + project.name);
-                openProject(project.name, id);
+                openProject(project.id, id);
             }
 
             @Override
@@ -315,15 +317,10 @@ public class GalleryFragment extends android.app.Fragment {
             File exportDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PXL");
             if (!exportDir.exists())
                 exportDir.mkdirs();
-            if (params[0].share) {
-                File imagePath = new File(exportDir, params[0].project.name + ".png");
-                Utils.saveBitmap(Bitmap.createScaledBitmap(params[0].project.getBitmap(false), params[0].project.pixelWidth * params[0].resolutionMultiplier, params[0].project.pixelHeight * params[0].resolutionMultiplier, false), imagePath);
-                params[0].imagePath = imagePath;
-            } else {
-                File imagePath = new File(exportDir, params[0].project.name + ".png");
-                Utils.saveBitmap(Bitmap.createScaledBitmap(params[0].project.getBitmap(false), params[0].project.pixelWidth * params[0].resolutionMultiplier, params[0].project.pixelHeight * params[0].resolutionMultiplier, false), imagePath);
-                params[0].imagePath = imagePath;
-            }
+
+            File imagePath = new File(exportDir, params[0].project.id + ".png");
+            Utils.saveBitmap(Bitmap.createScaledBitmap(params[0].project.getBitmap(false), params[0].project.pixelWidth * params[0].resolutionMultiplier, params[0].project.pixelHeight * params[0].resolutionMultiplier, false), imagePath);
+            params[0].imagePath = imagePath;
 
             return params[0];
         }

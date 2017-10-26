@@ -16,7 +16,7 @@ import android.widget.Spinner;
 
 import com.af.pxl.ColorPicker;
 import com.af.pxl.R;
-import com.af.pxl.Utils;
+import com.af.pxl.util.Utils;
 
 /**
  * Created by Aefyr on 29.07.2017.

@@ -18,7 +18,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 
 import com.af.pxl.R;
-import com.af.pxl.Utils;
+import com.af.pxl.util.Utils;
 
 public class PalettePickerActivity extends AppCompatActivity {
 
@@ -105,7 +105,7 @@ public class PalettePickerActivity extends AppCompatActivity {
             generationDialog.show();
 
             PaletteMakerH paletteMakerH = new PaletteMakerH(PalettePickerActivity.this);
-            paletteMakerH.createPaletteFromImage(data.getData(), new PaletteMakerH.PaletteGeneratorListener() {
+            paletteMakerH.createPaletteFromImage(data.getData(), new PaletteMakerH.PaletteGeneratonListener() {
                 @Override
                 public void onPaletteGenerated(Palette2 palette) {
                     generationDialog.dismiss();
@@ -158,9 +158,9 @@ public class PalettePickerActivity extends AppCompatActivity {
         creationDialog.show();
         final EditText paletteNameET = (EditText) creationDialog.findViewById(R.id.editText);
         paletteNameET.setHint(getString(R.string.enter_name));
-        creationDialog.findViewById(R.id.okButton).setOnClickListener(new View.OnClickListener() {
+        creationDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(DialogInterface dialog, int which) {
                 String paletteName = paletteNameET.getText().toString();
                 if (PaletteUtils.isNameAvailable(paletteName)) {
                     recyclerView.smoothScrollToPosition(adapter.addItem(new Palette2(paletteName).getName(), PalettePickRecyclerAdapter.AUTO_POSITION));
@@ -170,6 +170,7 @@ public class PalettePickerActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
 
     private void renamePalette(final Palette2 palette, final int id) {

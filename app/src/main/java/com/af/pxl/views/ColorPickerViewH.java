@@ -10,7 +10,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.af.pxl.Utils;
+import com.af.pxl.util.Utils;
 
 /**
  * Created by Aefyr on 13.06.2017.

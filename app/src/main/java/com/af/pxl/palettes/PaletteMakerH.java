@@ -30,8 +30,8 @@ public class PaletteMakerH {
 
     }
 
-    public void createPaletteFromImage(Uri bitmapUri, PaletteGeneratorListener listener){
-        new PaletteGenerationTask(listener).execute(bitmapUri);
+    public void createPaletteFromImage(Uri bitmapUri, PaletteGeneratonListener listener){
+        new PaletteGeneratorTask(listener).execute(bitmapUri);
     }
 
     private Palette2 extractPalette3(Uri bitmapUri){
@@ -106,12 +106,12 @@ public class PaletteMakerH {
         return sampleSizedImage;
     }
 
-    public interface PaletteGeneratorListener{
+    public interface PaletteGeneratonListener {
         void onPaletteGenerated(Palette2 palette);
     }
-    private class PaletteGenerationTask extends AsyncTask<Uri, Void, Palette2>{
-        private PaletteGeneratorListener listener;
-        private PaletteGenerationTask(PaletteGeneratorListener listener){
+    private class PaletteGeneratorTask extends AsyncTask<Uri, Void, Palette2>{
+        private PaletteGeneratonListener listener;
+        private PaletteGeneratorTask(PaletteGeneratonListener listener){
             this.listener = listener;
         }
 

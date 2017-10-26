@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
+import com.af.pxl.util.Utils;
 import com.af.pxl.views.PixelImageView;
 
 import java.io.File;
