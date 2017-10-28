@@ -16,18 +16,21 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.ShareCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.af.pxl.DrawingActivity;
 import com.af.pxl.R;
@@ -112,7 +115,8 @@ public class GalleryFragment extends android.app.Fragment {
     }
 
     private void createNewProject() {
-        final AlertDialog d = new AlertDialog.Builder(getActivity()).setView(R.layout.project_creation).create();
+        final AlertDialog d = new AlertDialog.Builder(getActivity()).setView(R.layout.project_creation).setPositiveButton(R.string.create, null).setNegativeButton(R.string.cancel, null).create();
+        d.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         d.show();
 
         final EditText nameET = (EditText) d.findViewById(R.id.name);
@@ -144,10 +148,9 @@ public class GalleryFragment extends android.app.Fragment {
         widthET.addTextChangedListener(resolutionLimiter);
         heightET.addTextChangedListener(resolutionLimiter);
 
-        d.findViewById(R.id.create).setOnClickListener(new View.OnClickListener() {
+        d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-
+            public void onClick(View v) {
                 String name = nameET.getText().toString();
                 /*if (!ProjectsUtils.isNameAvailable(name)) {
                     Utils.toaster(getActivity(), getString(R.string.incorrect_project_name));
@@ -249,11 +252,12 @@ public class GalleryFragment extends android.app.Fragment {
     AlertDialog exportResolutionPickDialog;
 
     private void exportProject(final Project project, final boolean forShare) {
-        String[] resolutionOptions = {project.pixelWidth + "x" + project.pixelHeight + " (" + getString(R.string.original) + ")", project.pixelWidth * 2 + "x" + project.pixelHeight * 2 + " (x2)", project.pixelWidth * 4 + "x" + project.pixelHeight * 4 + " (x4)", project.pixelWidth * 8 + "x" + project.pixelHeight * 8 + " (x8)"};
+        String[] resolutionOptions = {project.width + "x" + project.height + " (" + getString(R.string.original) + ")", project.width * 2 + "x" + project.height * 2 + " (x2)", project.width * 4 + "x" + project.height * 4 + " (x4)", project.width * 8 + "x" + project.height * 8 + " (x8)", getString(R.string.custom)};
         exportResolutionPickDialog = new AlertDialog.Builder(getActivity()).setTitle(getString(R.string.select_resolution)).setItems(resolutionOptions, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 int resolutionMultiplier = 1;
+                boolean launchTask = true;
                 switch (i) {
                     case 0:
                         break;
@@ -266,9 +270,45 @@ public class GalleryFragment extends android.app.Fragment {
                     case 3:
                         resolutionMultiplier = 8;
                         break;
+                    case 4:
+                        launchTask = false;
+                        final AlertDialog multiplierPickDialog = new AlertDialog.Builder(getActivity()).setTitle(R.string.select_multiplier).setView(R.layout.multiplier_picker_dialog).setPositiveButton(R.string.ok, null).setNegativeButton(R.string.cancel, null).create();
+                        multiplierPickDialog.show();
+                        final SeekBar multiplierBar = multiplierPickDialog.findViewById(R.id.seekBar);
+                        final TextView multiplierInfo = multiplierPickDialog.findViewById(R.id.textView);
+                        final String infoPattern = getString(R.string.multiplier_info_pattern);
+                        multiplierInfo.setText(String.format(infoPattern, 8, project.width*8, project.height*8));
+                        multiplierBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                            @Override
+                            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                                int multiplier = progress+1;
+                                multiplierInfo.setText(String.format(infoPattern, multiplier, project.width*multiplier, project.height*multiplier));
+                            }
+
+                            @Override
+                            public void onStartTrackingTouch(SeekBar seekBar) {
+
+                            }
+
+                            @Override
+                            public void onStopTrackingTouch(SeekBar seekBar) {
+
+                            }
+                        });
+                        multiplierPickDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                ExportTask exportTask = new ExportTask();
+                                exportTask.execute(exportTask.createParams(project, forShare, multiplierBar.getProgress()+1));
+                                multiplierPickDialog.dismiss();
+                            }
+                        });
+                        break;
                 }
-                ExportTask exportTask = new ExportTask();
-                exportTask.execute(exportTask.createParams(project, forShare, resolutionMultiplier));
+                if(launchTask) {
+                    ExportTask exportTask = new ExportTask();
+                    exportTask.execute(exportTask.createParams(project, forShare, resolutionMultiplier));
+                }
             }
         }).create();
         if (!Utils.checkPermissions(getActivity())) {
@@ -305,7 +345,7 @@ public class GalleryFragment extends android.app.Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = new ProgressDialog(getContext(), ProgressDialog.STYLE_SPINNER);
+            progressDialog = new ProgressDialog(getActivity(), ProgressDialog.STYLE_SPINNER);
             progressDialog.setMessage(getString(R.string.exporting) + "...");
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.setCancelable(false);
@@ -314,12 +354,13 @@ public class GalleryFragment extends android.app.Fragment {
 
         @Override
         protected Params doInBackground(Params... params) {
-            File exportDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PXL");
+            //TODO Change this path to something more unique?
+            File exportDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/pxl");
             if (!exportDir.exists())
                 exportDir.mkdirs();
 
             File imagePath = new File(exportDir, params[0].project.id + ".png");
-            Utils.saveBitmap(Bitmap.createScaledBitmap(params[0].project.getBitmap(false), params[0].project.pixelWidth * params[0].resolutionMultiplier, params[0].project.pixelHeight * params[0].resolutionMultiplier, false), imagePath);
+            Utils.saveBitmap(Bitmap.createScaledBitmap(params[0].project.getBitmap(false), params[0].project.width * params[0].resolutionMultiplier, params[0].project.height * params[0].resolutionMultiplier, false), imagePath);
             params[0].imagePath = imagePath;
 
             return params[0];
@@ -331,13 +372,13 @@ public class GalleryFragment extends android.app.Fragment {
             progressDialog.dismiss();
             if (params.share) {
                 Intent shareIntent = new Intent();
+                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                shareIntent.setType("image/png");
                 shareIntent.setAction(Intent.ACTION_SEND);
-                shareIntent.setType("image/*");
-                shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(params.imagePath));
+                shareIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(getActivity(), "com.af.pxl.fileprovider", params.imagePath));
                 startActivity(Intent.createChooser(shareIntent, getString(R.string.share)));
-                params.imagePath.deleteOnExit();
             } else {
-                Utils.alternativeAddImageToGallery(getContext(), params.imagePath);
+                Utils.alternativeAddImageToGallery(getActivity(), params.imagePath);
             }
         }
     }
@@ -371,30 +412,22 @@ public class GalleryFragment extends android.app.Fragment {
         }
     }
 
-    private void renameProject(final Project project, final int id) {
-        final AlertDialog renameDialog = new AlertDialog.Builder(getActivity()).setTitle(getString(R.string.rename_project)).setView(R.layout.edit_text).create();
+    private void renameProject(final Project project, final int index) {
+        final AlertDialog renameDialog = new AlertDialog.Builder(getActivity()).setTitle(R.string.rename_project).setView(R.layout.edit_text_dialog_view).setPositiveButton(R.string.ok, null).setNegativeButton(R.string.cancel, null).create();
         renameDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         renameDialog.show();
-
-        final EditText nameEditText = ((EditText) renameDialog.findViewById(R.id.editText));
+        final EditText nameEditText = renameDialog.findViewById(R.id.dialogEditText);
         nameEditText.setHint(getString(R.string.new_name));
         nameEditText.setText(project.name);
-        nameEditText.setSelection(0, project.name.length());
-
-        renameDialog.findViewById(R.id.okButton).setOnClickListener(new View.OnClickListener() {
+        nameEditText.selectAll();
+        renameDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                String newName = nameEditText.getText().toString();
-                if (ProjectsUtils.isNameAvailable(newName)) {
-                    ProjectsUtils.renameProject(project, newName);
-                    adapter.notifyItemChanged(id);
-                    renameDialog.dismiss();
-                } else {
-                    Utils.toaster(getActivity(), getString(R.string.incorrect_project_name));
-                }
+            public void onClick(View v) {
+                project.setName(nameEditText.getText().toString());
+                adapter.notifyItemChanged(index);
+                renameDialog.dismiss();
             }
         });
-
     }
 
     private void duplicateProject(Project project) {

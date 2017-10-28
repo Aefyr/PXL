@@ -19,18 +19,20 @@ import java.util.ArrayList;
 
 public class ProjectsUtils {
     private static String projectsFolderDirectory;
-    private static String projectDuplicatePostfix;
+    private static String DUPLICATE_PREFIX;
     private static final String PROJECT_NAME_VALIDITY_PATTERN = "\\w+[A-Za-zА-Яа-я_0-9\\s]*";
     private static final String META_SEPARATOR = "]|[";
 
     public static void initialize(Context c) {
         projectsFolderDirectory = c.getFilesDir() + "/projects";
-        projectDuplicatePostfix = " " + c.getString(R.string.project_duplicate_postfix);
+        DUPLICATE_PREFIX = c.getString(R.string.duplicate_prefix)+" ";
 
-        File testDir = new File(projectsFolderDirectory);
 
-        if (!testDir.exists())
-            testDir.mkdir();
+        //TODO Create this on first launch
+        File projectsDirectory = new File(projectsFolderDirectory);
+
+        if (!projectsDirectory.exists())
+            projectsDirectory.mkdir();
     }
 
     public static ArrayList<Project> getProjects() {
@@ -75,17 +77,15 @@ public class ProjectsUtils {
         File newProjectDirectory = new File(projectsFolderDirectory + "/" + generateId());
         System.out.println("mkdirs=" + newProjectDirectory.mkdir());
 
-        File meta = new File(newProjectDirectory, ".pxlmeta");
-        try {
-            meta.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try (FileWriter fileWrite = new FileWriter(meta)) {
-            fileWrite.write(pixelWidth + META_SEPARATOR + pixelHeight + META_SEPARATOR + palette + META_SEPARATOR + transparentBackground + META_SEPARATOR + name);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Project project = new Project(newProjectDirectory);
+        project.name = name;
+        project.width = pixelWidth;
+        project.height = pixelHeight;
+        project.palette = palette;
+        project.transparentBackground = transparentBackground;
+
+        writeMeta(project);
+
         File bitmapPath = new File(newProjectDirectory, "image.pxl");
         Bitmap b = Bitmap.createBitmap(pixelWidth, pixelHeight, Bitmap.Config.ARGB_8888);
         if (!transparentBackground) {
@@ -97,6 +97,22 @@ public class ProjectsUtils {
         return new Project(newProjectDirectory);
     }
 
+    static void writeMeta(Project project){
+        File meta = new File(project.directory, ".pxlmeta");
+        if(!meta.exists()) {
+            try {
+                meta.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try (FileWriter fileWrite = new FileWriter(meta, false)) {
+            fileWrite.write(project.width + META_SEPARATOR + project.height + META_SEPARATOR + project.palette + META_SEPARATOR + project.transparentBackground + META_SEPARATOR + project.name);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static Project createProjectFromBitmap(Context c, Bitmap bitmap) {
         String name = c.getString(R.string.name_imported);
         if (!isNameAvailable(name)) {
@@ -106,43 +122,35 @@ public class ProjectsUtils {
             name += " " + a;
         }
         Project project = createNewProject(name, bitmap.getWidth(), bitmap.getHeight(), "Default", bitmap.hasAlpha());
-        Utils.saveBitmap(bitmap, new File(project.projectDirectory, "image.pxl"));
+        Utils.saveBitmap(bitmap, new File(project.directory, "image.pxl"));
         return project;
     }
 
     public static void deleteProject(Project project) {
-
-        if (!project.projectDirectory.exists())
+        if (!project.directory.exists())
             return;
-        File[] children = project.projectDirectory.listFiles();
+        File[] children = project.directory.listFiles();
         for (File c : children)
             c.delete();
-        project.projectDirectory.delete();
-    }
-
-    public static Project renameProject(Project project, String newName) {
-        File newProjectDirectory = new File(projectsFolderDirectory + "/" + newName);
-        project.projectDirectory.renameTo(newProjectDirectory);
-        project.projectDirectory = newProjectDirectory;
-        project.name = newName;
-        return project;
+        project.directory.delete();
     }
 
     public static Project duplicateProject(Project project) {
-        String newProjectName = project.name + projectDuplicatePostfix;
+        String duplicatedId = generateId();
+        String duplicatedName = DUPLICATE_PREFIX + project.name;
 
-        if (!isNameAvailable(newProjectName)) {
-            int a = 1;
-            while (!isNameAvailable(newProjectName + " " + a))
-                a++;
-            newProjectName = newProjectName + " " + a;
-        }
+        Utils.copyFileOrDirectory(project.directory, new File(projectsFolderDirectory + "/" + duplicatedId));
 
-        Utils.copyFileOrDirectory(project.projectDirectory, new File(projectsFolderDirectory + "/" + newProjectName));
-        return loadProject(newProjectName);
+        Project duplicate = loadProject(duplicatedId);
+        duplicate.setName(duplicatedName);
+
+        return duplicate;
     }
 
-    static String generateId(){
-        return String.valueOf(System.currentTimeMillis());
+    private static String generateId(){
+        long id = System.currentTimeMillis();
+        while (new File(projectsFolderDirectory + "/" + String.valueOf(System.currentTimeMillis())).exists())
+            id++;
+        return String.valueOf(id);
     }
 }

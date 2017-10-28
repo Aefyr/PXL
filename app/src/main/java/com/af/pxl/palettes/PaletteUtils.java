@@ -25,7 +25,7 @@ public class PaletteUtils {
 
     public static void initialize(Context c) {
         palettesPath = c.getFilesDir() + "/palettes";
-        paletteDuplicatePostfix = " " + c.getString(R.string.project_duplicate_postfix);
+        paletteDuplicatePostfix = " " + c.getString(R.string.duplicate_prefix);
         File f = new File(palettesPath);
 
         if (!f.exists()) {

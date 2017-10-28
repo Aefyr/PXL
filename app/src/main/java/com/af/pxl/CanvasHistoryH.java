@@ -212,7 +212,7 @@ class CanvasHistoryH {
 
     void setProject(Project project) {
         this.project = project;
-        projectBitmap = new File(project.projectDirectory + "/image.pxl");
+        projectBitmap = new File(project.directory + "/image.pxl");
         bitmap = aps.pixelBitmap;
         arraySize = bitmap.getWidth() * bitmap.getHeight();
     }

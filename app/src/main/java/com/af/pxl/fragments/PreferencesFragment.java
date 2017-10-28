@@ -53,13 +53,13 @@ public class PreferencesFragment extends PreferenceFragment {
             }
         });
 
-        findPreference("hardware_accelerated").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        findPreference("hardware_accelerated").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
-            public boolean onPreferenceClick(Preference preference) {
-                if(!((SwitchPreference)preference).isChecked())
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                if(!((boolean)newValue))
                     Utils.easyAlert(getActivity(), getString(R.string.warn), getText(R.string.hw_warn)).show();
 
-                return false;
+                return true;
             }
         });
 

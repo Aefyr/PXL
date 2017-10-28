@@ -154,50 +154,45 @@ public class PalettePickerActivity extends AppCompatActivity {
     }
 
     private void createPalette() {
-        final AlertDialog creationDialog = new AlertDialog.Builder(this).setView(R.layout.edit_text).setTitle(getString(R.string.create_new_palette)).create();
+        final AlertDialog creationDialog = new AlertDialog.Builder(this).setTitle(R.string.create_new_palette).setView(R.layout.edit_text_dialog_view).setPositiveButton(R.string.ok, null).setNegativeButton(R.string.cancel, null).create();
+        creationDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         creationDialog.show();
-        final EditText paletteNameET = (EditText) creationDialog.findViewById(R.id.editText);
-        paletteNameET.setHint(getString(R.string.enter_name));
-        creationDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.ok), new DialogInterface.OnClickListener() {
+        creationDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String paletteName = paletteNameET.getText().toString();
-                if (PaletteUtils.isNameAvailable(paletteName)) {
-                    recyclerView.smoothScrollToPosition(adapter.addItem(new Palette2(paletteName).getName(), PalettePickRecyclerAdapter.AUTO_POSITION));
-                    creationDialog.cancel();
-                } else {
+            public void onClick(View view) {
+                String name = ((EditText)creationDialog.findViewById(R.id.dialogEditText)).getText().toString();
+                if (PaletteUtils.isNameAvailable(name)) {
+                    recyclerView.smoothScrollToPosition(adapter.addItem(new Palette2(name).getName(), PalettePickRecyclerAdapter.AUTO_POSITION));
+                    creationDialog.dismiss();
+                } else
                     Utils.toaster(PalettePickerActivity.this, getString(R.string.incorrect_palette_name));
-                }
             }
         });
+        ((EditText)creationDialog.findViewById(R.id.dialogEditText)).setHint(R.string.enter_name);
 
     }
 
     private void renamePalette(final Palette2 palette, final int id) {
-        final AlertDialog renameDialog = new AlertDialog.Builder(this).setTitle(getString(R.string.rename_palette)).setView(R.layout.edit_text).create();
+        final AlertDialog renameDialog = new AlertDialog.Builder(this).setTitle(getString(R.string.rename_palette)).setView(R.layout.edit_text_dialog_view).setPositiveButton(R.string.ok, null).setNegativeButton(R.string.cancel, null).create();
         renameDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         renameDialog.show();
 
-        final EditText nameEditText = ((EditText) renameDialog.findViewById(R.id.editText));
+        final EditText nameEditText = renameDialog.findViewById(R.id.dialogEditText);
         nameEditText.setHint(getString(R.string.new_name));
         nameEditText.setText(palette.getName());
-        nameEditText.setSelection(0, palette.getName().length());
+        nameEditText.selectAll();
 
-        renameDialog.findViewById(R.id.okButton).setOnClickListener(new View.OnClickListener() {
+        renameDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 String newName = nameEditText.getText().toString();
                 if (PaletteUtils.isNameAvailable(newName)) {
-                    if (palette.getName().equals(currentPaletteName)) {
-                        currentPaletteNameChanged = true;
-                        currentPaletteName = newName;
-                    }
                     PaletteUtils.renamePalette(palette, newName);
                     adapter.paletteNames.set(id, newName);
                     adapter.notifyItemChanged(id);
                     renameDialog.dismiss();
                 } else {
-                    Utils.toaster(PalettePickerActivity.this, "Name is incorrect or already in use!");
+                    Utils.toaster(PalettePickerActivity.this, getString(R.string.incorrect_palette_name));
                 }
             }
         });

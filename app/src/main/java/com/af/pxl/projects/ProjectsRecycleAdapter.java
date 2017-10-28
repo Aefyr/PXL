@@ -101,9 +101,9 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
     private class LastModifiedComparator implements Comparator<Project> {
         @Override
         public int compare(Project project, Project t1) {
-            if (project.projectDirectory.lastModified() < t1.projectDirectory.lastModified())
+            if (project.directory.lastModified() < t1.directory.lastModified())
                 return 1;
-            if (project.projectDirectory.lastModified() > t1.projectDirectory.lastModified())
+            if (project.directory.lastModified() > t1.directory.lastModified())
                 return -1;
             return 0;
         }

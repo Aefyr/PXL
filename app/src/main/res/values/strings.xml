@@ -62,6 +62,9 @@
     <string name="name_imported">Imported</string>
     <string name="original">Original</string>
     <string name="select_resolution">Select resolution of exported image</string>
+    <string name="custom">Custom…</string>
+    <string name="multiplier_info_pattern" formatted="false">Multiplier: %d\nResolution: %dx%d</string>
+    <string name="select_multiplier">Select custom resolution multiplier</string>
     <string name="share">Share</string>
     <string name="exporting">Exporting image</string>
     <string name="storage_permissions_denied">Can\'t access gallery without permission to use storage!</string>
@@ -79,8 +82,8 @@
     <!-- Projects options -->
     <string name="new_name">New name</string>
     <string name="rename_project">Rename Project</string>
-    <string name="delete_project">Delete Project?</string>
-    <string name="project_duplicate_postfix">copy</string>
+    <string name="delete_project">Delete this project?</string>
+    <string name="duplicate_prefix">Copy of</string>
 
     <!-- Palettes options -->
     <string name="rename_palette">Rename Palette</string>

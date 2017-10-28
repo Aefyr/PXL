@@ -199,9 +199,9 @@ public class PalettesFragment extends android.app.Fragment {
         optionsDialog.show();
     }
 
-    private AlertDialog creationDialog;
     private void createPalette() {
-        creationDialog = new AlertDialog.Builder(getActivity()).setTitle(R.string.create_new_palette).setView(R.layout.edit_text_dialog_view).setPositiveButton(R.string.ok, null).setNegativeButton(R.string.cancel, null).create();
+        final AlertDialog creationDialog = new AlertDialog.Builder(getActivity()).setTitle(R.string.create_new_palette).setView(R.layout.edit_text_dialog_view).setPositiveButton(R.string.ok, null).setNegativeButton(R.string.cancel, null).create();
+        creationDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         creationDialog.show();
         creationDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -215,37 +215,21 @@ public class PalettesFragment extends android.app.Fragment {
             }
         });
         ((EditText)creationDialog.findViewById(R.id.dialogEditText)).setHint(R.string.enter_name);
-        /*final AlertDialog creationDialog = new AlertDialog.Builder(getActivity()).setView(R.layout.edit_text).setTitle(getString(R.string.create_new_palette)).create();
-        creationDialog.show();
-        final EditText paletteNameET = (EditText) creationDialog.findViewById(R.id.editText);
-        paletteNameET.setHint(getString(R.string.enter_name));
-        creationDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String paletteName = paletteNameET.getText().toString();
-                if (PaletteUtils.isNameAvailable(paletteName)) {
-                    recyclerView.smoothScrollToPosition(adapter.addItem(new Palette2(paletteName).getName(), PalettePickRecyclerAdapter.AUTO_POSITION));
-                    creationDialog.cancel();
-                } else {
-                    Utils.toaster(getActivity(), getString(R.string.incorrect_palette_name));
-                }
-            }
-        });*/
     }
 
     private void renamePalette(final Palette2 palette, final int id) {
-        final AlertDialog renameDialog = new AlertDialog.Builder(getActivity()).setTitle(getString(R.string.rename_palette)).setView(R.layout.edit_text).create();
+        final AlertDialog renameDialog = new AlertDialog.Builder(getActivity()).setTitle(getString(R.string.rename_palette)).setView(R.layout.edit_text_dialog_view).setPositiveButton(R.string.ok, null).setNegativeButton(R.string.cancel, null).create();
         renameDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         renameDialog.show();
 
-        final EditText nameEditText = ((EditText) renameDialog.findViewById(R.id.editText));
+        final EditText nameEditText = renameDialog.findViewById(R.id.dialogEditText);
         nameEditText.setHint(getString(R.string.new_name));
         nameEditText.setText(palette.getName());
-        nameEditText.setSelection(0, palette.getName().length());
+        nameEditText.selectAll();
 
-        renameDialog.findViewById(R.id.okButton).setOnClickListener(new View.OnClickListener() {
+        renameDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 String newName = nameEditText.getText().toString();
                 if (PaletteUtils.isNameAvailable(newName)) {
                     PaletteUtils.renamePalette(palette, newName);

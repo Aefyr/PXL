@@ -44,6 +44,15 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoStatusBar" />
         <activity android:name="com.af.pxl.TCA.TutorialActivity"></activity>
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.af.pxl.fileprovider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
     </application>
 
 </manifest>

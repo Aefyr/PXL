@@ -16,21 +16,21 @@ import java.io.IOException;
 
 public class Project {
     public String id;
-    public File projectDirectory;
+    public File directory;
     public String name;
     long lastModified;
 
     //Meta
-    public int pixelWidth = 999;
-    public int pixelHeight = 999;
+    public int width = 999;
+    public int height = 999;
     public String palette = "Default";
     public boolean transparentBackground = false;
 
 
-    public Project(File projectDirectory) {
-        id = projectDirectory.getName();
-        this.projectDirectory = projectDirectory;
-        lastModified = projectDirectory.lastModified();
+    public Project(File directory) {
+        id = directory.getName();
+        this.directory = directory;
+        lastModified = directory.lastModified();
         loadMeta();
     }
 
@@ -38,7 +38,7 @@ public class Project {
         BitmapFactory.Options op = new BitmapFactory.Options();
         op.inMutable = mutable;
         op.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap loadedBitmap = BitmapFactory.decodeFile(projectDirectory + "/image.pxl", op);
+        Bitmap loadedBitmap = BitmapFactory.decodeFile(directory + "/image.pxl", op);
         if (transparentBackground)
             loadedBitmap.setHasAlpha(true);
         return loadedBitmap;
@@ -46,29 +46,35 @@ public class Project {
     }
 
     public void setPalette(Palette2 palette) {
-        File meta = new File(projectDirectory, ".pxlmeta");
-        try (FileWriter writer = new FileWriter(meta, false)) {
-            writer.write(pixelWidth + "," + pixelHeight + "," + palette.getName() + "," + transparentBackground);
-            notifyProjectModified();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        if(this.palette.equals(palette.getName()))
+            return;
+
+        this.palette = palette.getName();
+        ProjectsUtils.writeMeta(this);
+    }
+
+    public void setName(String name){
+        if(name.equals(this.name))
+            return;
+
+        this.name = name;
+        ProjectsUtils.writeMeta(this);
     }
 
     public void notifyProjectModified() {
-        System.out.println("LastModifiedWas " + projectDirectory.lastModified());
-        System.out.println("Modified Time=" + projectDirectory.setLastModified(System.currentTimeMillis()));
+        System.out.println("LastModifiedWas " + directory.lastModified());
+        System.out.println("Modified Time=" + directory.setLastModified(System.currentTimeMillis()));
 
     }
 
     public String getResolutionString() {
-        return pixelWidth + "x" + pixelHeight;
+        return width + "x" + height;
     }
 
     private void loadMeta() {
         StringBuilder builder = new StringBuilder();
 
-        try (FileReader reader = new FileReader(projectDirectory + "/.pxlmeta")) {
+        try (FileReader reader = new FileReader(directory + "/.pxlmeta")) {
             int c = reader.read();
             while (c != -1) {
                 builder.append((char) c);
@@ -86,10 +92,10 @@ public class Project {
         String[] metaValues = rawMeta.split("]\\|\\[");
         if (metaValues.length == 0)
             return;
-        pixelWidth = Integer.parseInt(metaValues[0]);
+        width = Integer.parseInt(metaValues[0]);
         if (metaValues.length == 1)
             return;
-        pixelHeight = Integer.parseInt(metaValues[1]);
+        height = Integer.parseInt(metaValues[1]);
         if (metaValues.length == 2)
             return;
         palette = metaValues[2];

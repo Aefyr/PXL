@@ -90,7 +90,7 @@ public class AdaptivePixelSurfaceH extends View {
     }
 
     private void initialize() {
-        /*pixelBitmap = Bitmap.createBitmap(pixelWidth, pixelHeight, Bitmap.Config.ARGB_8888);
+        /*pixelBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         pixelCanvas = new Canvas(pixelBitmap);*/
 
         pixelMatrix = new Matrix();
