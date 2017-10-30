@@ -54,6 +54,7 @@ public class Project {
     }
 
     public void setName(String name){
+        name = name.replaceAll("]\\|\\[", " ");
         if(name.equals(this.name))
             return;
 

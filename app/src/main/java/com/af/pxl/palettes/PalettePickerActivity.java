@@ -20,6 +20,8 @@ import android.widget.EditText;
 import com.af.pxl.R;
 import com.af.pxl.util.Utils;
 
+import java.util.ArrayList;
+
 public class PalettePickerActivity extends AppCompatActivity {
 
     PalettePickRecyclerAdapter adapter;
@@ -36,7 +38,20 @@ public class PalettePickerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_palette_picker);
 
         recyclerView = (RecyclerView) findViewById(R.id.palettesRecyclerView);
-        adapter = new PalettePickRecyclerAdapter(this, PaletteUtils.getSavedPalettes());
+        adapter = new PalettePickRecyclerAdapter(this);
+        //TODO Shorten this mess
+        adapter.setPalettes(new ArrayList<Palette2>(PaletteUtils.getSavedPalettesCount()));
+        new PaletteUtils().loadSavedPalettesAsync(false, new PaletteUtils.PalettesLoaderListener() {
+            @Override
+            public void onPalettesLoaded(ArrayList<Palette2> palettes) {
+                adapter.setPalettes(palettes);
+            }
+
+            @Override
+            public void onPaletteLoaded(Palette2 palette) {
+                adapter.addItem(palette);
+            }
+        });
         recyclerView.setLayoutManager(new GridLayoutManager(this, (int) (Utils.getScreenWidth(getResources()) / Utils.dpToPx(130, getResources()))));
         recyclerView.setItemViewCacheSize(24);
         adapter.setHasStableIds(true);
@@ -109,7 +124,8 @@ public class PalettePickerActivity extends AppCompatActivity {
                 @Override
                 public void onPaletteGenerated(Palette2 palette) {
                     generationDialog.dismiss();
-                    recyclerView.smoothScrollToPosition(adapter.addItem(palette.getName(), PalettePickRecyclerAdapter.AUTO_POSITION));
+                    adapter.addItem(palette);
+                    recyclerView.smoothScrollToPosition(adapter.getItemCount()-1);
 
                 }
             });
@@ -129,7 +145,7 @@ public class PalettePickerActivity extends AppCompatActivity {
                                 renamePalette(palette, index);
                                 break;
                             case 1:
-                                duplicatePalette(palette, index);
+                                duplicatePalette(palette);
                                 break;
                             case 2:
                                 deletePalette(palette, index);
@@ -162,7 +178,8 @@ public class PalettePickerActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String name = ((EditText)creationDialog.findViewById(R.id.dialogEditText)).getText().toString();
                 if (PaletteUtils.isNameAvailable(name)) {
-                    recyclerView.smoothScrollToPosition(adapter.addItem(new Palette2(name).getName(), PalettePickRecyclerAdapter.AUTO_POSITION));
+                    adapter.addItem(new Palette2(name));
+                    recyclerView.smoothScrollToPosition(adapter.getItemCount()-1);
                     creationDialog.dismiss();
                 } else
                     Utils.toaster(PalettePickerActivity.this, getString(R.string.incorrect_palette_name));
@@ -187,9 +204,11 @@ public class PalettePickerActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String newName = nameEditText.getText().toString();
                 if (PaletteUtils.isNameAvailable(newName)) {
-                    PaletteUtils.renamePalette(palette, newName);
-                    adapter.paletteNames.set(id, newName);
-                    adapter.notifyItemChanged(id);
+                    if (palette.getName().equals(currentPaletteName)) {
+                        currentPaletteNameChanged = true;
+                        currentPaletteName = newName;
+                    }
+                    adapter.renamePalette(id, newName);
                     renameDialog.dismiss();
                 } else {
                     Utils.toaster(PalettePickerActivity.this, getString(R.string.incorrect_palette_name));
@@ -198,8 +217,9 @@ public class PalettePickerActivity extends AppCompatActivity {
         });
     }
 
-    private void duplicatePalette(Palette2 palette, int id) {
-        adapter.addItem(PaletteUtils.duplicatePalette(palette), id + 1);
+    private void duplicatePalette(Palette2 palette) {
+        adapter.addItem(PaletteUtils.duplicatePalette(palette));
+        recyclerView.smoothScrollToPosition(adapter.getItemCount()-1);
     }
 
     private void deletePalette(final Palette2 palette, final int id) {

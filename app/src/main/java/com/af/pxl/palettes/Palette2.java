@@ -28,10 +28,16 @@ public class Palette2 {
         this.name = name;
         colors = new ArrayList<>(16);
         directory = new File(PaletteUtils.palettesPath, name + PaletteUtils.EXTENSION);
-        if (!wasLoaded)
+        if (!wasLoaded) {
             autoSave();
+            directory.setLastModified(System.currentTimeMillis());
+        }
 
         listeners = new ArrayList<>(2);
+    }
+
+    File directory(){
+        return directory;
     }
 
     public Palette2(String name) {
@@ -66,6 +72,7 @@ public class Palette2 {
 
     public void setName(String name) {
         this.name = name;
+        listenerEvent();
     }
 
     ArrayList<Integer> getColors() {
@@ -107,6 +114,10 @@ public class Palette2 {
 
     private void autoSave() {
         PaletteUtils.savePalette(this);
+    }
+
+    void setLastModified(long time){
+        directory.setLastModified(time);
     }
 
     public long lastModified() {

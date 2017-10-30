@@ -1,6 +1,7 @@
 package com.af.pxl.palettes;
 
 import android.content.Context;
+import android.os.AsyncTask;
 
 import com.af.pxl.R;
 import com.af.pxl.util.Utils;
@@ -10,6 +11,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  * Created by Aefyr on 17.07.2017.
@@ -46,9 +49,8 @@ public class PaletteUtils {
             }
         }
 
-
+        long lastModified = path.lastModified();
         try (FileWriter fileWriter = new FileWriter(path, false)) {
-
 
             int limit = palette.getColors().size();
             for (int i = 0; i < limit; i++) {
@@ -57,13 +59,15 @@ public class PaletteUtils {
                     fileWriter.append(",");
                 }
             }
-            path.setLastModified(System.currentTimeMillis());
+
             System.out.println("Palette was saved!");
             return true;
         } catch (IOException e) {
             System.out.println("Failed to save the palette :(");
             e.printStackTrace();
             return false;
+        }finally {
+            path.setLastModified(lastModified);
         }
     }
 
@@ -96,14 +100,12 @@ public class PaletteUtils {
         }
     }
 
-    public static String renamePalette(Palette2 palette, String newName) {
-        File old = new File(palettesPath + "/" + palette.getName() + EXTENSION);
-        old.renameTo(new File(palettesPath + "/" + newName + EXTENSION));
+    public static void renamePalette(Palette2 palette, String newName) {
+        palette.directory().renameTo(new File(palettesPath + "/" + newName + EXTENSION));
         palette.setName(newName);
-        return newName;
     }
 
-    public static String duplicatePalette(Palette2 original) {
+    public static Palette2 duplicatePalette(Palette2 original) {
         String newPaletteName = original.getName() + paletteDuplicatePostfix;
         if (!isNameAvailable(newPaletteName)) {
             int a = 1;
@@ -115,7 +117,9 @@ public class PaletteUtils {
         }
 
         Utils.copyFileOrDirectory(new File(palettesPath + "/" + original.getName() + EXTENSION), new File(palettesPath + "/" + newPaletteName + EXTENSION));
-        return newPaletteName;
+        Palette2 duplicatedPalette = loadPalette(newPaletteName);
+        duplicatedPalette.setLastModified(System.currentTimeMillis());
+        return duplicatedPalette;
     }
 
     public static void deletePalette(Palette2 palette) {
@@ -152,5 +156,75 @@ public class PaletteUtils {
         }
 
         return names;
+    }
+
+    public static int getSavedPalettesCount(){
+        return new File(palettesPath).listFiles().length;
+    }
+
+    public void loadSavedPalettesAsync(boolean allAtOnce, PalettesLoaderListener listener){
+        new PalettesLoaderTask().execute(new PalettesLoaderTaskParams(listener, allAtOnce));
+    }
+
+    public interface PalettesLoaderListener{
+        void onPalettesLoaded(ArrayList<Palette2> palettes);
+        void onPaletteLoaded(Palette2 palette);
+    }
+
+    private class PalettesLoaderTaskParams{
+        private PalettesLoaderListener listener;
+        private boolean allAtOnce;
+        private PalettesLoaderTaskParams(PalettesLoaderListener listener, boolean allAtOnce){
+            this.listener = listener;
+            this.allAtOnce = allAtOnce;
+        }
+    }
+    private class PalettesLoaderTask extends AsyncTask<PalettesLoaderTaskParams, Palette2, ArrayList<Palette2>>{
+
+        private PalettesLoaderListener listener;
+
+        @Override
+        protected ArrayList<Palette2> doInBackground(PalettesLoaderTaskParams... params) {
+            this.listener = params[0].listener;
+            final boolean allAtOnce = params[0].allAtOnce;
+
+            File[] palettesFiles = (new File(palettesPath)).listFiles();
+            Arrays.sort(palettesFiles, new Comparator<File>() {
+                @Override
+                public int compare(File o1, File o2) {
+                    return Long.compare(o1.lastModified(), o2.lastModified());
+                }
+            });
+
+            ArrayList<Palette2> palettes = null;
+            if(allAtOnce)
+                palettes = new ArrayList<>(palettesFiles.length);
+
+            String name;
+            for (File palette : palettesFiles) {
+                name = palette.getName();
+                name = name.substring(0, name.length() - EXTENSION.length());
+
+                if(allAtOnce)
+                    palettes.add(loadPalette(name));
+                else
+                    publishProgress(loadPalette(name));
+            }
+
+            return allAtOnce?palettes:null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Palette2... palettes) {
+            super.onProgressUpdate(palettes);
+            listener.onPaletteLoaded(palettes[0]);
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Palette2> palettes) {
+            super.onPostExecute(palettes);
+            if(palettes!=null)
+                listener.onPalettesLoaded(palettes);
+        }
     }
 }

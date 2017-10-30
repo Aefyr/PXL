@@ -372,10 +372,10 @@ public class GalleryFragment extends android.app.Fragment {
             progressDialog.dismiss();
             if (params.share) {
                 Intent shareIntent = new Intent();
-                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                shareIntent.setType("image/png");
                 shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
                 shareIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(getActivity(), "com.af.pxl.fileprovider", params.imagePath));
+                shareIntent.setType("image/png");
                 startActivity(Intent.createChooser(shareIntent, getString(R.string.share)));
             } else {
                 Utils.alternativeAddImageToGallery(getActivity(), params.imagePath);

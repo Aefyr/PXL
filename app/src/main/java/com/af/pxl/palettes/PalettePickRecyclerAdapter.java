@@ -11,6 +11,7 @@ import com.af.pxl.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Created by Aefyr on 22.07.2017.
@@ -18,15 +19,22 @@ import java.util.Collections;
 
 public class PalettePickRecyclerAdapter extends RecyclerView.Adapter<PalettePickRecyclerAdapter.PaletteViewHolder> {
 
-    public ArrayList<String> paletteNames;
+    public ArrayList<Palette2> palettes;
     private LayoutInflater inflater;
     private OnPaletteClickListener onPaletteClickListener;
-    public final static int AUTO_POSITION = -1;
 
-    public PalettePickRecyclerAdapter(Context c, ArrayList<String> paletteNames) {
+    public PalettePickRecyclerAdapter(Context c) {
         inflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.paletteNames = paletteNames;
-        Collections.sort(paletteNames);
+    }
+
+    public void setPalettes(ArrayList<Palette2> palettes){
+        this.palettes = palettes;
+        notifyDataSetChanged();
+    }
+
+    public void renamePalette(int atIndex, String newName){
+        PaletteUtils.renamePalette(palettes.get(atIndex), newName);
+        notifyItemChanged(atIndex);
     }
 
     @Override
@@ -48,33 +56,27 @@ public class PalettePickRecyclerAdapter extends RecyclerView.Adapter<PalettePick
     }
 
     private Palette2 getPalette(int index) {
-        return PaletteUtils.loadPalette(paletteNames.get(index));
+        return palettes.get(index);
     }
 
-    public int addItem(String paletteName, int index) {
-        if (index == AUTO_POSITION) {
-            index = 0;
-            while (index < paletteNames.size() && paletteName.compareTo(paletteNames.get(index)) > 0)
-                index++;
-        }
-        paletteNames.add(index, paletteName);
-        notifyItemInserted(index);
-        return index;
+    public void addItem(Palette2 palette) {
+        palettes.add(palette);
+        notifyItemInserted(palettes.size()-1);
     }
 
     public void removeItem(int index) {
-        paletteNames.remove(index);
+        palettes.remove(index);
         notifyItemRemoved(index);
     }
 
     @Override
     public int getItemCount() {
-        return paletteNames.size();
+        return palettes==null?0:palettes.size();
     }
 
     @Override
     public long getItemId(int position) {
-        return paletteNames.get(position).hashCode();
+        return palettes.get(position).getName().hashCode();
     }
 
     class PaletteViewHolder extends RecyclerView.ViewHolder {

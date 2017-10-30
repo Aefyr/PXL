@@ -76,6 +76,7 @@ public class ProjectsUtils {
     public static Project createNewProject(String name, int pixelWidth, int pixelHeight, String palette, boolean transparentBackground) {
         File newProjectDirectory = new File(projectsFolderDirectory + "/" + generateId());
         System.out.println("mkdirs=" + newProjectDirectory.mkdir());
+        name = name.replaceAll(META_SEPARATOR, " ");
 
         Project project = new Project(newProjectDirectory);
         project.name = name;
