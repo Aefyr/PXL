@@ -59,7 +59,10 @@ public class PalettePickRecyclerAdapter extends RecyclerView.Adapter<PalettePick
         return palettes.get(index);
     }
 
-    public void addItem(Palette2 palette) {
+    public void addPalette(Palette2 palette) {
+        if(palettes==null)
+            palettes = new ArrayList<>(PaletteUtils.getSavedPalettesCount());
+
         palettes.add(palette);
         notifyItemInserted(palettes.size()-1);
     }

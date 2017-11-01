@@ -22,6 +22,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 
 import com.af.pxl.R;
+import com.af.pxl.palettes.DynamicPalettesLoader;
 import com.af.pxl.util.Utils;
 import com.af.pxl.palettes.Palette2;
 import com.af.pxl.palettes.PaletteMakerH;
@@ -56,19 +57,6 @@ public class PalettesFragment extends android.app.Fragment {
 
         recyclerView = (RecyclerView) view.findViewById(R.id.palettesRecycler);
         adapter = new PalettePickRecyclerAdapter(getActivity());
-        //TODO Shorten this mess
-        adapter.setPalettes(new ArrayList<Palette2>(PaletteUtils.getSavedPalettesCount()));
-        new PaletteUtils().loadSavedPalettesAsync(false, new PaletteUtils.PalettesLoaderListener() {
-            @Override
-            public void onPalettesLoaded(ArrayList<Palette2> palettes) {
-                adapter.setPalettes(palettes);
-            }
-
-            @Override
-            public void onPaletteLoaded(Palette2 palette) {
-                adapter.addItem(palette);
-            }
-        });
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), (int) (Utils.getScreenWidth(getResources()) / Utils.dpToPx(130, getResources()))));
         recyclerView.setItemViewCacheSize(24);
         adapter.setHasStableIds(true);
@@ -94,8 +82,17 @@ public class PalettesFragment extends android.app.Fragment {
 
             }
         });
+
+        DynamicPalettesLoader.getInstance(getActivity()).loadPalettes(new DynamicPalettesLoader.PalettesLoaderCallbackD() {
+            @Override
+            public void onPaletteLoaded(Palette2 palette) {
+                adapter.addPalette(palette);
+            }
+        });
+
         return view;
     }
+
 
     private void importImage() {
         if (!Utils.checkPermissions(getActivity())) {
@@ -142,19 +139,19 @@ public class PalettesFragment extends android.app.Fragment {
                 @Override
                 public void onPaletteGenerated(Palette2 palette) {
                     generationDialog.dismiss();
-                    adapter.addItem(palette);
+                    adapter.addPalette(palette);
                     recyclerView.smoothScrollToPosition(adapter.getItemCount()-1);
                     paletteManager.showPaletteManagerDialog((AppCompatActivity) getActivity(), palette);
 
                 }
             });
-            //recyclerView.smoothScrollToPosition(adapter.addItem(paletteMakerH.extractPalette3(data.getData()).getName(), PalettePickRecyclerAdapter.AUTO_POSITION));
+            //recyclerView.smoothScrollToPosition(adapter.addPalette(paletteMakerH.extractPalette3(data.getData()).getName(), PalettePickRecyclerAdapter.AUTO_POSITION));
 
 
             /*PaletteMaker.getInstance(getActivity()).extractPalette(getActivity(), data.getData(), new PaletteMaker.OnPaletteGenerationListener() {
                 @Override
                 public void onPaletteGenerated(Palette2 palette) {
-                    recyclerView.smoothScrollToPosition(adapter.addItem(palette.getName(), PalettePickRecyclerAdapter.AUTO_POSITION));
+                    recyclerView.smoothScrollToPosition(adapter.addPalette(palette.getName(), PalettePickRecyclerAdapter.AUTO_POSITION));
                     generationDialog.dismiss();
                 }
 
@@ -224,7 +221,7 @@ public class PalettesFragment extends android.app.Fragment {
             public void onClick(View view) {
                 String name = ((EditText)creationDialog.findViewById(R.id.dialogEditText)).getText().toString();
                 if (PaletteUtils.isNameAvailable(name)) {
-                    adapter.addItem(new Palette2(name));
+                    adapter.addPalette(new Palette2(name));
                     recyclerView.smoothScrollToPosition(adapter.getItemCount()-1);
                     creationDialog.dismiss();
                 } else
@@ -259,7 +256,7 @@ public class PalettesFragment extends android.app.Fragment {
     }
 
     private void duplicatePalette(Palette2 palette) {
-        adapter.addItem(PaletteUtils.duplicatePalette(palette));
+        adapter.addPalette(PaletteUtils.duplicatePalette(palette));
         recyclerView.smoothScrollToPosition(adapter.getItemCount()-1);
     }
 

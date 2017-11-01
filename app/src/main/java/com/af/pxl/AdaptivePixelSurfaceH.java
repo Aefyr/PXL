@@ -21,7 +21,7 @@ import android.view.View;
 import com.af.pxl.fragments.PreferencesFragment;
 import com.af.pxl.palettes.PaletteManagerH;
 import com.af.pxl.projects.Project;
-import com.af.pxl.custom.RectP;
+import com.af.pxl.common.RectP;
 import com.af.pxl.util.Utils;
 
 import java.util.ArrayDeque;
@@ -331,7 +331,7 @@ public class AdaptivePixelSurfaceH extends View {
 
 
     public void centerCanvas() {
-        pixelScale = realWidth < realHeight ? (float) realWidth / (float) pixelWidth : (float) realHeight / (float) pixelHeight;
+        pixelScale = Math.min(realHeight/(float)pixelHeight, realWidth/(float)pixelWidth);
         matrixOffsetX = ((float) realWidth / 2f - (((float) pixelWidth * pixelScale) / 2f));
         matrixOffsetY = ((float) realHeight / 2f - (((float) pixelHeight * pixelScale) / 2f));
     }

@@ -8,7 +8,7 @@ import android.support.v8.renderscript.Float4;
 import android.support.v8.renderscript.Int3;
 import android.support.v8.renderscript.RenderScript;
 
-import com.af.pxl.custom.Vector2;
+import com.af.pxl.common.Vector2;
 
 import java.util.HashSet;
 

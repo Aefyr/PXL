@@ -20,8 +20,8 @@ import java.util.Comparator;
 
 public class PaletteUtils {
 
-    static final String PALETTE_NAME_VALIDITY_PATTERN = "\\w+[A-Za-zА-Яа-я_0-9\\s]*";
-    static String paletteDuplicatePostfix;
+    private static final String PALETTE_NAME_VALIDITY_PATTERN = "\\w+[A-Za-zА-Яа-я_0-9\\s]*";
+    private static String paletteDuplicatePostfix;
 
     static String palettesPath;
     static final String EXTENSION = ".pxlpalette";
@@ -31,9 +31,8 @@ public class PaletteUtils {
         paletteDuplicatePostfix = " " + c.getString(R.string.duplicate_prefix);
         File f = new File(palettesPath);
 
-        if (!f.exists()) {
+        if (!f.exists())
             f.mkdir();
-        }
     }
 
     public static boolean savePalette(Palette2 palette) {
@@ -144,87 +143,7 @@ public class PaletteUtils {
     }
 
 
-    public static ArrayList<String> getSavedPalettes() {
-        ArrayList<String> names = new ArrayList<>();
-
-        File file = new File(palettesPath);
-
-        for (File child : file.listFiles()) {
-            String name = child.getName();
-            name = name.substring(0, name.length() - EXTENSION.length());
-            names.add(name);
-        }
-
-        return names;
-    }
-
     public static int getSavedPalettesCount(){
         return new File(palettesPath).listFiles().length;
-    }
-
-    public void loadSavedPalettesAsync(boolean allAtOnce, PalettesLoaderListener listener){
-        new PalettesLoaderTask().execute(new PalettesLoaderTaskParams(listener, allAtOnce));
-    }
-
-    public interface PalettesLoaderListener{
-        void onPalettesLoaded(ArrayList<Palette2> palettes);
-        void onPaletteLoaded(Palette2 palette);
-    }
-
-    private class PalettesLoaderTaskParams{
-        private PalettesLoaderListener listener;
-        private boolean allAtOnce;
-        private PalettesLoaderTaskParams(PalettesLoaderListener listener, boolean allAtOnce){
-            this.listener = listener;
-            this.allAtOnce = allAtOnce;
-        }
-    }
-    private class PalettesLoaderTask extends AsyncTask<PalettesLoaderTaskParams, Palette2, ArrayList<Palette2>>{
-
-        private PalettesLoaderListener listener;
-
-        @Override
-        protected ArrayList<Palette2> doInBackground(PalettesLoaderTaskParams... params) {
-            this.listener = params[0].listener;
-            final boolean allAtOnce = params[0].allAtOnce;
-
-            File[] palettesFiles = (new File(palettesPath)).listFiles();
-            Arrays.sort(palettesFiles, new Comparator<File>() {
-                @Override
-                public int compare(File o1, File o2) {
-                    return Long.compare(o1.lastModified(), o2.lastModified());
-                }
-            });
-
-            ArrayList<Palette2> palettes = null;
-            if(allAtOnce)
-                palettes = new ArrayList<>(palettesFiles.length);
-
-            String name;
-            for (File palette : palettesFiles) {
-                name = palette.getName();
-                name = name.substring(0, name.length() - EXTENSION.length());
-
-                if(allAtOnce)
-                    palettes.add(loadPalette(name));
-                else
-                    publishProgress(loadPalette(name));
-            }
-
-            return allAtOnce?palettes:null;
-        }
-
-        @Override
-        protected void onProgressUpdate(Palette2... palettes) {
-            super.onProgressUpdate(palettes);
-            listener.onPaletteLoaded(palettes[0]);
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<Palette2> palettes) {
-            super.onPostExecute(palettes);
-            if(palettes!=null)
-                listener.onPalettesLoaded(palettes);
-        }
     }
 }

@@ -34,6 +34,7 @@ import android.widget.TextView;
 
 import com.af.pxl.DrawingActivity;
 import com.af.pxl.R;
+import com.af.pxl.projects.DynamicProjectsLoader;
 import com.af.pxl.util.Utils;
 import com.af.pxl.projects.Project;
 import com.af.pxl.projects.ProjectsRecycleAdapter;
@@ -68,7 +69,7 @@ public class GalleryFragment extends android.app.Fragment {
         ProjectsUtils.initialize(getActivity());
 
         recyclerView = (RecyclerView) view.findViewById(R.id.galleryRecycler);
-        adapter = new ProjectsRecycleAdapter(getActivity(), ProjectsUtils.getProjects());
+        adapter = new ProjectsRecycleAdapter(getActivity());
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), (int) (Utils.getScreenWidth(getResources()) / Utils.dpToPx(180, getResources()))));
         recyclerView.setItemViewCacheSize(16);
         adapter.setHasStableIds(true);
@@ -76,6 +77,13 @@ public class GalleryFragment extends android.app.Fragment {
 
         initializeFABOnClickListener(view);
         initializeOnProjectClickListener();
+
+        DynamicProjectsLoader.getInstance(getActivity()).loadProjects(new DynamicProjectsLoader.ProjectsLoaderCallbackD() {
+            @Override
+            public void onProjectLoaded(Project project) {
+                adapter.addProject(project);
+            }
+        });
 
         return view;
     }
@@ -165,10 +173,10 @@ public class GalleryFragment extends android.app.Fragment {
                 int width = Integer.parseInt(widthET.getText().toString());
                 int height = Integer.parseInt(heightET.getText().toString());
                 Project newProject = ProjectsUtils.createNewProject(name, width, height, "Default", ((Switch) d.findViewById(R.id.transparentBackground)).isChecked());
-                adapter.addItem(newProject);
+                adapter.addProject(newProject);
                 d.dismiss();
                 recyclerView.scrollToPosition(0);
-                openProject(newProject.id, 0);
+                openProject(newProject.id, adapter.getItemCount()-1);
             }
         });
     }
@@ -204,7 +212,7 @@ public class GalleryFragment extends android.app.Fragment {
             }
             Project p = ProjectsUtils.createProjectFromBitmap(getActivity(), importedImage);
             importedImage.recycle();
-            adapter.addItem(p);
+            adapter.addProject(p);
             recyclerView.scrollToPosition(0);
             openProject(p.id, 0);
         } else if (requestCode == DRAWING_REQUEST && resultCode == 1) {
@@ -216,7 +224,6 @@ public class GalleryFragment extends android.app.Fragment {
         adapter.setOnProjectClickListener(new ProjectsRecycleAdapter.OnProjectClickListener() {
             @Override
             public void onProjectClick(Project project, int id) {
-                System.out.println("Clicked " + project.name);
                 openProject(project.id, id);
             }
 
@@ -431,7 +438,7 @@ public class GalleryFragment extends android.app.Fragment {
     }
 
     private void duplicateProject(Project project) {
-        adapter.addItem(ProjectsUtils.duplicateProject(project));
+        adapter.addProject(ProjectsUtils.duplicateProject(project));
         recyclerView.scrollToPosition(0);
     }
 

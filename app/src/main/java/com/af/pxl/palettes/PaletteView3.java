@@ -14,7 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.af.pxl.util.Utils;
-import com.af.pxl.custom.RectP;
+import com.af.pxl.common.RectP;
 
 /**
  * Created by Aefyr on 22.07.2017.
@@ -140,7 +140,6 @@ public class PaletteView3 extends View implements Palette2.OnPaletteChangeListen
         int column = (int) (x / colorSizeX);
         int row = (int) (y / colorSizeY);
         int id = row * 4 + column;
-        System.out.println("PV3: Clicked currentColor with id " + id);
         if (id < 16) {
             if (listener != null)
                 listener.onColorClick(id);

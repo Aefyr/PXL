@@ -53,6 +53,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
 
         if (getIntent().getStringExtra("projectToLoad") != null)
             aps.setProject(ProjectsUtils.loadProject(getIntent().getStringExtra("projectToLoad")));
+        aps.project.notifyProjectModified();
 
 
         aps.setOnSpecialToolUseListener(this);
@@ -330,7 +331,6 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
 
     @Override
     public void onBackPressed() {
-        //aps.cleanupWeReLeaving();
         setResult(1);
         finish();
         super.onBackPressed();

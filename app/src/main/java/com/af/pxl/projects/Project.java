@@ -7,7 +7,6 @@ import com.af.pxl.palettes.Palette2;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 
 /**
@@ -18,7 +17,6 @@ public class Project {
     public String id;
     public File directory;
     public String name;
-    long lastModified;
 
     //Meta
     public int width = 999;
@@ -30,7 +28,6 @@ public class Project {
     public Project(File directory) {
         id = directory.getName();
         this.directory = directory;
-        lastModified = directory.lastModified();
         loadMeta();
     }
 
@@ -54,7 +51,7 @@ public class Project {
     }
 
     public void setName(String name){
-        name = name.replaceAll("]\\|\\[", " ");
+        name = name.replaceAll(ProjectsUtils.META_SEPARATOR_REGEX, " ");
         if(name.equals(this.name))
             return;
 
@@ -62,10 +59,12 @@ public class Project {
         ProjectsUtils.writeMeta(this);
     }
 
-    public void notifyProjectModified() {
-        System.out.println("LastModifiedWas " + directory.lastModified());
-        System.out.println("Modified Time=" + directory.setLastModified(System.currentTimeMillis()));
+    public long lastModified(){
+        return directory.lastModified();
+    }
 
+    public void notifyProjectModified() {
+        directory.setLastModified(System.currentTimeMillis());
     }
 
     public String getResolutionString() {
@@ -90,7 +89,7 @@ public class Project {
     }
 
     private void parseMeta(String rawMeta) {
-        String[] metaValues = rawMeta.split("]\\|\\[");
+        String[] metaValues = rawMeta.split(ProjectsUtils.META_SEPARATOR_REGEX);
         if (metaValues.length == 0)
             return;
         width = Integer.parseInt(metaValues[0]);

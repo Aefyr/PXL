@@ -6,21 +6,22 @@
     android:paddingBottom="4dp"
     android:paddingEnd="16dp"
     android:paddingStart="16dp"
-    android:paddingTop="16dp">
-
-    <SeekBar
-        android:id="@+id/seekBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:max="15"
-        android:progress="7" />
+    android:paddingTop="8dp">
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:gravity="center"
         android:text="Multiplier: 8\nOutput resolution: 8192x8192"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:max="15"
+        android:progress="7" />
+
 </LinearLayout>

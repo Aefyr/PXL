@@ -39,24 +39,10 @@ public class PalettePickerActivity extends AppCompatActivity {
 
         recyclerView = (RecyclerView) findViewById(R.id.palettesRecyclerView);
         adapter = new PalettePickRecyclerAdapter(this);
-        //TODO Shorten this mess
-        adapter.setPalettes(new ArrayList<Palette2>(PaletteUtils.getSavedPalettesCount()));
-        new PaletteUtils().loadSavedPalettesAsync(false, new PaletteUtils.PalettesLoaderListener() {
-            @Override
-            public void onPalettesLoaded(ArrayList<Palette2> palettes) {
-                adapter.setPalettes(palettes);
-            }
-
-            @Override
-            public void onPaletteLoaded(Palette2 palette) {
-                adapter.addItem(palette);
-            }
-        });
         recyclerView.setLayoutManager(new GridLayoutManager(this, (int) (Utils.getScreenWidth(getResources()) / Utils.dpToPx(130, getResources()))));
         recyclerView.setItemViewCacheSize(24);
         adapter.setHasStableIds(true);
         recyclerView.setAdapter(adapter);
-
         currentPaletteName = getIntent().getStringExtra("currentPalette");
         initializePaletteItemsInteractions(getIntent().getBooleanExtra("pickerMode", false));
 
@@ -75,6 +61,13 @@ public class PalettePickerActivity extends AppCompatActivity {
                             importImage();
                     }
                 }).create().show();
+            }
+        });
+
+        DynamicPalettesLoader.getInstance(this).loadPalettes(new DynamicPalettesLoader.PalettesLoaderCallbackD() {
+            @Override
+            public void onPaletteLoaded(Palette2 palette) {
+                adapter.addPalette(palette);
             }
         });
     }
@@ -124,7 +117,7 @@ public class PalettePickerActivity extends AppCompatActivity {
                 @Override
                 public void onPaletteGenerated(Palette2 palette) {
                     generationDialog.dismiss();
-                    adapter.addItem(palette);
+                    adapter.addPalette(palette);
                     recyclerView.smoothScrollToPosition(adapter.getItemCount()-1);
 
                 }
@@ -178,7 +171,7 @@ public class PalettePickerActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String name = ((EditText)creationDialog.findViewById(R.id.dialogEditText)).getText().toString();
                 if (PaletteUtils.isNameAvailable(name)) {
-                    adapter.addItem(new Palette2(name));
+                    adapter.addPalette(new Palette2(name));
                     recyclerView.smoothScrollToPosition(adapter.getItemCount()-1);
                     creationDialog.dismiss();
                 } else
@@ -218,7 +211,7 @@ public class PalettePickerActivity extends AppCompatActivity {
     }
 
     private void duplicatePalette(Palette2 palette) {
-        adapter.addItem(PaletteUtils.duplicatePalette(palette));
+        adapter.addPalette(PaletteUtils.duplicatePalette(palette));
         recyclerView.smoothScrollToPosition(adapter.getItemCount()-1);
     }
 

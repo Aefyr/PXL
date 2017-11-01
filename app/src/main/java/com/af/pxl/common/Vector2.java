@@ -1,4 +1,4 @@
-package com.af.pxl.custom;
+package com.af.pxl.common;
 
 /**
  * Created by Aefyr on 14.10.2017.

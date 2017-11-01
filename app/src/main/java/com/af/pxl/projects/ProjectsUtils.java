@@ -22,6 +22,7 @@ public class ProjectsUtils {
     private static String DUPLICATE_PREFIX;
     private static final String PROJECT_NAME_VALIDITY_PATTERN = "\\w+[A-Za-zА-Яа-я_0-9\\s]*";
     private static final String META_SEPARATOR = "]|[";
+    static final String META_SEPARATOR_REGEX = "]\\|\\[";
 
     public static void initialize(Context c) {
         projectsFolderDirectory = c.getFilesDir() + "/projects";
@@ -62,6 +63,10 @@ public class ProjectsUtils {
         return (!f.exists());
     }
 
+    public static int getProjectsCount(){
+        return new File(projectsFolderDirectory).listFiles().length;
+    }
+
     public static String getDefaultProjectName(Context c) {
         String name = c.getString(R.string.project);
         if (!isNameAvailable(name)) {
@@ -76,7 +81,7 @@ public class ProjectsUtils {
     public static Project createNewProject(String name, int pixelWidth, int pixelHeight, String palette, boolean transparentBackground) {
         File newProjectDirectory = new File(projectsFolderDirectory + "/" + generateId());
         System.out.println("mkdirs=" + newProjectDirectory.mkdir());
-        name = name.replaceAll(META_SEPARATOR, " ");
+        name = name.replaceAll(META_SEPARATOR_REGEX, " ");
 
         Project project = new Project(newProjectDirectory);
         project.name = name;

@@ -39,15 +39,31 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
     }
 
     public ProjectsRecycleAdapter(Context c, ArrayList<Project> projects) {
-        inflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        simpleDateFormat = new SimpleDateFormat("dd.MM.yy HH:mm", Locale.getDefault());
+        initialize(c);
         this.projects = projects;
         Collections.sort(projects, new LastModifiedComparator());
     }
 
-    public void setItems(ArrayList<Project> projects) {
+    public ProjectsRecycleAdapter(Context c){
+        initialize(c);
+    }
+
+    private void initialize(Context c){
+        inflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        simpleDateFormat = new SimpleDateFormat("dd.MM.yy HH:mm", Locale.getDefault());
+    }
+
+    public void setProjects(ArrayList<Project> projects) {
         this.projects = projects;
         notifyDataSetChanged();
+    }
+
+    public void addProject(Project project){
+        if(projects == null)
+            projects = new ArrayList<>(ProjectsUtils.getProjectsCount());
+
+        projects.add(project);
+        notifyItemInserted(projects.size()-1);
     }
 
     @Override
@@ -61,29 +77,22 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
         Project p = getProject(position);
         holder.name.setText(p.name);
         holder.resolution.setText(p.getResolutionString());
+        holder.lastModified.setText(simpleDateFormat.format(getProject(position).lastModified()));
         holder.preview.setImageBitmap(p.getBitmap(false));
-        holder.lastModified.setText(simpleDateFormat.format(new Date(getProject(position).lastModified)));
     }
 
     @Override
     public int getItemCount() {
-        if (projects == null)
-            return 0;
-        return projects.size();
+        return projects==null?0:projects.size();
     }
 
     @Override
     public long getItemId(int position) {
-        return projects.get(position).lastModified;
+        return projects.get(position).lastModified();
     }
 
     private Project getProject(int index) {
         return projects.get(index);
-    }
-
-    public void addItem(Project project) {
-        projects.add(0, project);
-        notifyItemInserted(0);
     }
 
     public void moveItem(int index, int newIndex) {

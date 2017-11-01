@@ -8,7 +8,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.os.Build;
 
-import com.af.pxl.custom.RectP;
+import com.af.pxl.common.RectP;
 import com.af.pxl.util.Utils;
 
 /**

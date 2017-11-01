@@ -7,7 +7,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 
-import com.af.pxl.custom.RectP;
+import com.af.pxl.common.RectP;
 import com.af.pxl.util.Utils;
 
 import java.util.HashSet;
