@@ -26,7 +26,7 @@
     <string name="transparentBackground">Прозрачный фон</string>
     <string name="incorrect_width_or_height">Необходимо ввести ширину и высоту!</string>
     <string name="incorrect_project_name">Имя проекта уже занято или некорректно!\n(В имене можно использовать только буквы, цифры и пробелы)</string>
-    <string name="imported_bitmap_too_big">Максимальный размер импортированного изображения - 512x512!</string>
+    <string name="imported_bitmap_too_big">Максимальный размер импортированного изображения - %dx%d!</string>
     <string name="name_imported">Импортировано</string>
     <string name="original">Оригинал</string>
     <string name="select_resolution">Выберите разрешение экспортированного изображения</string>
@@ -131,4 +131,10 @@
     <string name="custom">Своё…</string>
     <string name="multiplier_info_pattern" formatted="false">Множитель разрешения: %d\nРазрешение: %dx%d</string>
     <string name="select_multiplier">Выберите множитель разрешения</string>
+    <string name="exit_prompt">Закрыть текущий проект?</string>
+    <string name="project_saved">Проект экспортирован</string>
+    <string name="hw_desc">Значительно улучшает производительность некоторых инструментов</string>
+    <string name="allow_hi_res">Высокое разрешение</string>
+    <string name="hi_res_desc">Поддержка проектов и изображений с разрешением вплоть до 512x512.\nНе рекомендуется на устройствах с меньше 2ГБ ОЗУ.</string>
+    <string name="tc_bg_desc">Фон прозрачного холста, чтобы было видно где рисовать.\nИсчезает при экспорте проекта</string>
 </resources>

@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,7 +15,6 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.ShareCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
@@ -28,13 +26,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.SeekBar;
 import android.widget.Switch;
-import android.widget.TextView;
 
 import com.af.pxl.DrawingActivity;
 import com.af.pxl.R;
+import com.af.pxl.common.Ruler;
 import com.af.pxl.projects.DynamicProjectsLoader;
+import com.af.pxl.projects.ProjectsExporter;
 import com.af.pxl.util.Utils;
 import com.af.pxl.projects.Project;
 import com.af.pxl.projects.ProjectsRecycleAdapter;
@@ -123,6 +121,7 @@ public class GalleryFragment extends android.app.Fragment {
     }
 
     private void createNewProject() {
+        final int dLimit = Ruler.getInstance(getActivity()).maxDimensionSize();
         final AlertDialog d = new AlertDialog.Builder(getActivity()).setView(R.layout.project_creation).setPositiveButton(R.string.create, null).setNegativeButton(R.string.cancel, null).create();
         d.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         d.show();
@@ -144,8 +143,8 @@ public class GalleryFragment extends android.app.Fragment {
             public void afterTextChanged(Editable editable) {
                 if (editable.length() == 0)
                     return;
-                if (Integer.parseInt(editable.toString()) > 512)
-                    editable.replace(0, editable.length(), 512 + "");
+                if (Integer.parseInt(editable.toString()) > dLimit)
+                    editable.replace(0, editable.length(), dLimit + "");
             }
         };
 
@@ -197,6 +196,7 @@ public class GalleryFragment extends android.app.Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IMPORT_IMAGE && resultCode == Activity.RESULT_OK) {
+            final int dLimit = Ruler.getInstance(getActivity()).maxDimensionSize();
             Bitmap importedImage;
             try {
                 importedImage = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(data.getData()));
@@ -206,15 +206,14 @@ public class GalleryFragment extends android.app.Fragment {
                 Utils.toaster(getActivity(), getString(R.string.error));
                 return;
             }
-            if (importedImage.getWidth() > 512 || importedImage.getHeight() > 512) {
-                new AlertDialog.Builder(getActivity()).setMessage(getString(R.string.imported_bitmap_too_big)).setPositiveButton(getString(R.string.ok), null).show();
+            if (importedImage.getWidth() > dLimit || importedImage.getHeight() > dLimit) {
+                new AlertDialog.Builder(getActivity()).setMessage(String.format(getString(R.string.imported_bitmap_too_big), dLimit, dLimit)).setPositiveButton(R.string.ok, null).show();
                 return;
             }
             Project p = ProjectsUtils.createProjectFromBitmap(getActivity(), importedImage);
             importedImage.recycle();
             adapter.addProject(p);
-            recyclerView.scrollToPosition(0);
-            openProject(p.id, 0);
+            openProject(p.id, adapter.getItemCount()-1);
         } else if (requestCode == DRAWING_REQUEST && resultCode == 1) {
             adapter.notifyItemChanged(openedProjectIndex);
         }
@@ -256,138 +255,20 @@ public class GalleryFragment extends android.app.Fragment {
         });
     }
 
-    AlertDialog exportResolutionPickDialog;
+    private ProjectsExporter projectsExporter;
 
     private void exportProject(final Project project, final boolean forShare) {
-        String[] resolutionOptions = {project.width + "x" + project.height + " (" + getString(R.string.original) + ")", project.width * 2 + "x" + project.height * 2 + " (x2)", project.width * 4 + "x" + project.height * 4 + " (x4)", project.width * 8 + "x" + project.height * 8 + " (x8)", getString(R.string.custom)};
-        exportResolutionPickDialog = new AlertDialog.Builder(getActivity()).setTitle(getString(R.string.select_resolution)).setItems(resolutionOptions, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                int resolutionMultiplier = 1;
-                boolean launchTask = true;
-                switch (i) {
-                    case 0:
-                        break;
-                    case 1:
-                        resolutionMultiplier = 2;
-                        break;
-                    case 2:
-                        resolutionMultiplier = 4;
-                        break;
-                    case 3:
-                        resolutionMultiplier = 8;
-                        break;
-                    case 4:
-                        launchTask = false;
-                        final AlertDialog multiplierPickDialog = new AlertDialog.Builder(getActivity()).setTitle(R.string.select_multiplier).setView(R.layout.multiplier_picker_dialog).setPositiveButton(R.string.ok, null).setNegativeButton(R.string.cancel, null).create();
-                        multiplierPickDialog.show();
-                        final SeekBar multiplierBar = multiplierPickDialog.findViewById(R.id.seekBar);
-                        final TextView multiplierInfo = multiplierPickDialog.findViewById(R.id.textView);
-                        final String infoPattern = getString(R.string.multiplier_info_pattern);
-                        multiplierInfo.setText(String.format(infoPattern, 8, project.width*8, project.height*8));
-                        multiplierBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                            @Override
-                            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                                int multiplier = progress+1;
-                                multiplierInfo.setText(String.format(infoPattern, multiplier, project.width*multiplier, project.height*multiplier));
-                            }
+        if(projectsExporter==null)
+            projectsExporter = new ProjectsExporter(getActivity());
 
-                            @Override
-                            public void onStartTrackingTouch(SeekBar seekBar) {
+        projectsExporter.prepareDialogFor(project, forShare, null);
 
-                            }
-
-                            @Override
-                            public void onStopTrackingTouch(SeekBar seekBar) {
-
-                            }
-                        });
-                        multiplierPickDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                ExportTask exportTask = new ExportTask();
-                                exportTask.execute(exportTask.createParams(project, forShare, multiplierBar.getProgress()+1));
-                                multiplierPickDialog.dismiss();
-                            }
-                        });
-                        break;
-                }
-                if(launchTask) {
-                    ExportTask exportTask = new ExportTask();
-                    exportTask.execute(exportTask.createParams(project, forShare, resolutionMultiplier));
-                }
-            }
-        }).create();
         if (!Utils.checkPermissions(getActivity())) {
             actionAfter = 0;
             requestPermissions();
             return;
         }
-        exportResolutionPickDialog.show();
-
-    }
-
-
-    private class ExportTask extends AsyncTask<ExportTask.Params, Void, ExportTask.Params> {
-
-        class Params {
-            Project project;
-            boolean share;
-            int resolutionMultiplier;
-            File imagePath;
-
-            Params(Project p, boolean share, int resolutionMultiplier) {
-                this.project = p;
-                this.share = share;
-                this.resolutionMultiplier = resolutionMultiplier;
-            }
-        }
-
-        Params createParams(Project p, boolean share, int resolutionMultiplier) {
-            return new Params(p, share, resolutionMultiplier);
-        }
-
-        ProgressDialog progressDialog;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressDialog = new ProgressDialog(getActivity(), ProgressDialog.STYLE_SPINNER);
-            progressDialog.setMessage(getString(R.string.exporting) + "...");
-            progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-        }
-
-        @Override
-        protected Params doInBackground(Params... params) {
-            //TODO Change this path to something more unique?
-            File exportDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/pxl");
-            if (!exportDir.exists())
-                exportDir.mkdirs();
-
-            File imagePath = new File(exportDir, params[0].project.id + ".png");
-            Utils.saveBitmap(Bitmap.createScaledBitmap(params[0].project.getBitmap(false), params[0].project.width * params[0].resolutionMultiplier, params[0].project.height * params[0].resolutionMultiplier, false), imagePath);
-            params[0].imagePath = imagePath;
-
-            return params[0];
-        }
-
-        @Override
-        protected void onPostExecute(Params params) {
-            super.onPostExecute(params);
-            progressDialog.dismiss();
-            if (params.share) {
-                Intent shareIntent = new Intent();
-                shareIntent.setAction(Intent.ACTION_SEND);
-                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-                shareIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(getActivity(), "com.af.pxl.fileprovider", params.imagePath));
-                shareIntent.setType("image/png");
-                startActivity(Intent.createChooser(shareIntent, getString(R.string.share)));
-            } else {
-                Utils.alternativeAddImageToGallery(getActivity(), params.imagePath);
-            }
-        }
+        projectsExporter.showDialog();
     }
 
     final static int STORAGE_PERMISSIONS_REQUEST = 3232;
@@ -406,7 +287,7 @@ public class GalleryFragment extends android.app.Fragment {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 switch (actionAfter) {
                     case 0:
-                        exportResolutionPickDialog.show();
+                        projectsExporter.showDialog();
                         break;
                     case 1:
                         importImage();

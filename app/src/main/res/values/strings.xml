@@ -58,7 +58,7 @@
     <string name="transparentBackground">Transparent Background</string>
     <string name="incorrect_width_or_height">You must enter width and height!</string>
     <string name="incorrect_project_name">Project name is already in use or incorrect!\n(You may use only letters, digits and spaces)</string>
-    <string name="imported_bitmap_too_big">Maximum size of imported image is 512x512!</string>
+    <string name="imported_bitmap_too_big" formatted="false">Maximum size of imported image is %dx%d!</string>
     <string name="name_imported">Imported</string>
     <string name="original">Original</string>
     <string name="select_resolution">Select resolution of exported image</string>
@@ -69,6 +69,7 @@
     <string name="exporting">Exporting image</string>
     <string name="storage_permissions_denied">Can\'t access gallery without permission to use storage!</string>
     <string name="create">Create</string>
+    <string name="project_saved">Project has been exported</string>
 
     <!--gallery_item-->
     <string name="size">Size</string>
@@ -95,6 +96,7 @@
     <string name="symmetry_none">Symmetry Disabled</string>
     <string name="symmetry_h">Horizontal Symmetry</string>
     <string name="symmetry_v">Vertical Symmetry</string>
+    <string name="exit_prompt">Close this Project?</string>
 
     <!-- ToolSettingManager -->
     <string name="lock_angles">Lock Angles</string>
@@ -117,13 +119,17 @@
     <string name="cursor_opacity">Cursor Opacity</string>
     <string name="select_cursor_image">Select Cursor Image</string>
     <string name="trans_canvas_bg">Transparent Canvas Background</string>
+    <string name="tc_bg_desc">The background color of a transparent canvas, so you can see the actual drawing area.\nVanishes when you export the project</string>
     <string name="category_other">Other</string>
     <string name="restore_default_palettes">Restore default palettes</string>
     <string name="palettes_restored">Default palettes were restored</string>
     <string name="performance">Performance</string>
     <string name="hardware_acceleration">Hardware Acceleration</string>
+    <string name="hw_desc">Improves performance of some tools drastically</string>
     <string name="warn">Warning</string>
     <string name="hw_warn">Only disable hardware acceleration if the app crashes when you use one of the following tools:\n<b>Color Swapper</b>\n\nIf the tools listed above work fine, disabling acceleration will only make them much less effective</string>
+    <string name="allow_hi_res">Allow High Resolution</string>
+    <string name="hi_res_desc">Enable support of up to 512x512 projects and images.\nNot recommended on devices with less than 2GBs of RAM</string>
 
     <!--- Tutorial -->
     <string name="close">Close</string>

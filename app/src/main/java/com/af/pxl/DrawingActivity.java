@@ -331,9 +331,27 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
 
     @Override
     public void onBackPressed() {
-        setResult(1);
-        finish();
-        super.onBackPressed();
+        new AlertDialog.Builder(this).setMessage(R.string.exit_prompt).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                setResult(1);
+                finish();
+            }
+        }).setNegativeButton(R.string.cancel, null).create().show();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
     }
 
     final static int STORAGE_PERMISSIONS_REQUEST = 3232;

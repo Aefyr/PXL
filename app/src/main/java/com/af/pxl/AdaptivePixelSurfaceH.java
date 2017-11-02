@@ -356,7 +356,7 @@ public class AdaptivePixelSurfaceH extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        //Believe me, we really don't wanna interfere the flood fill algorithm
+        //We really don't wanna interfere the flood fill algorithm
         if (fillInProgress)
             return true;
 

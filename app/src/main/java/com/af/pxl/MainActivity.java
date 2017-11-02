@@ -25,6 +25,7 @@ import com.af.pxl.fragments.PalettesFragment;
 import com.af.pxl.fragments.PreferencesFragment;
 import com.af.pxl.palettes.PaletteMaker;
 import com.af.pxl.palettes.PaletteUtils;
+import com.af.pxl.util.Utils;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -54,10 +55,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             PaletteUtils.initialize(this);
             PaletteUtils.defaultPalette();
             PaletteMaker.generateDefaultPalettes(this);
+
+            if((Runtime.getRuntime().maxMemory()/1024/1024)>=128)
+                PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit().putBoolean("allow_512", true).apply();
+
             new AlertDialog.Builder(this).setMessage(getString(R.string.tutorial_prompt)).setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     //Start tutorial
+
                     Intent tut = new Intent(MainActivity.this, TutorialActivity.class);
                     startActivity(tut);
                 }
@@ -138,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_community) {
             setFragment(PXLFragment.PREFERENCES);
         } else if (id == R.id.nav_about) {
-
+            new AlertDialog.Builder(this).setMessage("mem: "+Runtime.getRuntime().maxMemory()/1024/1024).setPositiveButton(R.string.ok, null).create().show();
         } else if (id == R.id.nav_tutorial) {
             Intent tut = new Intent(MainActivity.this, TutorialActivity.class);
             startActivity(tut);

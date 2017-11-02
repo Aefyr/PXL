@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.af.pxl.common.Ruler;
 import com.af.pxl.util.Utils;
 import com.af.pxl.views.PixelImageView;
 
@@ -51,12 +52,13 @@ public class BitmapsMergeActivity extends AppCompatActivity {
             transparentBackground = intent.getBooleanExtra("transparentBackground", false);
         } else if (mode == MODE_MERGE) {
             try {
+                final int dLimit = Ruler.getInstance(this).maxDimensionSize();
                 BitmapFactory.Options sizeCheckOptions = new BitmapFactory.Options();
                 sizeCheckOptions.inJustDecodeBounds = true;
 
                 BitmapFactory.decodeStream(getContentResolver().openInputStream(Uri.parse(intent.getStringExtra("uri"))), new Rect(0, 0, 0, 0), sizeCheckOptions);
-                if (sizeCheckOptions.outHeight > 512 || sizeCheckOptions.outWidth > 512) {
-                    AlertDialog errorDialog = new AlertDialog.Builder(this).setMessage(getString(R.string.imported_bitmap_too_big)).setOnCancelListener(new DialogInterface.OnCancelListener() {
+                if (sizeCheckOptions.outHeight > dLimit || sizeCheckOptions.outWidth > dLimit) {
+                    AlertDialog errorDialog = new AlertDialog.Builder(this).setMessage(String.format(getString(R.string.imported_bitmap_too_big), dLimit, dLimit)).setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialogInterface) {
                             cancelled();

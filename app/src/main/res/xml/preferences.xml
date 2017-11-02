@@ -2,7 +2,8 @@
 <PreferenceScreen xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="@string/performance">
-        <SwitchPreference android:key="hardware_accelerated" android:title="@string/hardware_acceleration" android:defaultValue="true"/>
+        <SwitchPreference android:key="hardware_accelerated" android:title="@string/hardware_acceleration" android:summary="@string/hw_desc" android:defaultValue="true"/>
+        <SwitchPreference android:key="allow_512" android:title="@string/allow_hi_res" android:summary="@string/hi_res_desc" android:defaultValue="false"/>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pixel_surface">
@@ -14,7 +15,7 @@
             android:layout="@layout/pref_generic_color_pick"
             android:title="@string/select_grid_color" />
         <com.af.pxl.preferences.TransparentColorBackgroundPreference
-            android:title="@string/trans_canvas_bg" android:key="trans_background" android:layout="@layout/pref_trans_background" android:defaultValue="1"/>
+            android:title="@string/trans_canvas_bg" android:summary="@string/tc_bg_desc" android:key="trans_background" android:layout="@layout/pref_trans_background" android:defaultValue="1"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/cursor">
         <com.af.pxl.preferences.CursorSensitivityPreference
