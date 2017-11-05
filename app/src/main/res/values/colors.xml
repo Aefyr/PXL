@@ -9,5 +9,6 @@
     <color name="colorAlmostWhite">#fafafa</color>
     <color name="colorNotSoWhite">#bdbdbd</color>
     <color name="colorTutorialText">#263238</color>
-    <color name="colorPressedPaletteBG">#78909c</color>
+    <color name="colorPressedPaletteBG">#af455a64</color>
+    <color name="colorRetroGray">#757575</color>
 </resources>

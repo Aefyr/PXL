@@ -1,13 +1,16 @@
 package com.af.pxl.palettes;
 
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.af.pxl.R;
+import com.af.pxl.util.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -90,6 +93,10 @@ public class PalettePickRecyclerAdapter extends RecyclerView.Adapter<PalettePick
             super(itemView);
             previewView = (PalettePreviewView) itemView.findViewById(R.id.palettePreview);
             paletteName = (TextView) itemView.findViewById(R.id.paletteName);
+            int height = (int) Utils.dpToPx(200, inflater.getContext().getResources());
+            itemView.setMinimumHeight(height);
+            previewView.setMinimumHeight(height);
+            paletteName.setMinimumHeight(height);
 
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override

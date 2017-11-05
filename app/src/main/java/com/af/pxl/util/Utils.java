@@ -104,12 +104,21 @@ public class Utils {
         return Color.RED;
     }
 
+    @Deprecated
     public static float colorsDifference(int color1, int color2) {
         return (Math.abs(Color.red(color1) - Color.red(color2)) / 255f + Math.abs(Color.blue(color1) - Color.blue(color2)) / 255f + Math.abs(Color.blue(color1) - Color.blue(color2)) / 255f) / 3f;
     }
 
-    public static int averageColor(int color1, int color2) {
-        return Color.rgb((Color.red(color1) + Color.red(color2)) / 2, (Color.green(color1) + Color.green(color2)) / 2, (Color.blue(color1) + Color.blue(color2)) / 2);
+    public static int averageColor(int... colors) {
+        int r = 0;
+        int g = 0;
+        int b = 0;
+        for(int color: colors){
+            r+=Color.red(color);
+            g+=Color.green(color);
+            b+=Color.blue(color);
+        }
+        return Color.rgb(r/colors.length, g/colors.length, b/colors.length);
     }
 
     public static void toaster(Context context, String message) {

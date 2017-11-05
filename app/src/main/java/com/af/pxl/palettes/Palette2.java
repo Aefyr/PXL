@@ -92,6 +92,7 @@ public class Palette2 {
             autoSave();
     }
 
+
     public void addOnPaletteChangeListener(OnPaletteChangeListener listener) {
         listeners.add(listener);
     }
