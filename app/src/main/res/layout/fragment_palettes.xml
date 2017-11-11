@@ -26,6 +26,6 @@
         android:rotation="45"
         android:tint="@color/colorImageButtonBackgroundTint"
         app:fabSize="normal"
-        app:srcCompat="@android:drawable/ic_delete" />
+        app:srcCompat="@drawable/ic_close_white_48dp" />
 
 </RelativeLayout>

@@ -51,5 +51,15 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/pxlImageView"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="8dp"
+        android:id="@+id/include" />
+
+    <Button
+        android:id="@+id/preciseSelectorButton"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/include"
+        android:layout_centerHorizontal="true"
+        android:text="@string/precise_picker" />
 </RelativeLayout>

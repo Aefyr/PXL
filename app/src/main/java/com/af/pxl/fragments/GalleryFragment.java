@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.Switch;
 
 import com.af.pxl.DrawingActivity;
+import com.af.pxl.MainActivity;
 import com.af.pxl.R;
 import com.af.pxl.common.Ruler;
 import com.af.pxl.projects.DynamicProjectsLoader;
@@ -98,6 +99,7 @@ public class GalleryFragment extends android.app.Fragment {
         recyclerView.scrollToPosition(0);
         recyclerView.clearAnimation();
         openedProjectIndex = 0;
+        ((MainActivity)getActivity()).notifyProjectOpened();
         //getActivity().finish();
     }
 

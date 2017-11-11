@@ -206,6 +206,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         transaction.commit();
 
     }
+    public void notifyProjectOpened(){
+        destroyFragments(FragmentTag.PALETTES, FragmentTag.PREFS);
+    }
+
+    private void destroyFragments(String... tags){
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        for(String tag: tags){
+            Fragment fragment = fragmentManager.findFragmentByTag(tag);
+            if(fragment!=null)
+                transaction.remove(fragment);
+        }
+        transaction.commit();
+    }
 
     private class FragmentTag {
         private static final String GALLERY = "GALLERY";

@@ -98,6 +98,9 @@
     <string name="symmetry_v">Vertical Symmetry</string>
     <string name="exit_prompt">Close this Project?</string>
 
+    <!-- Color Swapper Activity -->
+    <string name="precise_picker">Use Precise Color Picker</string>
+
     <!-- ToolSettingManager -->
     <string name="lock_angles">Lock Angles</string>
     <string name="lock_square">Lock to Square</string>

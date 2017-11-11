@@ -8,6 +8,6 @@
         android:id="@+id/colorCircle"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:elevation="6dp" />
+        android:elevation="4dp" />
 
 </FrameLayout>

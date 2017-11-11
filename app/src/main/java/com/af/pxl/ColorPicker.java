@@ -27,6 +27,8 @@ public class ColorPicker {
 
     float[] color = {0, 0, 0};
 
+    private boolean active = true;
+
     public ColorPicker(ColorPickerView hueView, SeekBar hueBar, ColorPickerView saturationView, SeekBar saturationBar, ColorPickerView valueView, SeekBar valueBar, ColorCircle newColorCircle, int currentColor) {
         this.hueView = hueView;
         this.hueBar = hueBar;
@@ -37,7 +39,7 @@ public class ColorPicker {
 
         this.newColorCircle = newColorCircle;
 
-        setStartColor(currentColor);
+        setColor(currentColor, true);
         initialize();
     }
 
@@ -51,18 +53,22 @@ public class ColorPicker {
         newColorCircle = (ColorCircle) colorPickerView.findViewById(R.id.newColor);
         oldColorCircle = (ColorCircle) colorPickerView.findViewById(R.id.oldColor);
 
-        setStartColor(startColor);
         initialize();
+        setColor(startColor, true);
     }
 
     //Hai, hai, this workflow sucks, but I gonna write a new ColorPicker analogue soon anyway
-    private void setStartColor(int startColor) {
-        oldColorCircle.setColor(startColor);
+    void setColor(int setColor, boolean startColor) {
+        active = false;
+        if(startColor)
+            oldColorCircle.setColor(setColor);
 
-        Color.colorToHSV(startColor, color);
+        Color.colorToHSV(setColor, color);
         hueBar.setProgress((int) color[0]);
         saturationBar.setProgress((int) (color[1] * 100));
         valueBar.setProgress((int) (color[2] * 100));
+        updateColorViews();
+        active = true;
     }
 
     private void initialize() {
@@ -76,15 +82,19 @@ public class ColorPicker {
         SeekBar.OnSeekBarChangeListener onSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                if (seekBar == hueBar) {
-                    color[0] = i;
-                } else if (seekBar == saturationBar) {
-                    color[1] = (float) i * 0.01f;
-                } else if (seekBar == valueBar) {
-                    color[2] = (float) i * 0.01f;
+                if(active) {
+                    if (seekBar == hueBar) {
+                        color[0] = i;
+                    } else if (seekBar == saturationBar) {
+                        color[1] = (float) i * 0.01f;
+                    } else if (seekBar == valueBar) {
+                        color[2] = (float) i * 0.01f;
+                    }
+
+                    updateColorViews();
                 }
 
-                updateColorViews();
+
             }
 
             @Override

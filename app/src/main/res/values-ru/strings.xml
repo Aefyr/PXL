@@ -137,4 +137,5 @@
     <string name="allow_hi_res">Высокое разрешение</string>
     <string name="hi_res_desc">Поддержка проектов и изображений с разрешением вплоть до 512x512.\nНе рекомендуется на устройствах с меньше 2ГБ ОЗУ.</string>
     <string name="tc_bg_desc">Фон прозрачного холста, чтобы было видно где рисовать.\nИсчезает при экспорте проекта</string>
+    <string name="precise_picker">Точный выбор цвета</string>
 </resources>
