@@ -75,7 +75,7 @@ public class GalleryFragment extends android.app.Fragment {
         DynamicProjectsLoader.getInstance(getActivity()).loadProjects(new DynamicProjectsLoader.ProjectsLoaderCallbackD() {
             @Override
             public void onProjectLoaded(Project project) {
-                adapter.addProject(project);
+                adapter.addProject(project, false);
             }
         });
 
@@ -169,7 +169,7 @@ public class GalleryFragment extends android.app.Fragment {
                 int width = Integer.parseInt(widthET.getText().toString());
                 int height = Integer.parseInt(heightET.getText().toString());
                 Project newProject = ProjectsUtils.createNewProject(name, width, height, "Default", ((Switch) d.findViewById(R.id.transparentBackground)).isChecked());
-                adapter.addProject(newProject);
+                adapter.addProject(newProject, true);
                 d.dismiss();
                 recyclerView.scrollToPosition(0);
                 openProject(newProject.id, adapter.getItemCount()-1);
@@ -209,7 +209,7 @@ public class GalleryFragment extends android.app.Fragment {
             }
             Project p = ProjectsUtils.createProjectFromBitmap(getActivity(), importedImage);
             importedImage.recycle();
-            adapter.addProject(p);
+            adapter.addProject(p, true);
             openProject(p.id, adapter.getItemCount()-1);
         } else if (requestCode == DRAWING_REQUEST && resultCode == 1) {
             adapter.notifyItemChanged(openedProjectIndex);
@@ -308,7 +308,7 @@ public class GalleryFragment extends android.app.Fragment {
     }
 
     private void duplicateProject(Project project) {
-        adapter.addProject(ProjectsUtils.duplicateProject(project));
+        adapter.addProject(ProjectsUtils.duplicateProject(project), true);
         recyclerView.scrollToPosition(0);
     }
 

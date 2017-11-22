@@ -58,12 +58,16 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
         notifyDataSetChanged();
     }
 
-    public void addProject(Project project){
+    public void addProject(Project project, boolean toFront){
         if(projects == null)
             projects = new ArrayList<>(ProjectsUtils.getProjectsCount());
 
-        projects.add(0, project);
-        notifyItemInserted(0);
+        if(toFront)
+            projects.add(0, project);
+        else
+            projects.add(project);
+
+        notifyItemInserted(toFront?0:projects.size()-1);
     }
 
     @Override
