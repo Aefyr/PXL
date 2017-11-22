@@ -5,6 +5,7 @@ import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -25,7 +26,6 @@ import com.af.pxl.fragments.PalettesFragment;
 import com.af.pxl.fragments.PreferencesFragment;
 import com.af.pxl.palettes.PaletteMaker;
 import com.af.pxl.palettes.PaletteUtils;
-import com.af.pxl.util.Utils;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            navigationView.setCheckedItem(R.id.nav_community);
+            navigationView.setCheckedItem(R.id.nav_prefs);
             setFragment(PXLFragment.PREFERENCES);
             return true;
         }
@@ -137,17 +137,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_gallery) {
-            setFragment(PXLFragment.GALLERY);
-        } else if (id == R.id.nav_palettes) {
-            setFragment(PXLFragment.PALETTES);
-        } else if (id == R.id.nav_community) {
-            setFragment(PXLFragment.PREFERENCES);
-        } else if (id == R.id.nav_about) {
-            new AlertDialog.Builder(this).setMessage("mem: "+Runtime.getRuntime().maxMemory()/1024/1024).setPositiveButton(R.string.ok, null).create().show();
-        } else if (id == R.id.nav_tutorial) {
-            Intent tut = new Intent(MainActivity.this, TutorialActivity.class);
-            startActivity(tut);
+        switch (id){
+            case R.id.nav_gallery:
+                setFragment(PXLFragment.GALLERY);
+                break;
+            case R.id.nav_palettes:
+                setFragment(PXLFragment.PALETTES);
+                break;
+            case R.id.nav_prefs:
+                setFragment(PXLFragment.PREFERENCES);
+                break;
+            case R.id.nav_feedback:
+                Intent mailIntent = new Intent(Intent.ACTION_SENDTO);
+                mailIntent.setType("text/plain");
+                mailIntent.setData(Uri.parse("mailto:polychromaticfox+pxl@gmail.com?subject="+getString(R.string.feedback_mail_subject)));
+                startActivity(Intent.createChooser(mailIntent, getString(R.string.feedback)));
+                break;
+            case R.id.nav_about:
+                new AlertDialog.Builder(this).setMessage("mem: "+Runtime.getRuntime().maxMemory()/1024/1024).setPositiveButton(R.string.ok, null).create().show();
+                break;
+            case R.id.nav_tutorial:
+                Intent tut = new Intent(MainActivity.this, TutorialActivity.class);
+                startActivity(tut);
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -210,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         destroyFragments(FragmentTag.PALETTES, FragmentTag.PREFS);
     }
 
-    private void destroyFragments(String... tags){
+    public void destroyFragments(String... tags){
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         for(String tag: tags){
             Fragment fragment = fragmentManager.findFragmentByTag(tag);
@@ -220,9 +232,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         transaction.commit();
     }
 
-    private class FragmentTag {
-        private static final String GALLERY = "GALLERY";
-        private static final String PALETTES = "PALETTES";
-        private static final String PREFS = "PREFS";
+    public class FragmentTag {
+        public static final String GALLERY = "GALLERY";
+        public static final String PALETTES = "PALETTES";
+        public static final String PREFS = "PREFS";
     }
 }

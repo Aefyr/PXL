@@ -1,5 +1,6 @@
 package com.af.pxl.util;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -10,6 +11,7 @@ import android.graphics.Rect;
 import android.media.MediaScannerConnection;
 import android.os.Build;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.util.TypedValue;
 import android.widget.Toast;
@@ -204,22 +206,15 @@ public class Utils {
         return hexColor;
     }
 
-    private static boolean permissionsGranted;
+    public static AlertDialog easyAlert(Context c, @Nullable CharSequence title, @Nullable CharSequence message){
+        AlertDialog.Builder builder = new AlertDialog.Builder(c).setPositiveButton(c.getString(R.string.ok), null);
 
-    public static boolean checkPermissions(Context c) {
-        if (permissionsGranted)
-            return true;
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (c.checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED && (c.checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED))
-                permissionsGranted = true;
-        } else
-            permissionsGranted = true;
-        return permissionsGranted;
+        if(title!=null)
+            builder.setTitle(title);
+        if(message!=null)
+            builder.setMessage(message);
+
+        return builder.create();
     }
-
-    public static AlertDialog easyAlert(Context c, CharSequence title, CharSequence message){
-        return new AlertDialog.Builder(c).setTitle(title).setMessage(message).setPositiveButton(c.getString(R.string.ok), null).create();
-    }
-
 
 }

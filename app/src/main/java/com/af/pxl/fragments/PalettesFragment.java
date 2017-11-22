@@ -6,7 +6,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -23,14 +22,13 @@ import android.widget.EditText;
 
 import com.af.pxl.R;
 import com.af.pxl.palettes.DynamicPalettesLoader;
+import com.af.pxl.util.PermissionsUtils;
 import com.af.pxl.util.Utils;
 import com.af.pxl.palettes.Palette2;
 import com.af.pxl.palettes.PaletteMakerH;
 import com.af.pxl.palettes.PaletteManager;
 import com.af.pxl.palettes.PalettePickRecyclerAdapter;
 import com.af.pxl.palettes.PaletteUtils;
-
-import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -95,8 +93,8 @@ public class PalettesFragment extends android.app.Fragment {
 
 
     private void importImage() {
-        if (!Utils.checkPermissions(getActivity())) {
-            requestPermissions();
+        if (!PermissionsUtils.checkStoragePermissions(getActivity())) {
+            PermissionsUtils.requestStoragePermissions(getActivity());
             return;
         }
 
@@ -106,22 +104,16 @@ public class PalettesFragment extends android.app.Fragment {
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), IMPORT_IMAGE);
     }
 
-    final static int STORAGE_PERMISSIONS_REQUEST = 3232;
 
-    private void requestPermissions() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSIONS_REQUEST);
-        }
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == STORAGE_PERMISSIONS_REQUEST) {
+        if (requestCode == PermissionsUtils.CODE_STORAGE_PERMISSIONS_REQUEST) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 importImage();
             } else {
-                new AlertDialog.Builder(getActivity()).setMessage(getString(R.string.storage_permissions_denied)).setPositiveButton(getString(R.string.ok), null).show();
+                PermissionsUtils.showNoStoragePermissionWarning(getActivity());;
             }
         }
     }

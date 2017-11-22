@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 
 import com.af.pxl.R;
+import com.af.pxl.util.PermissionsUtils;
 import com.af.pxl.util.Utils;
 
 import java.util.ArrayList;
@@ -73,8 +74,8 @@ public class PalettePickerActivity extends AppCompatActivity {
     }
 
     private void importImage() {
-        if (!Utils.checkPermissions(this)) {
-            requestPermissions();
+        if (!PermissionsUtils.checkStoragePermissions(this)) {
+            PermissionsUtils.checkStoragePermissions(this);
             return;
         }
 
@@ -84,18 +85,10 @@ public class PalettePickerActivity extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), IMPORT_IMAGE);
     }
 
-    final static int STORAGE_PERMISSIONS_REQUEST = 3232;
-
-    private void requestPermissions() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSIONS_REQUEST);
-        }
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == STORAGE_PERMISSIONS_REQUEST) {
+        if (requestCode == PermissionsUtils.CODE_STORAGE_PERMISSIONS_REQUEST) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 importImage();
             } else {

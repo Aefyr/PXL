@@ -32,11 +32,8 @@
             style="@style/PXLImageButton"
             android:layout_width="52dp"
             android:layout_height="52dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
             android:layout_margin="0dp"
             android:background="@drawable/sketchbook_style_button_selector"
-            android:elevation="0dp"
             app:srcCompat="@drawable/gridoff" />
 
         <ImageButton
@@ -45,9 +42,7 @@
             android:layout_width="52dp"
             android:layout_height="52dp"
             android:layout_margin="0dp"
-            android:layout_toEndOf="@+id/grid"
             android:background="@drawable/sketchbook_style_button_selector"
-            android:elevation="0dp"
             app:srcCompat="@drawable/symmetryoff" />
 
         <ImageButton
@@ -56,9 +51,7 @@
             android:layout_width="52dp"
             android:layout_height="52dp"
             android:layout_margin="0dp"
-            android:layout_toEndOf="@+id/symmetry"
             android:background="@drawable/sketchbook_style_button_selector"
-            android:elevation="0dp"
             app:srcCompat="@drawable/normal2" />
 
     </LinearLayout>
@@ -159,6 +152,7 @@
         android:layout_toEndOf="@+id/toolPicker"
         android:background="@drawable/full_round_rect_bg"
         android:clickable="true"
+        android:focusable="true"
         android:descendantFocusability="blocksDescendants"
         android:elevation="12dp"
         android:padding="8dp"
@@ -195,8 +189,11 @@
             android:layout_alignBottom="@+id/changePalette"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:gravity="center"
+            android:layout_toStartOf="@+id/changePalette"
+            android:ellipsize="end"
+            android:gravity="center_vertical|start"
             android:paddingStart="8dp"
+            android:singleLine="true"
             android:text="Default"
             android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
@@ -253,8 +250,6 @@
             style="@style/PXLImageButton"
             android:layout_width="64dp"
             android:layout_height="64dp"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
             android:layout_weight="0.5"
             android:elevation="4dp"
             app:srcCompat="@drawable/clear" />

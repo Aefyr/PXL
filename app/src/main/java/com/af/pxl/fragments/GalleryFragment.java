@@ -2,20 +2,15 @@ package com.af.pxl.fragments;
 
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,12 +29,12 @@ import com.af.pxl.R;
 import com.af.pxl.common.Ruler;
 import com.af.pxl.projects.DynamicProjectsLoader;
 import com.af.pxl.projects.ProjectsExporter;
+import com.af.pxl.util.PermissionsUtils;
 import com.af.pxl.util.Utils;
 import com.af.pxl.projects.Project;
 import com.af.pxl.projects.ProjectsRecycleAdapter;
 import com.af.pxl.projects.ProjectsUtils;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 
 
@@ -183,9 +178,9 @@ public class GalleryFragment extends android.app.Fragment {
     }
 
     private void importImage() {
-        if (!Utils.checkPermissions(getActivity())) {
+        if (!PermissionsUtils.checkStoragePermissions(getActivity())) {
             actionAfter = 1;
-            requestPermissions();
+            PermissionsUtils.requestStoragePermissions(getActivity());
             return;
         }
         Intent intent = new Intent();
@@ -265,27 +260,20 @@ public class GalleryFragment extends android.app.Fragment {
 
         projectsExporter.prepareDialogFor(project, forShare, null);
 
-        if (!Utils.checkPermissions(getActivity())) {
+        if (!PermissionsUtils.checkStoragePermissions(getActivity())) {
             actionAfter = 0;
-            requestPermissions();
+            PermissionsUtils.requestStoragePermissions(getActivity());
             return;
         }
         projectsExporter.showDialog();
     }
 
-    final static int STORAGE_PERMISSIONS_REQUEST = 3232;
     int actionAfter = 0;
-
-    private void requestPermissions() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSIONS_REQUEST);
-        }
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == STORAGE_PERMISSIONS_REQUEST) {
+        if (requestCode == PermissionsUtils.CODE_STORAGE_PERMISSIONS_REQUEST) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 switch (actionAfter) {
                     case 0:
@@ -296,9 +284,8 @@ public class GalleryFragment extends android.app.Fragment {
                         break;
                 }
 
-            } else {
-                new AlertDialog.Builder(getActivity()).setMessage(getString(R.string.storage_permissions_denied)).setPositiveButton(getString(R.string.ok), null).show();
-            }
+            } else
+                PermissionsUtils.showNoStoragePermissionWarning(getActivity());;
         }
     }
 

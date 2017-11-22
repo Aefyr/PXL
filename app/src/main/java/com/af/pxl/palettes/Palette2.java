@@ -40,6 +40,10 @@ public class Palette2 {
         return directory;
     }
 
+    void setDirectory(File newDirectory){
+        this.directory = newDirectory;
+    }
+
     public Palette2(String name) {
         this.name = name;
         colors = new ArrayList<>(16);

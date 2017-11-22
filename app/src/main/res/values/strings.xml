@@ -19,13 +19,15 @@
     <string name="no">Nope</string>
     <string name="tutorial_hint">You can always revisit the tutorial from the navigation drawer!</string>
 
-    <!-- Commons -->
+    <!-- Commons and MainActivity -->
     <string name="ok">OK</string>
     <string name="done">Done</string>
     <string name="cancel">Cancel</string>
     <string name="cursor_action">PXL!</string>
     <string name="error">Internal error</string>
+    <string name="dont_show_again">Don\'t show again</string>
     <string name="comp_mode">On Android 4.4, PXL uses dark theme</string>
+    <string name="feedback_mail_subject">PXL Feedback</string>
 
     <!-- Misc -->
     <string name="misc">Other</string>
@@ -70,6 +72,7 @@
     <string name="storage_permissions_denied">Can\'t access gallery without permission to use storage!</string>
     <string name="create">Create</string>
     <string name="project_saved">Project has been exported</string>
+    <string name="res_notice">If you\'re going to use the exported image for further editing or as an asset in game, select original resolution to keep it a \"True Pixel Art\". But if you want share the image, select a reasonably high resolution, otherwise the image will look blurry due to scaling algorithms used in most apps and websites</string>
 
     <!--gallery_item-->
     <string name="size">Size</string>
@@ -96,13 +99,13 @@
     <string name="symmetry_none">Symmetry Disabled</string>
     <string name="symmetry_h">Horizontal Symmetry</string>
     <string name="symmetry_v">Vertical Symmetry</string>
-    <string name="exit_prompt">Close this Project?</string>
+    <string name="exit_prompt">Close this project?</string>
 
     <!-- Color Swapper Activity -->
     <string name="precise_picker">Use Precise Color Picker</string>
 
     <!-- ToolSettingManager -->
-    <string name="lock_angles">Lock Angles</string>
+    <string name="lock_angles">Locked Angles</string>
     <string name="lock_square">Lock to Square</string>
     <string name="lock_circle">Lock to Circle</string>
     <string name="tool_style">Cap Style</string>
@@ -133,6 +136,7 @@
     <string name="hw_warn">Only disable hardware acceleration if the app crashes when you use one of the following tools:\n<b>Color Swapper</b>\n\nIf the tools listed above work fine, disabling acceleration will only make them much less effective</string>
     <string name="allow_hi_res">Allow High Resolution</string>
     <string name="hi_res_desc">Enable support of up to 512x512 projects and images.\nNot recommended on devices with less than 2GBs of RAM</string>
+    <string name="palettes_override_warn">This will override all of the modified colors in default palettes and restore deleted ones\n\nDefault palettes are marked with a star (*)</string>
 
     <!--- Tutorial -->
     <string name="close">Close</string>

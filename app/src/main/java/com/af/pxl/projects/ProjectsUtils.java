@@ -149,6 +149,7 @@ public class ProjectsUtils {
 
         Project duplicate = loadProject(duplicatedId);
         duplicate.setName(duplicatedName);
+        duplicate.notifyProjectModified();
 
         return duplicate;
     }

@@ -2,6 +2,7 @@ package com.af.pxl.palettes;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.af.pxl.R;
 import com.af.pxl.util.Utils;
@@ -100,8 +101,11 @@ public class PaletteUtils {
     }
 
     public static void renamePalette(Palette2 palette, String newName) {
-        palette.directory().renameTo(new File(palettesPath + "/" + newName + EXTENSION));
+        File newDirectory = new File(palettesPath + "/" + newName + EXTENSION);
+        Log.d("PaletteUtils","Renaming palette " +palette.getName()+", success? " + palette.directory().renameTo(newDirectory));
+        palette.setDirectory(newDirectory);
         palette.setName(newName);
+        Log.d("PaletteUtils", "New path: "+palette.directory().getPath());
     }
 
     public static Palette2 duplicatePalette(Palette2 original) {

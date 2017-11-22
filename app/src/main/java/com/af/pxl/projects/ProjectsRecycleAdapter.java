@@ -62,8 +62,8 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
         if(projects == null)
             projects = new ArrayList<>(ProjectsUtils.getProjectsCount());
 
-        projects.add(project);
-        notifyItemInserted(projects.size()-1);
+        projects.add(0, project);
+        notifyItemInserted(0);
     }
 
     @Override

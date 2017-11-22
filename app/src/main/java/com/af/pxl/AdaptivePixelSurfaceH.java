@@ -202,7 +202,7 @@ public class AdaptivePixelSurfaceH extends View {
         selector = new SelectorH(this);
         if (project.transparentBackground) {
             SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(getContext());
-            int bg = p.getInt(PreferencesFragment.TRANSPARENT_CANVAS_BACKGROUND_COLOR, 111);
+            int bg = p.getInt(PreferencesFragment.TRANSPARENT_CANVAS_BACKGROUND_COLOR, 1);
             trans = new Paint();
             if (bg <= 0) {
                 trans.setColor(bg);

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -23,10 +22,12 @@ import android.widget.RelativeLayout;
 import com.af.pxl.palettes.PaletteManagerH;
 import com.af.pxl.palettes.PalettePickerActivity;
 import com.af.pxl.palettes.PaletteUtils;
+import com.af.pxl.projects.ProjectsExporter;
 import com.af.pxl.projects.ProjectsUtils;
 import com.af.pxl.tools.SymmetrySwitcher;
 import com.af.pxl.tools.ToolPickRecyclerAdapter;
 import com.af.pxl.tools.ToolPreview;
+import com.af.pxl.util.PermissionsUtils;
 import com.af.pxl.util.Utils;
 import com.af.pxl.views.ColorCircle;
 
@@ -105,6 +106,10 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                         aps.translateChanged = true;
                         aps.invalidate();
                         break;
+                    case 4:
+                        exportImage();
+                        break;
+
                 }
             }
         }).create();
@@ -354,23 +359,21 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         }
     }
 
-    final static int STORAGE_PERMISSIONS_REQUEST = 3232;
-
-    private void requestPermissions() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSIONS_REQUEST);
-        }
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == STORAGE_PERMISSIONS_REQUEST) {
+        if (requestCode == PermissionsUtils.CODE_STORAGE_PERMISSIONS_REQUEST) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                mergeTool();
-            } else {
-                new AlertDialog.Builder(this).setMessage(getString(R.string.storage_permissions_denied)).setPositiveButton(getString(R.string.ok), null).show();
-            }
+                switch (actionAfter){
+                    case 0:
+                        mergeTool();
+                        break;
+                    case 1:
+                        exportImage();
+                        break;
+                }
+            }else
+                PermissionsUtils.showNoStoragePermissionWarning(this);
         }
     }
 
@@ -426,14 +429,27 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
     static final int IMPORT_IMAGE = 13322;
 
     private void mergeTool() {
-        if (!Utils.checkPermissions(this)) {
-            requestPermissions();
+        if (!PermissionsUtils.checkStoragePermissions(this)) {
+            actionAfter = 0;
+            PermissionsUtils.requestStoragePermissions(this);
             return;
         }
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), IMPORT_IMAGE);
+    }
+
+    private int actionAfter = 0; // 0=merge, 1=export
+    private void exportImage(){
+        if(!PermissionsUtils.checkStoragePermissions(this)) {
+            actionAfter = 1;
+            PermissionsUtils.requestStoragePermissions(this);
+            return;
+        }
+        ProjectsExporter exporter = new ProjectsExporter(this);
+        exporter.prepareDialogFor(aps.project, false, null);
+        exporter.showDialog();
     }
 
     //OnPaletteChangeRequestListener
@@ -444,6 +460,8 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         pickerIntent.putExtra("currentPalette", pm.getPalette().getName());
         startActivityForResult(pickerIntent, PalettePickerActivity.REQUEST_CODE_PICK_PALETTE);
     }
+
+
 
 
 }

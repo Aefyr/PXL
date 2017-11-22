@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
@@ -95,8 +96,10 @@ public class ProjectsExporter {
     }
 
     public void showDialog(){
-        if(exportResolutionPickDialog!=null)
+        if(exportResolutionPickDialog!=null) {
             exportResolutionPickDialog.show();
+            showResolutionNoticeIfNeeded();
+        }
     }
 
     public interface ExportListener {
@@ -167,6 +170,18 @@ public class ProjectsExporter {
 
             if(listener!=null)
                 listener.onProjectExported(imagePath);
+        }
+    }
+
+
+    private void showResolutionNoticeIfNeeded(){
+        if(!PreferenceManager.getDefaultSharedPreferences(c).getBoolean("res_notice_shown", false)){
+            new AlertDialog.Builder(c).setTitle(R.string.warn).setMessage(R.string.res_notice).setPositiveButton(R.string.ok, null).setNeutralButton(R.string.dont_show_again, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean("res_notice_shown", true).apply();
+                }
+            }).create().show();
         }
     }
 }
