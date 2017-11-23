@@ -100,6 +100,7 @@
     <string name="symmetry_h">Horizontal Symmetry</string>
     <string name="symmetry_v">Vertical Symmetry</string>
     <string name="exit_prompt">Close this project?</string>
+    <string name="flip_direction_selection">Flip direction</string>
 
     <!-- Color Swapper Activity -->
     <string name="precise_picker">Use Precise Color Picker</string>

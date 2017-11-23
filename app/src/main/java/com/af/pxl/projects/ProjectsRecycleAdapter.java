@@ -99,11 +99,9 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
         return projects.get(index);
     }
 
-    public void moveItem(int index, int newIndex) {
-        if (index < 0 || index >= projects.size() || newIndex < 0 || newIndex >= projects.size())
-            return;
-        projects.add(newIndex, projects.remove(index));
-        notifyItemMoved(index, newIndex);
+    public void moveItemToFront(int index) {
+        projects.add(0, projects.remove(index));
+        notifyItemMoved(index, 0);
     }
 
     public void removeItem(int index) {

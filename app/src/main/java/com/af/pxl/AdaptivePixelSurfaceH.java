@@ -334,6 +334,9 @@ public class AdaptivePixelSurfaceH extends View {
         pixelScale = Math.min(realHeight/(float)pixelHeight, realWidth/(float)pixelWidth);
         matrixOffsetX = ((float) realWidth / 2f - (((float) pixelWidth * pixelScale) / 2f));
         matrixOffsetY = ((float) realHeight / 2f - (((float) pixelHeight * pixelScale) / 2f));
+        scaleAnchorX = 0;
+        scaleAnchorY = 0;
+        translateChanged = true;
     }
 
 

@@ -22,6 +22,7 @@
         <item>Смещение пикселей</item>
         <item>Наложить изображение</item>
         <item>Центрировать холст</item>
+        <item>Отразить изображение</item>
         <item>Сохранить в галерею</item>
     </string-array>
 
@@ -34,6 +35,11 @@
     <string-array name="palette_creation_options">
         <item>Новая палитра</item>
         <item>Создать палитру из изображения</item>
+    </string-array>
+
+    <string-array name="flip_directions">
+        <item>По горизонтали</item>
+        <item>По вертикали</item>
     </string-array>
 
 </resources>

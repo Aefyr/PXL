@@ -6,6 +6,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -100,13 +104,13 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                         mergeTool();
                         break;
                     case 3:
-                        aps.scaleAnchorX = 0;
-                        aps.scaleAnchorY = 0;
                         aps.centerCanvas();
-                        aps.translateChanged = true;
                         aps.invalidate();
                         break;
                     case 4:
+                        flipImage();
+                        break;
+                    case 5:
                         exportImage();
                         break;
 
@@ -450,6 +454,22 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         ProjectsExporter exporter = new ProjectsExporter(this);
         exporter.prepareDialogFor(aps.project, false, null);
         exporter.showDialog();
+    }
+
+    private void flipImage(){
+        new AlertDialog.Builder(this).setTitle(R.string.flip_direction_selection).setItems(R.array.flip_directions, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Matrix flippingMatrix = new Matrix();
+                flippingMatrix.setScale(which==1?1:-1, which==1?-1:1, ((float)aps.pixelWidth)/2f, ((float)aps.pixelHeight)/2f);
+                aps.canvasHistory.startHistoricalChange();
+                Bitmap flippedBitmap = Bitmap.createBitmap(aps.pixelBitmap, 0, 0, aps.pixelWidth, aps.pixelHeight, flippingMatrix, false);
+                aps.pixelCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+                aps.pixelCanvas.drawBitmap(flippedBitmap, 0, 0, null);
+                aps.canvasHistory.completeHistoricalChange();
+                aps.invalidate();
+            }
+        }).create().show();
     }
 
     //OnPaletteChangeRequestListener

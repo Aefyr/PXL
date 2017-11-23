@@ -83,17 +83,15 @@ public class GalleryFragment extends android.app.Fragment {
     }
 
     private static final int DRAWING_REQUEST = 1445;
-    private int openedProjectIndex = 0;
 
     private void openProject(String id, int index) {
         Intent i = new Intent(getActivity(), DrawingActivity.class);
         i.putExtra("projectToLoad", id);
         startActivityForResult(i, DRAWING_REQUEST);
 
-        adapter.moveItem(index, 0);
+        adapter.moveItemToFront(index);
         recyclerView.scrollToPosition(0);
         recyclerView.clearAnimation();
-        openedProjectIndex = 0;
         ((MainActivity)getActivity()).notifyProjectOpened();
         //getActivity().finish();
     }
@@ -212,7 +210,7 @@ public class GalleryFragment extends android.app.Fragment {
             adapter.addProject(p, true);
             openProject(p.id, adapter.getItemCount()-1);
         } else if (requestCode == DRAWING_REQUEST && resultCode == 1) {
-            adapter.notifyItemChanged(openedProjectIndex);
+            adapter.notifyItemChanged(0);
         }
     }
 
