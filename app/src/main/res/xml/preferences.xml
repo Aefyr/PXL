@@ -17,6 +17,9 @@
         <com.af.pxl.preferences.TransparentColorBackgroundPreference
             android:title="@string/trans_canvas_bg" android:summary="@string/tc_bg_desc" android:key="trans_background" android:layout="@layout/pref_trans_background" android:defaultValue="1"/>
     </PreferenceCategory>
+    <PreferenceCategory android:title="@string/behavior">
+        <SwitchPreference android:title="@string/auto_back_after_color_pick" android:summary="@string/abacp_desc" android:key="abacp" android:defaultValue="true"/>
+    </PreferenceCategory>
     <PreferenceCategory android:title="@string/cursor">
         <com.af.pxl.preferences.CursorSensitivityPreference
             android:defaultValue="9"

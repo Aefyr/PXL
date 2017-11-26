@@ -15,10 +15,10 @@ import com.af.pxl.ToolSettingsManager;
  * Created by Aefyr on 05.08.2017.
  */
 
-public class ToolPickRecyclerAdapter extends RecyclerView.Adapter<ToolPickRecyclerAdapter.ViewHolder> {
+public class ToolPickRecyclerAdapter extends RecyclerView.Adapter<ToolPickRecyclerAdapter.ViewHolder> implements AdaptivePixelSurfaceH.OnToolChangeListener{
 
     private AdaptivePixelSurfaceH aps;
-    private ToolPreview[] tools;
+    private AdaptivePixelSurfaceH.Tool[] tools;
     private LayoutInflater inflater;
     private RecyclerView recyclerView;
     private ImageButton currentTool;
@@ -31,15 +31,15 @@ public class ToolPickRecyclerAdapter extends RecyclerView.Adapter<ToolPickRecycl
         void onVisibilityChanged(boolean visible);
     }
 
-    public ToolPickRecyclerAdapter(Context c, ToolPreview[] tools, AdaptivePixelSurfaceH aps, ImageButton currentTool, final RecyclerView recyclerView, final ToolSettingsManager manager) {
+    public ToolPickRecyclerAdapter(Context c, AdaptivePixelSurfaceH.Tool[] tools, AdaptivePixelSurfaceH aps, ImageButton currentTool, final RecyclerView recyclerView, final ToolSettingsManager manager) {
         this.aps = aps;
+        aps.setOnToolChangeListener(this);
         this.tools = tools;
         inflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.recyclerView = recyclerView;
         this.currentTool = currentTool;
         this.manager = manager;
-        manager.notifyToolPicked(AdaptivePixelSurfaceH.Tool.PENCIL);
-        manager.hide();
+        manager.notifyToolPicked(AdaptivePixelSurfaceH.Tool.PENCIL, false);
 
         currentTool.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,7 +86,7 @@ public class ToolPickRecyclerAdapter extends RecyclerView.Adapter<ToolPickRecycl
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.icon.setImageResource(tools[position].toolIconId);
+        holder.icon.setImageResource(ToolPreview.getIconForTool(tools[position]));
     }
 
     @Override
@@ -94,23 +94,26 @@ public class ToolPickRecyclerAdapter extends RecyclerView.Adapter<ToolPickRecycl
         return tools.length;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         private ImageButton icon;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             icon = (ImageButton) itemView.findViewById(R.id.toolIcon);
 
             icon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
-                    aps.setTool(tools[getAdapterPosition()].tool);
-                    currentTool.setImageResource(tools[getAdapterPosition()].toolIconId);
-                    if (manager.notifyToolPicked(tools[getAdapterPosition()].tool))
-                        hide();
+                    aps.setTool(tools[getAdapterPosition()], false);
                 }
             });
         }
+    }
+
+    @Override
+    public void onToolChanged(AdaptivePixelSurfaceH.Tool newTool, boolean showToolSettings) {
+        currentTool.setImageResource(ToolPreview.getIconForTool(newTool));
+        if(manager.notifyToolPicked(newTool, showToolSettings))
+            hide();
     }
 }

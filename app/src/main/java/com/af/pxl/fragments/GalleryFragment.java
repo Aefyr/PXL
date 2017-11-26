@@ -167,9 +167,8 @@ public class GalleryFragment extends android.app.Fragment {
                 int width = Integer.parseInt(widthET.getText().toString());
                 int height = Integer.parseInt(heightET.getText().toString());
                 Project newProject = ProjectsUtils.createNewProject(name, width, height, "Default", ((Switch) d.findViewById(R.id.transparentBackground)).isChecked());
-                adapter.addProject(newProject, true);
+                adapter.addProject(newProject, false);
                 d.dismiss();
-                recyclerView.scrollToPosition(0);
                 openProject(newProject.id, adapter.getItemCount()-1);
             }
         });

@@ -54,10 +54,10 @@ public class TransparentColorBackgroundPreference extends Preference {
         optionsSpinner.setAdapter(adapter);
         optionsSpinner.setPrompt(getContext().getString(R.string.trans_canvas_bg));
         switch (currentValue) {
-            case 111:
+            case 1:
                 optionsSpinner.setSelection(0);
                 break;
-            case 322:
+            case 2:
                 optionsSpinner.setSelection(1);
                 break;
             default:
@@ -106,7 +106,7 @@ public class TransparentColorBackgroundPreference extends Preference {
         colorPickButton.setTextColor(Utils.invertColor(currentValue));
     }
 
-    void openColorEditDialog() {
+    private void openColorEditDialog() {
         final AlertDialog colorEditDialog = new AlertDialog.Builder(getContext()).setView(R.layout.color_picker).setPositiveButton(getContext().getString(R.string.done), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {

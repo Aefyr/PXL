@@ -70,14 +70,15 @@ public class ToolSettingsManager {
             toolSettingsWindowLayout.setVisibility(View.VISIBLE);
     }
 
-    public boolean notifyToolPicked(AdaptivePixelSurfaceH.Tool tool) {
+    public boolean notifyToolPicked(AdaptivePixelSurfaceH.Tool tool, boolean showToolSettings) {
         currentTool = tool;
         switch (currentTool) {
 
             case ERASER:
             case PENCIL:
                 pencilSetup();
-                show();
+                if(showToolSettings)
+                    show();
                 return false;
             case FLOOD_FILL:
             case COLOR_PICK:
@@ -86,7 +87,8 @@ public class ToolSettingsManager {
                 return true;
             case MULTISHAPE:
                 multishapeSetup();
-                show();
+                if(showToolSettings)
+                    show();
                 return false;
         }
         return true;

@@ -59,6 +59,7 @@ public class AdaptivePixelSurfaceH extends View {
     }
 
     Tool currentTool = Tool.PENCIL;
+    private Tool prevTool = Tool.PENCIL;
 
     CanvasHistoryH canvasHistory;
 
@@ -106,11 +107,20 @@ public class AdaptivePixelSurfaceH extends View {
         cursorPreviewRect = new RectF();
     }
 
+    public interface OnToolChangeListener{
+        void onToolChanged(Tool newTool, boolean showToolSettings);
+    }
+    private OnToolChangeListener onToolChangeListener;
+    public void setOnToolChangeListener(OnToolChangeListener listener){
+        onToolChangeListener = listener;
+    }
 
     //Setters
-    public void setTool(Tool tool) {
+    public void setTool(Tool tool, boolean showToolSettings) {
         if (currentTool == tool)
             return;
+
+        prevTool = currentTool;
 
         if (currentTool == Tool.SELECTOR)
             selector.cancel(0, 0);
@@ -145,7 +155,14 @@ public class AdaptivePixelSurfaceH extends View {
                 currentTool = Tool.SELECTOR;
                 break;
         }
+        if(onToolChangeListener!=null)
+            onToolChangeListener.onToolChanged(currentTool, showToolSettings);
+
         invalidate();
+    }
+
+    private void setPrevTool(){
+        setTool(prevTool, false);
     }
 
     public void setColor(int color) {
@@ -200,8 +217,9 @@ public class AdaptivePixelSurfaceH extends View {
         canvasHistory = new CanvasHistoryH(this, project, CanvasHistoryH.ADAPTIVE_SIZE);
         multiShape = new MultiShapeH(this);
         selector = new SelectorH(this);
+        SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(getContext());
+        autoSwitchToPrevToolAfterColorPick = p.getBoolean("abacp", true);
         if (project.transparentBackground) {
-            SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(getContext());
             int bg = p.getInt(PreferencesFragment.TRANSPARENT_CANVAS_BACKGROUND_COLOR, 1);
             trans = new Paint();
             if (bg <= 0) {
@@ -581,19 +599,17 @@ public class AdaptivePixelSurfaceH extends View {
         invalidate();
     }
 
+    private boolean autoSwitchToPrevToolAfterColorPick;
     void colorPick(int x, int y) {
         if (x < 0 || x >= pixelWidth || y < 0 || y >= pixelHeight)
             return;
         int pickedColor = pixelBitmap.getPixel(x, y);
-        colorManager.setCurrentColor(pickedColor);
-        /*if(pickedColor==0)
-            return;
-        if(!palette.colorPickToolWasUsed(pickedColor)){
-            //Set LiveColor to pickedColor
-            /*setCurrentColor(pickedColor);
-            updateColorCircle(pickedColor);
-            palette.editColor(palette.getSelectedColorIndex(), pickedColor);
-        }*/
+
+        if(pickedColor!=Color.TRANSPARENT) {
+            colorManager.setCurrentColor(pickedColor);
+            if(autoSwitchToPrevToolAfterColorPick)
+                setPrevTool();
+        }
     }
 
     void clearCanvas() {

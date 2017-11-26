@@ -138,6 +138,9 @@
     <string name="allow_hi_res">Allow High Resolution</string>
     <string name="hi_res_desc">Enable support of up to 512x512 projects and images.\nNot recommended on devices with less than 2GBs of RAM</string>
     <string name="palettes_override_warn">This will override all of the modified colors in default palettes and restore deleted ones\n\nDefault palettes are marked with a star (*)</string>
+    <string name="auto_back_after_color_pick">Switch back after picking color</string>
+    <string name="abacp_desc">Automatically switches to the previous tool after picking color with Color Picker tool</string>
+    <string name="behavior">Behavior</string>
 
     <!--- Tutorial -->
     <string name="close">Close</string>
