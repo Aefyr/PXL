@@ -6,7 +6,6 @@ package com.af.pxl.palettes;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
-import android.support.v4.view.ViewCompat;
 import android.util.Log;
 import java.util.Arrays;
 
@@ -50,7 +49,7 @@ class Kmeans {
         }
 
         int getRGB() {
-            return ((ViewCompat.MEASURED_STATE_MASK | ((this.reds / this.pixelCount) << 16)) | ((this.greens / this.pixelCount) << 8)) | (this.blues / this.pixelCount);
+            return ((0xff000000 | ((this.reds / this.pixelCount) << 16)) | ((this.greens / this.pixelCount) << 8)) | (this.blues / this.pixelCount);
         }
 
         void addPixel(int color) {

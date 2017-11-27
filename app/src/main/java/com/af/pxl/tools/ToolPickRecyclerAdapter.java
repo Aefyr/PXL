@@ -104,7 +104,7 @@ public class ToolPickRecyclerAdapter extends RecyclerView.Adapter<ToolPickRecycl
             icon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    aps.setTool(tools[getAdapterPosition()], false);
+                    aps.setTool(tools[getAdapterPosition()], true);
                 }
             });
         }

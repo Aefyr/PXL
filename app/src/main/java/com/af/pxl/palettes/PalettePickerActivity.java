@@ -13,6 +13,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputFilter;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -159,10 +160,12 @@ public class PalettePickerActivity extends AppCompatActivity {
         final AlertDialog creationDialog = new AlertDialog.Builder(this).setTitle(R.string.create_new_palette).setView(R.layout.edit_text_dialog_view).setPositiveButton(R.string.ok, null).setNegativeButton(R.string.cancel, null).create();
         creationDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         creationDialog.show();
+        final EditText paletteName = (EditText)creationDialog.findViewById(R.id.dialogEditText);
+        paletteName.setFilters(new InputFilter[]{new InputFilter.LengthFilter(48)});
         creationDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String name = ((EditText)creationDialog.findViewById(R.id.dialogEditText)).getText().toString();
+                String name = paletteName.getText().toString();
                 if (PaletteUtils.isNameAvailable(name)) {
                     adapter.addPalette(new Palette2(name));
                     recyclerView.smoothScrollToPosition(adapter.getItemCount()-1);

@@ -46,13 +46,15 @@
         android:text="@string/cancel" />
 
     <include
+        android:id="@+id/include"
         layout="@layout/color_picker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/pxlImageView"
-        android:layout_marginTop="8dp"
-        android:id="@+id/include" />
+        android:layout_marginEnd="12dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp" />
 
     <Button
         android:id="@+id/preciseSelectorButton"

@@ -102,7 +102,6 @@ public class AdaptivePixelSurfaceH extends View {
         //canvasHistory = new CanvasHistory(this, pixelBitmap, 100);
 
         cursor = new CursorH(this);
-        superPencil = new SuperPencilH(this);
         initializePaints();
         cursorPreviewRect = new RectF();
     }
@@ -215,6 +214,7 @@ public class AdaptivePixelSurfaceH extends View {
         this.pixelHeight = pixelBitmap.getHeight();
         pixelCanvas = new Canvas(pixelBitmap);
         canvasHistory = new CanvasHistoryH(this, project, CanvasHistoryH.ADAPTIVE_SIZE);
+        superPencil = new SuperPencilH(this);
         multiShape = new MultiShapeH(this);
         selector = new SelectorH(this);
         SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(getContext());

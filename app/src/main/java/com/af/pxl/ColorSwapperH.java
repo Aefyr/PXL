@@ -3,6 +3,7 @@ package com.af.pxl;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.preference.PreferenceManager;
 import android.support.v8.renderscript.Allocation;
 import android.support.v8.renderscript.Float4;
 import android.support.v8.renderscript.Int3;
@@ -18,8 +19,6 @@ import java.util.HashSet;
  */
 
 public class ColorSwapperH {
-    public static final int MODE_NORMAL = 0;
-    public static final int MODE_HARDWARE_ACCELERATED = 1;
 
     //Common
     private Context c;
@@ -27,6 +26,7 @@ public class ColorSwapperH {
     private int oldColor = Color.RED;
     private int newColor = Color.WHITE;
     private Bitmap b;
+    private boolean accelerationEnabled;
 
     //Accelerated swapTo resources
     private RenderScript rs;
@@ -37,19 +37,26 @@ public class ColorSwapperH {
     //Slow swapTo resources
     private HashSet<Vector2> pixelsToSwap;
 
-    public ColorSwapperH(Context context, Bitmap bitmap, int fromColor, int toColor, int mode){
+    public ColorSwapperH(Context context, Bitmap bitmap, int fromColor, int toColor){
         this.mode = mode;
         oldColor = fromColor;
         newColor = toColor;
         c = context;
         b = bitmap;
+        accelerationEnabled = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("hardware_accelerated", true);
+        initialize();
+    }
+
+    public void setAccelerationEnabled(boolean enabled){
+        destroy();
+        this.accelerationEnabled = enabled;
         initialize();
     }
 
     public void swapTo(int toColor){
         newColor = toColor;
 
-        if(mode==MODE_HARDWARE_ACCELERATED) {
+        if(accelerationEnabled) {
             updateAcceleratedSwapResources();
             acceleratedSwap();
         }else {
@@ -59,7 +66,7 @@ public class ColorSwapperH {
     }
 
     public void destroy(){
-        if(mode == MODE_HARDWARE_ACCELERATED) {
+        if(accelerationEnabled) {
             rs.destroy();
             fillScript.destroy();
             in.destroy();
@@ -74,10 +81,7 @@ public class ColorSwapperH {
     }
 
     private void initialize(){
-        if(mode != MODE_NORMAL && mode != MODE_HARDWARE_ACCELERATED)
-            throw new IllegalArgumentException("Invalid mode");
-
-        if(mode == MODE_HARDWARE_ACCELERATED)
+        if(accelerationEnabled)
             initializeAcceleratedSwapResources();
         else
             initializeSlowSwapResources();

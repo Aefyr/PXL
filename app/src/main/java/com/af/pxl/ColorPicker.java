@@ -136,7 +136,7 @@ public class ColorPicker {
 
     void useColorSwap(Bitmap bitmap, int colorToSwap, OnLivePreviewUpdateListener listener) {
         this.listener = listener;
-        colorSwapperH = new ColorSwapperH(hueView.getContext(), bitmap, colorToSwap, Color.HSVToColor(color), PreferenceManager.getDefaultSharedPreferences(hueView.getContext()).getBoolean("hardware_accelerated", true)?ColorSwapperH.MODE_HARDWARE_ACCELERATED:ColorSwapperH.MODE_NORMAL);
+        colorSwapperH = new ColorSwapperH(hueView.getContext(), bitmap, colorToSwap, Color.HSVToColor(color));
     }
 
     void setLivePreviewEnabled(boolean enabled) {

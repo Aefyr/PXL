@@ -23,7 +23,7 @@
     <string name="ok">OK</string>
     <string name="done">Done</string>
     <string name="cancel">Cancel</string>
-    <string name="cursor_action">PXL!</string>
+    <string name="cursor_action">DRAW!</string>
     <string name="error">Internal error</string>
     <string name="dont_show_again">Don\'t show again</string>
     <string name="comp_mode">On Android 4.4, PXL uses dark theme</string>
@@ -141,6 +141,10 @@
     <string name="auto_back_after_color_pick">Switch back after picking color</string>
     <string name="abacp_desc">Automatically switches to the previous tool after picking color with Color Picker tool</string>
     <string name="behavior">Behavior</string>
+    <string name="insta_swap">Instant Swap</string>
+    <string name="insta_swap_desc">Color Swapper tool instantly swaps the picked color to the current paint color instead of opening a color chooser with an ability to live-preview changes</string>
+    <string name="flawless_symmetry">Flawless Symmetry</string>
+    <string name="flawless_sym_desc">Uses pixel perfect but a slightly more resources-demanding symmetry</string>
 
     <!--- Tutorial -->
     <string name="close">Close</string>

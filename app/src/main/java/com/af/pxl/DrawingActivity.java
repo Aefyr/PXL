@@ -3,6 +3,7 @@ package com.af.pxl;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -87,6 +89,9 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         initializeToolbar();
         initializeCursor();
         PaletteUtils.initialize(this);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        instaSwap = preferences.getBoolean("insta_swap", false);
     }
 
     private void canvasWiseOptionsDialog() {
@@ -385,10 +390,20 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
     //Special tools
 
     //ColorSwap
+    private boolean instaSwap;
     @Override
     public void onColorSwapToolUse(int color) {
-        System.out.println("Swapping color: " + color);
-        startColorSwapActivity(color);
+        if(instaSwap){
+            aps.canvasHistory.startHistoricalChange();
+            ColorSwapperH colorSwapperH = new ColorSwapperH(this, aps.pixelBitmap, color, aps.paint.getColor());
+            colorSwapperH.swapTo(aps.paint.getColor());
+            colorSwapperH.destroy();
+            aps.canvasHistory.completeHistoricalChange();
+            aps.invalidate();
+        }else {
+            System.out.println("Swapping color: " + color);
+            startColorSwapActivity(color);
+        }
     }
 
     private void startColorSwapActivity(int colorToSwap) {

@@ -1,8 +1,13 @@
 package com.af.pxl;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PorterDuff;
+import android.preference.PreferenceManager;
 
 import com.af.pxl.util.Utils;
 
@@ -17,6 +22,11 @@ public class SuperPencilH extends ToolH {
     private float circleRadius = 1;
     private float highVelocityThreshold;
 
+    //Flawless symmetry
+    private boolean flawlessSymmetry;
+    private Bitmap mBitmap;
+    private Canvas mCanvas;
+
     enum Style {
         SQUARE, ROUND
     }
@@ -27,6 +37,12 @@ public class SuperPencilH extends ToolH {
         mirroredPath = new Path();
         mirrorMatrix = new Matrix();
         highVelocityThreshold = Utils.dpToPx(6, adaptivePixelSurface.getResources());
+
+        flawlessSymmetry = PreferenceManager.getDefaultSharedPreferences(adaptivePixelSurface.getContext()).getBoolean("flawless_symmetry", true);
+        if(flawlessSymmetry) {
+            mBitmap = Bitmap.createBitmap(aps.pixelWidth, aps.pixelHeight, Bitmap.Config.ARGB_8888);
+            mCanvas = new Canvas(mBitmap);
+        }
     }
 
     void setStyle(Style style) {
@@ -77,6 +93,7 @@ public class SuperPencilH extends ToolH {
             aps.pixelCanvas.drawPoint(sX, sY, aps.paint);
         }
 
+
         if (aps.symmetry) {
             calculateSymmetricalCanvasXY();
             mirroredPath.reset();
@@ -112,9 +129,15 @@ public class SuperPencilH extends ToolH {
         lX = x;
         lY = y;
 
+        //Drawing main path, 2 options for 2 symmetry profiles
+        if(aps.symmetry&&flawlessSymmetry) {
+            mCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+            mCanvas.drawPath(path, aps.paint);
+        }
+
 
         if (aps.cursorMode && !highVelocity && instaDots && aps.strokeWidth == 1)
-            aps.pixelCanvas.drawPoint(sX, sY, aps.paint);
+            (aps.symmetry&&flawlessSymmetry?mCanvas:aps.pixelCanvas).drawPoint(sX, sY, aps.paint);
 
 
         if (aps.symmetry) {
@@ -122,14 +145,25 @@ public class SuperPencilH extends ToolH {
                 calculateSymmetricalCanvasXY();
 
                 if (aps.cursorMode && instaDots && aps.strokeWidth == 1)
-                    aps.pixelCanvas.drawPoint(aSX, aSY, aps.paint);
+                    (flawlessSymmetry?mCanvas:aps.pixelCanvas).drawPoint(aSX, aSY, aps.paint);
+
             }
-            path.transform(mirrorMatrix, mirroredPath);
-            aps.pixelCanvas.drawPath(mirroredPath, aps.paint);
+
+            //Drawing mirrored path, 2 options for 2 symmetry profiles
+            if(flawlessSymmetry)
+                aps.pixelCanvas.drawBitmap(mBitmap, mirrorMatrix, null);
+            else {
+                path.transform(mirrorMatrix, mirroredPath);
+                aps.pixelCanvas.drawPath(mirroredPath, aps.paint);
+            }
         }
 
+        if(aps.symmetry&&flawlessSymmetry)
+            aps.pixelCanvas.drawBitmap(mBitmap, 0, 0, null);
+        else
+            aps.pixelCanvas.drawPath(path, aps.paint);
+
         moves++;
-        aps.pixelCanvas.drawPath(path, aps.paint);
         aps.invalidate();
     }
 
@@ -141,27 +175,44 @@ public class SuperPencilH extends ToolH {
         calculateCanvasXY(x, y);
 
         path.setLastPoint(sX, sY);
-        aps.pixelCanvas.drawPath(path, aps.paint);
+
+        //Drawing main path, 2 options for 2 symmetry profiles
+        if(aps.symmetry&&flawlessSymmetry) {
+            mCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+            mCanvas.drawPath(path, aps.paint);
+        }
 
         if (moves < 10) {
             if (style == Style.SQUARE || aps.paint.getStrokeWidth() == 1)
-                aps.pixelCanvas.drawPoint(sX, sY, aps.paint);
+                (aps.symmetry&&flawlessSymmetry?mCanvas:aps.pixelCanvas).drawPoint(sX, sY, aps.paint);
             else if (style == Style.ROUND)
-                aps.pixelCanvas.drawCircle(sX, sY, circleRadius, aps.paint);
+                (aps.symmetry&&flawlessSymmetry?mCanvas:aps.pixelCanvas).drawCircle(sX, sY, circleRadius, aps.paint);
         }
 
         if (aps.symmetry) {
-            path.transform(mirrorMatrix, mirroredPath);
-            aps.pixelCanvas.drawPath(mirroredPath, aps.paint);
-            calculateSymmetricalCanvasXY();
+            //Drawing a point at the point where user released the draw button
             if (moves < 10) {
+                calculateSymmetricalCanvasXY();
                 if (style == Style.SQUARE || aps.paint.getStrokeWidth() == 1)
-                    aps.pixelCanvas.drawPoint(aSX, aSY, aps.paint);
+                    (flawlessSymmetry?mCanvas:aps.pixelCanvas).drawPoint(aSX, aSY, aps.paint);
                 else if (style == Style.ROUND)
-                    aps.pixelCanvas.drawCircle(aSX, aSY, circleRadius, aps.paint);
+                    (flawlessSymmetry?mCanvas:aps.pixelCanvas).drawCircle(aSX, aSY, circleRadius, aps.paint);
             }
-            mirroredPath.rewind();
+
+            //Drawing mirrored path, 2 options for 2 symmetry profiles
+            if(flawlessSymmetry)
+                aps.pixelCanvas.drawBitmap(mBitmap, mirrorMatrix, null);
+            else {
+                path.transform(mirrorMatrix, mirroredPath);
+                aps.pixelCanvas.drawPath(mirroredPath, aps.paint);
+                mirroredPath.rewind();
+            }
         }
+
+        if(aps.symmetry&&flawlessSymmetry)
+            aps.pixelCanvas.drawBitmap(mBitmap, 0, 0, null);
+        else
+            aps.pixelCanvas.drawPath(path, aps.paint);
 
         if (hitBounds)
             aps.canvasHistory.completeHistoricalChange();
@@ -198,28 +249,22 @@ public class SuperPencilH extends ToolH {
     private void calculateSymmetricalCanvasXY() {
         aSX = sX;
         aSY = sY;
-        if (aps.symmetryType == AdaptivePixelSurfaceH.SymmetryType.HORIZONTAL) {
+        if (aps.symmetryType == AdaptivePixelSurfaceH.SymmetryType.HORIZONTAL)
             aSX = Math.abs(aps.pixelWidth - sX);
-            if (sX > aps.pixelWidth)
-                aSX = -aSX;
-        }
-        if (aps.symmetryType == AdaptivePixelSurfaceH.SymmetryType.VERTICAL) {
-            aSY = Math.abs(aps.pixelHeight - sY);
-            if (sY > aps.pixelHeight)
-                aSY = -aSY;
-        }
 
+        if (aps.symmetryType == AdaptivePixelSurfaceH.SymmetryType.VERTICAL)
+            aSY = Math.abs(aps.pixelHeight - sY);
     }
 
     void symmetryUpdate() {
         if (!aps.symmetry)
             return;
         if (aps.symmetryType == AdaptivePixelSurfaceH.SymmetryType.HORIZONTAL) {
-            mirrorMatrix.setScale(-1f, 1f, (float) aps.pixelWidth / 2f, (float) aps.pixelHeight / 2f);
+            mirrorMatrix.setScale(-1f, 1f, ((float) aps.pixelWidth) / 2f, ((float) aps.pixelHeight )/ 2f);
             return;
         }
         if (aps.symmetryType == AdaptivePixelSurfaceH.SymmetryType.VERTICAL) {
-            mirrorMatrix.setScale(1f, -1f, (float) aps.pixelWidth / 2f, (float) aps.pixelHeight / 2f);
+            mirrorMatrix.setScale(1f, -1f, ((float) aps.pixelWidth) / 2f, ((float) aps.pixelHeight )/ 2f);
         }
 
     }

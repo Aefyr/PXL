@@ -4,7 +4,7 @@
     <!-- Commons -->
     <string name="done">Готово</string>
     <string name="cancel">Отмена</string>
-    <string name="cursor_action">PXL!</string>
+    <string name="cursor_action">Рисовать!</string>
     <string name="error">Ошибка</string>
 
 
@@ -144,8 +144,14 @@
     <string name="dont_show_again">Больше не показывать</string>
     <string name="flip_direction_selection">Направление отражения</string>
     <string name="auto_back_after_color_pick">Перелючить после выбора цвета</string>
-    <string name="abacp_desc">Автоматически переключается на предидущий инструмент полсе выбора цвета пипеткой</string>
+    <string name="abacp_desc">Автоматически переключается на предыдущий инструмент полсе выбора цвета пипеткой</string>
     <string name="behavior">Поведение</string>
+    <string name="insta_swap">Мгновенная замена</string>
+    <string name="insta_swap_desc">Заменитель цвета мгновенно заменяет выбранный им цвет на текущий цвет краски вместо открытия дополнительного интерфейса замены цвета с лайв-превью</string>
+    <string name="flawless_symmetry">Безупречная симметрия</string>
+    <string name="flawless_sym_desc">Идеальная, но немного более требовательная к ресурсам симметрия</string>
+
+
 
 
 

@@ -28,11 +28,10 @@
         android:paddingTop="4dp"
         android:text="100%" />
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/tile_background"
-        android:orientation="vertical">
+        android:background="@color/colorPrimary">
 
         <ImageView
             android:id="@+id/cursorOpacityPreview"
@@ -42,6 +41,6 @@
             android:paddingTop="4dp"
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/defaultcursor" />
-    </LinearLayout>
+    </FrameLayout>
 
 </LinearLayout>
