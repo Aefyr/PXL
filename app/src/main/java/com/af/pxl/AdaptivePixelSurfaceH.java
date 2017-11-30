@@ -72,6 +72,7 @@ public class AdaptivePixelSurfaceH extends View {
     //Symmetry
     boolean symmetry = false;
     SymmetryType symmetryType = SymmetryType.HORIZONTAL;
+    boolean symmetryAxisesShown = false;
 
     public enum SymmetryType {
         HORIZONTAL, VERTICAL
@@ -201,6 +202,32 @@ public class AdaptivePixelSurfaceH extends View {
         return symmetry;
     }
 
+    public boolean toggleSymmetryGuidelines(){
+        symmetryAxisesShown = !symmetryAxisesShown;
+        invalidate();
+        return symmetryAxisesShown;
+    }
+
+    public boolean symGuidelinesShown(){
+        return symmetryAxisesShown;
+    }
+
+    private Paint sAP;
+    private void drawSymmetryAxises(Canvas c){
+        sAP.setStrokeWidth((int) Utils.clamp(pixelScale / 12, 1, 999));
+        if(symmetryType==SymmetryType.HORIZONTAL){
+            p[0] = ((float)pixelWidth)/2f;
+            p[1] = 0;
+            pixelMatrix.mapPoints(p);
+            c.drawLine(p[0], p[1]-pixelScale, p[0], p[1]+(pixelScale*(pixelHeight+1)), sAP);
+        }else {
+            p[0] = 0;
+            p[1] = ((float)pixelHeight)/2f;
+            pixelMatrix.mapPoints(p);
+            c.drawLine(p[0]-pixelScale, p[1],p[0]+(pixelScale*(pixelWidth+1)), p[1], sAP);
+        }
+    }
+
     public RectP getBounds() {
         return new RectP(0, 0, pixelWidth, pixelHeight);
     }
@@ -218,7 +245,7 @@ public class AdaptivePixelSurfaceH extends View {
         multiShape = new MultiShapeH(this);
         selector = new SelectorH(this);
         SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(getContext());
-        autoSwitchToPrevToolAfterColorPick = p.getBoolean("abacp", true);
+        autoSwitchToPrevToolAfterColorPick = p.getBoolean(PreferencesFragment.AUTO_SWITCH_AFTER_CS, true);
         if (project.transparentBackground) {
             int bg = p.getInt(PreferencesFragment.TRANSPARENT_CANVAS_BACKGROUND_COLOR, 1);
             trans = new Paint();
@@ -324,6 +351,9 @@ public class AdaptivePixelSurfaceH extends View {
         gridP.setColor(preferences.getInt(PreferencesFragment.GRID_COLOR, -11183637));
         gridP.setStyle(Paint.Style.STROKE);
         gridP.setStrokeWidth(1f);
+
+        sAP = new Paint(gridP);
+        sAP.setColor(preferences.getInt(PreferencesFragment.SYM_AXISES_COLOR, Color.BLACK));
 
         cursorPaint = new Paint();
         cursorPaint.setStyle(Paint.Style.STROKE);
@@ -676,6 +706,12 @@ public class AdaptivePixelSurfaceH extends View {
         //Draw grid
         if (gridEnabled) {
             drawGrid(canvas);
+        }
+
+        //TODO Complete this
+        //Draw symmetry guidelines
+        if(symmetryAxisesShown&&symmetry){
+            drawSymmetryAxises(canvas);
         }
 
         if (currentTool == Tool.SELECTOR)

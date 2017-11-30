@@ -23,6 +23,7 @@ public class SymmetrySwitcher {
     private ImageButton h;
     private ImageButton v;
     private ImageButton s;
+    private ImageButton tg;
 
     private boolean shown;
 
@@ -53,6 +54,7 @@ public class SymmetrySwitcher {
         no = (ImageButton) layout.findViewById(R.id.symmetryN);
         h = (ImageButton) layout.findViewById(R.id.symmetryH);
         v = (ImageButton) layout.findViewById(R.id.symmetryV);
+        tg = (ImageButton) layout.findViewById(R.id.symmetryTG);
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
@@ -67,6 +69,9 @@ public class SymmetrySwitcher {
                     case R.id.symmetryV:
                         setSymmetry(true, AdaptivePixelSurfaceH.SymmetryType.VERTICAL);
                         break;
+                    case R.id.symmetryTG:
+                        toggleGuidelines();
+                        break;
                 }
             }
         };
@@ -74,6 +79,7 @@ public class SymmetrySwitcher {
         no.setOnClickListener(onClickListener);
         h.setOnClickListener(onClickListener);
         v.setOnClickListener(onClickListener);
+        tg.setOnClickListener(onClickListener);
         dark(no);
         normal(h, v);
 
@@ -88,12 +94,13 @@ public class SymmetrySwitcher {
         }
 
         aps.setSymmetryEnabled(enabled, type);
+        aps.invalidate();
 
         if (!enabled) {
             dark(no);
             normal(h, v);
             s.setImageResource(R.drawable.symmetryoff);
-            gravityDefiedToaster(aps.getResources().getString(R.string.symmetry_none));
+            gravityDefiedToaster(aps.getContext().getString(R.string.symmetry_none));
             hide();
             return;
         }
@@ -102,17 +109,23 @@ public class SymmetrySwitcher {
                 dark(h);
                 normal(v, no);
                 s.setImageResource(R.drawable.symmetryh);
-                gravityDefiedToaster(aps.getResources().getString(R.string.symmetry_h));
+                gravityDefiedToaster(aps.getContext().getString(R.string.symmetry_h));
                 break;
             case VERTICAL:
                 dark(v);
                 normal(h, no);
                 s.setImageResource(R.drawable.symmetryv);
-                gravityDefiedToaster(aps.getResources().getString(R.string.symmetry_v));
+                gravityDefiedToaster(aps.getContext().getString(R.string.symmetry_v));
                 break;
         }
 
         hide();
+    }
+
+    private void toggleGuidelines(){
+        boolean shown = aps.toggleSymmetryGuidelines();
+        tg.setImageResource(shown?R.drawable.sym_axises_shown:R.drawable.sym_axises_hidden);
+        gravityDefiedToaster(shown?aps.getContext().getString(R.string.sym_axises_shown):aps.getContext().getString(R.string.sym_axises_hidden));
     }
 
     public void hide() {
@@ -164,7 +177,7 @@ public class SymmetrySwitcher {
 
     private void gravityDefiedToaster(String message){
         Toast toast = Toast.makeText(aps.getContext(), message, Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, toastOffset);
+        toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
     }
 }

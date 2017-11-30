@@ -37,6 +37,7 @@
 
 
     <!-- Palettes -->
+    <string name="change_palette">Change Palette</string>
     <string name="select_palette">Select Palette</string>
     <string name="edit_color">Edit Color</string>
     <string name="palettes">Palettes</string>
@@ -101,6 +102,8 @@
     <string name="symmetry_v">Vertical Symmetry</string>
     <string name="exit_prompt">Close this project?</string>
     <string name="flip_direction_selection">Flip direction</string>
+    <string name="sym_axises_shown">Symmetry axis is now shown</string>
+    <string name="sym_axises_hidden">Symmetry axis is now hidden</string>
 
     <!-- Color Swapper Activity -->
     <string name="precise_picker">Use Precise Color Picker</string>
@@ -120,8 +123,8 @@
     <!-- Preferences -->
     <string name="pixel_surface">Canvas</string>
     <string name="cursor">Cursor</string>
-    <string name="select_background_color">Select Background Color</string>
-    <string name="select_grid_color">Select Grid Color</string>
+    <string name="select_background_color">Background Color</string>
+    <string name="select_grid_color">Grid Color</string>
     <string name="cursor_sensitivity">Cursor Sensitivity</string>
     <string name="cursor_opacity">Cursor Opacity</string>
     <string name="select_cursor_image">Select Cursor Image</string>
@@ -145,6 +148,7 @@
     <string name="insta_swap_desc">Color Swapper tool instantly swaps the picked color to the current paint color instead of opening a color chooser with an ability to live-preview changes</string>
     <string name="flawless_symmetry">Flawless Symmetry</string>
     <string name="flawless_sym_desc">Uses pixel perfect but a slightly more resources-demanding symmetry</string>
+    <string name="sym_axises_color">Symmetry axises color</string>
 
     <!--- Tutorial -->
     <string name="close">Close</string>

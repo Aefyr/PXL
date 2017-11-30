@@ -15,6 +15,11 @@
             android:key="grid_color"
             android:layout="@layout/pref_generic_color_pick"
             android:title="@string/select_grid_color" />
+        <com.af.pxl.preferences.ColorPickPreference
+            android:defaultValue="-16777216"
+            android:key="sym_axises_color"
+            android:layout="@layout/pref_generic_color_pick"
+            android:title="@string/sym_axises_color" />
         <com.af.pxl.preferences.TransparentColorBackgroundPreference
             android:title="@string/trans_canvas_bg" android:summary="@string/tc_bg_desc" android:key="trans_background" android:layout="@layout/pref_trans_background" android:defaultValue="1"/>
     </PreferenceCategory>

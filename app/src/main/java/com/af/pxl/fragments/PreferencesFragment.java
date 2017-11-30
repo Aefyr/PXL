@@ -28,6 +28,9 @@ public class PreferencesFragment extends PreferenceFragment {
     public static final String GRID_COLOR = "grid_color";
     public static final String BACKGROUND_COLOR = "background_color";
     public static final String TRANSPARENT_CANVAS_BACKGROUND_COLOR = "trans_background";
+    public static final String AUTO_SWITCH_AFTER_CS = "abacp";
+    public static final String FLAWLESS_SYMMETRY = "flawless_symmetry";
+    public static final String SYM_AXISES_COLOR = "sym_axises_color";
 
 
     public PreferencesFragment() {

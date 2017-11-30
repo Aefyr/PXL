@@ -180,7 +180,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
-            android:text="@string/select_palette" />
+            android:text="@string/change_palette" />
 
         <TextView
             android:id="@+id/paletteName"
@@ -262,7 +262,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/topButtons"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/full_round_rect_bg"
         android:elevation="@dimen/default_elevation"
         android:orientation="horizontal"
@@ -294,6 +294,15 @@
             android:layout_weight="1"
             android:elevation="16dp"
             app:srcCompat="@drawable/symmetryv" />
+
+        <ImageButton
+            android:id="@+id/symmetryTG"
+            style="@style/PXLImageButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:elevation="16dp"
+            app:srcCompat="@drawable/sym_axises_hidden" />
     </LinearLayout>
 
 </RelativeLayout>

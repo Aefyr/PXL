@@ -9,7 +9,7 @@
 
 
     <!-- Palettes -->
-    <string name="select_palette">Выбрать палитру</string>
+    <string name="select_palette">Выберите палитру</string>
     <string name="edit_color">Изменить цвет</string>
     <string name="palettes">Палитры</string>
     <string name="incorrect_palette_name">Имя палитры уже занято или некорректно!\n(В имене можно использовать только буквы, цифры и пробелы)</string>
@@ -60,8 +60,8 @@
     <!-- Preferences -->
     <string name="pixel_surface">Холст</string>
     <string name="cursor">Курсор</string>
-    <string name="select_background_color">Выбрать цвет фона</string>
-    <string name="select_grid_color">Выбрать цвет сетки</string>
+    <string name="select_background_color">Цвет фона</string>
+    <string name="select_grid_color">Цвет сетки</string>
     <string name="cursor_sensitivity">Чувствительность курсора</string>
     <string name="cursor_opacity">Непрозрачность курсора</string>
     <string name="select_cursor_image">Выбрать изображение курсора</string>
@@ -150,6 +150,10 @@
     <string name="insta_swap_desc">Заменитель цвета мгновенно заменяет выбранный им цвет на текущий цвет краски вместо открытия дополнительного интерфейса замены цвета с лайв-превью</string>
     <string name="flawless_symmetry">Безупречная симметрия</string>
     <string name="flawless_sym_desc">Идеальная, но немного более требовательная к ресурсам симметрия</string>
+    <string name="change_palette">Сменить палитру</string>
+    <string name="sym_axises_shown">Ось симметрии показана</string>
+    <string name="sym_axises_hidden">Ось симметрии скрыта</string>
+    <string name="sym_axises_color">Цвет осей симметрии</string>
 
 
 

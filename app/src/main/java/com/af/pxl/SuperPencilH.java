@@ -9,6 +9,7 @@ import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.preference.PreferenceManager;
 
+import com.af.pxl.fragments.PreferencesFragment;
 import com.af.pxl.util.Utils;
 
 
@@ -38,7 +39,7 @@ public class SuperPencilH extends ToolH {
         mirrorMatrix = new Matrix();
         highVelocityThreshold = Utils.dpToPx(6, adaptivePixelSurface.getResources());
 
-        flawlessSymmetry = PreferenceManager.getDefaultSharedPreferences(adaptivePixelSurface.getContext()).getBoolean("flawless_symmetry", true);
+        flawlessSymmetry = PreferenceManager.getDefaultSharedPreferences(adaptivePixelSurface.getContext()).getBoolean(PreferencesFragment.FLAWLESS_SYMMETRY, true);
         if(flawlessSymmetry) {
             mBitmap = Bitmap.createBitmap(aps.pixelWidth, aps.pixelHeight, Bitmap.Config.ARGB_8888);
             mCanvas = new Canvas(mBitmap);

@@ -286,9 +286,10 @@ public class ToolSettingsManager {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                if (seekBar.getId() == R.id.shapeToolSizeSeekbar)
+                if (seekBar.getId() == R.id.shapeToolSizeSeekbar) {
                     aps.setStrokeWidth(strokeWidth);
-                else
+                    aps.invalidate();
+                }else
                     aps.multiShape.rounding = rounding * 2;
             }
         };
