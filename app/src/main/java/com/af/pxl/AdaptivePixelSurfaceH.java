@@ -704,15 +704,12 @@ public class AdaptivePixelSurfaceH extends View {
         canvas.drawBitmap(pixelBitmap, pixelMatrix, noAAPaint);
 
         //Draw grid
-        if (gridEnabled) {
+        if (gridEnabled)
             drawGrid(canvas);
-        }
 
-        //TODO Complete this
         //Draw symmetry guidelines
-        if(symmetryAxisesShown&&symmetry){
+        if(symmetryAxisesShown&&symmetry)
             drawSymmetryAxises(canvas);
-        }
 
         if (currentTool == Tool.SELECTOR)
             selector.drawSelection(canvas, pixelMatrix);
@@ -720,9 +717,8 @@ public class AdaptivePixelSurfaceH extends View {
 
         //Highlight the pixel we'll draw on with cursorPencil
         //TODO Maybe make "less than 1 pixel" offsets global variables
-        if (cursorMode) {
+        if (cursorMode)
             cursor.drawCursor(canvas);
-        }
 
 
         deltaTime = System.currentTimeMillis() - start;
