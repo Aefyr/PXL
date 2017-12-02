@@ -14,7 +14,7 @@
         android:text="ColorPick Preference"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
 
-    <com.af.pxl.views.ColorCircle
+    <com.af.pxl.custom.ColorCircle
         android:id="@+id/colorCircle"
         android:layout_width="32dp"
         android:layout_height="32dp"

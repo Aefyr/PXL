@@ -8,13 +8,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.af.pxl.R;
-import com.af.pxl.views.PixelImageView;
+import com.af.pxl.custom.PixelImageView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.Locale;
 
 /**

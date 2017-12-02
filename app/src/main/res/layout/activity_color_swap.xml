@@ -7,7 +7,7 @@
     android:background="@color/colorPrimaryDark"
     tools:context="com.af.pxl.ColorSwapActivity">
 
-    <com.af.pxl.views.PixelImageView
+    <com.af.pxl.custom.PixelImageView
         android:id="@+id/pxlImageView"
         android:layout_width="290dp"
         android:layout_height="290dp"

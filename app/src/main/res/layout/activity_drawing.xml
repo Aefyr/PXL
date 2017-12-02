@@ -78,7 +78,7 @@
         android:background="@drawable/full_round_rect_bg"
         app:srcCompat="@drawable/redo" />
 
-    <com.af.pxl.views.ColorCircle
+    <com.af.pxl.custom.ColorCircle
         android:id="@+id/currentColor"
         android:layout_width="64dp"
         android:layout_height="64dp"
@@ -215,7 +215,7 @@
             android:layout_below="@+id/paletteRecycler"
             android:text="@string/pick_color" />
 
-        <com.af.pxl.views.ColorCircle
+        <com.af.pxl.custom.ColorCircle
             android:id="@+id/colorCircle"
             android:layout_width="64dp"
             android:layout_height="64dp"

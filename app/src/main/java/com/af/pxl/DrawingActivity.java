@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.PorterDuff;
@@ -25,6 +24,8 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.af.pxl.custom.ItemWithIcon;
+import com.af.pxl.custom.ListAdapterWithIcons;
 import com.af.pxl.palettes.PaletteManagerH;
 import com.af.pxl.palettes.PalettePickerActivity;
 import com.af.pxl.palettes.PaletteUtils;
@@ -32,10 +33,9 @@ import com.af.pxl.projects.ProjectsExporter;
 import com.af.pxl.projects.ProjectsUtils;
 import com.af.pxl.tools.SymmetrySwitcher;
 import com.af.pxl.tools.ToolPickRecyclerAdapter;
-import com.af.pxl.tools.ToolPreview;
 import com.af.pxl.util.PermissionsUtils;
 import com.af.pxl.util.Utils;
-import com.af.pxl.views.ColorCircle;
+import com.af.pxl.custom.ColorCircle;
 
 import java.io.File;
 
@@ -94,35 +94,48 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         instaSwap = preferences.getBoolean("insta_swap", false);
     }
 
+    private AlertDialog dialog11;
     private void canvasWiseOptionsDialog() {
-        AlertDialog canvasWiseOptionsDialog = new AlertDialog.Builder(this).setTitle(getString(R.string.canvas_options)).setItems(getResources().getStringArray(R.array.canvas_options_array), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                switch (i) {
-                    case 0:
-                        aps.clearCanvas();
-                        break;
-                    case 1:
-                        startTranslateActivity();
-                        break;
-                    case 2:
-                        mergeTool();
-                        break;
-                    case 3:
-                        aps.centerCanvas();
-                        aps.invalidate();
-                        break;
-                    case 4:
-                        flipImage();
-                        break;
-                    case 5:
-                        exportImage();
-                        break;
+        if(dialog11 == null) {
+            String[] actions = getResources().getStringArray(R.array.canvas_options_array);
+            ItemWithIcon[] items = new ItemWithIcon[6];
+            items[0] = new ItemWithIcon(actions[0], R.drawable.clear);
+            items[1] = new ItemWithIcon(actions[1], R.drawable.move);
+            items[2] = new ItemWithIcon(actions[2], R.drawable.overlay);
+            items[3] = new ItemWithIcon(actions[3], R.drawable.center);
+            items[4] = new ItemWithIcon(actions[4], R.drawable.mirror);
+            items[5] = new ItemWithIcon(actions[5], R.drawable.save);
+            ListAdapterWithIcons adapterWithIcons = new ListAdapterWithIcons(this, items);
 
+            dialog11 = new AlertDialog.Builder(this).setTitle(getString(R.string.canvas_options)).setAdapter(adapterWithIcons, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    switch (i) {
+                        case 0:
+                            aps.clearCanvas();
+                            break;
+                        case 1:
+                            startTranslateActivity();
+                            break;
+                        case 2:
+                            mergeTool();
+                            break;
+                        case 3:
+                            aps.centerCanvas();
+                            aps.invalidate();
+                            break;
+                        case 4:
+                            flipImage();
+                            break;
+                        case 5:
+                            exportImage();
+                            break;
+
+                    }
                 }
-            }
-        }).create();
-        canvasWiseOptionsDialog.show();
+            }).create();
+        }
+        dialog11.show();
     }
 
 

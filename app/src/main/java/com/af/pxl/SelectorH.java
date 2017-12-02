@@ -6,11 +6,10 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 
 import com.af.pxl.common.RectP;
 import com.af.pxl.util.Utils;
-
-import java.util.HashSet;
 
 /**
  * Created by Aefyr on 06.08.2017.
@@ -22,14 +21,14 @@ public class SelectorH extends ToolH {
     private boolean sessionStarted;
     private RectP selection;
     private Paint selectionPaint;
+    private Paint clearerPaint;
     private Bitmap sB;
     private Canvas sC;
 
     private Bitmap selectedPart;
-    private Canvas selPC;
     private Bitmap backup;
 
-    private int offsetX, offsetY;
+    private int offsetX, offsetY, iOffsetX, iOffsetY;
     private int pX, pY;
 
     private RectP canvasBounds;
@@ -37,14 +36,17 @@ public class SelectorH extends ToolH {
     public SelectorH(AdaptivePixelSurfaceH aps) {
         this.aps = aps;
         sB = Bitmap.createBitmap(aps.pixelWidth, aps.pixelHeight, Bitmap.Config.ARGB_8888);
-        selectedPart = sB.copy(Bitmap.Config.ARGB_8888, true);
-        selPC = new Canvas(selectedPart);
         sC = new Canvas(sB);
         selectionPaint = new Paint();
         selectionPaint.setColor(Color.CYAN);
         selectionPaint.setAlpha(75);
         selection = new RectP();
         canvasBounds = new RectP(0, 0, aps.pixelWidth, aps.pixelHeight);
+
+        clearerPaint = new Paint();
+        clearerPaint.setColor(Color.WHITE);
+        if(aps.project.transparentBackground)
+            clearerPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
     }
 
     @Override
@@ -55,7 +57,7 @@ public class SelectorH extends ToolH {
 
         if (hasSelection && (!selection.contains((int) sX, (int) sY) || (sX < 0 || sY < 0 || sX >= aps.pixelWidth || sY >= aps.pixelHeight))) {
             hasSelection = false;
-            if (offsetX != 0 || offsetY != 0) {
+            if (offsetX != iOffsetX || offsetY != iOffsetY) {
                 aps.canvasHistory.completeHistoricalChange();
             } else
                 aps.canvasHistory.cancelHistoricalChange(false);
@@ -78,18 +80,6 @@ public class SelectorH extends ToolH {
             pY = (int) sY;
 
             drawing = true;
-        }
-    }
-
-    private class Pixel {
-        int c;
-        int x;
-        int y;
-
-        Pixel(int x, int y, int c) {
-            this.x = x;
-            this.y = y;
-            this.c = c;
         }
     }
 
@@ -124,23 +114,17 @@ public class SelectorH extends ToolH {
             hasSelection = true;
             if (!sessionStarted) {
                 aps.canvasHistory.startHistoricalChange();
-                offsetX = offsetY = 0;
-                HashSet<Pixel> pixels = new HashSet<>();
-                for (int i = Utils.clamp(selection.left < selection.right ? selection.left : selection.right, 0, aps.pixelWidth - 1); i < aps.pixelWidth && i < (selection.left < selection.right ? selection.right : selection.left); i++) {
-                    for (int i2 = Utils.clamp(selection.top < selection.bottom ? selection.top : selection.bottom, 0, aps.pixelHeight - 1); i2 < aps.pixelHeight && i2 < (selection.top < selection.bottom ? selection.bottom : selection.top); i2++) {
-                        pixels.add(new Pixel(i, i2, aps.pixelBitmap.getPixel(i, i2)));
-                    }
-                }
+                int realLeft = Utils.clamp(selection.left < selection.right ? selection.left : selection.right, 0, aps.pixelWidth - 1);
+                int realTop = Utils.clamp(selection.top < selection.bottom ? selection.top : selection.bottom, 0, aps.pixelHeight - 1);
+                int realHeight = Utils.clamp(selection.height(), 0, aps.pixelHeight-realTop);
+                int realWidth = Utils.clamp(selection.width(), 0, aps.pixelWidth-realLeft);
+                selection.set(realLeft, realTop, realLeft+realWidth, realTop+realHeight);
 
-                selPC.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-                for (Pixel p : pixels) {
-                    if (aps.project.transparentBackground)
-                        aps.pixelBitmap.setPixel(p.x, p.y, Color.TRANSPARENT);
-                    else
-                        aps.pixelBitmap.setPixel(p.x, p.y, Color.WHITE);
+                iOffsetX = offsetX = realLeft;
+                iOffsetY = offsetY = realTop;
 
-                    selectedPart.setPixel(p.x, p.y, p.c);
-                }
+                selectedPart = Bitmap.createBitmap(aps.pixelBitmap, realLeft, realTop, realWidth, realHeight);
+                aps.pixelCanvas.drawRect(realLeft, realTop, realLeft+realWidth, realTop+realHeight, clearerPaint);
 
                 backup = aps.pixelBitmap.copy(Bitmap.Config.ARGB_8888, true);
                 sessionStarted = true;

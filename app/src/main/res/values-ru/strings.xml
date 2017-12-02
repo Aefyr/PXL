@@ -24,8 +24,8 @@
     <string name="width">Ширина</string>
     <string name="height">Высота</string>
     <string name="transparentBackground">Прозрачный фон</string>
-    <string name="incorrect_width_or_height">Необходимо ввести ширину и высоту!</string>
-    <string name="incorrect_project_name">Имя проекта уже занято или некорректно!\n(В имене можно использовать только буквы, цифры и пробелы)</string>
+    <string name="incorrect_width_or_height">Ширина и высота должны быть больше 0</string>
+    <string name="incorrect_project_name">Имя проекта уже занято или некорректно.\n(В имене можно использовать только буквы, цифры и пробелы)</string>
     <string name="imported_bitmap_too_big">Максимальный размер импортированного изображения - %dx%d!</string>
     <string name="name_imported">Импортировано</string>
     <string name="original">Оригинал</string>
@@ -154,9 +154,7 @@
     <string name="sym_axises_shown">Ось симметрии показана</string>
     <string name="sym_axises_hidden">Ось симметрии скрыта</string>
     <string name="sym_axises_color">Цвет осей симметрии</string>
-
-
-
+    <string name="default_palette">По умолчанию</string>
 
 
 </resources>

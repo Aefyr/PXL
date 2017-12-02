@@ -1,4 +1,4 @@
-package com.af.pxl.views;
+package com.af.pxl.custom;
 
 import android.content.Context;
 import android.support.v7.widget.CardView;

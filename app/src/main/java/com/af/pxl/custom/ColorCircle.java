@@ -1,4 +1,4 @@
-package com.af.pxl.views;
+package com.af.pxl.custom;
 
 import android.annotation.TargetApi;
 import android.content.Context;

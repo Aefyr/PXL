@@ -23,6 +23,7 @@ public class PaletteUtils {
 
     private static final String PALETTE_NAME_VALIDITY_PATTERN = "\\w+[A-Za-zА-Яа-я_0-9\\s]*";
     private static String paletteDuplicatePostfix;
+    private static String defaultPaletteName;
 
     static String palettesPath;
     static final String EXTENSION = ".pxlpalette";
@@ -30,6 +31,7 @@ public class PaletteUtils {
     public static void initialize(Context c) {
         palettesPath = c.getFilesDir() + "/palettes";
         paletteDuplicatePostfix = " " + c.getString(R.string.duplicate_prefix);
+        defaultPaletteName = c.getString(R.string.default_palette);
         File f = new File(palettesPath);
 
         if (!f.exists())
@@ -139,11 +141,10 @@ public class PaletteUtils {
     }
 
     public static Palette2 defaultPalette() {
-        File defaultPalette = new File(palettesPath + "/Default" + EXTENSION);
+        File defaultPalette = new File(palettesPath + "/" + defaultPaletteName + EXTENSION);
         if (defaultPalette.exists())
-            return loadPalette("Default");
-        Palette2 p = new Palette2("Default");
-        return p;
+            return loadPalette(defaultPaletteName);
+        return new Palette2(defaultPaletteName);
     }
 
 

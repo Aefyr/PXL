@@ -13,7 +13,7 @@ import com.af.pxl.AdaptivePixelSurfaceH;
 import com.af.pxl.ColorPickerH;
 import com.af.pxl.R;
 import com.af.pxl.util.Utils;
-import com.af.pxl.views.ColorCircle;
+import com.af.pxl.custom.ColorCircle;
 
 /**
  * Created by Aefyr on 03.08.2017.

@@ -2,15 +2,14 @@ package com.af.pxl;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.SeekBar;
 
-import com.af.pxl.views.ColorPickerViewH;
-import com.af.pxl.views.ColorRect;
+import com.af.pxl.custom.ColorPickerViewH;
+import com.af.pxl.custom.ColorRect;
 
 /**
  * Created by Aefyr on 17.06.2017.

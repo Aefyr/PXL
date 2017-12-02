@@ -18,7 +18,7 @@ import android.view.View;
 
 import com.af.pxl.common.Ruler;
 import com.af.pxl.util.Utils;
-import com.af.pxl.views.PixelImageView;
+import com.af.pxl.custom.PixelImageView;
 
 import java.io.File;
 import java.io.FileNotFoundException;

@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.af.pxl.R;
-import com.af.pxl.views.ColorCircle;
+import com.af.pxl.custom.ColorCircle;
 
 /**
  * Created by Aefyr on 03.08.2017.

@@ -2,12 +2,11 @@ package com.af.pxl;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.preference.PreferenceManager;
 import android.view.Window;
 import android.widget.SeekBar;
 
-import com.af.pxl.views.ColorCircle;
-import com.af.pxl.views.ColorPickerView;
+import com.af.pxl.custom.ColorCircle;
+import com.af.pxl.custom.ColorPickerView;
 
 /**
  * Created by Aefyr on 17.06.2017.

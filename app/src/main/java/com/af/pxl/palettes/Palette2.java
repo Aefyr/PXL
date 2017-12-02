@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class Palette2 {
 
-    private final static int[] defaultPaletteColors = {-1808, -465951, -4024696, -8972, -13238282, -9051393, -38808, -4486, -6226046, -10591253, -5153550, -29966, -16777216, -7418960, -11582910, -23716};
+    private final static int[] defaultPaletteColors = {-43948,-21441,-266496,-3280384,-8388767,-8519737,-7340801,-12081153,-12562991,-6267649,-1937944,-35885,-1,-6513508,-10263709,-16777216,-23716};
     private ArrayList<Integer> colors;
     private String name;
     private File directory;

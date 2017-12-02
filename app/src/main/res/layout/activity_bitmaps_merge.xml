@@ -7,7 +7,7 @@
     android:background="@color/colorPrimaryDark"
     tools:context="com.af.pxl.BitmapsMergeActivity">
 
-    <com.af.pxl.views.PixelImageView
+    <com.af.pxl.custom.PixelImageView
         android:id="@+id/pxlImageView"
         android:layout_width="340dp"
         android:layout_height="340dp"

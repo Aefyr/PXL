@@ -44,7 +44,7 @@
         android:singleLine="true"
         android:text="100" />
 
-    <com.af.pxl.views.ColorPickerViewH
+    <com.af.pxl.custom.ColorPickerViewH
         android:id="@+id/colorPickerVal"
         android:layout_width="match_parent"
         android:layout_height="16dp"
@@ -61,13 +61,13 @@
         android:layout_marginStart="16dp"
         android:orientation="horizontal">
 
-        <com.af.pxl.views.ColorRect
+        <com.af.pxl.custom.ColorRect
             android:id="@+id/oldColor"
             android:layout_width="match_parent"
             android:layout_height="64dp"
             android:layout_weight="0.5" />
 
-        <com.af.pxl.views.ColorRect
+        <com.af.pxl.custom.ColorRect
             android:id="@+id/newColor"
             android:layout_width="match_parent"
             android:layout_height="64dp"
@@ -75,7 +75,7 @@
 
     </LinearLayout>
 
-    <com.af.pxl.views.ColorPickerViewH
+    <com.af.pxl.custom.ColorPickerViewH
         android:id="@+id/colorPickerHue"
         android:layout_width="match_parent"
         android:layout_height="16dp"
@@ -145,7 +145,7 @@
         android:singleLine="true"
         android:text="100" />
 
-    <com.af.pxl.views.ColorPickerViewH
+    <com.af.pxl.custom.ColorPickerViewH
         android:id="@+id/colorPickerSat"
         android:layout_width="match_parent"
         android:layout_height="16dp"

@@ -159,7 +159,7 @@ public class GalleryFragment extends android.app.Fragment {
                     return;
                 }*/
 
-                if (widthET.getText().length() == 0 || heightET.getText().length() == 0) {
+                if (widthET.getText().length() == 0 || heightET.getText().length() == 0 || widthET.getText().toString().equals("0") || heightET.getText().toString().equals("0")) {
                     Utils.toaster(getActivity(), getString(R.string.incorrect_width_or_height));
                     return;
                 }
