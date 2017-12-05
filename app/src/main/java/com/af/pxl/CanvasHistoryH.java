@@ -153,8 +153,7 @@ class CanvasHistoryH {
         if (past.size() == 0)
             return;
 
-        if (aps.currentTool == AdaptivePixelSurfaceH.Tool.SELECTOR)
-            aps.selector.cancel(0, 0);
+        aps.cancelDrawing();
 
         int[] pixels = new int[arraySize];
 

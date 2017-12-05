@@ -222,6 +222,11 @@ public class MultiShapeH extends ToolH {
         drawing = false;
     }
 
+    @Override
+    void cancel() {
+        cancel(rX, rY);
+    }
+
     private RectP canvasBounds;
     private RectP shapeBounds;
     private float cX, cY;

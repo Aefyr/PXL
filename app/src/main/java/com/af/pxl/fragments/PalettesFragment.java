@@ -95,7 +95,7 @@ public class PalettesFragment extends android.app.Fragment {
 
     private void importImage() {
         if (!PermissionsUtils.checkStoragePermissions(getActivity())) {
-            PermissionsUtils.requestStoragePermissions(getActivity());
+            PermissionsUtils.requestStoragePermissions(this);
             return;
         }
 

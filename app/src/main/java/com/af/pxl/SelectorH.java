@@ -114,17 +114,17 @@ public class SelectorH extends ToolH {
             hasSelection = true;
             if (!sessionStarted) {
                 aps.canvasHistory.startHistoricalChange();
-                int realLeft = Utils.clamp(selection.left < selection.right ? selection.left : selection.right, 0, aps.pixelWidth - 1);
-                int realTop = Utils.clamp(selection.top < selection.bottom ? selection.top : selection.bottom, 0, aps.pixelHeight - 1);
-                int realHeight = Utils.clamp(selection.height(), 0, aps.pixelHeight-realTop);
-                int realWidth = Utils.clamp(selection.width(), 0, aps.pixelWidth-realLeft);
-                selection.set(realLeft, realTop, realLeft+realWidth, realTop+realHeight);
+                int realLeft = Utils.clamp(selection.left < selection.right ? selection.left : selection.right, 0, aps.pixelWidth);
+                int realTop = Utils.clamp(selection.top < selection.bottom ? selection.top : selection.bottom, 0, aps.pixelHeight);
+                int realRight = Utils.clamp(selection.left < selection.right ? selection.right : selection.left, 0, aps.pixelWidth);
+                int realBottom = Utils.clamp(selection.top < selection.bottom ? selection.bottom : selection.top, 0, aps.pixelHeight);
+                selection.set(realLeft, realTop, realRight, realBottom);
 
                 iOffsetX = offsetX = realLeft;
                 iOffsetY = offsetY = realTop;
 
-                selectedPart = Bitmap.createBitmap(aps.pixelBitmap, realLeft, realTop, realWidth, realHeight);
-                aps.pixelCanvas.drawRect(realLeft, realTop, realLeft+realWidth, realTop+realHeight, clearerPaint);
+                selectedPart = Bitmap.createBitmap(aps.pixelBitmap, realLeft, realTop, selection.width(), selection.height());
+                aps.pixelCanvas.drawRect(realLeft, realTop, realRight, realBottom, clearerPaint);
 
                 backup = aps.pixelBitmap.copy(Bitmap.Config.ARGB_8888, true);
                 sessionStarted = true;
@@ -151,6 +151,10 @@ public class SelectorH extends ToolH {
         aps.onSpecialToolUseListener.onSelectionOptionsVisibilityChanged(false);
     }
 
+    @Override
+    void cancel() {
+        cancel(rX, rY);
+    }
 
     void copy() {
         Canvas c = new Canvas(backup);

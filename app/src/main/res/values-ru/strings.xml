@@ -32,7 +32,7 @@
     <string name="select_resolution">Выберите разрешение экспортированного изображения</string>
     <string name="share">Поделиться</string>
     <string name="exporting">Идёт экспорт изображения</string>
-    <string name="storage_permissions_denied">Невозможно получить доступ к галерее без доступа к памяти!</string>
+    <string name="storage_permissions_denied">Не удалось получить доступ к галерее</string>
 
     <!--gallery_item-->
     <string name="size">Размер</string>
@@ -75,7 +75,6 @@
     <string name="fill_action">Залить</string>
     <string name="ok">ОК</string>
     <string name="create">Создать</string>
-    <string name="app_name">PXL</string>
     <string name="colorpick">Пипетка</string>
     <string name="colorpick_action">Выбрать!</string>
     <string name="pencil_action">Рисовать!</string>
@@ -139,7 +138,7 @@
     <string name="tc_bg_desc">Фон прозрачного холста, чтобы было видно где рисовать.\nИсчезает при экспорте проекта</string>
     <string name="precise_picker">Точный выбор цвета</string>
     <string name="feedback_mail_subject">PXL Обратная связь</string>
-    <string name="palettes_override_warn">Это восстановит все цвета в изменённых стандартных палитрах и вновь создаст удаленные\n\nСтандартные палитры помечены звёздочкой (*)</string>
+    <string name="palettes_override_warn">Это восстановит все цвета в изменённых стандартных палитрах и вновь создаст удаленные</string>
     <string name="res_notice">Если вы собираетесь дальше редактировать изображение, экспортируйте его в оригинальном разрешении, чтобы оно осталось \"настоящим пиксель артом\". Но если вы собираетесь публиковать изображение, выберите разрешение повыше, иначе оно будет выглядить размыто на большинстве сайтов и в программах, из-за алгоритмов увеличения применяемых в них</string>
     <string name="dont_show_again">Больше не показывать</string>
     <string name="flip_direction_selection">Направление отражения</string>

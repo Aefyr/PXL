@@ -92,7 +92,6 @@ public class ProjectsExporter {
                 }
             }
         }).create();
-        exportResolutionPickDialog.show();
     }
 
     public void showDialog(){

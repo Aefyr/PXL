@@ -16,6 +16,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -177,7 +178,7 @@ public class GalleryFragment extends android.app.Fragment {
     private void importImage() {
         if (!PermissionsUtils.checkStoragePermissions(getActivity())) {
             actionAfter = 1;
-            PermissionsUtils.requestStoragePermissions(getActivity());
+            PermissionsUtils.requestStoragePermissions(this);
             return;
         }
         Intent intent = new Intent();
@@ -259,7 +260,7 @@ public class GalleryFragment extends android.app.Fragment {
 
         if (!PermissionsUtils.checkStoragePermissions(getActivity())) {
             actionAfter = 0;
-            PermissionsUtils.requestStoragePermissions(getActivity());
+            PermissionsUtils.requestStoragePermissions(this);
             return;
         }
         projectsExporter.showDialog();
@@ -270,6 +271,7 @@ public class GalleryFragment extends android.app.Fragment {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.d("GF", "Code: "+requestCode);
         if (requestCode == PermissionsUtils.CODE_STORAGE_PERMISSIONS_REQUEST) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 switch (actionAfter) {

@@ -14,6 +14,7 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -412,15 +413,7 @@ public class AdaptivePixelSurfaceH extends View {
             return true;
 
         if (event.getPointerCount() != 1) {
-            if (cursorMode) {
-                superPencil.cancel(cursor.getX(), cursor.getY());
-                multiShape.cancel(cursor.getX(), cursor.getY());
-                selector.cancel(cursor.getX(), cursor.getY());
-            } else {
-                superPencil.cancel(event.getX(), event.getY());
-                multiShape.cancel(event.getX(), event.getY());
-                selector.cancel(event.getX(), event.getY());
-            }
+            cancelDrawing(cursorMode?cursor.getX():event.getX(), cursorMode?cursor.getY():event.getY());
             touchToolWillBeUsedOnUpEvent = false;
 
 
@@ -559,6 +552,18 @@ public class AdaptivePixelSurfaceH extends View {
         lastY = event.getY();
         prevPointerCount = event.getPointerCount();
         return true;
+    }
+
+    public void cancelDrawing(float x, float y){
+        superPencil.cancel(x, y);
+        multiShape.cancel(x, y);
+        selector.cancel(x, y);
+    }
+
+    public void cancelDrawing(){
+        superPencil.cancel();
+        multiShape.cancel();
+        selector.cancel();
     }
 
     void setCursorModeEnabled(boolean enabled) {

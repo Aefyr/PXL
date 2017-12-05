@@ -244,6 +244,11 @@ public class SuperPencilH extends ToolH {
         }
     }
 
+    @Override
+    void cancel() {
+        cancel(rX, rY);
+    }
+
     private Path mirroredPath;
     private float aSX, aSY;
 

@@ -1,6 +1,7 @@
 package com.af.pxl.util;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -27,6 +28,11 @@ public class PermissionsUtils {
     }
 
     public static void requestStoragePermissions(Activity from){
+        if (Build.VERSION.SDK_INT >= 23)
+            from.requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE}, CODE_STORAGE_PERMISSIONS_REQUEST);
+    }
+
+    public static void requestStoragePermissions(Fragment from){
         if (Build.VERSION.SDK_INT >= 23)
             from.requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE}, CODE_STORAGE_PERMISSIONS_REQUEST);
     }

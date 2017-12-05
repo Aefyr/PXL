@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PXL</string>
+    <string name="app_name" translatable="false">PXLRT</string>
     <string name="title_activity_main">PXL!</string>
 
     <string name="pencil">Pencil</string>
@@ -71,7 +71,7 @@
     <string name="select_multiplier">Select custom resolution multiplier</string>
     <string name="share">Share</string>
     <string name="exporting">Exporting image</string>
-    <string name="storage_permissions_denied">Can\'t access gallery without permission to use storage!</string>
+    <string name="storage_permissions_denied">Unable to access gallery</string>
     <string name="create">Create</string>
     <string name="project_saved">Project has been exported</string>
     <string name="res_notice">If you\'re going to use the exported image for further editing or as an asset in game, select original resolution to keep it a \"True Pixel Art\". But if you want share the image, select a reasonably high resolution, otherwise the image will look blurry due to scaling algorithms used in most apps and websites</string>
@@ -141,7 +141,7 @@
     <string name="hw_warn">Only disable hardware acceleration if the app crashes when you use one of the following tools:\n<b>Color Swapper</b>\n\nIf the tools listed above work fine, disabling acceleration will only make them much less effective</string>
     <string name="allow_hi_res">Allow High Resolution</string>
     <string name="hi_res_desc">Enable support of up to 512x512 projects and images.\nNot recommended on devices with less than 2GBs of RAM</string>
-    <string name="palettes_override_warn">This will override all of the modified colors in default palettes and restore deleted ones\n\nDefault palettes are marked with a star (*)</string>
+    <string name="palettes_override_warn">This will override all of the modified colors in default palettes and restore deleted ones</string>
     <string name="auto_back_after_color_pick">Switch back after picking color</string>
     <string name="abacp_desc">Automatically switches to the previous tool after picking color with Color Picker tool</string>
     <string name="behavior">Behavior</string>

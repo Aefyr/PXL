@@ -8,6 +8,7 @@ abstract class ToolH {
 
     protected boolean drawing = false;
     protected float sX, sY;
+    protected float rX, rY;
     protected float startX, startY;
     protected int moves;
 
@@ -27,10 +28,14 @@ abstract class ToolH {
 
     abstract void cancel(float x, float y);
 
+    abstract void cancel();
+
 
     protected float[] p = {0, 0};
 
     protected void calculateCanvasXY(float x, float y) {
+        rX = x;
+        rY = y;
         p[0] = p[1] = 0;
         aps.pixelMatrix.mapPoints(p);
         sX = (x - p[0]) / aps.pixelScale;
