@@ -22,10 +22,10 @@
                 android:id="@+id/nav_feedback"
                 android:icon="@drawable/ic_feedback_black_24dp"
                 android:title="@string/feedback" />
-            <item
+            <!--<item
                 android:id="@+id/nav_tutorial"
                 android:icon="@drawable/ic_school_black_24dp"
-                android:title="@string/tutorial" />
+                android:title="@string/tutorial" /> -->
             <item
                 android:id="@+id/nav_about"
                 android:icon="@drawable/ic_more_horiz_black_24dp"

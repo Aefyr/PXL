@@ -27,6 +27,8 @@ import android.widget.Switch;
 import com.af.pxl.DrawingActivity;
 import com.af.pxl.MainActivity;
 import com.af.pxl.R;
+import com.af.pxl.analytics.FirebaseConstants;
+import com.af.pxl.analytics.ProjectsAnalyticsHelper;
 import com.af.pxl.common.Ruler;
 import com.af.pxl.projects.DynamicProjectsLoader;
 import com.af.pxl.projects.ProjectsExporter;
@@ -36,6 +38,7 @@ import com.af.pxl.projects.Project;
 import com.af.pxl.projects.ProjectsRecycleAdapter;
 import com.af.pxl.projects.ProjectsUtils;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 
 
@@ -48,6 +51,8 @@ public class GalleryFragment extends android.app.Fragment {
 
     ProjectsRecycleAdapter adapter;
     RecyclerView recyclerView;
+
+    private ProjectsAnalyticsHelper projectsAnalytics;
 
     public GalleryFragment() {
         // Required empty public constructor
@@ -80,12 +85,15 @@ public class GalleryFragment extends android.app.Fragment {
             }
         });
 
+        projectsAnalytics = ProjectsAnalyticsHelper.getInstance(getActivity());
+
         return view;
     }
 
     private static final int DRAWING_REQUEST = 1445;
 
     private void openProject(String id, int index) {
+        projectsAnalytics.logProjectOpened();
         Intent i = new Intent(getActivity(), DrawingActivity.class);
         i.putExtra("projectToLoad", id);
         startActivityForResult(i, DRAWING_REQUEST);
@@ -170,6 +178,7 @@ public class GalleryFragment extends android.app.Fragment {
                 Project newProject = ProjectsUtils.createNewProject(name, width, height, "Default", ((Switch) d.findViewById(R.id.transparentBackground)).isChecked());
                 adapter.addProject(newProject, false);
                 d.dismiss();
+                projectsAnalytics.logProjectCreated(FirebaseConstants.Projects.VIA_NORMAL);
                 openProject(newProject.id, adapter.getItemCount()-1);
             }
         });
@@ -208,6 +217,7 @@ public class GalleryFragment extends android.app.Fragment {
             Project p = ProjectsUtils.createProjectFromBitmap(getActivity(), importedImage);
             importedImage.recycle();
             adapter.addProject(p, true);
+            projectsAnalytics.logProjectCreated(FirebaseConstants.Projects.VIA_IMPORTING);
             openProject(p.id, adapter.getItemCount()-1);
         } else if (requestCode == DRAWING_REQUEST && resultCode == 1) {
             adapter.notifyItemChanged(0);
@@ -256,7 +266,12 @@ public class GalleryFragment extends android.app.Fragment {
         if(projectsExporter==null)
             projectsExporter = new ProjectsExporter(getActivity());
 
-        projectsExporter.prepareDialogFor(project, forShare, null);
+        projectsExporter.prepareDialogFor(project, forShare, new ProjectsExporter.ExportListener() {
+            @Override
+            public void onProjectExported(File imagePath) {
+                projectsAnalytics.logProjectExported(forShare);
+            }
+        });
 
         if (!PermissionsUtils.checkStoragePermissions(getActivity())) {
             actionAfter = 0;
@@ -309,6 +324,7 @@ public class GalleryFragment extends android.app.Fragment {
     private void duplicateProject(Project project) {
         adapter.addProject(ProjectsUtils.duplicateProject(project), true);
         recyclerView.scrollToPosition(0);
+        projectsAnalytics.logProjectCreated(FirebaseConstants.Projects.VIA_DUPLICATING);
     }
 
     private void deleteProject(final Project project, final int id) {

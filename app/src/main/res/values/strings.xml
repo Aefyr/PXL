@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name" translatable="false">PXLRT</string>
-    <string name="title_activity_main">PXL!</string>
 
     <string name="pencil">Pencil</string>
     <string name="fill">Flood Fill</string>
@@ -9,7 +8,7 @@
     <string name="eraser">Eraser</string>
     <string name="selector">Selector</string>
     <string name="multishape">Multishape</string>
-    <string name="pencil_action">Draw!</string>
+    <string name="pencil_action">Draw</string>
     <string name="fill_action">Fill!</string>
     <string name="colorpick_action">Pick!</string>
 
@@ -23,11 +22,11 @@
     <string name="ok">OK</string>
     <string name="done">Done</string>
     <string name="cancel">Cancel</string>
-    <string name="cursor_action">DRAW!</string>
+    <string name="cursor_action">DRAW</string>
     <string name="error">Internal error</string>
     <string name="dont_show_again">Don\'t show again</string>
-    <string name="comp_mode">On Android 4.4, PXL uses dark theme</string>
-    <string name="feedback_mail_subject">PXL Feedback</string>
+    <string name="comp_mode">On Android 4.4, PXLRT uses compatible dark theme</string>
+    <string name="feedback_mail_subject">PXLRT Feedback</string>
 
     <!-- Misc -->
     <string name="misc">Other</string>
@@ -61,7 +60,6 @@
     <string name="height">Height</string>
     <string name="transparentBackground">Transparent Background</string>
     <string name="incorrect_width_or_height">Width and height must be bigger than 0</string>
-    <string name="incorrect_project_name">Project name is already in use or incorrect!\n(You may use only letters, digits and spaces)</string>
     <string name="imported_bitmap_too_big" formatted="false">Maximum size of imported image is %dx%d!</string>
     <string name="name_imported">Imported</string>
     <string name="original">Original</string>

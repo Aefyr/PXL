@@ -14,11 +14,11 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.af.pxl.analytics.CanvasAnalyticsHelper;
 import com.af.pxl.fragments.PreferencesFragment;
 import com.af.pxl.palettes.PaletteManagerH;
 import com.af.pxl.projects.Project;
@@ -81,6 +81,7 @@ public class AdaptivePixelSurfaceH extends View {
 
     //Rest
     PaletteManagerH colorManager;
+    private CanvasAnalyticsHelper canvasAnalytics;
 
     public AdaptivePixelSurfaceH(Context context) {
         super(context);
@@ -106,6 +107,7 @@ public class AdaptivePixelSurfaceH extends View {
         cursor = new CursorH(this);
         initializePaints();
         cursorPreviewRect = new RectF();
+        canvasAnalytics = CanvasAnalyticsHelper.getInstance(getContext());
     }
 
     public interface OnToolChangeListener{
@@ -159,6 +161,7 @@ public class AdaptivePixelSurfaceH extends View {
         if(onToolChangeListener!=null)
             onToolChangeListener.onToolChanged(currentTool, showToolSettings);
 
+        canvasAnalytics.logToolPicked(tool);
         invalidate();
     }
 
@@ -193,6 +196,7 @@ public class AdaptivePixelSurfaceH extends View {
         symmetry = enabled;
         symmetryType = type;
         superPencil.symmetryUpdate();
+        canvasAnalytics.logSymmetryChange(enabled, type);
     }
 
     public SymmetryType getSymmetryType() {
@@ -324,6 +328,7 @@ public class AdaptivePixelSurfaceH extends View {
 
     void setGridEnabled(boolean enabled) {
         gridEnabled = enabled;
+        canvasAnalytics.logGridVisibilityChange(enabled);
         invalidate();
     }
 
@@ -331,7 +336,7 @@ public class AdaptivePixelSurfaceH extends View {
     private int backgroundColor = Color.GRAY;
 
     void initializePaints() {
-        //Main paint
+        //Projects paint
         paint = new Paint();
         paint.setAntiAlias(false);
         paint.setFilterBitmap(false);
@@ -571,6 +576,7 @@ public class AdaptivePixelSurfaceH extends View {
             return;
 
         cursorMode = enabled;
+        canvasAnalytics.logCursorModeChange(enabled);
         invalidate();
     }
 

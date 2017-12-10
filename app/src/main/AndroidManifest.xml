@@ -8,9 +8,9 @@
     <supports-screens android:requiresSmallestWidthDp="360"/>
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:hardwareAccelerated="true"
-        android:icon="@mipmap/icon2"
+        android:icon="@mipmap/icon3"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"

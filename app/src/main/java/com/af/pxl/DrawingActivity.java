@@ -24,6 +24,8 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.af.pxl.analytics.CanvasAnalyticsHelper;
+import com.af.pxl.analytics.FirebaseConstants;
 import com.af.pxl.custom.ItemWithIcon;
 import com.af.pxl.custom.ListAdapterWithIcons;
 import com.af.pxl.palettes.PaletteManagerH;
@@ -110,28 +112,36 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
             dialog11 = new AlertDialog.Builder(this).setTitle(getString(R.string.canvas_options)).setAdapter(adapterWithIcons, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
+                    String analyticsAction = "undefined";
                     switch (i) {
                         case 0:
                             aps.clearCanvas();
+                            analyticsAction = FirebaseConstants.Canvas.ACTION_CLEAR;
                             break;
                         case 1:
                             startTranslateActivity();
+                            analyticsAction = FirebaseConstants.Canvas.ACTION_MOVE;
                             break;
                         case 2:
                             mergeTool();
+                            analyticsAction = FirebaseConstants.Canvas.ACTION_OVERLAY;
                             break;
                         case 3:
                             aps.centerCanvas();
+                            analyticsAction = FirebaseConstants.Canvas.ACTION_CENTER;
                             aps.invalidate();
                             break;
                         case 4:
                             flipImage();
+                            analyticsAction = FirebaseConstants.Canvas.ACTION_MIRROR;
                             break;
                         case 5:
                             exportImage();
+                            analyticsAction = FirebaseConstants.Canvas.ACTION_SAVE;
                             break;
 
                     }
+                    CanvasAnalyticsHelper.getInstance(DrawingActivity.this).logCanvasSpecialAction(analyticsAction);
                 }
             }).create();
         }

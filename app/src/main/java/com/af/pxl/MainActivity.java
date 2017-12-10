@@ -156,10 +156,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_about:
                 new AlertDialog.Builder(this).setMessage("mem: "+Runtime.getRuntime().maxMemory()/1024/1024).setPositiveButton(R.string.ok, null).create().show();
                 break;
-            case R.id.nav_tutorial:
+            /*case R.id.nav_tutorial:
                 Intent tut = new Intent(MainActivity.this, TutorialActivity.class);
                 startActivity(tut);
-                break;
+                break;*/
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

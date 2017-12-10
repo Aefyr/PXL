@@ -12,4 +12,5 @@
     <color name="colorPressedPaletteBG">#af455a64</color>
     <color name="colorRetroGray">#757575</color>
     <color name="colorCursorAction">#1976d2</color>
+    <color name="colorLighterAccent">#67e27f</color>
 </resources>
