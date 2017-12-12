@@ -27,6 +27,7 @@
     <string name="dont_show_again">Don\'t show again</string>
     <string name="comp_mode">On Android 4.4, PXLRT uses compatible dark theme</string>
     <string name="feedback_mail_subject">PXLRT Feedback</string>
+    <string name="about_info" formatted="false">PXLRT version %s\nAvailable process memory: %d MB</string>
 
     <!-- Misc -->
     <string name="misc">Other</string>
@@ -46,7 +47,7 @@
     <string name="pick_color">Edit Current Color</string>
     <string name="add_to_palette">Add to Palette</string>
     <string name="add_to_palette_hint">Click on the color in palette you want to replace with current color!</string>
-    <string name="color_edit_hint">Click color to edit it!</string>
+    <string name="color_edit_hint">Click on a color to edit it!</string>
     <string name="extracted">Extracted</string>
     <string name="extracting">Extracting colors…</string>
     <string name="default_palette">Default</string>

@@ -1,5 +1,5 @@
 #pragma version(1)
-#pragma rs java_package_name(com.af.pxl)
+#pragma rs java_package_name(com.aefyr.pxl)
 #pragma rs_fp_relaxed
 
 int3 oldValue = {1, 1, 1};

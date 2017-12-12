@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.af.pxl">
+    package="com.aefyr.pxl">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -16,19 +16,19 @@
         android:theme="@style/AppTheme"
         android:largeHeap="true">
         <activity
-            android:name="com.af.pxl.DrawingActivity"
+            android:name="com.aefyr.pxl.DrawingActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoStatusBar" />
         <activity
-            android:name="com.af.pxl.ColorSwapActivity"
+            android:name="com.aefyr.pxl.ColorSwapActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoStatusBar" />
         <activity
-            android:name="com.af.pxl.BitmapsMergeActivity"
+            android:name="com.aefyr.pxl.BitmapsMergeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoStatusBar" />
         <activity
-            android:name="com.af.pxl.MainActivity"
+            android:name="com.aefyr.pxl.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashScreen">
             <intent-filter>
@@ -38,16 +38,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.af.pxl.TestActivity"
+            android:name="com.aefyr.pxl.TestActivity"
             android:theme="@style/OverlayActivity" />
         <activity
-            android:name="com.af.pxl.palettes.PalettePickerActivity"
+            android:name="com.aefyr.pxl.palettes.PalettePickerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoStatusBar" />
-        <activity android:name="com.af.pxl.TCA.TutorialActivity"></activity>
+        <activity android:name="com.aefyr.pxl.TCA.TutorialActivity"></activity>
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.af.pxl.fileprovider"
+            android:authorities="com.aefyr.pxl.fileprovider"
             android:grantUriPermissions="true"
             android:exported="false">
             <meta-data

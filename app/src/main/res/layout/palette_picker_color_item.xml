@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:padding="6dp">
 
-    <com.af.pxl.custom.ColorCircle
+    <com.aefyr.pxl.custom.ColorCircle
         android:id="@+id/colorCircle"
         android:layout_width="48dp"
         android:layout_height="48dp"
