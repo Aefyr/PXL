@@ -201,7 +201,7 @@ public class GalleryFragment extends android.app.Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IMPORT_IMAGE && resultCode == Activity.RESULT_OK) {
             final int dLimit = Ruler.getInstance(getActivity()).maxDimensionSize();
-            Bitmap importedImage;
+            final Bitmap importedImage;
             try {
                 importedImage = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(data.getData()));
 
@@ -211,17 +211,36 @@ public class GalleryFragment extends android.app.Fragment {
                 return;
             }
             if (importedImage.getWidth() > dLimit || importedImage.getHeight() > dLimit) {
-                new AlertDialog.Builder(getActivity()).setMessage(String.format(getString(R.string.imported_bitmap_too_big), dLimit, dLimit)).setPositiveButton(R.string.ok, null).show();
+                final int suggestedW = importedImage.getWidth()>importedImage.getHeight()?dLimit: (int) ((float)importedImage.getWidth() / ((float) importedImage.getHeight() / (float)dLimit));
+                final int suggestedH = importedImage.getHeight()>importedImage.getWidth()?dLimit:(int) ((float)importedImage.getHeight() / ((float) importedImage.getWidth() / (float) dLimit));
+                new AlertDialog.Builder(getActivity()).setTitle(R.string.warn).setMessage(String.format(getString(R.string.resize_promt), dLimit, dLimit, suggestedW, suggestedH)).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Bitmap resizedImportedImage = Bitmap.createScaledBitmap(importedImage, suggestedW, suggestedH, false);
+                        createProjectFromImportedImage(resizedImportedImage);
+                        resizedImportedImage.recycle();
+                        importedImage.recycle();
+                    }
+                }).setNegativeButton(R.string.cancel_import, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        importedImage.recycle();
+                    }
+                }).create().show();
                 return;
             }
-            Project p = ProjectsUtils.createProjectFromBitmap(getActivity(), importedImage);
+            createProjectFromImportedImage(importedImage);
             importedImage.recycle();
-            adapter.addProject(p, true);
-            projectsAnalytics.logProjectCreated(FirebaseConstants.Projects.VIA_IMPORTING);
-            openProject(p.id, adapter.getItemCount()-1);
         } else if (requestCode == DRAWING_REQUEST && resultCode == 1) {
             adapter.notifyItemChanged(0);
         }
+    }
+
+    private void createProjectFromImportedImage(Bitmap importedImage){
+        Project p = ProjectsUtils.createProjectFromBitmap(getActivity(), importedImage);
+        adapter.addProject(p, true);
+        projectsAnalytics.logProjectCreated(FirebaseConstants.Projects.VIA_IMPORTING);
+        openProject(p.id, 0);
     }
 
     private void initializeOnProjectClickListener() {

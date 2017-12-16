@@ -74,6 +74,8 @@
     <string name="create">Create</string>
     <string name="project_saved">Project has been exported</string>
     <string name="res_notice">If you\'re going to use the exported image for further editing or as an asset in game, select original resolution to keep it a \"True Pixel Art\". But if you want share the image, select a reasonably high resolution, otherwise the image will look blurry due to scaling algorithms used in most apps and websites</string>
+    <string name="resize_promt">Maximum project resolution is %dx%d.\n\nDo you want PXLRT to resize imported image to %dx%d?</string>
+    <string name="cancel_import">Cancel Importing</string>
 
     <!--gallery_item-->
     <string name="size">Size</string>

@@ -22,7 +22,6 @@ public class ColorSwapperH {
 
     //Common
     private Context c;
-    private int mode;
     private int oldColor = Color.RED;
     private int newColor = Color.WHITE;
     private Bitmap b;
@@ -30,15 +29,13 @@ public class ColorSwapperH {
 
     //Accelerated swapTo resources
     private RenderScript rs;
-    private ScriptC_color_swapper fillScript;
-    private Allocation in;
-    private Allocation out;
+    private ScriptC_color_swapper swapperScript;
+    private Allocation bitmapAllocation;
 
     //Slow swapTo resources
     private HashSet<Vector2> pixelsToSwap;
 
     public ColorSwapperH(Context context, Bitmap bitmap, int fromColor, int toColor){
-        this.mode = mode;
         oldColor = fromColor;
         newColor = toColor;
         c = context;
@@ -68,9 +65,8 @@ public class ColorSwapperH {
     public void destroy(){
         if(accelerationEnabled) {
             rs.destroy();
-            fillScript.destroy();
-            in.destroy();
-            out.destroy();
+            swapperScript.destroy();
+            bitmapAllocation.destroy();
         }
     }
 
@@ -89,12 +85,11 @@ public class ColorSwapperH {
 
     private void initializeAcceleratedSwapResources(){
         rs = RenderScript.create(c);
-        fillScript = new ScriptC_color_swapper(rs);
+        swapperScript = new ScriptC_color_swapper(rs);
 
-        in = Allocation.createFromBitmap(rs, b);
-        out = Allocation.createTyped(rs, in.getType());
+        bitmapAllocation = Allocation.createFromBitmap(rs, b);
 
-        fillScript.set_oldValue(new Int3(Color.red(oldColor), Color.green(oldColor), Color.blue(oldColor)));
+        swapperScript.set_oldValue(new Int3(Color.red(oldColor), Color.green(oldColor), Color.blue(oldColor)));
 
         updateAcceleratedSwapResources();
     }
@@ -103,16 +98,18 @@ public class ColorSwapperH {
         float r = (float) Color.red(newColor)/255f;
         float g = (float) Color.green(newColor)/255f;
         float b = (float) Color.blue(newColor)/255f;
-        fillScript.set_newValue(new Float4(r, g, b, 1f));
+        swapperScript.set_newValue(new Float4(r, g, b, 1f));
 
-        fillScript.invoke_packColor();
+        swapperScript.invoke_packColor();
     }
 
     private void acceleratedSwap(){
-        fillScript.forEach_swap(in, out);
-        out.copyTo(b);
+        swapperScript.forEach_swap(bitmapAllocation, bitmapAllocation);
+        bitmapAllocation.copyTo(b);
+
+        //Preparing for next swap
         oldColor = newColor;
-        fillScript.set_oldValue(new Int3(Color.red(oldColor), Color.green(oldColor), Color.blue(oldColor)));
+        swapperScript.set_oldValue(new Int3(Color.red(oldColor), Color.green(oldColor), Color.blue(oldColor)));
     }
 
     private void initializeSlowSwapResources(){
