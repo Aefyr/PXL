@@ -13,12 +13,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.aefyr.pxl.common.Ruler;
-import com.aefyr.pxl.util.Utils;
 import com.aefyr.pxl.custom.PixelImageView;
+import com.aefyr.pxl.util.Utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -37,8 +38,8 @@ public class BitmapsMergeActivity extends AppCompatActivity {
     private Bitmap image;
     private Canvas bC;
     private Matrix m;
-    private int offsetX;
-    private int offsetY;
+    private float offsetX;
+    private float offsetY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,18 +177,10 @@ public class BitmapsMergeActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
-    private float cX, cY;
     private float pX, pY;
-    private int t = 8;
     private int prevPointerCount = 0;
 
     private void setupTouch() {
-        piv.setOnSizeChangedListener(new PixelImageView.OnSizeChangedListener() {
-            @Override
-            public void onSizeChanged(int width, int height) {
-                t = (int) piv.getPixelScale();
-            }
-        });
         piv.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -206,47 +199,22 @@ public class BitmapsMergeActivity extends AppCompatActivity {
                     y = motionEvent.getY();
                 }
 
-                if (prevPointerCount != pointerCount) {
+                if (prevPointerCount != pointerCount || motionEvent.getAction()==MotionEvent.ACTION_DOWN) {
                     pX = x;
                     pY = y;
                 }
 
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    pX = x;
-                    pY = y;
-                    return true;
-                }
 
-                if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
-                    cX += x - pX;
-                    cY += y - pY;
+                offsetX+=(x-pX)/piv.getPixelScale();
+                offsetY+=(y-pY)/piv.getPixelScale();
 
-                    if (cX > t) {
-                        offsetX += cX / t;
-                        redraw();
-                        cX = 0;
-                    }
-                    if (cX < -t) {
-                        offsetX += cX / t;
-                        redraw();
-                        cX = 0;
-                    }
-                    if (cY > t) {
-                        offsetY += cY / t;
-                        redraw();
-                        cY = 0;
-                    }
-                    if (cY < -t) {
-                        offsetY += cY / t;
-                        redraw();
-                        cY = 0;
-                    }
+                pX = x;
+                pY = y;
 
-                    pX = x;
-                    pY = y;
-                }
                 prevPointerCount = pointerCount;
-                return false;
+
+                redraw();
+                return true;
             }
         });
     }

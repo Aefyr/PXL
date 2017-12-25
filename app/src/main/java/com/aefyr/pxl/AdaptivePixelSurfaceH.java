@@ -15,6 +15,7 @@ import android.graphics.RectF;
 import android.graphics.Shader;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -697,6 +698,9 @@ public class AdaptivePixelSurfaceH extends View {
             scaleChanged = false;
             translateChanged = false;
 
+            //TODO limit relative offset
+            float realOffsetX = matrixOffsetX+(scaleAnchorX*(1-pixelScale));
+            Log.d("PXL/APS", "matrixOffsetX="+matrixOffsetX+", scaleAnchorX="+scaleAnchorX +", pixelScale="+pixelScale+", realOffset="+realOffsetX);
         }
 
         //Draw transparency tile
