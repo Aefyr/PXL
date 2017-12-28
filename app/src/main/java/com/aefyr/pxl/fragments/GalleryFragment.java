@@ -216,7 +216,7 @@ public class GalleryFragment extends android.app.Fragment {
                 new AlertDialog.Builder(getActivity()).setTitle(R.string.warn).setMessage(String.format(getString(R.string.resize_promt), dLimit, dLimit, suggestedW, suggestedH)).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Bitmap resizedImportedImage = Bitmap.createScaledBitmap(importedImage, suggestedW, suggestedH, false);
+                        Bitmap resizedImportedImage = Bitmap.createScaledBitmap(importedImage, suggestedW, suggestedH, true);
                         createProjectFromImportedImage(resizedImportedImage);
                         resizedImportedImage.recycle();
                         importedImage.recycle();

@@ -24,6 +24,7 @@ import com.aefyr.pxl.fragments.PreferencesFragment;
 import com.aefyr.pxl.palettes.PaletteManagerH;
 import com.aefyr.pxl.projects.Project;
 import com.aefyr.pxl.common.RectP;
+import com.aefyr.pxl.util.QueueLinearFloodFiller;
 import com.aefyr.pxl.util.Utils;
 
 import java.util.ArrayDeque;
@@ -594,7 +595,11 @@ public class AdaptivePixelSurfaceH extends View {
         int oldC = pixelBitmap.getPixel(x, y);
 
         long s = System.currentTimeMillis();
-        ArrayDeque<Pixel> p = new ArrayDeque<>();
+
+        //TODO Maybe keep this filler as a global variable
+        QueueLinearFloodFiller filler = new QueueLinearFloodFiller(pixelBitmap, oldC, paint.getColor());
+        filler.floodFill(x, y);
+        /*ArrayDeque<Pixel> p = new ArrayDeque<>(pixelWidth*pixelHeight);
 
         p.add(new Pixel(x, y));
 
@@ -633,7 +638,7 @@ public class AdaptivePixelSurfaceH extends View {
                 }
             }
 
-        }
+        }*/
 
         canvasHistory.completeHistoricalChange();
         fillInProgress = false;
@@ -694,13 +699,14 @@ public class AdaptivePixelSurfaceH extends View {
         if (scaleChanged || translateChanged) {
             pixelMatrix.reset();
             pixelMatrix.setScale(pixelScale, pixelScale, scaleAnchorX, scaleAnchorY);
+            matrixOffsetX = Utils.clamp(matrixOffsetX, (-pixelScale*pixelWidth-(scaleAnchorX*(1-pixelScale))), realWidth-(scaleAnchorX*(1-pixelScale)));
+            matrixOffsetY = Utils.clamp(matrixOffsetY, (-pixelScale*pixelHeight-(scaleAnchorY*(1-pixelScale))), realHeight-(scaleAnchorY*(1-pixelScale)));
             pixelMatrix.postTranslate(matrixOffsetX, matrixOffsetY);
             scaleChanged = false;
             translateChanged = false;
 
-            //TODO limit relative offset
-            float realOffsetX = matrixOffsetX+(scaleAnchorX*(1-pixelScale));
-            Log.d("PXL/APS", "matrixOffsetX="+matrixOffsetX+", scaleAnchorX="+scaleAnchorX +", pixelScale="+pixelScale+", realOffset="+realOffsetX);
+            //float realOffsetX = matrixOffsetX+(scaleAnchorX*(1-pixelScale));
+            //Log.d("PXL/APS", "matrixOffsetX="+matrixOffsetX+", scaleAnchorX="+scaleAnchorX +", pixelScale="+pixelScale+", realOffset="+realOffsetX);
         }
 
         //Draw transparency tile
