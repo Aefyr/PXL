@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.aefyr.pxl.experimental.ExperimentalPaletteEditorActivity;
 import com.aefyr.pxl.fragments.GalleryFragment;
 import com.aefyr.pxl.fragments.PalettesFragment;
 import com.aefyr.pxl.fragments.PreferencesFragment;
@@ -152,13 +153,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(Intent.createChooser(mailIntent, getString(R.string.feedback)));
                 break;
             case R.id.nav_about:
-                String versionName = "???";
+                Intent epea = new Intent(this, ExperimentalPaletteEditorActivity.class);
+                startActivity(epea);
+                /*String versionName = "???";
                 try {
                     versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
                 } catch (PackageManager.NameNotFoundException e) {
                     e.printStackTrace();
                 }
                 new AlertDialog.Builder(this).setMessage(String.format(getString(R.string.about_info), versionName, Runtime.getRuntime().maxMemory()/1024/1024)).setPositiveButton(R.string.ok, null).create().show();
+                */
                 break;
             /*case R.id.nav_tutorial:
                 Intent tut = new Intent(MainActivity.this, TutorialActivity.class);

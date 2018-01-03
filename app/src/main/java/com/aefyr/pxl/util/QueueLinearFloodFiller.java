@@ -76,7 +76,7 @@ public class QueueLinearFloodFiller {
 
         pixels = new int[width * height];
 
-        image.getPixels(pixels, 0, width, 0, 0, width - 1, height - 1);
+        image.getPixels(pixels, 0, width, 0, 0, width, height);
     }
 
     public void useImage(Bitmap img) {
@@ -88,7 +88,7 @@ public class QueueLinearFloodFiller {
 
         pixels = new int[width * height];
 
-        image.getPixels(pixels, 0, width, 0, 0, width - 1, height - 1);
+        image.getPixels(pixels, 0, width, 0, 0, width, height);
     }
 
     private void prepare() {
@@ -149,7 +149,7 @@ public class QueueLinearFloodFiller {
             }
         }
 
-        image.setPixels(pixels, 0, width, 0, 0  , width - 1, height - 1);
+        image.setPixels(pixels, 0, width, 0, 0  , width, height);
     }
 
     // Finds the furthermost left and right boundaries of the fill area

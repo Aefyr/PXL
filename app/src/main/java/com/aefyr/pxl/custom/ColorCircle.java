@@ -65,6 +65,10 @@ public class ColorCircle extends View {
         invalidate();
     }
 
+    public int color(){
+        return color;
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);

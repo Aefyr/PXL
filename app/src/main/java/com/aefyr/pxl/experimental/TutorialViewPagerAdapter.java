@@ -1,4 +1,4 @@
-package com.aefyr.pxl.TCA;
+package com.aefyr.pxl.experimental;
 
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;

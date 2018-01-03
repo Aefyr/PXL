@@ -1,4 +1,4 @@
-package com.aefyr.pxl.TCA;
+package com.aefyr.pxl.experimental;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;

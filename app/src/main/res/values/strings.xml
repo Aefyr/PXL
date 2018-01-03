@@ -27,7 +27,7 @@
     <string name="dont_show_again">Don\'t show again</string>
     <string name="comp_mode">On Android 4.4, PXLRT uses compatible dark theme</string>
     <string name="feedback_mail_subject">PXLRT Feedback</string>
-    <string name="about_info" formatted="false">PXLRT version %s\nAvailable process memory: %d MB</string>
+    <string name="about_info" formatted="false">PXLRT version %s\nMax process memory: %d MB</string>
 
     <!-- Misc -->
     <string name="misc">Other</string>

@@ -19,14 +19,13 @@ import java.util.ArrayList;
 class CanvasHistoryH {
     private AdaptivePixelSurfaceH aps;
 
-    private ArrayDeque<int[]> past;
+    private ArrayDeque<Bitmap> past;
     private Bitmap bitmap;
     private int size;
-    private int arraySize;
 
     final static int ADAPTIVE_SIZE = 322;
 
-    private ArrayDeque<int[]> future;
+    private ArrayDeque<Bitmap> future;
 
     private ArrayList<OnHistoryAvailabilityChangeListener> listeners;
 
@@ -44,7 +43,6 @@ class CanvasHistoryH {
         this.size = size;
         past = new ArrayDeque<>();
         future = new ArrayDeque<>();
-        arraySize = bitmap.getWidth() * bitmap.getHeight();
         listeners = new ArrayList<>();
     }
 
@@ -55,8 +53,8 @@ class CanvasHistoryH {
         } else
             this.size = size;
         setProject(project);
-        past = new ArrayDeque<>();
-        future = new ArrayDeque<>();
+        past = new ArrayDeque<>(size);
+        future = new ArrayDeque<>(size);
         listeners = new ArrayList<>();
     }
 
@@ -80,36 +78,11 @@ class CanvasHistoryH {
         listeners.add(listener);
     }
 
-    /*void commitHistoricalChange(){
-
-        if(past.size()==size){
-            past.removeLast();
-        }
-
-        int[] pixels = new int[arraySize];
-        bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0 , bitmap.getWidth(), bitmap.getHeight());
-        past.addFirst(pixels);
-
-        if(past.size()==1){
-            for(OnHistoryAvailabilityChangeListener listener: listeners){
-                listener.pastAvailabilityChanged(true);
-            }
-        }
-
-
-        future.clear();
-        for(OnHistoryAvailabilityChangeListener listener: listeners){
-            listener.futureAvailabilityChanged(false);
-        }
-    }*/
-
-
-    private int[] temp;
+    private Bitmap temp;
     private boolean historicalChangeInProgress = false;
 
     void startHistoricalChange() {
-        temp = new int[arraySize];
-        bitmap.getPixels(temp, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+        temp = bitmap.copy(Bitmap.Config.ARGB_8888, false);
         historicalChangeInProgress = true;
     }
 
@@ -141,7 +114,7 @@ class CanvasHistoryH {
     void cancelHistoricalChange(boolean canvasWasChanged) {
         if (historicalChangeInProgress) {
             if (canvasWasChanged) {
-                bitmap.setPixels(temp, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+                aps.pixelCanvas.drawBitmap(temp, 0, 0, null);
                 aps.invalidate();
             }
             historicalChangeInProgress = false;
@@ -155,14 +128,9 @@ class CanvasHistoryH {
 
         aps.cancelDrawing();
 
-        int[] pixels = new int[arraySize];
+        future.addFirst(bitmap.copy(Bitmap.Config.ARGB_8888, false));
 
-        bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-        future.addFirst(pixels);
-
-        pixels = past.removeFirst();
-        bitmap.setPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-
+        aps.pixelCanvas.drawBitmap(past.removeFirst(), 0, 0, null);
 
         for (OnHistoryAvailabilityChangeListener listener : listeners) {
             listener.futureAvailabilityChanged(true);
@@ -185,12 +153,9 @@ class CanvasHistoryH {
         if (aps.currentTool == AdaptivePixelSurfaceH.Tool.SELECTOR)
             aps.selector.cancel(0, 0);
 
-        int[] pixels = new int[arraySize];
-        bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-        past.addFirst(pixels);
+        past.addFirst(bitmap.copy(Bitmap.Config.ARGB_8888, false));
 
-        pixels = future.removeFirst();
-        bitmap.setPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+        aps.pixelCanvas.drawBitmap(future.removeFirst(), 0, 0, null);
 
         for (OnHistoryAvailabilityChangeListener listener : listeners) {
             listener.pastAvailabilityChanged(true);
@@ -213,7 +178,6 @@ class CanvasHistoryH {
         this.project = project;
         projectBitmap = new File(project.directory + "/image.pxl");
         bitmap = aps.pixelBitmap;
-        arraySize = bitmap.getWidth() * bitmap.getHeight();
     }
 
     private void saveCanvas() {

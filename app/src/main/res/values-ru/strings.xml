@@ -152,7 +152,7 @@
     <string name="sym_axises_hidden">Ось симметрии скрыта</string>
     <string name="sym_axises_color">Цвет осей симметрии</string>
     <string name="default_palette">По умолчанию</string>
-    <string name="about_info" formatted="false">PXLRT версии %s\nДоступная память процесса: %d МБ</string>
+    <string name="about_info" formatted="false">PXLRT версии %s\nМаксимальная память процесса: %d МБ</string>
     <string name="resize_promt">Максимальное разрешение проекта равно %dx%d.\n\nХотите, чтобы PXLRT сжал выбранное изображение до разрешения %dx%d?</string>
     <string name="cancel_import">Отмена импорта</string>
 
