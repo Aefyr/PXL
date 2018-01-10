@@ -155,6 +155,8 @@
     <string name="about_info" formatted="false">PXLRT версии %s\nМаксимальная память процесса: %d МБ</string>
     <string name="resize_promt">Максимальное разрешение проекта равно %dx%d.\n\nХотите, чтобы PXLRT сжал выбранное изображение до разрешения %dx%d?</string>
     <string name="cancel_import">Отмена импорта</string>
-
+    <string name="posterizing">Постеризация изображения…</string>
+    <string name="posterizer_prompt">Постеризация</string>
+    <string name="posterizer_desc">Вы хотите, чтобы PXLRT постеризовал это изображение?\n\n(Постеризация - это снижение количества цветов, используемых в изображении до 16, чтобы оно выглядело более \"пиксельартно\")</string>
 
 </resources>

@@ -35,8 +35,6 @@ public class PaletteMakerH {
     }
 
     private Palette2 extractPalette3(Uri bitmapUri){
-        long startTime = System.currentTimeMillis();
-
         Bitmap image;
         try {
             image = BitmapFactory.decodeStream(c.getContentResolver().openInputStream(bitmapUri));
@@ -44,6 +42,12 @@ public class PaletteMakerH {
             e.printStackTrace();
             return null;
         }
+
+        return extractPalette3(image);
+    }
+
+    public Palette2 extractPalette3(Bitmap image){
+        long startTime = System.currentTimeMillis();
 
         Bitmap lidlBitmap = Kmeans.test(createSampleSizedImage(image, 128, true));
 
@@ -64,7 +68,7 @@ public class PaletteMakerH {
         if(colors.size()<16)
             palette.fillVoidColorsWithDefault(true);
 
-        Log.d("PaletteMaker", "Generated palette from image in "+(System.currentTimeMillis()-startTime)+"ms.");
+        Log.d("PaletteMakerH", "Generated palette from image in "+(System.currentTimeMillis()-startTime)+"ms.");
         return palette;
     }
 

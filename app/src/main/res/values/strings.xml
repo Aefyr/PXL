@@ -76,6 +76,9 @@
     <string name="res_notice">If you\'re going to use the exported image for further editing or as an asset in game, select original resolution to keep it a \"True Pixel Art\". But if you want share the image, select a reasonably high resolution, otherwise the image will look blurry due to scaling algorithms used in most apps and websites</string>
     <string name="resize_promt">Maximum project resolution is %dx%d.\n\nDo you want PXLRT to resize imported image to %dx%d?</string>
     <string name="cancel_import">Cancel Importing</string>
+    <string name="posterizing">Posterizing Image…</string>
+    <string name="posterizer_prompt">Posterizing</string>
+    <string name="posterizer_desc">Do you want to posterize the Image?\n\n(Posterization means reducing the color palette of the image to 16 colors, so it looks more \"pixelartish\")</string>
 
     <!--gallery_item-->
     <string name="size">Size</string>

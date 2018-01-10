@@ -45,12 +45,22 @@ public class ExperimentalPaletteEditorActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 animate(view);
+                lidlTest();
             }
         };
 
         for(ColorCircle circle: circles)
             circle.setOnClickListener(listener);
 
+    }
+
+    private void lidlTest(){
+        int color = Color.BLUE;
+        System.out.println("blue="+color);
+        float r = color & 0x00FF0000;
+        float g = color & 0x0000FF00;
+        float b = color & 0x000000FF;
+        System.out.println(String.format("r = %f; g = %f; b = %f", r,g,b));
     }
 
     private void animate(final View clickedCircle){

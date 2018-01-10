@@ -2,12 +2,16 @@ package com.aefyr.pxl.fragments;
 
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -33,6 +37,7 @@ import com.aefyr.pxl.common.Ruler;
 import com.aefyr.pxl.projects.DynamicProjectsLoader;
 import com.aefyr.pxl.projects.ProjectsExporter;
 import com.aefyr.pxl.util.PermissionsUtils;
+import com.aefyr.pxl.util.Posterizer;
 import com.aefyr.pxl.util.Utils;
 import com.aefyr.pxl.projects.Project;
 import com.aefyr.pxl.projects.ProjectsRecycleAdapter;
@@ -217,9 +222,8 @@ public class GalleryFragment extends android.app.Fragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Bitmap resizedImportedImage = Bitmap.createScaledBitmap(importedImage, suggestedW, suggestedH, true);
-                        createProjectFromImportedImage(resizedImportedImage);
-                        resizedImportedImage.recycle();
                         importedImage.recycle();
+                        suggestPosterizing(resizedImportedImage);
                     }
                 }).setNegativeButton(R.string.cancel_import, new DialogInterface.OnClickListener() {
                     @Override
@@ -229,10 +233,41 @@ public class GalleryFragment extends android.app.Fragment {
                 }).create().show();
                 return;
             }
-            createProjectFromImportedImage(importedImage);
-            importedImage.recycle();
+            suggestPosterizing(importedImage);
         } else if (requestCode == DRAWING_REQUEST && resultCode == 1) {
             adapter.notifyItemChanged(0);
+        }
+    }
+
+    private void suggestPosterizing(final Bitmap image){
+        if(PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean("hardware_accelerated", true)){
+            new AlertDialog.Builder(getActivity()).setTitle(R.string.posterizer_prompt).setMessage(R.string.posterizer_desc).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    final Posterizer posterizer = new Posterizer(getActivity());
+                    final ProgressDialog progressDialog = Posterizer.createGenerationProgressDialog(getActivity());
+                    progressDialog.show();
+                    posterizer.posterizeAsync(image, new Posterizer.PosterizationListener() {
+                        @Override
+                        public void onImagePosterized(Bitmap posterizedImage) {
+                            progressDialog.dismiss();
+                            createProjectFromImportedImage(posterizedImage);
+                            posterizedImage.recycle();
+                            image.recycle();
+                            posterizer.recycle();
+                        }
+                    });
+                }
+            }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    createProjectFromImportedImage(image);
+                    image.recycle();
+                }
+            }).create().show();
+        }else {
+            createProjectFromImportedImage(image);
+            image.recycle();
         }
     }
 
