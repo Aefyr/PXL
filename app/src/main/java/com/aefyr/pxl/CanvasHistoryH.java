@@ -1,6 +1,9 @@
 package com.aefyr.pxl;
 
 import android.graphics.Bitmap;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -22,6 +25,7 @@ class CanvasHistoryH {
     private ArrayDeque<Bitmap> past;
     private Bitmap bitmap;
     private int size;
+    private Paint srcPaint;
 
     final static int ADAPTIVE_SIZE = 322;
 
@@ -52,6 +56,10 @@ class CanvasHistoryH {
             autoSize();
         } else
             this.size = size;
+
+        srcPaint = new Paint();
+        srcPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
+
         setProject(project);
         past = new ArrayDeque<>(size);
         future = new ArrayDeque<>(size);
@@ -114,7 +122,7 @@ class CanvasHistoryH {
     void cancelHistoricalChange(boolean canvasWasChanged) {
         if (historicalChangeInProgress) {
             if (canvasWasChanged) {
-                aps.pixelCanvas.drawBitmap(temp, 0, 0, null);
+                aps.pixelCanvas.drawBitmap(temp, 0, 0, srcPaint);
                 aps.invalidate();
             }
             historicalChangeInProgress = false;
@@ -130,7 +138,7 @@ class CanvasHistoryH {
 
         future.addFirst(bitmap.copy(Bitmap.Config.ARGB_8888, false));
 
-        aps.pixelCanvas.drawBitmap(past.removeFirst(), 0, 0, null);
+        aps.pixelCanvas.drawBitmap(past.removeFirst(), 0, 0, srcPaint);
 
         for (OnHistoryAvailabilityChangeListener listener : listeners) {
             listener.futureAvailabilityChanged(true);
@@ -155,7 +163,7 @@ class CanvasHistoryH {
 
         past.addFirst(bitmap.copy(Bitmap.Config.ARGB_8888, false));
 
-        aps.pixelCanvas.drawBitmap(future.removeFirst(), 0, 0, null);
+        aps.pixelCanvas.drawBitmap(future.removeFirst(), 0, 0, srcPaint);
 
         for (OnHistoryAvailabilityChangeListener listener : listeners) {
             listener.pastAvailabilityChanged(true);

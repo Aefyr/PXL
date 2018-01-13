@@ -12,8 +12,9 @@ import android.util.Log;
 
 import com.aefyr.pxl.R;
 import com.aefyr.pxl.ScriptC_posterizer;
-import com.aefyr.pxl.palettes.Palette2;
 import com.aefyr.pxl.palettes.PaletteMakerH;
+
+import java.util.ArrayList;
 
 /**
  * Created by Aefyr on 10.01.2018.
@@ -21,20 +22,22 @@ import com.aefyr.pxl.palettes.PaletteMakerH;
 
 public class Posterizer {
     private static String TAG = "Posterizer";
+
+    private boolean recycled;
     private Context c;
     private ScriptC_posterizer posterizer;
     private RenderScript rs;
-
-    private Allocation paletteAllocation;
 
     public Posterizer(Context c){
         this.c = c;
         rs = RenderScript.create(c);
         posterizer = new ScriptC_posterizer(rs);
-        paletteAllocation = Allocation.createTyped(rs, Type.createX(rs, Element.I32(rs), 16));
     }
 
-    public Bitmap posterize(Bitmap image){
+    public Bitmap posterize(Bitmap image, int colorsCount){
+        if(recycled)
+            throw new IllegalStateException("You can't use a recycled Posterizer");
+
         long start = System.currentTimeMillis();
 
         final int w = image.getWidth();
@@ -43,14 +46,20 @@ public class Posterizer {
         Allocation bitmapAllocation = Allocation.createFromBitmap(rs, image);
         Log.d(TAG, "Created bitmap allocation from the image");
 
-        Log.d(TAG, "Extracting 16-bit palette from image...");
+        Log.d(TAG, String.format("Extracting %d-colors palette from image...", colorsCount));
         PaletteMakerH paletteMaker = new PaletteMakerH(c);
-        Palette2 palette = paletteMaker.extractPalette3(image);
+        ArrayList<Integer> colorsAL = paletteMaker.extractColorsFromImage(image, colorsCount);
 
-        int[] colors = new int[16];
-        for(int i=0; i<16; i++){
-            colors[i] = palette.getColor(i);
+        colorsCount = colorsAL.size();
+        posterizer.set_paletteSize(colorsCount);
+        Log.d(TAG, String.format("Actually extracted %d colors", colorsCount));
+
+        int[] colors = new int[colorsCount];
+        for(int i=0; i<colorsCount; i++){
+            colors[i] = colorsAL.get(i);
         }
+
+        Allocation paletteAllocation = Allocation.createTyped(rs, Type.createX(rs, Element.I32(rs), colorsCount));
         paletteAllocation.copyFrom(colors);
 
         Log.d(TAG, String.format("Palette was extracted and loaded into allocation in %d ms, starting applying it to the image...", System.currentTimeMillis()-start));
@@ -67,19 +76,20 @@ public class Posterizer {
         bitmapAllocation.copyTo(posterizedImage);
 
         bitmapAllocation.destroy();
+        paletteAllocation.destroy();
         Log.d(TAG, String.format("Done! Palette was applied to the bitmap in %d ms.", System.currentTimeMillis()-start));
 
         return posterizedImage;
     }
 
-    public void posterizeAsync(Bitmap image, PosterizationListener listener){
-        new PosterizerTask(listener).execute(image);
+    public void posterizeAsync(Bitmap image, int colorsCount, PosterizationListener listener){
+        new PosterizerTask(colorsCount, listener).execute(image);
     }
 
     public void recycle(){
+        recycled = true;
         posterizer.destroy();
         rs.destroy();
-        paletteAllocation.destroy();
     }
 
     public interface PosterizationListener{
@@ -88,14 +98,16 @@ public class Posterizer {
 
     private class PosterizerTask extends AsyncTask<Bitmap, Void, Bitmap>{
         private PosterizationListener listener;
+        private int colorsCount;
 
-        PosterizerTask(PosterizationListener listener){
+        PosterizerTask(int colorsCount, PosterizationListener listener){
             this.listener = listener;
+            this.colorsCount = colorsCount;
         }
 
         @Override
         protected Bitmap doInBackground(Bitmap... bitmaps) {
-            return posterize(bitmaps[0]);
+            return posterize(bitmaps[0], colorsCount);
         }
 
         @Override

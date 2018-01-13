@@ -21,6 +21,8 @@ import java.util.Comparator;
  */
 
 public class PaletteMakerH {
+    private static final String TAG = "PaletteMakerH";
+
     private Context c;
     private String TEXT_EXTRACTED = "Extracted";
 
@@ -46,30 +48,59 @@ public class PaletteMakerH {
         return extractPalette3(image);
     }
 
-    public Palette2 extractPalette3(Bitmap image){
-        long startTime = System.currentTimeMillis();
-
-        Bitmap lidlBitmap = Kmeans.test(createSampleSizedImage(image, 128, true));
-
-        int[] pixels = new int[lidlBitmap.getWidth()*lidlBitmap.getHeight()];
-        lidlBitmap.getPixels(pixels, 0, lidlBitmap.getWidth(), 0, 0, lidlBitmap.getWidth(), lidlBitmap.getHeight());
+    private Palette2 extractPalette3(Bitmap image){
+        ArrayList<Integer> colors = extractColorsFromImage(image, 16);
 
         Palette2 palette = new Palette2(getName(), false);
-
-        ArrayList<Integer> colors = palette.getColors();
-        for(int color: pixels){
-            if(!colors.contains(color))
-                colors.add(color);
-        }
-
-        Collections.sort(colors, new ColorBrightnessComparator());
 
         palette.setColors(colors);
         if(colors.size()<16)
             palette.fillVoidColorsWithDefault(true);
 
-        Log.d("PaletteMakerH", "Generated palette from image in "+(System.currentTimeMillis()-startTime)+"ms.");
         return palette;
+    }
+
+    public ArrayList<Integer> extractColorsFromImage(Bitmap image, int colorsCount){
+        long start = System.currentTimeMillis();
+        Bitmap lidlBitmap = createSampleSizedImage(image, 128, true);
+
+        /*This lidl-looking system tries to retrieve colorsCount+1 colors from image just to check if we need to run Kmeans on the image,
+        since running Kmeans on and image is very expensive and it will actually ruin the color palette of an image that has less than colorsCount colors*/
+        ArrayList<Integer> colors = sequentiallyGetUniqueColorsFromImage(lidlBitmap, colorsCount+1);
+
+        if(colors.size()<=colorsCount)
+            return colors;
+
+        lidlBitmap = new Kmeans().calculate(lidlBitmap, colorsCount, 1);
+
+        colors = sequentiallyGetUniqueColorsFromImage(lidlBitmap, colorsCount);
+
+        Log.d(TAG, String.format("Extracted %d colors from image in %d ms", colorsCount, System.currentTimeMillis()-start));
+
+        return colors;
+    }
+
+    private ArrayList<Integer> sequentiallyGetUniqueColorsFromImage(Bitmap image, int stopWhenUniqueColorsCountReaches){
+        long start = System.currentTimeMillis();
+
+        ArrayList<Integer> colors = new ArrayList<>(stopWhenUniqueColorsCountReaches);
+        int[] pixels = new int[image.getWidth()*image.getHeight()];
+        image.getPixels(pixels, 0, image.getWidth(), 0, 0, image.getWidth(), image.getHeight());
+
+        for(int color: pixels){
+            if(!colors.contains(color)) {
+                colors.add(color);
+
+                if(colors.size()>=stopWhenUniqueColorsCountReaches)
+                    break;
+            }
+        }
+
+        Collections.sort(colors, new ColorBrightnessComparator());
+
+        Log.d(TAG, String.format("Retrieved %d colors from a %dx%d image in %d ms", colors.size(), image.getWidth(), image.getHeight(), System.currentTimeMillis()-start));
+
+        return colors;
     }
 
     private class ColorBrightnessComparator implements Comparator<Integer>{

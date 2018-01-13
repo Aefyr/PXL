@@ -247,7 +247,7 @@ public class GalleryFragment extends android.app.Fragment {
                     final Posterizer posterizer = new Posterizer(getActivity());
                     final ProgressDialog progressDialog = Posterizer.createGenerationProgressDialog(getActivity());
                     progressDialog.show();
-                    posterizer.posterizeAsync(image, new Posterizer.PosterizationListener() {
+                    posterizer.posterizeAsync(image,  Ruler.getInstance(getActivity()).posterizationColorsCount(), new Posterizer.PosterizationListener() {
                         @Override
                         public void onImagePosterized(Bitmap posterizedImage) {
                             progressDialog.dismiss();

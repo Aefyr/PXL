@@ -10,11 +10,9 @@ import android.preference.PreferenceManager;
 
 public class Ruler {
     private static Ruler instance;
-    private Context c;
     private SharedPreferences preferences;
 
     private Ruler(Context c){
-        this.c = c;
         preferences = PreferenceManager.getDefaultSharedPreferences(c);
         instance = this;
     }
@@ -25,5 +23,9 @@ public class Ruler {
 
     public int maxDimensionSize(){
         return preferences.getBoolean("allow_512", false)?512:256;
+    }
+
+    public int posterizationColorsCount(){
+        return preferences.getInt("posterization_colors_count", 16);
     }
 }

@@ -3,6 +3,7 @@
 #pragma rs_fp_relaxed
 
 rs_allocation palette;
+int paletteSize = 16;
 
 static int rgbaToInt(float4 rgba){
     int red = (int)(rgba.r * 255.0f);
@@ -22,15 +23,15 @@ static float4 intToRgba(int colorInt){
 }
 
 static float dist(float4 color1, float4 color2){
-    return sqrt(pow(color2.r-color1.r, 2.0f)+pow(color2.g-color1.g, 2.0f)+pow(color2.b-color1.b, 2.0f));
+    return sqrt(pow(color2.r*255.0f-color1.r*255.0f, 2.0f)+pow(color2.g*255.0f-color1.g*255.0f, 2.0f)+pow(color2.b*255.0f-color1.b*255.0f, 2.0f));
 }
 
 uchar4 RS_KERNEL posterize(uchar4 in){
     float4 f4Color = rsUnpackColor8888(in);
 
     int closestColor = -1;
-    float minimalDiff = 100000000.0f;
-    for(int i=0; i<16; i++){
+    float minimalDiff = 255.0f * 255.0f * 255.0f;
+    for(int i=0; i<paletteSize; i++){
         float difference = dist(f4Color, intToRgba(rsGetElementAt_int(palette, i)));
 
         if(difference<minimalDiff){

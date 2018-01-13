@@ -4,6 +4,10 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Handler;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
@@ -13,9 +17,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.aefyr.pxl.R;
+import com.aefyr.pxl.common.Ruler;
 import com.aefyr.pxl.custom.ColorCircle;
 import com.aefyr.pxl.custom.ColorRect;
+import com.aefyr.pxl.palettes.PaletteMakerH;
 import com.aefyr.pxl.util.Utils;
+
+import java.io.FileNotFoundException;
 
 public class ExperimentalPaletteEditorActivity extends AppCompatActivity {
     private ColorCircle[] circles;
@@ -61,6 +69,32 @@ public class ExperimentalPaletteEditorActivity extends AppCompatActivity {
         float g = color & 0x0000FF00;
         float b = color & 0x000000FF;
         System.out.println(String.format("r = %f; g = %f; b = %f", r,g,b));
+
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), 322);
+    }
+
+    private void lidlTest2(Bitmap test){
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 322 && resultCode == Activity.RESULT_OK) {
+            final int dLimit = Ruler.getInstance(this).maxDimensionSize();
+            final Bitmap importedImage;
+            try {
+                importedImage = BitmapFactory.decodeStream(getContentResolver().openInputStream(data.getData()));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                Utils.toaster(this, getString(R.string.error));
+                return;
+            }
+
+            lidlTest2(importedImage);
+        }
     }
 
     private void animate(final View clickedCircle){
