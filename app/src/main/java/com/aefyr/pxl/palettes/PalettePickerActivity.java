@@ -79,7 +79,7 @@ public class PalettePickerActivity extends AppCompatActivity {
 
     private void importImage() {
         if (!PermissionsUtils.checkStoragePermissions(this)) {
-            PermissionsUtils.checkStoragePermissions(this);
+            PermissionsUtils.requestStoragePermissions(this);
             return;
         }
 

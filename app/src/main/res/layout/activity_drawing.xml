@@ -16,22 +16,19 @@
 
     <LinearLayout
         android:id="@+id/topButtons"
-        android:layout_width="162dp"
-        android:layout_height="58dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:background="@drawable/halfround_rect_background"
         android:elevation="@dimen/default_elevation"
         android:orientation="horizontal"
-        android:padding="3dp"
-        android:paddingTop="0dp"
+        android:padding="@dimen/pxl_margin_s"
         android:visibility="visible">
 
         <ImageButton
             android:id="@+id/grid"
             style="@style/PXLImageButton"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
             android:layout_margin="0dp"
             android:background="@drawable/sketchbook_style_button_selector"
             app:srcCompat="@drawable/gridoff" />
@@ -39,8 +36,6 @@
         <ImageButton
             android:id="@+id/symmetry"
             style="@style/PXLImageButton"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
             android:layout_margin="0dp"
             android:background="@drawable/sketchbook_style_button_selector"
             app:srcCompat="@drawable/symmetryoff" />
@@ -48,8 +43,6 @@
         <ImageButton
             android:id="@+id/cursorMode"
             style="@style/PXLImageButton"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
             android:layout_margin="0dp"
             android:background="@drawable/sketchbook_style_button_selector"
             app:srcCompat="@drawable/normal2" />
@@ -59,8 +52,6 @@
     <ImageButton
         android:id="@+id/undo"
         style="@style/PXLImageButton"
-        android:layout_width="52dp"
-        android:layout_height="52dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:alpha="0.5"
@@ -70,8 +61,6 @@
     <ImageButton
         android:id="@+id/redo"
         style="@style/PXLImageButton"
-        android:layout_width="52dp"
-        android:layout_height="52dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:alpha="0.5"
@@ -80,8 +69,8 @@
 
     <com.aefyr.pxl.custom.ColorCircle
         android:id="@+id/currentColor"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="@dimen/main_color_circle_size"
+        android:layout_height="@dimen/main_color_circle_size"
         android:layout_alignParentEnd="true"
         android:elevation="18dp" />
 
@@ -100,17 +89,19 @@
 
     <LinearLayout
         android:id="@+id/toolPicker"
-        android:layout_width="92dp"
+        android:layout_width="@dimen/tool_picker_layout_width"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/undo"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:layout_marginStart="@dimen/pxl_margin_s"
         android:elevation="16dp"
         android:orientation="vertical">
 
         <ImageButton
             android:id="@+id/toolButton"
-            android:layout_width="72dp"
-            android:layout_height="72dp"
+            android:layout_width="@dimen/tool_button_size"
+            android:layout_height="@dimen/tool_button_size"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="16dp"
             android:background="@drawable/halfround_rect_background"
@@ -124,7 +115,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="12dp"
             android:layout_marginTop="-17dp"
             android:background="@drawable/halfround_rect_background"
             android:elevation="6dp"
@@ -134,8 +125,6 @@
     <ImageButton
         android:id="@+id/canvasOptions"
         style="@style/PXLImageButton"
-        android:layout_width="52dp"
-        android:layout_height="52dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:text="Move"
@@ -143,18 +132,17 @@
 
     <FrameLayout
         android:id="@+id/toolSettings"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/tool_settings_layout_width"
         android:layout_height="wrap_content"
         android:layout_below="@+id/topButtons"
-        android:layout_marginEnd="@dimen/tool_setting_layout_margin_end"
         android:layout_marginStart="-4dp"
         android:layout_marginTop="4dp"
         android:layout_toEndOf="@+id/toolPicker"
         android:background="@drawable/full_round_rect_bg"
         android:clickable="true"
-        android:focusable="true"
         android:descendantFocusability="blocksDescendants"
         android:elevation="12dp"
+        android:focusable="true"
         android:padding="8dp"
         android:visibility="gone">
 
@@ -217,8 +205,8 @@
 
         <com.aefyr.pxl.custom.ColorCircle
             android:id="@+id/colorCircle"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            android:layout_width="@dimen/main_color_circle_size"
+            android:layout_height="@dimen/main_color_circle_size"
             android:layout_alignParentBottom="false"
             android:layout_alignParentEnd="true"
             android:layout_alignTop="@+id/editColor"
@@ -239,8 +227,6 @@
         <ImageButton
             android:id="@+id/cloneSelection"
             style="@style/PXLImageButton"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
             android:layout_weight="0.5"
             android:elevation="4dp"
             app:srcCompat="@drawable/clone" />
@@ -248,8 +234,6 @@
         <ImageButton
             android:id="@+id/deleteSelection"
             style="@style/PXLImageButton"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
             android:layout_weight="0.5"
             android:elevation="4dp"
             app:srcCompat="@drawable/clear" />
@@ -262,7 +246,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/topButtons"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/pxl_margin_m"
         android:background="@drawable/full_round_rect_bg"
         android:elevation="@dimen/default_elevation"
         android:orientation="horizontal"
@@ -271,8 +255,8 @@
         <ImageButton
             android:id="@+id/symmetryN"
             style="@style/PXLImageButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="@dimen/symmetry_menu_button_size"
+            android:layout_height="@dimen/symmetry_menu_button_size"
             android:layout_weight="1"
             android:elevation="16dp"
             app:srcCompat="@drawable/symmetryoff" />
@@ -280,8 +264,8 @@
         <ImageButton
             android:id="@+id/symmetryH"
             style="@style/PXLImageButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="@dimen/symmetry_menu_button_size"
+            android:layout_height="@dimen/symmetry_menu_button_size"
             android:layout_weight="1"
             android:elevation="16dp"
             app:srcCompat="@drawable/symmetryh" />
@@ -289,8 +273,8 @@
         <ImageButton
             android:id="@+id/symmetryV"
             style="@style/PXLImageButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="@dimen/symmetry_menu_button_size"
+            android:layout_height="@dimen/symmetry_menu_button_size"
             android:layout_weight="1"
             android:elevation="16dp"
             app:srcCompat="@drawable/symmetryv" />
@@ -298,8 +282,8 @@
         <ImageButton
             android:id="@+id/symmetryTG"
             style="@style/PXLImageButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="@dimen/symmetry_menu_button_size"
+            android:layout_height="@dimen/symmetry_menu_button_size"
             android:layout_weight="1"
             android:elevation="16dp"
             app:srcCompat="@drawable/sym_axises_hidden" />

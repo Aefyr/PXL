@@ -31,7 +31,7 @@
     <string name="select_resolution">Выберите разрешение экспортированного изображения</string>
     <string name="share">Поделиться</string>
     <string name="exporting">Идёт экспорт изображения</string>
-    <string name="storage_permissions_denied">Не удалось получить доступ к галерее</string>
+    <string name="storage_permissions_denied">Не удалось получить доступ к галерее. Пожалуйста, дайте приложению разрешение на доступ к файлам.</string>
 
     <!--gallery_item-->
     <string name="size">Размер</string>
@@ -39,7 +39,7 @@
 
     <!-- BitmapsMergeActivity -->
     <string name="live_preview">Лайв-превью</string>
-    <string name="moving_image_tip">Вы также можете перетаскивать изображение!</string>
+    <string name="moving_image_tip"><b>Подсказка:</b> Вы можете перетаскивать изображение или использовать кнопки, чтобы попиксельно смещать его</string>
 
 
     <!-- Projects options -->

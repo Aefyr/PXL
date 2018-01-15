@@ -23,6 +23,8 @@
         <item name="android:padding">9dp</item>
         <item name="android:elevation" tools:targetApi="lollipop">@dimen/default_elevation</item>
         <item name="android:layout_margin">8dp</item>
+        <item name="android:layout_width">@dimen/pxl_button_style_size</item>
+        <item name="android:layout_height">@dimen/pxl_button_style_size</item>
     </style>
 
     <style name="EditTextResolutionInput" parent="Widget.AppCompat.EditText">

@@ -2,16 +2,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/multishapeSettings"
-    android:layout_width="@dimen/tool_setting_layout_width"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:layout_alignParentTop="true"
     android:padding="8dp">
 
     <ImageButton
         android:id="@+id/rectTool"
         style="@style/PXLImageButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="@dimen/tool_settings_multishape_shape_size"
+        android:layout_height="@dimen/tool_settings_multishape_shape_size"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:visibility="visible"
@@ -20,8 +20,8 @@
     <ImageButton
         android:id="@+id/circleTool"
         style="@style/PXLImageButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="@dimen/tool_settings_multishape_shape_size"
+        android:layout_height="@dimen/tool_settings_multishape_shape_size"
         android:layout_alignParentTop="true"
         android:layout_marginStart="7dp"
         android:layout_toEndOf="@+id/rectTool"
@@ -31,8 +31,8 @@
     <ImageButton
         android:id="@+id/lineTool"
         style="@style/PXLImageButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="@dimen/tool_settings_multishape_shape_size"
+        android:layout_height="@dimen/tool_settings_multishape_shape_size"
         android:layout_alignParentTop="true"
         android:layout_toStartOf="@+id/rectTool"
         android:background="@drawable/full_round_rect_bg_dark"

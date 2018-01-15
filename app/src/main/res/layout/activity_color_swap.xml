@@ -9,8 +9,8 @@
 
     <com.aefyr.pxl.custom.PixelImageView
         android:id="@+id/pxlImageView"
-        android:layout_width="290dp"
-        android:layout_height="290dp"
+        android:layout_width="@dimen/color_swap_activity_preview_size"
+        android:layout_height="@dimen/color_swap_activity_preview_size"
         android:layout_below="@+id/livePreviewSwitch"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"

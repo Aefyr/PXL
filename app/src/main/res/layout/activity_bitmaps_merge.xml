@@ -74,8 +74,10 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/pxlImageView"
-        android:layout_centerHorizontal="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/pxlImageView"
+        android:layout_marginTop="@dimen/pxl_margin_s"
+        android:gravity="center"
         android:text="@string/moving_image_tip"
         android:textColor="@color/colorAlmostWhite" />
 

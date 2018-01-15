@@ -6,6 +6,27 @@
     <dimen name="nav_header_height">160dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="tool_setting_layout_width">-1px</dimen>
-    <dimen name="tool_setting_layout_margin_end">64dp</dimen>
-    <dimen name="default_elevation">12dp</dimen>
+    <dimen name="default_elevation">10dp</dimen>
+
+    <!-- PXL -->
+    <dimen name="pxl_margin_m">8dp</dimen>
+    <dimen name="pxl_margin_s">4dp</dimen>
+    <dimen name="pxl_button_style_size">48dp</dimen>
+
+    <!-- Drawing Activity and Tools -->
+    <dimen name="main_color_circle_size">56dp</dimen>
+    <dimen name="symmetry_menu_button_size">40dp</dimen>
+    <dimen name="palette_color_circle_size">36dp</dimen>
+    <dimen name="color_swap_activity_preview_size">220dp</dimen>
+
+    <dimen name="tool_button_size">56dp</dimen>
+    <dimen name="tool_item_size">40dp</dimen>
+    <dimen name="tool_picker_layout_width">76dp</dimen>
+
+    <dimen name="tool_settings_multishape_shape_size">40dp</dimen>
+    <dimen name="tool_settings_layout_margin_end">16dp</dimen>
+    <dimen name="tool_settings_layout_width">220dp</dimen>
+
+
+
 </resources>

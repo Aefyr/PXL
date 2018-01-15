@@ -70,7 +70,7 @@
     <string name="select_multiplier">Select custom resolution multiplier</string>
     <string name="share">Share</string>
     <string name="exporting">Exporting image</string>
-    <string name="storage_permissions_denied">Unable to access gallery</string>
+    <string name="storage_permissions_denied">Unable to access gallery. Please give the app permission to access files on the device.</string>
     <string name="create">Create</string>
     <string name="project_saved">Project has been exported</string>
     <string name="res_notice">If you\'re going to use the exported image for further editing or as an asset in game, select original resolution to keep it a \"True Pixel Art\". But if you want share the image, select a reasonably high resolution, otherwise the image will look blurry due to scaling algorithms used in most apps and websites</string>
@@ -86,7 +86,7 @@
 
     <!-- BitmapsMergeActivity -->
     <string name="live_preview">Live Preview</string>
-    <string name="moving_image_tip">You can also drag the image!</string>
+    <string name="moving_image_tip"><b>Tip:</b> You can drag the image or use the buttons to move it pixel-by-pixel</string>
 
 
     <!-- Projects options -->
