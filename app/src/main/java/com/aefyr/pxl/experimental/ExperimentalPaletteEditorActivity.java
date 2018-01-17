@@ -129,7 +129,6 @@ public class ExperimentalPaletteEditorActivity extends AppCompatActivity {
         }
     }
 
-    private View prevCircle;
     private ColorCircle currentCircle;
     private void animate(final View clickedCircle){
         if(currentCircle!=null){
