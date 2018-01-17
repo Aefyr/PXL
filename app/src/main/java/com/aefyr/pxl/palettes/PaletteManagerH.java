@@ -90,7 +90,7 @@ public class PaletteManagerH {
         });
 
         RecyclerView recycler = (RecyclerView) paletteLayoutRoot.findViewById(R.id.paletteRecycler);
-        recycler.setLayoutManager(new GridLayoutManager(paletteLayoutRoot.getContext(), (int) (Utils.getScreenWidth(paletteLayoutRoot.getResources()) / Utils.dpToPx(64, paletteLayoutRoot.getResources()))));
+        recycler.setLayoutManager(new GridLayoutManager(paletteLayoutRoot.getContext(), (int) (Utils.getScreenWidth(paletteLayoutRoot.getResources()) / (paletteLayoutRoot.getResources().getDimensionPixelSize(R.dimen.palette_color_circle_size)+Utils.dpToPx(12, paletteLayoutRoot.getResources())))));
         adapter = new ColorSelectionRecyclerAdapter(paletteLayoutRoot.getContext(), palette);
         recycler.setAdapter(adapter);
 

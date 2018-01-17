@@ -13,14 +13,19 @@ import android.os.Handler;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.aefyr.pxl.ColorPicker;
 import com.aefyr.pxl.R;
 import com.aefyr.pxl.common.Ruler;
 import com.aefyr.pxl.custom.ColorCircle;
 import com.aefyr.pxl.custom.ColorRect;
+import com.aefyr.pxl.palettes.ColorSelectionRecyclerAdapter;
 import com.aefyr.pxl.palettes.PaletteMakerH;
+import com.aefyr.pxl.palettes.PaletteUtils;
 import com.aefyr.pxl.util.Utils;
 
 import java.io.FileNotFoundException;
@@ -36,15 +41,42 @@ public class ExperimentalPaletteEditorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_experimental_palette_editor);
 
+        final RecyclerView paletteRecycler = findViewById(R.id.epeaReycler);
+        final ColorSelectionRecyclerAdapter adapter = new ColorSelectionRecyclerAdapter(this, PaletteUtils.loadPalette("Default"));
+        paletteRecycler.setAdapter(adapter);
+        paletteRecycler.setLayoutManager(new GridLayoutManager(this, (int) (Utils.getScreenWidth(getResources()) / (getResources().getDimensionPixelSize(R.dimen.palette_color_circle_size)+Utils.dpToPx(12, getResources())))));
+
+
+        adapter.setOnColorInteractionListener(new ColorSelectionRecyclerAdapter.OnColorInteractionListener() {
+            @Override
+            public void onColorClick(int index) {
+                animate(paletteRecycler.getChildAt(index).findViewById(R.id.colorCircle));
+            }
+
+            @Override
+            public void onColorLongClick(int index) {
+
+            }
+        });
+
         notRetardedRoot = findViewById(R.id.epeaParent);
 
-        circles = new ColorCircle[3];
+        /*circles = new ColorCircle[3];
         circles[0] = findViewById(R.id.epeaTestCircle1);
         circles[0].setColor(Color.RED);
         circles[1] = findViewById(R.id.epeaTestCircle2);
         circles[1].setColor(Color.GREEN);
         circles[2] = findViewById(R.id.epeaTestCircle3);
-        circles[2].setColor(Color.BLUE);
+        circles[2].setColor(Color.BLUE);*/
+
+        ColorPicker colorPicker = new ColorPicker(getWindow(), Color.RED);
+        colorPicker.setOnColorChangeListener(new ColorPicker.OnColorChangeListener() {
+            @Override
+            public void onColorChanged(int newColor) {
+                newRect.setColor(newColor);
+                currentCircle.setColor(newColor);
+            }
+        });
 
         oldRect = findViewById(R.id.epeaColorRectOld);
         newRect = findViewById(R.id.epeaColorRectNew);
@@ -57,8 +89,8 @@ public class ExperimentalPaletteEditorActivity extends AppCompatActivity {
             }
         };
 
-        for(ColorCircle circle: circles)
-            circle.setOnClickListener(listener);
+        /*for(ColorCircle circle: circles)
+            circle.setOnClickListener(listener);*/
 
     }
 
@@ -97,10 +129,29 @@ public class ExperimentalPaletteEditorActivity extends AppCompatActivity {
         }
     }
 
+    private View prevCircle;
+    private ColorCircle currentCircle;
     private void animate(final View clickedCircle){
-        final ColorCircle newCircle = new ColorCircle(this);
-        newCircle.setColor(((ColorCircle)clickedCircle).color());
+        if(currentCircle!=null){
+            PropertyValuesHolder x = PropertyValuesHolder.ofFloat(View.SCALE_X, 1f);
+            PropertyValuesHolder y = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f);
+            ObjectAnimator scaleAnimator = ObjectAnimator.ofPropertyValuesHolder(currentCircle, x, y);
+            scaleAnimator.setDuration(100);
+            scaleAnimator.start();
+        }
+
+        currentCircle = (ColorCircle) clickedCircle;
+
         final int dp64 = (int) Utils.dpToPx(64, getResources());
+
+        PropertyValuesHolder x = PropertyValuesHolder.ofFloat(View.SCALE_X, 1.1f);
+        PropertyValuesHolder y = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.1f);
+        ObjectAnimator scaleAnimator = ObjectAnimator.ofPropertyValuesHolder(clickedCircle, x, y);
+        scaleAnimator.setDuration(100);
+        scaleAnimator.start();
+
+        /*final ColorCircle newCircle = new ColorCircle(this);
+        newCircle.setColor(((ColorCircle)clickedCircle).color());
 
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(dp64, dp64);
         notRetardedRoot.addView(newCircle, params);
@@ -129,7 +180,7 @@ public class ExperimentalPaletteEditorActivity extends AppCompatActivity {
         });
 
         //Less cool looking variant but it doesn't rely on ColorRect.setColorWithExplosion implementation
-        /*
+
         PropertyValuesHolder x = PropertyValuesHolder.ofFloat(View.TRANSLATION_X, getAbsoluteX(oldRect)+oldRect.getWidth() - dp64/2);
         PropertyValuesHolder y = PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, getAbsoluteY(oldRect)+((oldRect.getHeight()-dp64)/2));
         ObjectAnimator positionAnimator = ObjectAnimator.ofPropertyValuesHolder(newCircle, x, y);
@@ -143,8 +194,10 @@ public class ExperimentalPaletteEditorActivity extends AppCompatActivity {
                 newRect.setColorWithExplosion(((ColorCircle) clickedCircle).color(), 0, newRect.getHeight()/2, dp64/2);
 
             }
-        });*/
-        positionAnimator.start();
+        });
+        positionAnimator.start();*/
+        oldRect.setColorWithExplosion(((ColorCircle) clickedCircle).color(), oldRect.getWidth(), oldRect.getHeight()/2, 0);
+        newRect.setColorWithExplosion(((ColorCircle) clickedCircle).color(), 0, newRect.getHeight()/2, 0);
     }
 
     private float getAbsoluteX(View ofView) {

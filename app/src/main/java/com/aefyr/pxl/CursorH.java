@@ -35,6 +35,7 @@ class CursorH {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(aps.getContext());
         opacity = preferences.getInt(PreferencesFragment.CURSOR_OPACITY, 255);
         sensitivity = preferences.getInt(PreferencesFragment.CURSOR_SENSITIVITY, 9) / 10f + 0.1f;
+        pixelSize = adaptivePixelSurface.getContext().getResources().getDimensionPixelSize(R.dimen.cursor_size);
 
         matrix = new Matrix();
 

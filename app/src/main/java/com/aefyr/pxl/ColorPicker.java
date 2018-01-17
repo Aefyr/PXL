@@ -91,6 +91,9 @@ public class ColorPicker {
                     }
 
                     updateColorViews();
+
+                    if(onColorChangeListener!=null)
+                        onColorChangeListener.onColorChanged(Color.HSVToColor(color));
                 }
 
 
@@ -156,5 +159,15 @@ public class ColorPicker {
 
     void destroySwapperIfNeeded(){
         colorSwapperH.destroy();
+    }
+
+
+    public interface OnColorChangeListener{
+        void onColorChanged(int newColor);
+    }
+
+    private OnColorChangeListener onColorChangeListener;
+    public void setOnColorChangeListener(OnColorChangeListener listener){
+        this.onColorChangeListener = listener;
     }
 }

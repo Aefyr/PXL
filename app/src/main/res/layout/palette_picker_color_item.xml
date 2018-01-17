@@ -6,8 +6,8 @@
 
     <com.aefyr.pxl.custom.ColorCircle
         android:id="@+id/colorCircle"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="@dimen/palette_color_circle_size"
+        android:layout_height="@dimen/palette_color_circle_size"
         android:elevation="4dp" />
 
 </FrameLayout>

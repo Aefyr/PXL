@@ -16,8 +16,9 @@
     <!-- Drawing Activity -->
     <dimen name="main_color_circle_size">64dp</dimen>
     <dimen name="symmetry_menu_button_size">48dp</dimen>
-    <dimen name="palette_color_circle_size">48dp</dimen>
+    <dimen name="palette_color_circle_size">52dp</dimen>
     <dimen name="color_swap_activity_preview_size">290dp</dimen>
+    <dimen name="cursor_size">52dp</dimen>
 
 
     <dimen name="tool_button_size">68dp</dimen>
