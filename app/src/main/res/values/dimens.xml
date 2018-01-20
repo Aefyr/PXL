@@ -19,6 +19,7 @@
     <dimen name="palette_color_circle_size">40dp</dimen>
     <dimen name="color_swap_activity_preview_size">220dp</dimen>
     <dimen name="cursor_size">36dp</dimen>
+    <dimen name="cursor_action_height">72dp</dimen>
 
     <dimen name="tool_button_size">56dp</dimen>
     <dimen name="tool_item_size">40dp</dimen>

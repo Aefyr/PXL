@@ -15,7 +15,6 @@ import android.graphics.RectF;
 import android.graphics.Shader;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -26,8 +25,6 @@ import com.aefyr.pxl.projects.Project;
 import com.aefyr.pxl.common.RectP;
 import com.aefyr.pxl.util.QueueLinearFloodFiller;
 import com.aefyr.pxl.util.Utils;
-
-import java.util.ArrayDeque;
 
 /**
  * Created by Aefyr on 27.06.2017.

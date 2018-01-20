@@ -84,6 +84,5 @@ public class ColorCircle extends View {
             p.setStyle(Paint.Style.STROKE);
             canvas.drawCircle(x / 2, y / 2, x / 2f - x / 12f, p);
         }
-        System.out.println("REDRAW");
     }
 }

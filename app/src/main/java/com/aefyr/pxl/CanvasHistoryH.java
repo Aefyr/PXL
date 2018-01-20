@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -14,12 +15,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by Aefyr on 28.06.2017.
  */
 
 class CanvasHistoryH {
+    private static final String TAG = "CanvasHistory";
+
     private AdaptivePixelSurfaceH aps;
 
     private ArrayDeque<Bitmap> past;
@@ -34,6 +38,9 @@ class CanvasHistoryH {
     private ArrayList<OnHistoryAvailabilityChangeListener> listeners;
 
     private File projectBitmap;
+
+    private CanvasSaver saver;
+    private AtomicInteger changesSinceLastSave;
 
     interface OnHistoryAvailabilityChangeListener {
         void pastAvailabilityChanged(boolean available);
@@ -61,9 +68,48 @@ class CanvasHistoryH {
         srcPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
 
         setProject(project);
+
+        changesSinceLastSave = new AtomicInteger(0);
+        saver = new CanvasSaver(bitmap, 2000);
+        saver.start();
+
         past = new ArrayDeque<>(size);
         future = new ArrayDeque<>(size);
         listeners = new ArrayList<>();
+    }
+
+    private class CanvasSaver extends Thread{
+        private static final String TAG = "CanvasSaver";
+        boolean running = true;
+        int interval;
+        Bitmap bitmap;
+
+        CanvasSaver(Bitmap bitmap, int interval){
+            this.interval = interval;
+            this.bitmap = bitmap;
+        }
+
+        @Override
+        public void run() {
+            while(running){
+
+                if(changesSinceLastSave.intValue()>0){
+                    changesSinceLastSave.set(0);
+                    long start = System.currentTimeMillis();
+                    Log.d(TAG, "Canvas has been changed since last save. Saving...");
+                    saveCanvas();
+                    Log.d(TAG, String.format("Canvas has been saved in %d ms.", System.currentTimeMillis()-start));
+                }
+
+                try{
+                    sleep(interval);
+                }catch (InterruptedException e){
+                    Log.e(TAG, "Unable to sleep\n" +e.getMessage());
+                }
+            }
+            Log.d(TAG, "Finished.");
+        }
+
     }
 
     private void autoSize() {
@@ -114,8 +160,8 @@ class CanvasHistoryH {
                 listener.futureAvailabilityChanged(false);
             }
 
-            saveCanvas();
             historicalChangeInProgress = false;
+            changesSinceLastSave.addAndGet(1);
         }
     }
 
@@ -151,7 +197,7 @@ class CanvasHistoryH {
         }
 
         aps.invalidate();
-        saveCanvas();
+        changesSinceLastSave.addAndGet(1);
     }
 
     void redoHistoricalChange() {
@@ -176,7 +222,7 @@ class CanvasHistoryH {
         }
 
         aps.invalidate();
-        saveCanvas();
+        changesSinceLastSave.addAndGet(1);
     }
 
 
@@ -188,7 +234,7 @@ class CanvasHistoryH {
         bitmap = aps.pixelBitmap;
     }
 
-    private void saveCanvas() {
+    public void saveCanvas() {
         if (projectBitmap == null)
             return;
         try (FileOutputStream out = new FileOutputStream(projectBitmap, false)) {
@@ -197,6 +243,17 @@ class CanvasHistoryH {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void finish(){
+        long start = System.currentTimeMillis();
+        Log.d(TAG, "Finishing. Stopping CanvasSaver's internal loop...");
+        saver.running = false;
+
+        Log.d(TAG, "Synchronously saving canvas...");
+        saveCanvas();
+
+        Log.d(TAG, String.format("Finished in %d ms.", System.currentTimeMillis()-start));
     }
 
     int getHistorySize() {

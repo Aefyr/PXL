@@ -17,6 +17,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -366,16 +367,28 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         }
     }
 
+    private boolean savedProperly;
     @Override
     public void onBackPressed() {
         new AlertDialog.Builder(this).setMessage(R.string.exit_prompt).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                aps.canvasHistory.finish();
+                savedProperly = true;
                 setResult(1);
                 finish();
             }
         }).setNegativeButton(R.string.cancel, null).create().show();
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("DrawingActivity", "Stopping");
+        if(!savedProperly)
+            aps.canvasHistory.saveCanvas();
+    }
+
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {

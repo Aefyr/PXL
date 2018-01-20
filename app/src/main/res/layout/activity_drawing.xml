@@ -76,15 +76,14 @@
 
     <Button
         android:id="@+id/cursorAction"
-        style="@style/Widget.AppCompat.Button.Borderless"
+        style="@style/PXLImageButton"
         android:layout_width="match_parent"
-        android:layout_height="96dp"
+        android:layout_height="@dimen/cursor_action_height"
         android:layout_above="@+id/canvasOptions"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/selector2"
         android:text="@string/cursor_action"
         android:textColor="@color/colorCursorAction"
-        android:textSize="24sp"
+        android:textSize="36sp"
         android:visibility="gone" />
 
     <LinearLayout
