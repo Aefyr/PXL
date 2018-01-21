@@ -34,16 +34,19 @@
 
     </LinearLayout>
 
+    <com.aefyr.pxl.experimental.SimpleColorPickerH
+        android:id="@+id/epeaSimplePicker"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/epeaColorPicker"
+        app:circleSize="10dp"
+        app:circleStrokeWidth="3dp" />
+
     <include
         android:id="@+id/epeaColorPicker"
         layout="@layout/color_picker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/linearLayout" />
-
-    <com.aefyr.pxl.experimental.SimpleColorPickerH
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/epeaColorPicker" />
 </RelativeLayout>

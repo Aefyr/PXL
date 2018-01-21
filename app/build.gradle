@@ -13,6 +13,8 @@ android {
 
         renderscriptTargetApi 23
         renderscriptSupportModeEnabled true
+
+        multiDexEnabled true
     }
     buildTypes {
         release {

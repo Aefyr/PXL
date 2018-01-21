@@ -6,4 +6,9 @@
         <attr name="autoResizeToMax" format="boolean" />
     </declare-styleable>
 
+    <declare-styleable name="SimpleColorPickerH">
+        <attr name="circleSize" format="dimension"/>
+        <attr name="circleStrokeWidth" format="dimension"/>
+    </declare-styleable>
+
 </resources>

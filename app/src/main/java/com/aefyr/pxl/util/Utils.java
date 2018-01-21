@@ -94,12 +94,16 @@ public class Utils {
             return ascendingNumbers[i];
     }
 
+    public static float lerp(float a, float b, float t){
+        return a+(b-a)*t;
+    }
+
     public static int invertColor(int color) {
         return Color.rgb(255 - Color.red(color), 255 - Color.green(color), 255 - Color.blue(color));
     }
 
     public static int lerpColor(int color1, int color2, float a) {
-        return Color.RED;
+        return Color.rgb((int)lerp(Color.red(color1), Color.red(color2), a), (int) lerp(Color.green(color1), Color.green(color2), a), (int)lerp(Color.blue(color1), Color.blue(color2), a));
     }
 
     @Deprecated

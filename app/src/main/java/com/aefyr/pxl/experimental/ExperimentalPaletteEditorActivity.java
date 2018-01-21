@@ -89,6 +89,14 @@ public class ExperimentalPaletteEditorActivity extends AppCompatActivity {
             }
         };
 
+        ((SimpleColorPickerH)findViewById(R.id.epeaSimplePicker)).setOnColorPickListener(new SimpleColorPickerH.OnColorPickListener() {
+            @Override
+            public void onColorPicked(int color) {
+                newRect.setColor(color);
+                currentCircle.setColor(color);
+            }
+        });
+
         /*for(ColorCircle circle: circles)
             circle.setOnClickListener(listener);*/
 
