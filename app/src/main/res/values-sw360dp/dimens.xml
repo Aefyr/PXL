@@ -12,6 +12,7 @@
     <dimen name="pxl_margin_m">12dp</dimen>
     <dimen name="pxl_margin_s">8dp</dimen>
     <dimen name="pxl_button_style_size">52dp</dimen>
+    <dimen name="simple_color_picker_height">180dp</dimen>
 
     <!-- Drawing Activity -->
     <dimen name="main_color_circle_size">64dp</dimen>

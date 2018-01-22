@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -35,6 +36,7 @@ public class ExperimentalPaletteEditorActivity extends AppCompatActivity {
     private ColorRect oldRect;
     private ColorRect newRect;
     private ViewGroup notRetardedRoot;
+    private SimpleColorPickerH simpleColorPickerH;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,11 @@ public class ExperimentalPaletteEditorActivity extends AppCompatActivity {
         final ColorSelectionRecyclerAdapter adapter = new ColorSelectionRecyclerAdapter(this, PaletteUtils.loadPalette("Default"));
         paletteRecycler.setAdapter(adapter);
         paletteRecycler.setLayoutManager(new GridLayoutManager(this, (int) (Utils.getScreenWidth(getResources()) / (getResources().getDimensionPixelSize(R.dimen.palette_color_circle_size)+Utils.dpToPx(12, getResources())))));
+
+
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar2));
+
+        getSupportActionBar().setTitle("Default");
 
 
         adapter.setOnColorInteractionListener(new ColorSelectionRecyclerAdapter.OnColorInteractionListener() {
@@ -69,15 +76,6 @@ public class ExperimentalPaletteEditorActivity extends AppCompatActivity {
         circles[2] = findViewById(R.id.epeaTestCircle3);
         circles[2].setColor(Color.BLUE);*/
 
-        ColorPicker colorPicker = new ColorPicker(getWindow(), Color.RED);
-        colorPicker.setOnColorChangeListener(new ColorPicker.OnColorChangeListener() {
-            @Override
-            public void onColorChanged(int newColor) {
-                newRect.setColor(newColor);
-                currentCircle.setColor(newColor);
-            }
-        });
-
         oldRect = findViewById(R.id.epeaColorRectOld);
         newRect = findViewById(R.id.epeaColorRectNew);
 
@@ -89,7 +87,8 @@ public class ExperimentalPaletteEditorActivity extends AppCompatActivity {
             }
         };
 
-        ((SimpleColorPickerH)findViewById(R.id.epeaSimplePicker)).setOnColorPickListener(new SimpleColorPickerH.OnColorPickListener() {
+        simpleColorPickerH = findViewById(R.id.epeaSimplePicker);
+        simpleColorPickerH.setOnColorPickListener(new SimpleColorPickerH.OnColorPickListener() {
             @Override
             public void onColorPicked(int color) {
                 newRect.setColor(color);
@@ -205,6 +204,8 @@ public class ExperimentalPaletteEditorActivity extends AppCompatActivity {
         positionAnimator.start();*/
         oldRect.setColorWithExplosion(((ColorCircle) clickedCircle).color(), oldRect.getWidth(), oldRect.getHeight()/2, 0);
         newRect.setColorWithExplosion(((ColorCircle) clickedCircle).color(), 0, newRect.getHeight()/2, 0);
+        simpleColorPickerH.setColor(((ColorCircle)clickedCircle).color());
+
     }
 
     private float getAbsoluteX(View ofView) {

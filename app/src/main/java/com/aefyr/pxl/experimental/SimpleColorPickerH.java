@@ -7,6 +7,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.RectF;
 import android.graphics.Shader;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,6 +26,15 @@ import com.aefyr.pxl.util.Utils;
  */
 
 public class SimpleColorPickerH extends View {
+    private Bitmap gradient;
+    private RectF mainGradientBorders;
+    private RectF valueGradientBorders;
+    private float valuePickerWidth = 80;
+    private float cornersRounding = 20;
+
+    private boolean ready;
+    private int toColor;
+
     public SimpleColorPickerH(@NonNull Context context) {
         super(context);
         initialize();
@@ -31,11 +43,27 @@ public class SimpleColorPickerH extends View {
     public SimpleColorPickerH(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.SimpleColorPickerH, 0, 0);
-        circleRadius = a.getDimension(R.styleable.SimpleColorPickerH_circleSize, Utils.dpToPx(32, getResources()));
+        mainCircleRadius = a.getDimension(R.styleable.SimpleColorPickerH_circleSize, Utils.dpToPx(32, getResources()));
         circleStrokeThickness = a.getDimension(R.styleable.SimpleColorPickerH_circleStrokeWidth, Utils.dpToPx(2, getResources()));
+        valuePickerWidth = a.getDimension(R.styleable.SimpleColorPickerH_valueGradientWidth, Utils.dpToPx(32, getResources()));
+        cornersRounding = a.getDimension(R.styleable.SimpleColorPickerH_cornersRounding, Utils.dpToPx(8, getResources()));
         a.recycle();
 
         initialize();
+    }
+
+    public void setColor(int color){
+        if(!ready){
+            toColor=color;
+            return;
+        }
+        float[] colorHSV = new float[3];
+        Color.colorToHSV(color, colorHSV);
+
+        mainCircleX = mainGradientBorders.left + colorHSV[0] * (mainGradientBorders.width()/361f);
+        mainCircleY = mainGradientBorders.top + colorHSV[1] * 100 *(mainGradientBorders.height()/101f);
+        valueCircleY = valueGradientBorders.top + (1-colorHSV[2]) * 100 * (valueGradientBorders.height()/101f);
+        invalidate();
     }
 
     private void initialize(){
@@ -43,41 +71,89 @@ public class SimpleColorPickerH extends View {
         circlePaint.setStyle(Paint.Style.STROKE);
         circlePaint.setStrokeWidth(circleStrokeThickness);
         circlePaint.setColor(Color.WHITE);
+
+        valuePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        valuePaint.setStyle(Paint.Style.FILL);
     }
 
-    private Bitmap gradient;
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         if(gradient!=null)
             gradient.recycle();
 
+        mainGradientBorders = new RectF(getPaddingLeft(), getPaddingTop(), getWidth()-getPaddingRight()*2- valuePickerWidth, getHeight()-getPaddingBottom());
+        valueGradientBorders = new RectF(mainGradientBorders.right+getPaddingRight(), mainGradientBorders.top, getWidth()-getPaddingRight(), mainGradientBorders.bottom);
+
+        valueCircleX = valueGradientBorders.left+valueGradientBorders.width()/2f;
+        valueCircleRadius = valueGradientBorders.width()/2f;
+
+        mainCircleX = mainGradientBorders.left;
+        mainCircleY = mainGradientBorders.top;
+        valueCircleY = valueGradientBorders.top;
+
         gradient = drawGradient(1);
+
+        ready=true;
+        setColor(toColor);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if(isInEditMode()){
-            canvas.drawColor(Color.RED);
-            moveCircleTo(getWidth()/2, getHeight()/2);
-            drawCircle(canvas);
+            circlePaint.setColor(Color.RED);
+            canvas.drawRect(mainGradientBorders, circlePaint);
+            canvas.drawRect(valueGradientBorders, circlePaint);
+            drawMainCircle(canvas);
+            drawValueCircle(canvas);
             return;
         }
-        canvas.drawBitmap(gradient, 0, 0, null);
-        drawCircle(canvas);
+
+        drawMainGradient(canvas);
+        drawMainCircle(canvas);
+
+        drawValueGradient(canvas);
+        drawValueCircle(canvas);
     }
+
+    private int currentlyMoving = -1;
+    private static final int MAIN_CIRCLE = 0;
+    private static final int VALUE_CIRCLE = 1;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if(event.getAction()==MotionEvent.ACTION_DOWN)
+        if(event.getAction()==MotionEvent.ACTION_DOWN) {
+            if(mainGradientBorders.contains(event.getX(), event.getY())){
+                currentlyMoving = MAIN_CIRCLE;
+                return true;
+            }
+
+            if(valueGradientBorders.contains(event.getX(), event.getY())){
+                currentlyMoving = VALUE_CIRCLE;
+                return true;
+            }
+
+            currentlyMoving = -1;
+            return false;
+        }
+
+        if(event.getAction()==MotionEvent.ACTION_MOVE){
+            switch (currentlyMoving){
+                case MAIN_CIRCLE:
+                    moveMainCircleTo(event.getX(), event.getY());
+                    break;
+                case VALUE_CIRCLE:
+                    moveValueCircle(event.getY());
+                    break;
+            }
+
+            if(listener!=null)
+                listener.onColorPicked(resolveCurrentColor());
+
             return true;
+        }
 
-
-
-        if(listener!=null)
-            listener.onColorPicked(resolveColorAt(event.getX(), event.getY()));
-        moveCircleTo(event.getX(), event.getY());
 
         if(event.getAction()==MotionEvent.ACTION_UP)
             return true;
@@ -85,40 +161,89 @@ public class SimpleColorPickerH extends View {
         return false;
     }
 
-    private float circleRadius = 80;
+    //Circles
+    private float mainCircleRadius = 80;
     private float circleStrokeThickness = 16;
     private Paint circlePaint;
-    private float currentCircleX, currentCircleY;
-    private void moveCircleTo(float x, float y){
-        float a = circleRadius+circleStrokeThickness/2f;
-        invalidate((int)(currentCircleX - a), (int)(currentCircleY-a), (int)(currentCircleX+a), (int)(currentCircleY+a));
-        currentCircleX = Utils.clamp(x, 0, getWidth());
-        currentCircleY = Utils.clamp(y, 0, getHeight());
-        invalidate((int)(currentCircleX - a), (int)(currentCircleY-a), (int)(currentCircleX+a), (int)(currentCircleY+a));
+    private float mainCircleX, mainCircleY;
+    private void moveMainCircleTo(float x, float y){
+        mainCircleX = Utils.clamp(x, mainGradientBorders.left, mainGradientBorders.right);
+        mainCircleY = Utils.clamp(y, mainGradientBorders.top, mainGradientBorders.bottom);
+
+        invalidate();
     }
 
-    private void drawCircle(Canvas c){
+    private void drawMainCircle(Canvas c){
         circlePaint.setStyle(Paint.Style.STROKE);
         circlePaint.setColor(Color.GRAY);
         circlePaint.setAlpha(75);
-        c.drawCircle(currentCircleX+circleStrokeThickness/3f, currentCircleY+circleStrokeThickness/3f, circleRadius, circlePaint);
+        c.drawCircle(mainCircleX, mainCircleY +circleStrokeThickness/5f, mainCircleRadius +circleStrokeThickness/4f, circlePaint);
 
         circlePaint.setAlpha(255);
         circlePaint.setStyle(Paint.Style.FILL);
-        circlePaint.setColor(resolveColorAt(currentCircleX, currentCircleY));
-        c.drawCircle(currentCircleX, currentCircleY, circleRadius, circlePaint);
+        circlePaint.setColor(resolveCurrentColor());
+        c.drawCircle(mainCircleX, mainCircleY, mainCircleRadius, circlePaint);
 
         circlePaint.setStyle(Paint.Style.STROKE);
         circlePaint.setColor(Color.WHITE);
-        c.drawCircle(currentCircleX, currentCircleY, circleRadius, circlePaint);
+        c.drawCircle(mainCircleX, mainCircleY, mainCircleRadius, circlePaint);
     }
 
-    private int resolveColorAt(float x, float y){
-        return Color.HSVToColor(new float[]{x/((float)getWidth()/361f), (y/((float)getHeight()/101f))/100f, 1});
+    private float valueCircleRadius;
+    private float valueCircleX, valueCircleY;
+    private void moveValueCircle(float y){
+        valueCircleY = Utils.clamp(y, valueGradientBorders.top, valueGradientBorders.bottom);
+
+        invalidate();
+    }
+
+    private void drawValueCircle(Canvas canvas){
+        circlePaint.setStyle(Paint.Style.STROKE);
+        circlePaint.setColor(Color.GRAY);
+        circlePaint.setAlpha(75);
+        canvas.drawCircle(valueCircleX, valueCircleY +circleStrokeThickness/5f, valueCircleRadius +circleStrokeThickness/4f, circlePaint);
+
+        circlePaint.setAlpha(255);
+        circlePaint.setStyle(Paint.Style.FILL);
+        circlePaint.setColor(resolveCurrentColor());
+        canvas.drawCircle(valueCircleX, valueCircleY, valueCircleRadius, circlePaint);
+
+        circlePaint.setStyle(Paint.Style.STROKE);
+        circlePaint.setColor(Color.WHITE);
+        canvas.drawCircle(valueCircleX, valueCircleY, valueCircleRadius, circlePaint);
+    }
+
+    //Gradients
+    private void drawMainGradient(Canvas canvas){
+        canvas.drawBitmap(gradient, mainGradientBorders.left, mainGradientBorders.top, null);
+    }
+
+    private int[] values = new int[101];
+    private Paint valuePaint;
+    private void drawValueGradient(Canvas canvas){
+        float[] color = resolveCurrentColorRaw();
+
+        for(int v = 0; v<=100; v++){
+            color[2] = 1f-((float)v/100f);
+            values[v] = Color.HSVToColor(color);
+        }
+        LinearGradient valueGradient = new LinearGradient(valueGradientBorders.centerX(), 0, valueGradientBorders.centerX(), valueGradientBorders.height(), values, null, Shader.TileMode.CLAMP);
+        valuePaint.setShader(valueGradient);
+
+        canvas.drawRoundRect(valueGradientBorders, cornersRounding, cornersRounding, valuePaint);
+    }
+
+    //Misc
+    private int resolveCurrentColor(){
+        return Color.HSVToColor(resolveCurrentColorRaw());
+    }
+
+    private float[] resolveCurrentColorRaw(){
+        return new float[]{(mainCircleX-mainGradientBorders.left)/(mainGradientBorders.width()/361f), ((mainCircleY-mainGradientBorders.top)/(mainGradientBorders.height()/101f))/100f, 1f-(((valueCircleY-valueGradientBorders.top)/(valueGradientBorders.height()/101f))/100f)};
     }
 
     private Bitmap drawGradient(float value){
-        Bitmap bitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap((int) mainGradientBorders.width(), (int) mainGradientBorders.height(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
 
         long start = System.currentTimeMillis();
@@ -139,10 +264,25 @@ public class SimpleColorPickerH extends View {
                 colors[h] = Color.HSVToColor(hsv);
             }
 
-            LinearGradient gradient = new LinearGradient(0, 0, getWidth(), fractionY, colors, null, Shader.TileMode.CLAMP);
+            LinearGradient gradient = new LinearGradient(0, fractionY/2f, mainGradientBorders.width(), fractionY/2f, colors, null, Shader.TileMode.CLAMP);
             p.setShader(gradient);
             canvas.drawRect(0, fractionY*(float)s, getWidth(), fractionY*(float)s+fractionY*((float)s+1f), p);
         }
+
+
+        Bitmap mask = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas maskCanvas = new Canvas(mask);
+
+        Paint temp = new Paint(Paint.ANTI_ALIAS_FLAG);
+        temp.setStyle(Paint.Style.FILL);
+        temp.setColor(Color.BLACK);
+
+        maskCanvas.drawRoundRect(new RectF(0, 0, bitmap.getWidth(), bitmap.getHeight()), cornersRounding, cornersRounding, temp);
+
+        temp.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+        canvas.drawBitmap(mask, 0,0, temp);
+
+        mask.recycle();
 
         Log.d("SimpleColorPickerH", String.format("Generated gradient in %d ms.", System.currentTimeMillis()-start));
 

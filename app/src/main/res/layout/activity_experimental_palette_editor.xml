@@ -5,20 +5,34 @@
     android:id="@+id/epeaParent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
     tools:context="com.aefyr.pxl.experimental.ExperimentalPaletteEditorActivity">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/epeaReycler"
+    <android.support.v7.widget.CardView
+        android:id="@+id/epeaRecyclerCardView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar2"
+        app:cardBackgroundColor="@color/colorPrimary"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        app:cardUseCompatPadding="true"
+        app:contentPadding="4dp">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/epeaReycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true" />
+    </android.support.v7.widget.CardView>
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="72dp"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/epeaReycler"
-        android:orientation="horizontal"
-        android:id="@+id/linearLayout">
+        android:layout_below="@+id/epeaRecyclerCardView"
+        android:orientation="horizontal">
 
         <com.aefyr.pxl.custom.ColorRect
             android:id="@+id/epeaColorRectOld"
@@ -34,19 +48,50 @@
 
     </LinearLayout>
 
-    <com.aefyr.pxl.experimental.SimpleColorPickerH
-        android:id="@+id/epeaSimplePicker"
+    <android.support.v7.widget.CardView
+        android:id="@+id/epeaSimplePickerCardView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/epeaColorPicker"
-        app:circleSize="10dp"
-        app:circleStrokeWidth="3dp" />
+        android:layout_below="@+id/linearLayout"
+        app:cardBackgroundColor="@color/colorPrimary"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        app:cardUseCompatPadding="true"
+        app:contentPadding="4dp">
 
-    <include
-        android:id="@+id/epeaColorPicker"
-        layout="@layout/color_picker"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.aefyr.pxl.experimental.SimpleColorPickerH
+                android:id="@+id/epeaSimplePicker"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.001"
+                android:padding="17dp"
+                app:circleSize="10dp"
+                app:circleStrokeWidth="3dp" />
+
+            <Button
+                android:id="@+id/button2"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/precise_picker"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linearLayout" />
+        android:layout_height="56dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme" />
+
 </RelativeLayout>

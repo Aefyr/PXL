@@ -57,7 +57,7 @@
                 android:resource="@xml/filepaths" />
         </provider>
 
-        <activity android:name=".experimental.ExperimentalPaletteEditorActivity"></activity>
+        <activity android:name=".experimental.ExperimentalPaletteEditorActivity" android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

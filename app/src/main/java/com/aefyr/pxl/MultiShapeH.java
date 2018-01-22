@@ -6,7 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
-import android.os.Build;
+import android.graphics.RectF;
 
 import com.aefyr.pxl.common.RectP;
 import com.aefyr.pxl.util.Utils;
@@ -26,6 +26,7 @@ public class MultiShapeH extends ToolH {
     boolean locked = false;
     boolean fill = false;
     int rounding = 0;
+    private RectF rect = new RectF();
 
 
     private Bitmap backupBitmap;
@@ -103,9 +104,10 @@ public class MultiShapeH extends ToolH {
             case RECT:
                 aps.pixelCanvas.drawBitmap(backupBitmap, 0, 0, overlayPaint);
                 if (!locked) {
-                    if (rounding > 0 && Build.VERSION.SDK_INT >= 21)
-                        shapeCanvas.drawRoundRect(startX < sX ? startX : sX, startY < sY ? startY : sY, startX < sX ? sX : startX, startY < sY ? sY : startY, rounding, rounding, aps.paint);
-                    else
+                    if (rounding > 0) {
+                        rect.set(startX < sX ? startX : sX, startY < sY ? startY : sY, startX < sX ? sX : startX, startY < sY ? sY : startY);
+                        shapeCanvas.drawRoundRect(rect, rounding, rounding, aps.paint);
+                    }else
                         shapeCanvas.drawRect(startX, startY, sX, sY, aps.paint);
 
                     cX = sX;
@@ -115,9 +117,9 @@ public class MultiShapeH extends ToolH {
                     float aX = (float) (startX + Math.sqrt(Math.pow(d[0], 2) / 2f) * Math.signum(d[0]));
                     float aY = (float) (startY + Math.sqrt(Math.pow(d[1], 2) / 2f) * Math.signum(d[1]));
 
-                    if (rounding > 0 && Build.VERSION.SDK_INT >= 21) {
-
-                        shapeCanvas.drawRoundRect(startX < aX ? startX : aX, startY < aY ? startY : aY, startX < aX ? aX : startX, startY < aY ? aY : startY, rounding, rounding, aps.paint);
+                    if (rounding > 0) {
+                        rect.set(startX < aX ? startX : aX, startY < aY ? startY : aY, startX < aX ? aX : startX, startY < aY ? aY : startY);
+                        shapeCanvas.drawRoundRect(rect, rounding, rounding, aps.paint);
                     } else
                         shapeCanvas.drawRect(startX, startY, aX, aY, aps.paint);
 
@@ -127,7 +129,7 @@ public class MultiShapeH extends ToolH {
                 break;
             case CIRCLE:
                 aps.pixelCanvas.drawBitmap(backupBitmap, 0, 0, overlayPaint);
-                if (!locked && Build.VERSION.SDK_INT >= 21) {
+                if (!locked) {
                     float x1 = sX >= 0 ? startX : sX;
                     float x2 = sX >= 0 ? sX : startX;
                     float y1 = sY >= 0 ? startY : sY;
@@ -142,11 +144,12 @@ public class MultiShapeH extends ToolH {
                         y1 = y2;
                         y2 = t;
                     }
-                    shapeCanvas.drawOval(x1, y1, x2, y2, aps.paint);
+                    rect.set(x1, y1, x2, y2);
+                    shapeCanvas.drawOval(rect, aps.paint);
 
                     cX = sX;
                     cY = sY;
-                } else if (locked && Build.VERSION.SDK_INT >= 21) {
+                } else{
                     d = Utils.signedVector2Distance(startX, startY, sX, sY);
 
                     float x1 = startX + d[0] >= 0 ? startX : startX + d[0];
@@ -164,17 +167,12 @@ public class MultiShapeH extends ToolH {
                         y2 = t;
                     }
 
-                    shapeCanvas.drawOval(x1, y1, x2, y2, aps.paint);
+                    rect.set(x1, y1, x2, y2);
+                    shapeCanvas.drawOval(rect, aps.paint);
 
                     cX = x1 == startX ? x2 : x1;
                     cY = y1 == startY ? y2 : y1;
-                } else {
-                    shapeCanvas.drawCircle(startX, startY, Utils.vector2Distance(startX, startY, sX, sY), aps.paint);
-
-                    cX = sX;
-                    cY = sY;
                 }
-
                 break;
         }
         aps.pixelCanvas.drawBitmap(shapeBitmap, 0, 0, aps.noAAPaint);
@@ -233,7 +231,7 @@ public class MultiShapeH extends ToolH {
 
     @Override
     protected void checkHitBounds() {
-        if (aps.paint.getStrokeWidth() == 1 && (Build.VERSION.SDK_INT >= 21 || shape != Shape.CIRCLE)) {
+        if (aps.paint.getStrokeWidth() == 1) {
             shapeBounds.set((int) startX, (int) startY, (int) cX, (int) cY);
             hitBounds = shapeBounds.overlaps(canvasBounds);
         } else

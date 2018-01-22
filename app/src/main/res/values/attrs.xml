@@ -9,6 +9,8 @@
     <declare-styleable name="SimpleColorPickerH">
         <attr name="circleSize" format="dimension"/>
         <attr name="circleStrokeWidth" format="dimension"/>
+        <attr name="valueGradientWidth" format="dimension"/>
+        <attr name="cornersRounding" format="dimension"/>
     </declare-styleable>
 
 </resources>

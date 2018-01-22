@@ -2,7 +2,6 @@ package com.aefyr.pxl;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.Build;
 import android.support.annotation.IdRes;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -200,10 +199,8 @@ public class ToolSettingsManager {
                         shapeCapStyles.setVisibility(View.VISIBLE);
                         toolStyleText.setVisibility(View.VISIBLE);
 
-                        if (Build.VERSION.SDK_INT >= 21) {
-                            roundingText.setVisibility(View.GONE);
-                            roundingSeekBar.setVisibility(View.GONE);
-                        }
+                        roundingText.setVisibility(View.GONE);
+                        roundingSeekBar.setVisibility(View.GONE);
                         break;
                     case R.id.rectTool:
                         if (aps.multiShape.shape == MultiShapeH.Shape.RECT)
@@ -221,10 +218,8 @@ public class ToolSettingsManager {
                         shapeCapStyles.setVisibility(View.GONE);
                         toolStyleText.setVisibility(View.GONE);
 
-                        if (Build.VERSION.SDK_INT >= 21) {
-                            roundingText.setVisibility(View.VISIBLE);
-                            roundingSeekBar.setVisibility(View.VISIBLE);
-                        }
+                        roundingText.setVisibility(View.VISIBLE);
+                        roundingSeekBar.setVisibility(View.VISIBLE);
                         break;
                     case R.id.circleTool:
                         if (aps.multiShape.shape == MultiShapeH.Shape.CIRCLE)
@@ -241,12 +236,11 @@ public class ToolSettingsManager {
                         shapeCapStyles.setVisibility(View.GONE);
                         toolStyleText.setVisibility(View.GONE);
 
-                        if (Build.VERSION.SDK_INT >= 21) {
-                            lockedSwitch.setVisibility(View.VISIBLE);
-                            roundingText.setVisibility(View.GONE);
-                            roundingSeekBar.setVisibility(View.GONE);
-                        } else
-                            lockedSwitch.setVisibility(View.GONE);
+
+                        lockedSwitch.setVisibility(View.VISIBLE);
+                        roundingText.setVisibility(View.GONE);
+                        roundingSeekBar.setVisibility(View.GONE);
+
                         break;
                 }
             }
