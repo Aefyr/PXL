@@ -24,7 +24,7 @@ public class PaletteManager {
     private boolean first = true;
 
     OnCloseListener listener;
-    Context c;
+    private Context c;
 
     public interface OnCloseListener {
         void onClose();
@@ -77,8 +77,19 @@ public class PaletteManager {
                 currentPalette.editColor(position, colorPicker.getColor());
                 colorPicker = null;
             }
-        }).setNegativeButton(c.getString(R.string.cancel), null).setTitle(c.getString(R.string.edit_color)).create();
+        }).setNegativeButton(c.getString(R.string.cancel), null).setTitle(c.getString(R.string.edit_color)).setNeutralButton(R.string.hex, null).create();
         colorEditDialog.show();
+        colorEditDialog.getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new HexColorPicker(c, colorPicker.getColor(), new HexColorPicker.OnColorPickListener() {
+                    @Override
+                    public void onColorPicked(int color) {
+                        colorPicker.setColor(color);
+                    }
+                }).show();
+            }
+        });
         colorPicker = new ColorPickerH(colorEditDialog.getWindow(), currentPalette.getColor(position));
     }
 

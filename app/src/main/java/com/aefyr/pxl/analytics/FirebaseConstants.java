@@ -39,6 +39,7 @@ public class FirebaseConstants {
         public static final String ACTION_CENTER = "center";
         public static final String ACTION_MIRROR = "mirror";
         public static final String ACTION_SAVE = "save";
+        public static final String ACTION_SHARE = "share";
     }
 
     public class Projects {

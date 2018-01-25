@@ -1,0 +1,95 @@
+package com.aefyr.pxl.palettes;
+
+import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import com.aefyr.pxl.R;
+import com.aefyr.pxl.custom.ColorRect;
+import com.aefyr.pxl.util.Utils;
+
+import java.util.Arrays;
+import java.util.HashSet;
+
+/**
+ * Created by Aefyr on 25.01.2018.
+ */
+
+public class HexColorPicker {
+    private AlertDialog dialog;
+
+    private TextView hexText;
+    private EditText hexEditText;
+    private ColorRect hexRect;
+
+    private int color;
+
+    private OnColorPickListener listener;
+
+    public interface OnColorPickListener{
+        void onColorPicked(int color);
+    }
+
+    public HexColorPicker(Context c, int initialColor, final OnColorPickListener listener){
+        this.color = initialColor;
+        this.listener = listener;
+
+        dialog = new AlertDialog.Builder(c).setView(R.layout.color_picker_hex).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                listener.onColorPicked(color);
+            }
+        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        }).create();
+    }
+
+    public void show(){
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        dialog.show();
+        hexText = dialog.findViewById(R.id.hexText);
+
+        hexEditText = dialog.findViewById(R.id.hexEditText);
+        hexEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(s.length()!=0)
+                    setColor(Utils.hexToColor(s.toString(), false));
+                else
+                    setColor(Utils.hexToColor("0", false));
+            }
+        });
+
+        hexRect = dialog.findViewById(R.id.hexRect);
+
+        hexEditText.setText(Utils.colorToHex(color));
+        hexEditText.setSelection(0, hexEditText.length());
+    }
+
+    public void setColor(int color){
+        this.color = color;
+        hexText.setText(Utils.colorToHex(color));
+        hexRect.setColor(color);
+    }
+}

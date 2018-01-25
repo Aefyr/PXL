@@ -12,6 +12,7 @@ import com.aefyr.pxl.R;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -71,9 +72,12 @@ public class PaletteMakerH {
         if(colors.size()<=colorsCount)
             return colors;
 
-        lidlBitmap = new Kmeans().calculate(lidlBitmap, colorsCount, 1);
+        colors = new ArrayList<>(colorsCount);
+        for(int color: new Kmeans().extractColors(lidlBitmap, colorsCount))
+            colors.add(color);
 
-        colors = sequentiallyGetUniqueColorsFromImage(lidlBitmap, colorsCount);
+        Collections.sort(colors, new ColorBrightnessComparator());
+        lidlBitmap.recycle();
 
         Log.d(TAG, String.format("Extracted %d colors from image in %d ms", colorsCount, System.currentTimeMillis()-start));
 

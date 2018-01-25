@@ -9,6 +9,7 @@ import android.media.MediaScannerConnection;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.util.TypedValue;
 import android.widget.Toast;
 
@@ -186,16 +187,53 @@ public class Utils {
     }
 
     public static String colorToHex(int color) {
-        String r = Integer.toHexString(Color.red(color)).toUpperCase();
-        if (r.length() == 1)
-            r = "0" + r;
-        String g = Integer.toHexString(Color.green(color)).toUpperCase();
-        if (g.length() == 1)
-            g = "0" + g;
-        String b = Integer.toHexString(Color.blue(color)).toUpperCase();
-        if (b.length() == 1)
-            b = "0" + b;
-        return r + g + b;
+        StringBuilder hexBuilder = new StringBuilder();
+
+        String r = Integer.toHexString(Color.red(color));
+        if(r.length()==1)
+            hexBuilder.append(0);
+        hexBuilder.append(r);
+
+        String g = Integer.toHexString(Color.green(color));
+        if(g.length()==1)
+            hexBuilder.append(0);
+        hexBuilder.append(g);
+
+        String b = Integer.toHexString(Color.blue(color));
+        if(b.length()==1)
+            hexBuilder.append(0);
+        hexBuilder.append(b);
+
+        return hexBuilder.toString().toUpperCase();
+    }
+
+    public static int hexToColor(String hex, boolean ascendingOrder){
+        int base = 0xFF000000;
+        char[] hexChars = hex.toCharArray();
+
+        for(int i = 0; i<hexChars.length; i++)
+            base += hexCharToInt(hexChars[i]) * Math.pow(16, ascendingOrder?hexChars.length - 1:5 - i);
+
+        return base;
+    }
+
+    private static int hexCharToInt(char hexChar){
+        hexChar = Character.toLowerCase(hexChar);
+        switch (hexChar){
+            case 'a':
+                return 10;
+            case 'b':
+                return 11;
+            case 'c':
+                return 12;
+            case 'd':
+                return 13;
+            case 'e':
+                return 14;
+            case 'f':
+                return 15;
+        }
+        return Character.getNumericValue(hexChar);
     }
 
     public static String correctHexColor(String hexColor) {

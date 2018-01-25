@@ -25,7 +25,6 @@
         android:layout_margin="@dimen/fab_margin"
         android:rotation="45"
         android:tint="@color/colorImageButtonBackgroundTint"
-        app:fabSize="normal"
         app:srcCompat="@drawable/ic_close_white_48dp" />
 
 </RelativeLayout>

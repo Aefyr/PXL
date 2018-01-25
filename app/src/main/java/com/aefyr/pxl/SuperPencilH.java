@@ -7,6 +7,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.preference.PreferenceManager;
 
 import com.aefyr.pxl.fragments.PreferencesFragment;
@@ -24,9 +25,10 @@ public class SuperPencilH extends ToolH {
     private float highVelocityThreshold;
 
     //Flawless symmetry
-    private boolean flawlessSymmetry;
+    boolean flawlessSymmetry;
     private Bitmap mBitmap;
     private Canvas mCanvas;
+    Paint flawlessPaint;
 
     enum Style {
         SQUARE, ROUND
@@ -43,6 +45,7 @@ public class SuperPencilH extends ToolH {
         if(flawlessSymmetry) {
             mBitmap = Bitmap.createBitmap(aps.pixelWidth, aps.pixelHeight, Bitmap.Config.ARGB_8888);
             mCanvas = new Canvas(mBitmap);
+            flawlessPaint = new Paint();
         }
     }
 
@@ -57,6 +60,28 @@ public class SuperPencilH extends ToolH {
             aps.paint.setStrokeCap(Paint.Cap.ROUND);
     }
 
+    void updatePaints(){
+        if(aps.currentTool== AdaptivePixelSurfaceH.Tool.ERASER){
+            if(aps.project.transparentBackground){
+                if(aps.symmetry&&flawlessSymmetry){
+                    aps.paint.setXfermode(null);
+                    flawlessPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
+                }else {
+                    aps.paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+                }
+            }else {
+                aps.paint.setColor(Color.WHITE);
+            }
+        }else {
+            if(aps.project.transparentBackground) {
+                aps.paint.setXfermode(null);
+                if(flawlessSymmetry)
+                    flawlessPaint.setXfermode(null);
+            }else
+                aps.paint.setColor(aps.currentColor);
+        }
+    }
+
 
     boolean instaDots = true;
 
@@ -64,7 +89,6 @@ public class SuperPencilH extends ToolH {
     private float nX, nY;
 
     private float lX, lY;
-    private boolean highVelocity;
 
     @Override
     void startDrawing(float x, float y) {
@@ -85,25 +109,41 @@ public class SuperPencilH extends ToolH {
         nY = sY;
 
         aps.canvasHistory.startHistoricalChange();
+        if(aps.symmetry&&flawlessSymmetry)
+            mCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
-        if (aps.strokeWidth == 1)
-            aps.pixelCanvas.drawPoint(sX, sY, aps.paint);
+        if (aps.strokeWidth == 1) {
+            if(aps.symmetry&&flawlessSymmetry)
+                mCanvas.drawPoint(sX, sY, aps.paint);
+            else
+                aps.pixelCanvas.drawPoint(sX, sY, aps.paint);
+
+        }
 
         //STYLE
         if (aps.cursorMode && style == Style.SQUARE) {
-            aps.pixelCanvas.drawPoint(sX, sY, aps.paint);
+            if(aps.symmetry&&flawlessSymmetry)
+                mCanvas.drawPoint(sX, sY, aps.paint);
+            else
+                aps.pixelCanvas.drawPoint(sX, sY, aps.paint);
+
         }
 
 
         if (aps.symmetry) {
-            calculateSymmetricalCanvasXY();
-            mirroredPath.reset();
-            if (aps.paint.getStrokeWidth() == 1)
-                aps.pixelCanvas.drawPoint(aSX, aSY, aps.paint);
+            if(flawlessSymmetry){
+                aps.pixelCanvas.drawBitmap(mBitmap, 0, 0, flawlessPaint);
+                aps.pixelCanvas.drawBitmap(mBitmap, mirrorMatrix, flawlessPaint);
+            }else {
+                calculateSymmetricalCanvasXY();
+                mirroredPath.reset();
+                if (aps.paint.getStrokeWidth() == 1)
+                    aps.pixelCanvas.drawPoint(aSX, aSY, aps.paint);
 
-            //STYLE
-            if (aps.cursorMode && style == Style.SQUARE) {
-                aps.pixelCanvas.drawPoint(aSX, aSY, aps.paint);
+                //STYLE
+                if (aps.cursorMode && style == Style.SQUARE) {
+                    aps.pixelCanvas.drawPoint(aSX, aSY, aps.paint);
+                }
             }
         }
 
@@ -115,7 +155,7 @@ public class SuperPencilH extends ToolH {
         if (!drawing)
             return;
 
-        highVelocity = Utils.vector2Distance(x, y, lX, lY) >= highVelocityThreshold;
+        boolean highVelocity = Utils.vector2Distance(x, y, lX, lY) >= highVelocityThreshold;
 
         calculateCanvasXY(x, y);
 
@@ -152,7 +192,7 @@ public class SuperPencilH extends ToolH {
 
             //Drawing mirrored path, 2 options for 2 symmetry profiles
             if(flawlessSymmetry)
-                aps.pixelCanvas.drawBitmap(mBitmap, mirrorMatrix, null);
+                aps.pixelCanvas.drawBitmap(mBitmap, mirrorMatrix, flawlessPaint);
             else {
                 path.transform(mirrorMatrix, mirroredPath);
                 aps.pixelCanvas.drawPath(mirroredPath, aps.paint);
@@ -160,7 +200,7 @@ public class SuperPencilH extends ToolH {
         }
 
         if(aps.symmetry&&flawlessSymmetry)
-            aps.pixelCanvas.drawBitmap(mBitmap, 0, 0, null);
+            aps.pixelCanvas.drawBitmap(mBitmap, 0, 0, flawlessPaint);
         else
             aps.pixelCanvas.drawPath(path, aps.paint);
 
@@ -202,7 +242,7 @@ public class SuperPencilH extends ToolH {
 
             //Drawing mirrored path, 2 options for 2 symmetry profiles
             if(flawlessSymmetry)
-                aps.pixelCanvas.drawBitmap(mBitmap, mirrorMatrix, null);
+                aps.pixelCanvas.drawBitmap(mBitmap, mirrorMatrix, flawlessPaint);
             else {
                 path.transform(mirrorMatrix, mirroredPath);
                 aps.pixelCanvas.drawPath(mirroredPath, aps.paint);
@@ -211,7 +251,7 @@ public class SuperPencilH extends ToolH {
         }
 
         if(aps.symmetry&&flawlessSymmetry)
-            aps.pixelCanvas.drawBitmap(mBitmap, 0, 0, null);
+            aps.pixelCanvas.drawBitmap(mBitmap, 0, 0, flawlessPaint);
         else
             aps.pixelCanvas.drawPath(path, aps.paint);
 

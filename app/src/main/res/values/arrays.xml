@@ -24,6 +24,7 @@
         <item>Center Canvas</item>
         <item>Flip Image</item>
         <item>Save to Gallery</item>
+        <item>Share</item>
     </string-array>
 
     <string-array name="trans_bg_options">

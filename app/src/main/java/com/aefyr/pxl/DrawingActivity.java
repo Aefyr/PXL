@@ -101,13 +101,14 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
     private void canvasWiseOptionsDialog() {
         if(dialog11 == null) {
             String[] actions = getResources().getStringArray(R.array.canvas_options_array);
-            ItemWithIcon[] items = new ItemWithIcon[6];
+            ItemWithIcon[] items = new ItemWithIcon[7];
             items[0] = new ItemWithIcon(actions[0], R.drawable.clear);
             items[1] = new ItemWithIcon(actions[1], R.drawable.move);
             items[2] = new ItemWithIcon(actions[2], R.drawable.overlay);
             items[3] = new ItemWithIcon(actions[3], R.drawable.center);
             items[4] = new ItemWithIcon(actions[4], R.drawable.mirror);
             items[5] = new ItemWithIcon(actions[5], R.drawable.save);
+            items[6] = new ItemWithIcon(actions[6], R.drawable.share);
             ListAdapterWithIcons adapterWithIcons = new ListAdapterWithIcons(this, items);
 
             dialog11 = new AlertDialog.Builder(this).setTitle(getString(R.string.canvas_options)).setAdapter(adapterWithIcons, new DialogInterface.OnClickListener() {
@@ -137,8 +138,12 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                             analyticsAction = FirebaseConstants.Canvas.ACTION_MIRROR;
                             break;
                         case 5:
-                            exportImage();
+                            exportImage(false);
                             analyticsAction = FirebaseConstants.Canvas.ACTION_SAVE;
+                            break;
+                        case 6:
+                            exportImage(true);
+                            analyticsAction = FirebaseConstants.Canvas.ACTION_SHARE;
                             break;
 
                     }
@@ -414,7 +419,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                         mergeTool();
                         break;
                     case 1:
-                        exportImage();
+                        exportImage(wasForShare);
                         break;
                 }
             }else
@@ -496,14 +501,16 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
     }
 
     private int actionAfter = 0; // 0=merge, 1=export
-    private void exportImage(){
+    private boolean wasForShare;
+    private void exportImage(boolean forShare){
         if(!PermissionsUtils.checkStoragePermissions(this)) {
+            wasForShare = forShare;
             actionAfter = 1;
             PermissionsUtils.requestStoragePermissions(this);
             return;
         }
         ProjectsExporter exporter = new ProjectsExporter(this);
-        exporter.prepareDialogFor(aps.project, false, null);
+        exporter.prepareDialogFor(aps.project, forShare, null);
         exporter.showDialog();
     }
 

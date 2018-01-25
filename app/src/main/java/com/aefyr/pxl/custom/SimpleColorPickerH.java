@@ -1,4 +1,4 @@
-package com.aefyr.pxl.experimental;
+package com.aefyr.pxl.custom;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -83,6 +83,10 @@ public class SimpleColorPickerH extends View {
             gradient.recycle();
 
         mainGradientBorders = new RectF(getPaddingLeft(), getPaddingTop(), getWidth()-getPaddingRight()*2- valuePickerWidth, getHeight()-getPaddingBottom());
+        if(mainGradientBorders.width()<1||mainGradientBorders.height()<1)
+            return;
+
+
         valueGradientBorders = new RectF(mainGradientBorders.right+getPaddingRight(), mainGradientBorders.top, getWidth()-getPaddingRight(), mainGradientBorders.bottom);
 
         valueCircleX = valueGradientBorders.left+valueGradientBorders.width()/2f;
@@ -100,6 +104,8 @@ public class SimpleColorPickerH extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        if(mainGradientBorders.width()<1||mainGradientBorders.height()<1)
+            return;
         super.onDraw(canvas);
         if(isInEditMode()){
             circlePaint.setColor(Color.RED);

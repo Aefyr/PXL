@@ -1,7 +1,5 @@
 package com.aefyr.pxl.experimental;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.app.Activity;
@@ -9,8 +7,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.Handler;
-import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -19,13 +15,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.aefyr.pxl.ColorPicker;
 import com.aefyr.pxl.R;
 import com.aefyr.pxl.common.Ruler;
 import com.aefyr.pxl.custom.ColorCircle;
 import com.aefyr.pxl.custom.ColorRect;
+import com.aefyr.pxl.custom.SimpleColorPickerH;
 import com.aefyr.pxl.palettes.ColorSelectionRecyclerAdapter;
-import com.aefyr.pxl.palettes.PaletteMakerH;
+import com.aefyr.pxl.palettes.HexColorPicker;
 import com.aefyr.pxl.palettes.PaletteUtils;
 import com.aefyr.pxl.util.Utils;
 
@@ -205,6 +201,13 @@ public class ExperimentalPaletteEditorActivity extends AppCompatActivity {
         oldRect.setColorWithExplosion(((ColorCircle) clickedCircle).color(), oldRect.getWidth(), oldRect.getHeight()/2, 0);
         newRect.setColorWithExplosion(((ColorCircle) clickedCircle).color(), 0, newRect.getHeight()/2, 0);
         simpleColorPickerH.setColor(((ColorCircle)clickedCircle).color());
+
+        new HexColorPicker(this, ((ColorCircle) clickedCircle).color(), new HexColorPicker.OnColorPickListener() {
+            @Override
+            public void onColorPicked(int color) {
+                ((ColorCircle) clickedCircle).setColor(color);
+            }
+        }).show();
 
     }
 

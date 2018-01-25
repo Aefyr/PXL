@@ -158,13 +158,13 @@ public class ProjectsExporter {
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
                 shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-                shareIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(c, "com.af.pxl.fileprovider", imagePath));
+                shareIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(c, "com.aefyr.pxl.fileprovider", imagePath));
                 shareIntent.setType("image/png");
                 c.startActivity(Intent.createChooser(shareIntent, c.getString(R.string.share)));
-            } else {
-                Utils.alternativeAddImageToGallery(c, imagePath);
+            } else
                 Utils.toaster(c, c.getString(R.string.project_saved));
-            }
+
+            Utils.alternativeAddImageToGallery(c, imagePath);
 
             if(listener!=null)
                 listener.onProjectExported(imagePath);

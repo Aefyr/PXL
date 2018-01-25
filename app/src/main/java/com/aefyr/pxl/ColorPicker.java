@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 import android.view.Window;
 
 import com.aefyr.pxl.custom.ColorRect;
-import com.aefyr.pxl.experimental.SimpleColorPickerH;
+import com.aefyr.pxl.custom.SimpleColorPickerH;
 
 /**
  * Created by Aefyr on 17.06.2017.
@@ -37,6 +37,12 @@ public class ColorPicker {
             simpleColorPickerH.setColor(color);
         }
 
+        newColor.setColor(color);
+    }
+
+    public void setColor(int color){
+        this.color = color;
+        simpleColorPickerH.setColor(color);
         newColor.setColor(color);
     }
 

@@ -7,6 +7,7 @@ package com.aefyr.pxl.palettes;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.util.Log;
+
 import java.util.Arrays;
 
 class Kmeans {
@@ -89,6 +90,45 @@ class Kmeans {
         return new Kmeans().calculate(sourceImage, 16, 1);
     }
 
+
+    public int[] extractColors(Bitmap source, int colorsCount) {
+        long start = System.currentTimeMillis();
+        int w = source.getWidth();
+        int h = source.getHeight();
+        this.clusters = createClusters(source, colorsCount);
+        int[] lut = new int[(w * h)];
+        Arrays.fill(lut, -1);
+        boolean pixelChangedCluster = true;
+        int loops = 0;
+        while (pixelChangedCluster) {
+            int y;
+            pixelChangedCluster = false;
+            loops++;
+            for (y = 0; y < h; y++) {
+                int x;
+                for (x = 0; x < w; x++) {
+                    int pixel = source.getPixel(x, y);
+                    Cluster cluster = findMinimalCluster(pixel);
+                    if (lut[(w * y) + x] != cluster.getId()) {
+                        if (lut[(w * y) + x] != -1) {
+                            this.clusters[lut[(w * y) + x]].removePixel(pixel);
+                        }
+                        cluster.addPixel(pixel);
+                        pixelChangedCluster = true;
+                        lut[(w * y) + x] = cluster.getId();
+                    }
+                }
+            }
+        }
+
+        int[] extractedColors = new int[colorsCount];
+        for (int i = 0; i < colorsCount; i++)
+            extractedColors[i] = clusters[i].getRGB();
+
+        Log.d("Kmeans", String.format("Time taken: %d ms. Clusters: %d. Loops: %d", (System.currentTimeMillis() - start), colorsCount, loops));
+        return extractedColors;
+    }
+
     public Bitmap calculate(Bitmap image, int k, int mode) {
         long start = System.currentTimeMillis();
         int w = image.getWidth();
@@ -136,7 +176,7 @@ class Kmeans {
                 result.setPixel(x, y, this.clusters[lut[(w * y) + x]].getRGB());
             }
         }
-        Log.d("Kmeans", String.format("Time taken: %d ms. Clusters: %d. Loops: %d", (System.currentTimeMillis()-start), k, loops));
+        Log.d("Kmeans", String.format("Time taken: %d ms. Clusters: %d. Loops: %d", (System.currentTimeMillis() - start), k, loops));
         return result;
     }
 
@@ -157,7 +197,7 @@ class Kmeans {
     private Cluster findMinimalCluster(int rgb) {
         Cluster wCluster = null;
         int min = Integer.MAX_VALUE;
-        for (Cluster cCluster: clusters) {
+        for (Cluster cCluster : clusters) {
             int distance = cCluster.distance(rgb);
             if (distance < min) {
                 min = distance;

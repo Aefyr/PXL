@@ -127,9 +127,6 @@ public class AdaptivePixelSurfaceH extends View {
         if (currentTool == Tool.SELECTOR)
             selector.cancel(0, 0);
 
-        if (project.transparentBackground)
-            paint.setXfermode(null);
-        paint.setColor(currentColor);
         switch (tool) {
             case PENCIL:
                 currentTool = Tool.PENCIL;
@@ -145,10 +142,6 @@ public class AdaptivePixelSurfaceH extends View {
                 break;
             case ERASER:
                 currentTool = Tool.ERASER;
-                if (project.transparentBackground) {
-                    paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-                } else
-                    paint.setColor(Color.WHITE);
                 break;
             case MULTISHAPE:
                 currentTool = Tool.MULTISHAPE;
@@ -157,6 +150,8 @@ public class AdaptivePixelSurfaceH extends View {
                 currentTool = Tool.SELECTOR;
                 break;
         }
+        superPencil.updatePaints();
+
         if(onToolChangeListener!=null)
             onToolChangeListener.onToolChanged(currentTool, showToolSettings);
 
@@ -195,6 +190,7 @@ public class AdaptivePixelSurfaceH extends View {
         symmetry = enabled;
         symmetryType = type;
         superPencil.symmetryUpdate();
+        superPencil.updatePaints();
         canvasAnalytics.logSymmetryChange(enabled, type);
     }
 

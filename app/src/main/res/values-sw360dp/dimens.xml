@@ -6,13 +6,14 @@
     <dimen name="nav_header_height">160dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="tool_setting_layout_width">256dp</dimen>
-    <dimen name="tool_setting_layout_margin_end">0dp</dimen>
 
     <!-- PXL -->
     <dimen name="pxl_margin_m">12dp</dimen>
     <dimen name="pxl_margin_s">8dp</dimen>
     <dimen name="pxl_button_style_size">52dp</dimen>
-    <dimen name="simple_color_picker_height">180dp</dimen>
+
+    <dimen name="simple_color_picker_height">206dp</dimen>
+    <dimen name="simple_color_picker_width">360dp</dimen>
 
     <!-- Drawing Activity -->
     <dimen name="main_color_circle_size">64dp</dimen>

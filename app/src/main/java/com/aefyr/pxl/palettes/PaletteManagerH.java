@@ -83,8 +83,19 @@ public class PaletteManagerH {
                         colorPicker = null;
                         hide();
                     }
-                }).setNegativeButton(aps.getResources().getString(R.string.cancel), null).setTitle(aps.getResources().getString(R.string.edit_color)).create();
+                }).setNegativeButton(aps.getResources().getString(R.string.cancel), null).setTitle(aps.getResources().getString(R.string.edit_color)).setNeutralButton(R.string.hex, null).create();
                 colorEditDialog.show();
+                colorEditDialog.getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        new HexColorPicker(aps.getContext(), colorPicker.getColor(), new HexColorPicker.OnColorPickListener() {
+                            @Override
+                            public void onColorPicked(int color) {
+                                colorPicker.setColor(color);
+                            }
+                        }).show();
+                    }
+                });
                 colorPicker = new ColorPickerH(colorEditDialog.getWindow(), currentColor);
             }
         });

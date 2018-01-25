@@ -36,19 +36,7 @@ public class ColorPickerH {
 
     float[] color = {0, 0, 0};
 
-    public ColorPickerH(ColorPickerViewH hueView, SeekBar hueBar, ColorPickerViewH saturationView, SeekBar saturationBar, ColorPickerViewH valueView, SeekBar valueBar, ColorRect newColorPreview, int currentColor) {
-        this.hueView = hueView;
-        this.hueBar = hueBar;
-        this.saturationView = saturationView;
-        this.saturationBar = saturationBar;
-        this.valueView = valueView;
-        this.valueBar = valueBar;
-
-        this.newColorPreview = newColorPreview;
-
-        setStartColor(currentColor);
-        initialize();
-    }
+    private boolean paused;
 
     public ColorPickerH(Window colorPickerView, int startColor) {
         hueView = (ColorPickerViewH) colorPickerView.findViewById(R.id.colorPickerHue);
@@ -64,21 +52,28 @@ public class ColorPickerH {
         editTextSat = (EditText) colorPickerView.findViewById(R.id.editTextSat);
         editTextVal = (EditText) colorPickerView.findViewById(R.id.editTextVal);
 
-        setStartColor(startColor);
+        setColorI(startColor, true);
         initialize();
     }
 
-    private void setStartColor(int startColor) {
-        oldColorPreview.setColor(startColor);
+    public void setColor(int color){
+        paused = true;
+        setColorI(color, false);
+        paused = false;
+    }
 
-        Color.colorToHSV(startColor, color);
-        hueBar.setProgress((int) color[0]);
-        saturationBar.setProgress((int) (color[1] * 100));
-        valueBar.setProgress((int) (color[2] * 100));
+    private void setColorI(int color, boolean initial) {
+        if(initial)
+            oldColorPreview.setColor(color);
 
-        editTextHue.setText(String.valueOf((int) color[0]));
-        editTextSat.setText(String.valueOf((int) (color[1] * 100f)));
-        editTextVal.setText(String.valueOf((int) (color[2] * 100f)));
+        Color.colorToHSV(color, this.color);
+        hueBar.setProgress((int) this.color[0]);
+        saturationBar.setProgress((int) (this.color[1] * 100));
+        valueBar.setProgress((int) (this.color[2] * 100));
+
+        editTextHue.setText(String.valueOf((int) this.color[0]));
+        editTextSat.setText(String.valueOf((int) (this.color[1] * 100f)));
+        editTextVal.setText(String.valueOf((int) (this.color[2] * 100f)));
     }
 
     private void initialize() {
@@ -93,6 +88,9 @@ public class ColorPickerH {
         SeekBar.OnSeekBarChangeListener onSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                if(paused)
+                    return;
+
                 if (seekBar == hueBar) {
                     color[0] = i;
                     editTextHue.setText(String.valueOf(i));

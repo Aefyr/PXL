@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
@@ -125,6 +126,7 @@ public class ColorSwapActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        Log.d("Destroyed!", "Ai ");
         colorPicker.destroySwapperIfNeeded();
         super.onDestroy();
     }

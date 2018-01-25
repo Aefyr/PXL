@@ -30,16 +30,18 @@ public class ColorSwapperH {
     //Accelerated swapTo resources
     private RenderScript rs;
     private ScriptC_color_swapper swapperScript;
-    private Allocation bitmapAllocation;
+    private Allocation originalAllocation;
+    private Allocation currentAllocation;
+    private Bitmap original;
 
     //Slow swapTo resources
     private HashSet<Vector2> pixelsToSwap;
 
-    public ColorSwapperH(Context context, Bitmap bitmap, int fromColor, int toColor){
+    public ColorSwapperH(Context context, Bitmap original, int fromColor, int toColor){
         oldColor = fromColor;
         newColor = toColor;
         c = context;
-        b = bitmap;
+        b = original;
         accelerationEnabled = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("hardware_accelerated", true);
         initialize();
     }
@@ -66,7 +68,9 @@ public class ColorSwapperH {
         if(accelerationEnabled) {
             rs.destroy();
             swapperScript.destroy();
-            bitmapAllocation.destroy();
+            originalAllocation.destroy();
+            currentAllocation.destroy();
+            original.recycle();
         }
     }
 
@@ -87,7 +91,9 @@ public class ColorSwapperH {
         rs = RenderScript.create(c);
         swapperScript = new ScriptC_color_swapper(rs);
 
-        bitmapAllocation = Allocation.createFromBitmap(rs, b);
+        original = b.copy(Bitmap.Config.ARGB_8888, true);
+        originalAllocation = Allocation.createFromBitmap(rs, original);
+        currentAllocation = Allocation.createFromBitmap(rs, b);
 
         swapperScript.set_oldValue(new Int3(Color.red(oldColor), Color.green(oldColor), Color.blue(oldColor)));
 
@@ -104,12 +110,8 @@ public class ColorSwapperH {
     }
 
     private void acceleratedSwap(){
-        swapperScript.forEach_swap(bitmapAllocation, bitmapAllocation);
-        bitmapAllocation.copyTo(b);
-
-        //Preparing for next swap
-        oldColor = newColor;
-        swapperScript.set_oldValue(new Int3(Color.red(oldColor), Color.green(oldColor), Color.blue(oldColor)));
+        swapperScript.forEach_swap(originalAllocation, currentAllocation);
+        currentAllocation.copyTo(b);
     }
 
     private void initializeSlowSwapResources(){
