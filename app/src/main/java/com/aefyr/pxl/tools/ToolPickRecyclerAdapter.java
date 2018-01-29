@@ -1,6 +1,7 @@
 package com.aefyr.pxl.tools;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -115,5 +116,18 @@ public class ToolPickRecyclerAdapter extends RecyclerView.Adapter<ToolPickRecycl
         currentTool.setImageResource(ToolPreview.getIconForTool(newTool));
         if(manager.notifyToolPicked(newTool, showToolSettings))
             hide();
+    }
+
+    public void writeStateToBundle(Bundle outState){
+        outState.putBoolean("toolPicker_shown", shown);
+    }
+
+    public void restoreState(Bundle savedInstanceState){
+        currentTool.setImageResource(ToolPreview.getIconForTool(aps.currentTool()));
+        manager.notifyToolPicked(aps.currentTool(), false);
+
+        if(savedInstanceState.getBoolean("toolPicker_shown", false))
+            show();
+
     }
 }

@@ -11,7 +11,11 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -27,6 +31,7 @@ import java.io.File;
 public class ProjectsExporter {
     private Context c;
     private AlertDialog exportResolutionPickDialog;
+    private float resolutionMultiplier = 1;
 
 
     public ProjectsExporter(Context c){
@@ -34,61 +39,69 @@ public class ProjectsExporter {
     }
 
     public void prepareDialogFor(final Project project, final boolean shareAfterExport, @Nullable final ExportListener listener){
-        String[] resolutionOptions = {project.width + "x" + project.height + " (" + c.getString(R.string.original) + ")", project.width * 2 + "x" + project.height * 2 + " (x2)", project.width * 4 + "x" + project.height * 4 + " (x4)", project.width * 8 + "x" + project.height * 8 + " (x8)", c.getString(R.string.custom)};
+        final int suggestedMultiplier = calculateMultiplierForSharing(project.width, project.height);
+        final String[] resolutionOptions = {project.width + "x" + project.height + " " + c.getString(R.string.original), project.width * suggestedMultiplier + "x" + project.height * suggestedMultiplier + " " + c.getString(R.string.suggested_multiplier), c.getString(R.string.custom)};
         exportResolutionPickDialog = new AlertDialog.Builder(c).setTitle(c.getString(R.string.select_resolution)).setItems(resolutionOptions, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                int resolutionMultiplier = 1;
+                resolutionMultiplier = 1;
                 boolean launchTask = true;
                 switch (i) {
                     case 0:
                         break;
                     case 1:
-                        resolutionMultiplier = 2;
+                        resolutionMultiplier = suggestedMultiplier;
                         break;
                     case 2:
-                        resolutionMultiplier = 4;
-                        break;
-                    case 3:
-                        resolutionMultiplier = 8;
-                        break;
-                    case 4:
                         launchTask = false;
-                        final AlertDialog multiplierPickDialog = new AlertDialog.Builder(c).setTitle(R.string.select_multiplier).setView(R.layout.multiplier_picker_dialog).setPositiveButton(R.string.ok, null).setNegativeButton(R.string.cancel, null).create();
+                        final AlertDialog multiplierPickDialog = new AlertDialog.Builder(c).setView(R.layout.multiplier_picker_dialog).setPositiveButton(R.string.ok, null).setNegativeButton(R.string.cancel, null).create();
+                        multiplierPickDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                         multiplierPickDialog.show();
-                        final SeekBar multiplierBar = multiplierPickDialog.findViewById(R.id.seekBar);
-                        final TextView multiplierInfo = multiplierPickDialog.findViewById(R.id.textView);
-                        final String infoPattern = c.getString(R.string.multiplier_info_pattern);
-                        multiplierInfo.setText(String.format(infoPattern, 8, project.width*8, project.height*8));
-                        multiplierBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                        final float greaterSideSize = project.width>project.height?project.width:project.height;
+                        final float lesserSideSize = greaterSideSize==project.width?project.height:project.width;
+                        final TextView lesserSide = multiplierPickDialog.findViewById(R.id.lesserSide);
+                        EditText greaterSide = multiplierPickDialog.findViewById(R.id.greaterSide);
+                        greaterSide.setText(String.valueOf((int)greaterSideSize));
+                        greaterSide.setSelection(0, greaterSide.length());
+                        lesserSide.setText(String.valueOf((int)lesserSideSize));
+                        greaterSide.addTextChangedListener(new TextWatcher() {
                             @Override
-                            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                                int multiplier = progress+1;
-                                multiplierInfo.setText(String.format(infoPattern, multiplier, project.width*multiplier, project.height*multiplier));
-                            }
-
-                            @Override
-                            public void onStartTrackingTouch(SeekBar seekBar) {
+                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
                             }
 
                             @Override
-                            public void onStopTrackingTouch(SeekBar seekBar) {
+                            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                            }
+
+                            @Override
+                            public void afterTextChanged(Editable s) {
+                                if(s.length()==0)
+                                    resolutionMultiplier = 0;
+                                else
+                                    resolutionMultiplier = ((float)(Integer.parseInt(s.toString()))) / greaterSideSize;
+
+                                lesserSide.setText(String.valueOf((int)(lesserSideSize*resolutionMultiplier)));
 
                             }
                         });
+
                         multiplierPickDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                new ExportTask().execute(new Params(project, multiplierBar.getProgress()+1, shareAfterExport, listener));
-                                multiplierPickDialog.dismiss();
+                                if((int)(resolutionMultiplier*project.width)==0||(int)(resolutionMultiplier*project.height)==0){
+                                    Utils.easyAlert(c, c.getString(R.string.invalid_resolution), c.getString(R.string.invalid_resolution_desc)).show();
+                                }else {
+                                    new ExportTask().execute(new Params(project, resolutionMultiplier, shareAfterExport, listener));
+                                    multiplierPickDialog.dismiss();
+                                }
                             }
                         });
                         break;
                 }
-                if(launchTask) {
+                if(launchTask)
                     new ExportTask().execute(new Params(project, resolutionMultiplier, shareAfterExport, listener));
-                }
             }
         }).create();
     }
@@ -108,9 +121,9 @@ public class ProjectsExporter {
         Project project;
         ExportListener listener;
         boolean shareAfter;
-        int resolutionMultiplier;
+        float resolutionMultiplier;
 
-        Params(Project project, int resolutionMultiplier, boolean shareAfter, ExportListener listener){
+        Params(Project project, float resolutionMultiplier, boolean shareAfter, ExportListener listener){
             this.project = project;
             this.resolutionMultiplier = resolutionMultiplier;
             this.shareAfter = shareAfter;
@@ -145,7 +158,7 @@ public class ProjectsExporter {
 
             Project p = params[0].project;
             imagePath = new File(exportDir, System.currentTimeMillis() + ".png");
-            Utils.saveBitmap(Bitmap.createScaledBitmap(p.getBitmap(false), p.width * params[0].resolutionMultiplier, p.height * params[0].resolutionMultiplier, false), imagePath);
+            Utils.saveBitmap(Bitmap.createScaledBitmap(p.getBitmap(false), (int)((float)p.width * params[0].resolutionMultiplier), (int)((float)p.height * params[0].resolutionMultiplier), false), imagePath);
             return null;
         }
 
@@ -181,5 +194,9 @@ public class ProjectsExporter {
                 }
             }).create().show();
         }
+    }
+
+    private int calculateMultiplierForSharing(int width, int height){
+        return width>height?4096/width:4096/height;
     }
 }

@@ -3,17 +3,23 @@ package com.aefyr.pxl.experimental;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.aefyr.pxl.R;
 import com.aefyr.pxl.common.Ruler;
@@ -33,6 +39,10 @@ public class ExperimentalPaletteEditorActivity extends AppCompatActivity {
     private ColorRect newRect;
     private ViewGroup notRetardedRoot;
     private SimpleColorPickerH simpleColorPickerH;
+
+    float[] hsv = new float[]{0, 1, 1};
+    private boolean ye = false;
+    private float hps = 36f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +101,37 @@ public class ExperimentalPaletteEditorActivity extends AppCompatActivity {
                 currentCircle.setColor(color);
             }
         });
+
+        final Button rgbButton = findViewById(R.id.button2);
+        rgbButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(ye) {
+                    ye = false;
+                    rgbButton.setText("RGB OFF");
+                    return;
+                }
+                rgbButton.setText("RGB ON");
+                ye = true;
+                final NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                final  Notification.Builder builder = new Notification.Builder(ExperimentalPaletteEditorActivity.this).setSmallIcon(R.drawable.arrow).setContentText("RGB");
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d("RGB", "Looop!");
+                        hsv[0] = (hsv[0]+hps/24f)%360;
+                        builder.setLights(Color.HSVToColor(hsv), 1000/24, 0);
+                        nm.notify(0, builder.build());
+
+                        if(ye)
+                            handler.postDelayed(this, 1000/24);
+
+                    }
+                }, 1000/24);
+            }
+        });
+
 
         /*for(ColorCircle circle: circles)
             circle.setOnClickListener(listener);*/

@@ -13,8 +13,10 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.graphics.Shader;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -159,6 +161,10 @@ public class AdaptivePixelSurfaceH extends View {
         invalidate();
     }
 
+    public Tool currentTool(){
+        return currentTool;
+    }
+
     private void setPrevTool(){
         setTool(prevTool, false);
     }
@@ -234,13 +240,19 @@ public class AdaptivePixelSurfaceH extends View {
 
     Paint trans;
 
-    public void setProject(Project project) {
+    public void setProject(Project project, Bundle savedState) {
         this.project = project;
         pixelBitmap = project.getBitmap(true);
         this.pixelWidth = pixelBitmap.getWidth();
         this.pixelHeight = pixelBitmap.getHeight();
         pixelCanvas = new Canvas(pixelBitmap);
-        canvasHistory = new CanvasHistoryH(this, project, CanvasHistoryH.ADAPTIVE_SIZE);
+        if(savedState==null) {
+            canvasHistory = new CanvasHistoryH(this, project, CanvasHistoryH.ADAPTIVE_SIZE);
+            //Save history in the persistent fragment
+        }else {
+            canvasHistory = new CanvasHistoryH(this, project, CanvasHistoryH.ADAPTIVE_SIZE);
+            //Pull history from the persistent fragment
+        }
         superPencil = new SuperPencilH(this);
         multiShape = new MultiShapeH(this);
         selector = new SelectorH(this);
@@ -267,6 +279,9 @@ public class AdaptivePixelSurfaceH extends View {
             }
 
         }
+
+        if(savedState!=null)
+            restoreState(savedState);
         projectReady = true;
     }
 
@@ -325,6 +340,10 @@ public class AdaptivePixelSurfaceH extends View {
         gridEnabled = enabled;
         canvasAnalytics.logGridVisibilityChange(enabled);
         invalidate();
+    }
+
+    public boolean gridEnabled(){
+        return gridEnabled;
     }
 
     Paint noAAPaint;
@@ -739,17 +758,19 @@ public class AdaptivePixelSurfaceH extends View {
         System.out.println("Canvas drawn in " + deltaTime + " ms");
     }
 
-    /*void writeStateToBundle(Bundle outState){
-        outState.putString("projectToLoad", project.name);
-        outState.putInt("selectedColor", currentColor);
+    void writeStateToBundle(Bundle outState){
+        Log.d("APH", "Saving changes done to the project and preserving state...");
+        canvasHistory.saveCanvas();
+
+        outState.putFloat("pixelScale", pixelScale);
+        outState.putInt("currentColor", currentColor);
         outState.putBoolean("grid", gridEnabled);
         outState.putBoolean("cursorMode", cursorMode);
         outState.putBoolean("symmetry", symmetry);
-        int symmetryT = 0;
-        if(symmetryType == SymmetryType.VERTICAL)
-            symmetryT = 1;
-        outState.putInt("symmetryType", symmetryT);
-        int tool = 0;
+        outState.putInt("symmetryType", symmetryType==SymmetryType.HORIZONTAL?0:1);
+        outState.putBoolean("symmetryAxisesShown", symmetryAxisesShown);
+
+        int tool = 0; //Pencil
         switch (currentTool){
             case FLOOD_FILL:
                 tool = 1;
@@ -763,9 +784,48 @@ public class AdaptivePixelSurfaceH extends View {
             case ERASER:
                 tool = 4;
                 break;
+            case MULTISHAPE:
+                tool = 5;
+                break;
+            case SELECTOR:
+                tool = 6;
+                break;
         }
         outState.putInt("tool", tool);
-    }*/
+    }
+
+    void restoreState(Bundle savedState){
+        pixelScale = Utils.clamp(savedState.getFloat("pixelScale", 1f), 1f, realWidth / 4);
+        setColor(savedState.getInt("selectedColor", Color.RED));
+        setGridEnabled(savedState.getBoolean("grid", false));
+        setCursorModeEnabled(savedState.getBoolean("cursorMode", false));
+        symmetryAxisesShown = savedState.getBoolean("symmetryAxisesShown", false);
+        setSymmetryEnabled(savedState.getBoolean("symmetry", false), savedState.getInt("symmetryType", 0)==0?SymmetryType.HORIZONTAL:SymmetryType.VERTICAL);
+
+        switch (savedState.getInt("tool", 0)){
+            case 0:
+                setTool(Tool.PENCIL, false);
+                break;
+            case 1:
+                setTool(Tool.FLOOD_FILL, false);
+                break;
+            case 2:
+                setTool(Tool.COLOR_PICK, false);
+                break;
+            case 3:
+                setTool(Tool.COLOR_SWAP, false);
+                break;
+            case 4:
+                setTool(Tool.ERASER, false);
+                break;
+            case 5:
+                setTool(Tool.MULTISHAPE, false);
+                break;
+            case 6:
+                setTool(Tool.SELECTOR, false);
+                break;
+        }
+    }
 
     OnSpecialToolUseListener onSpecialToolUseListener;
 

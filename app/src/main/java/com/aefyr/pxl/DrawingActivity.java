@@ -62,7 +62,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         aps = (AdaptivePixelSurfaceH) findViewById(R.id.aps);
 
         if (getIntent().getStringExtra("projectToLoad") != null)
-            aps.setProject(ProjectsUtils.loadProject(getIntent().getStringExtra("projectToLoad")));
+            aps.setProject(ProjectsUtils.loadProject(getIntent().getStringExtra("projectToLoad")), savedInstanceState);
         aps.project.notifyProjectModified();
 
 
@@ -88,9 +88,9 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         });
         aps.canvasHistory.setOnHistoryAvailabilityChangeListener(this);
 
-        initializeButtons();
-        initializeToolbar();
         initializeCursor();
+        initializeButtons(savedInstanceState!=null);
+        initializeToolbar(savedInstanceState);
         PaletteUtils.initialize(this);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -155,7 +155,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
     }
 
 
-    private void initializeToolbar() {
+    private void initializeToolbar(Bundle savedInstanceState) {
         //Add tools to the tool selector
         RecyclerView toolRV = (RecyclerView) findViewById(R.id.toolsRecycler);
         toolRV.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -228,9 +228,15 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                 }
             }
         });
+
+        if(savedInstanceState!=null){
+            toolPicker.restoreState(savedInstanceState);
+            pm.restoreState(savedInstanceState);
+            symmetrySwitcher.restoreState(savedInstanceState);
+        }
     }
 
-    private void initializeButtons() {
+    private void initializeButtons(boolean restoreState) {
         final ImageButton cursorToggle = (ImageButton) findViewById(R.id.cursorMode);
         final ImageButton canvasOptions = (ImageButton) findViewById(R.id.canvasOptions);
         final ImageButton gridToggle = (ImageButton) findViewById(R.id.grid);
@@ -276,6 +282,21 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         gridToggle.setOnClickListener(onClickListener);
         undoButton.setOnClickListener(onClickListener);
         redoButton.setOnClickListener(onClickListener);
+
+        if(restoreState){
+            if (aps.cursorMode) {
+                cursorToggle.setImageResource(R.drawable.cursor3);
+                cursorAction.setVisibility(View.VISIBLE);
+            } else {
+                cursorToggle.setImageResource(R.drawable.normal2);
+                cursorAction.setVisibility(View.GONE);
+            }
+
+            if (aps.gridEnabled())
+                gridToggle.setImageResource(R.drawable.gridon);
+            else
+                gridToggle.setImageResource(R.drawable.gridoff);
+        }
     }
 
     private void initializeCursor() {
@@ -427,6 +448,14 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        aps.writeStateToBundle(outState);
+        toolPicker.writeStateToBundle(outState);
+        pm.writeStateToBundle(outState);
+        symmetrySwitcher.writeStateToBundle(outState);
+    }
 
     //Special tools
 

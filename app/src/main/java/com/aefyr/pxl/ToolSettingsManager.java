@@ -2,6 +2,7 @@ package com.aefyr.pxl;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -184,63 +185,13 @@ public class ToolSettingsManager {
             public void onClick(View view) {
                 switch (view.getId()) {
                     case R.id.lineTool:
-                        if (aps.multiShape.shape == MultiShapeH.Shape.LINE)
-                            return;
-
-                        aps.multiShape.shape = MultiShapeH.Shape.LINE;
-                        line.setBackgroundResource(R.drawable.full_round_rect_bg_dark);
-                        rect.setBackgroundResource(R.drawable.sketchbook_style_bg_selector_2);
-                        circle.setBackgroundResource(R.drawable.sketchbook_style_bg_selector_2);
-
-                        lockedSwitch.setVisibility(View.VISIBLE);
-                        fillSwitch.setVisibility(View.GONE);
-                        lockedSwitch.setText(c.getString(R.string.lock_angles));
-
-                        shapeCapStyles.setVisibility(View.VISIBLE);
-                        toolStyleText.setVisibility(View.VISIBLE);
-
-                        roundingText.setVisibility(View.GONE);
-                        roundingSeekBar.setVisibility(View.GONE);
+                        multishapeShapeSetup(MultiShapeH.Shape.LINE);
                         break;
                     case R.id.rectTool:
-                        if (aps.multiShape.shape == MultiShapeH.Shape.RECT)
-                            return;
-
-                        aps.multiShape.shape = MultiShapeH.Shape.RECT;
-                        rect.setBackgroundResource(R.drawable.full_round_rect_bg_dark);
-                        line.setBackgroundResource(R.drawable.sketchbook_style_bg_selector_2);
-                        circle.setBackgroundResource(R.drawable.sketchbook_style_bg_selector_2);
-
-                        lockedSwitch.setVisibility(View.VISIBLE);
-                        fillSwitch.setVisibility(View.VISIBLE);
-                        lockedSwitch.setText(c.getString(R.string.lock_square));
-
-                        shapeCapStyles.setVisibility(View.GONE);
-                        toolStyleText.setVisibility(View.GONE);
-
-                        roundingText.setVisibility(View.VISIBLE);
-                        roundingSeekBar.setVisibility(View.VISIBLE);
+                        multishapeShapeSetup(MultiShapeH.Shape.RECT);
                         break;
                     case R.id.circleTool:
-                        if (aps.multiShape.shape == MultiShapeH.Shape.CIRCLE)
-                            return;
-
-                        aps.multiShape.shape = MultiShapeH.Shape.CIRCLE;
-                        circle.setBackgroundResource(R.drawable.full_round_rect_bg_dark);
-                        rect.setBackgroundResource(R.drawable.sketchbook_style_bg_selector_2);
-                        line.setBackgroundResource(R.drawable.sketchbook_style_bg_selector_2);
-
-                        fillSwitch.setVisibility(View.VISIBLE);
-                        lockedSwitch.setText(c.getString(R.string.lock_circle));
-
-                        shapeCapStyles.setVisibility(View.GONE);
-                        toolStyleText.setVisibility(View.GONE);
-
-
-                        lockedSwitch.setVisibility(View.VISIBLE);
-                        roundingText.setVisibility(View.GONE);
-                        roundingSeekBar.setVisibility(View.GONE);
-
+                        multishapeShapeSetup(MultiShapeH.Shape.CIRCLE);
                         break;
                 }
             }
@@ -306,4 +257,68 @@ public class ToolSettingsManager {
         roundingText.setText(String.format(TEXT_ROUNDING, rounding));
 
     }
+
+    private void multishapeShapeSetup(MultiShapeH.Shape shape){
+        switch (shape){
+            case LINE:
+                if (aps.multiShape.shape == MultiShapeH.Shape.LINE)
+                    return;
+
+                aps.multiShape.shape = MultiShapeH.Shape.LINE;
+                line.setBackgroundResource(R.drawable.full_round_rect_bg_dark);
+                rect.setBackgroundResource(R.drawable.sketchbook_style_bg_selector_2);
+                circle.setBackgroundResource(R.drawable.sketchbook_style_bg_selector_2);
+
+                lockedSwitch.setVisibility(View.VISIBLE);
+                fillSwitch.setVisibility(View.GONE);
+                lockedSwitch.setText(c.getString(R.string.lock_angles));
+
+                shapeCapStyles.setVisibility(View.VISIBLE);
+                toolStyleText.setVisibility(View.VISIBLE);
+
+                roundingText.setVisibility(View.GONE);
+                roundingSeekBar.setVisibility(View.GONE);
+                break;
+            case RECT:
+                if (aps.multiShape.shape == MultiShapeH.Shape.RECT)
+                    return;
+
+                aps.multiShape.shape = MultiShapeH.Shape.RECT;
+                rect.setBackgroundResource(R.drawable.full_round_rect_bg_dark);
+                line.setBackgroundResource(R.drawable.sketchbook_style_bg_selector_2);
+                circle.setBackgroundResource(R.drawable.sketchbook_style_bg_selector_2);
+
+                lockedSwitch.setVisibility(View.VISIBLE);
+                fillSwitch.setVisibility(View.VISIBLE);
+                lockedSwitch.setText(c.getString(R.string.lock_square));
+
+                shapeCapStyles.setVisibility(View.GONE);
+                toolStyleText.setVisibility(View.GONE);
+
+                roundingText.setVisibility(View.VISIBLE);
+                roundingSeekBar.setVisibility(View.VISIBLE);
+                break;
+            case CIRCLE:
+                if (aps.multiShape.shape == MultiShapeH.Shape.CIRCLE)
+                    return;
+
+                aps.multiShape.shape = MultiShapeH.Shape.CIRCLE;
+                circle.setBackgroundResource(R.drawable.full_round_rect_bg_dark);
+                rect.setBackgroundResource(R.drawable.sketchbook_style_bg_selector_2);
+                line.setBackgroundResource(R.drawable.sketchbook_style_bg_selector_2);
+
+                fillSwitch.setVisibility(View.VISIBLE);
+                lockedSwitch.setText(c.getString(R.string.lock_circle));
+
+                shapeCapStyles.setVisibility(View.GONE);
+                toolStyleText.setVisibility(View.GONE);
+
+
+                lockedSwitch.setVisibility(View.VISIBLE);
+                roundingText.setVisibility(View.GONE);
+                roundingSeekBar.setVisibility(View.GONE);
+                break;
+        }
+    }
+
 }

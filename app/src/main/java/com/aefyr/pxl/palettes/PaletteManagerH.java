@@ -2,6 +2,7 @@ package com.aefyr.pxl.palettes;
 
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -165,6 +166,18 @@ public class PaletteManagerH {
 
     public boolean shown() {
         return shown;
+    }
+
+    public void writeStateToBundle(Bundle outState){
+        outState.putBoolean("paletteManager_shown", shown);
+    }
+
+    public void restoreState(Bundle savedInstanceState){
+        setCurrentColor(savedInstanceState.getInt("currentColor", Color.RED));
+
+        if(savedInstanceState.getBoolean("paletteManager_shown", false))
+            show();
+
     }
 
 }

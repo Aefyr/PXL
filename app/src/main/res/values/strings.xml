@@ -64,11 +64,10 @@
     <string name="incorrect_width_or_height">Width and height must be bigger than 0</string>
     <string name="imported_bitmap_too_big" formatted="false">Maximum size of imported image is %dx%d!</string>
     <string name="name_imported">Imported</string>
-    <string name="original">Original</string>
+    <string name="original">(Original)</string>
     <string name="select_resolution">Select resolution of exported image</string>
     <string name="custom">Custom…</string>
-    <string name="multiplier_info_pattern" formatted="false">Multiplier: %d\nResolution: %dx%d</string>
-    <string name="select_multiplier">Select custom resolution multiplier</string>
+    <string name="enter_custom_resolution">Enter desired pixel size of greater side of the image, size of the lesser side will be calculated using aspect ratio of the project</string>
     <string name="share">Share</string>
     <string name="exporting">Exporting image</string>
     <string name="storage_permissions_denied">Unable to access gallery. Please give the app permission to access files on the device.</string>
@@ -80,6 +79,10 @@
     <string name="posterizing">Posterizing Image…</string>
     <string name="posterizer_prompt">Posterizing</string>
     <string name="posterizer_desc"><b>Do you want to posterize the Image?</b>\n\n(Posterization means reducing the color palette of the image to 16 colors, so it looks more \"pixelartish\". Looks good on some images, bad on some others.)</string>
+    <string name="suggested_multiplier">(Suggested for posting/sharing the art)</string>
+    <string name="invalid_resolution">Invalid Resolution</string>
+    <string name="invalid_resolution_desc">Both width and height must be greater than 0</string>
+
 
     <!--gallery_item-->
     <string name="size">Size</string>

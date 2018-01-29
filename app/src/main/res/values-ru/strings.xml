@@ -27,7 +27,7 @@
     <string name="incorrect_width_or_height">Ширина и высота должны быть больше 0</string>
     <string name="imported_bitmap_too_big">Максимальный размер импортированного изображения - %dx%d!</string>
     <string name="name_imported">Импортировано</string>
-    <string name="original">Оригинал</string>
+    <string name="original">(Оригинал)</string>
     <string name="select_resolution">Выберите разрешение экспортированного изображения</string>
     <string name="share">Поделиться</string>
     <string name="exporting">Идёт экспорт изображения</string>
@@ -126,8 +126,7 @@
     <string name="tt_color_swap">Заменяет все пиксели определенного цвета на изображении на другой. При использовании открывается окно, где вы можете менять цвет в реальном времени.\n\n<b>Внимание:</b>\nПри выключенном аппаратном ускорении, этот инструмент будет работать очень медленно на больших изображениях</string>
     <string name="comp_mode">На Android 4.4, PXLRT использует совместимое темное оформление</string>
     <string name="custom">Своё…</string>
-    <string name="multiplier_info_pattern" formatted="false">Множитель разрешения: %d\nРазрешение: %dx%d</string>
-    <string name="select_multiplier">Выберите множитель разрешения</string>
+    <string name="enter_custom_resolution">Введите желаемый размер в пикселях для большей стороны изображения, размер меньшей стороны будет вычислен на основе соотношения сторон проекта</string>
     <string name="exit_prompt">Закрыть текущий проект?</string>
     <string name="project_saved">Проект экспортирован</string>
     <string name="hw_desc">Значительно улучшает производительность некоторых инструментов</string>
@@ -158,5 +157,8 @@
     <string name="posterizing">Постеризация изображения…</string>
     <string name="posterizer_prompt">Постеризация</string>
     <string name="posterizer_desc"><b>Вы хотите, чтобы PXLRT постеризовал это изображение?</b>\n\n(Постеризация - это снижение количества цветов, используемых в изображении до 16, чтобы оно выглядело более \"пиксельартно\". Для каких-то изображений, смотрится хорошо, для каких-то - нет.)</string>
+    <string name="suggested_multiplier">(Рекомендуется для публикации арта)</string>
+    <string name="invalid_resolution">Неверное разрешение</string>
+    <string name="invalid_resolution_desc">Высота и ширина должны быть больше 0</string>
 
 </resources>

@@ -1,6 +1,7 @@
 package com.aefyr.pxl.tools;
 
 import android.os.Build;
+import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
@@ -61,13 +62,13 @@ public class SymmetrySwitcher {
             public void onClick(View view) {
                 switch (view.getId()) {
                     case R.id.symmetryN:
-                        setSymmetry(false, AdaptivePixelSurfaceH.SymmetryType.HORIZONTAL);
+                        setSymmetry(false, AdaptivePixelSurfaceH.SymmetryType.HORIZONTAL, false);
                         break;
                     case R.id.symmetryH:
-                        setSymmetry(true, AdaptivePixelSurfaceH.SymmetryType.HORIZONTAL);
+                        setSymmetry(true, AdaptivePixelSurfaceH.SymmetryType.HORIZONTAL, false);
                         break;
                     case R.id.symmetryV:
-                        setSymmetry(true, AdaptivePixelSurfaceH.SymmetryType.VERTICAL);
+                        setSymmetry(true, AdaptivePixelSurfaceH.SymmetryType.VERTICAL, false);
                         break;
                     case R.id.symmetryTG:
                         toggleGuidelines();
@@ -87,20 +88,23 @@ public class SymmetrySwitcher {
     }
 
 
-    private void setSymmetry(boolean enabled, AdaptivePixelSurfaceH.SymmetryType type) {
-        if (enabled == aps.isSymmetryEnabled() && type == aps.getSymmetryType()) {
+    private void setSymmetry(boolean enabled, AdaptivePixelSurfaceH.SymmetryType type, boolean forcedForStateRestoration) {
+        if (!forcedForStateRestoration && enabled == aps.isSymmetryEnabled() && type == aps.getSymmetryType()) {
             hide();
             return;
         }
 
-        aps.setSymmetryEnabled(enabled, type);
-        aps.invalidate();
+        if(!forcedForStateRestoration) {
+            aps.setSymmetryEnabled(enabled, type);
+            aps.invalidate();
+        }
 
         if (!enabled) {
             dark(no);
             normal(h, v);
             s.setImageResource(R.drawable.symmetryoff);
-            gravityDefiedToaster(aps.getContext().getString(R.string.symmetry_none));
+            if(!forcedForStateRestoration)
+                gravityDefiedToaster(aps.getContext().getString(R.string.symmetry_none));
             hide();
             return;
         }
@@ -109,13 +113,15 @@ public class SymmetrySwitcher {
                 dark(h);
                 normal(v, no);
                 s.setImageResource(R.drawable.symmetryh);
-                gravityDefiedToaster(aps.getContext().getString(R.string.symmetry_h));
+                if(!forcedForStateRestoration)
+                    gravityDefiedToaster(aps.getContext().getString(R.string.symmetry_h));
                 break;
             case VERTICAL:
                 dark(v);
                 normal(h, no);
                 s.setImageResource(R.drawable.symmetryv);
-                gravityDefiedToaster(aps.getContext().getString(R.string.symmetry_v));
+                if(!forcedForStateRestoration)
+                    gravityDefiedToaster(aps.getContext().getString(R.string.symmetry_v));
                 break;
         }
 
@@ -179,5 +185,20 @@ public class SymmetrySwitcher {
         Toast toast = Toast.makeText(aps.getContext(), message, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
+    }
+
+    public void writeStateToBundle(Bundle outState){
+        outState.putBoolean("symmetrySwitcher_shown", shown);
+    }
+
+    public void restoreState(Bundle savedInstanceState){
+        setSymmetry(aps.isSymmetryEnabled(), aps.getSymmetryType(), true);
+
+        boolean guidelinesShown = aps.symGuidelinesShown();
+        tg.setImageResource(guidelinesShown?R.drawable.sym_axises_shown:R.drawable.sym_axises_hidden);
+
+        if(savedInstanceState.getBoolean("symmetrySwitcher_shown", false))
+            show();
+
     }
 }
