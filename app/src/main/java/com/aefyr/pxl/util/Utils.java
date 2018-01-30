@@ -9,7 +9,6 @@ import android.media.MediaScannerConnection;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.util.TypedValue;
 import android.widget.Toast;
 
@@ -58,7 +57,7 @@ public class Utils {
     }
 
     public static float[] signedVector2Distance(float x1, float y1, float x2, float y2) {
-        float distance = (float) (Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2)));
+        float distance = vector2Distance(x1, y1, x2, y2);
 
         float[] d = new float[]{distance, distance};
         if (x2 < x1)

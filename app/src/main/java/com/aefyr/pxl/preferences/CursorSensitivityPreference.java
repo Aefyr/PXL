@@ -2,9 +2,9 @@ package com.aefyr.pxl.preferences;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.preference.Preference;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -26,11 +26,12 @@ public class CursorSensitivityPreference extends Preference {
     private DecimalFormat oneDigitAfterPoint;
 
     @Override
-    protected void onBindView(View view) {
-        super.onBindView(view);
+    public void onBindViewHolder(PreferenceViewHolder holder) {
+        super.onBindViewHolder(holder);
+
         oneDigitAfterPoint = new DecimalFormat("##.#");
-        seekBar = ((SeekBar) view.findViewById(R.id.cursorSensSeekbar));
-        sensitivity = (TextView) view.findViewById(R.id.cursorSensValue);
+        seekBar = ((SeekBar) holder.findViewById(R.id.cursorSensSeekbar));
+        sensitivity = (TextView) holder.findViewById(R.id.cursorSensValue);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {

@@ -3,13 +3,11 @@ package com.aefyr.pxl.fragments;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -35,13 +33,13 @@ import com.aefyr.pxl.analytics.FirebaseConstants;
 import com.aefyr.pxl.analytics.ProjectsAnalyticsHelper;
 import com.aefyr.pxl.common.Ruler;
 import com.aefyr.pxl.projects.DynamicProjectsLoader;
+import com.aefyr.pxl.projects.Project;
 import com.aefyr.pxl.projects.ProjectsExporter;
+import com.aefyr.pxl.projects.ProjectsRecycleAdapter;
+import com.aefyr.pxl.projects.ProjectsUtils;
 import com.aefyr.pxl.util.PermissionsUtils;
 import com.aefyr.pxl.util.Posterizer;
 import com.aefyr.pxl.util.Utils;
-import com.aefyr.pxl.projects.Project;
-import com.aefyr.pxl.projects.ProjectsRecycleAdapter;
-import com.aefyr.pxl.projects.ProjectsUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -50,7 +48,7 @@ import java.io.FileNotFoundException;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class GalleryFragment extends android.app.Fragment {
+public class GalleryFragment extends Fragment {
 
     static final int IMPORT_IMAGE = 512;
 

@@ -25,18 +25,18 @@ import com.aefyr.pxl.R;
 import com.aefyr.pxl.analytics.FirebaseConstants;
 import com.aefyr.pxl.analytics.PalettesAnalyticsHelper;
 import com.aefyr.pxl.palettes.DynamicPalettesLoader;
-import com.aefyr.pxl.util.PermissionsUtils;
-import com.aefyr.pxl.util.Utils;
 import com.aefyr.pxl.palettes.Palette2;
 import com.aefyr.pxl.palettes.PaletteMakerH;
 import com.aefyr.pxl.palettes.PaletteManager;
 import com.aefyr.pxl.palettes.PalettePickRecyclerAdapter;
 import com.aefyr.pxl.palettes.PaletteUtils;
+import com.aefyr.pxl.util.PermissionsUtils;
+import com.aefyr.pxl.util.Utils;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PalettesFragment extends android.app.Fragment {
+public class PalettesFragment extends Fragment {
 
 
     PalettePickRecyclerAdapter adapter;

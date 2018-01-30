@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Created by Aefyr on 28.06.2017.
  */
 
-class CanvasHistoryH {
+public class CanvasHistoryH {
     private static final String TAG = "CanvasHistory";
 
     private AdaptivePixelSurfaceH aps;
@@ -70,7 +70,7 @@ class CanvasHistoryH {
         setProject(project);
 
         changesSinceLastSave = new AtomicInteger(0);
-        saver = new CanvasSaver(bitmap, 2000);
+        saver = new CanvasSaver(2000);
         saver.start();
 
         past = new ArrayDeque<>(size);
@@ -78,21 +78,24 @@ class CanvasHistoryH {
         listeners = new ArrayList<>();
     }
 
+    public void restore(AdaptivePixelSurfaceH aps, Project project){
+        listeners.clear();
+        this.aps = aps;
+        setProject(project);
+    }
+
     private class CanvasSaver extends Thread{
         private static final String TAG = "CanvasSaver";
         boolean running = true;
         int interval;
-        Bitmap bitmap;
 
-        CanvasSaver(Bitmap bitmap, int interval){
+        CanvasSaver(int interval){
             this.interval = interval;
-            this.bitmap = bitmap;
         }
 
         @Override
         public void run() {
             while(running){
-
                 if(changesSinceLastSave.intValue()>0){
                     changesSinceLastSave.set(0);
                     long start = System.currentTimeMillis();
@@ -223,6 +226,14 @@ class CanvasHistoryH {
 
         aps.invalidate();
         changesSinceLastSave.addAndGet(1);
+    }
+
+    public boolean pastAvailable(){
+        return past.size()>0;
+    }
+
+    public boolean futureAvailable(){
+        return future.size()>0;
     }
 
 

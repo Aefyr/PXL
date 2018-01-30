@@ -16,7 +16,6 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.aefyr.pxl.R;

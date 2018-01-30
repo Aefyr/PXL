@@ -27,6 +27,7 @@ import android.widget.RelativeLayout;
 
 import com.aefyr.pxl.analytics.CanvasAnalyticsHelper;
 import com.aefyr.pxl.analytics.FirebaseConstants;
+import com.aefyr.pxl.custom.ColorCircle;
 import com.aefyr.pxl.custom.ItemWithIcon;
 import com.aefyr.pxl.custom.ListAdapterWithIcons;
 import com.aefyr.pxl.palettes.PaletteManagerH;
@@ -38,7 +39,6 @@ import com.aefyr.pxl.tools.SymmetrySwitcher;
 import com.aefyr.pxl.tools.ToolPickRecyclerAdapter;
 import com.aefyr.pxl.util.PermissionsUtils;
 import com.aefyr.pxl.util.Utils;
-import com.aefyr.pxl.custom.ColorCircle;
 
 import java.io.File;
 
@@ -296,6 +296,9 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                 gridToggle.setImageResource(R.drawable.gridon);
             else
                 gridToggle.setImageResource(R.drawable.gridoff);
+
+            updateHistoryButton(undoButton, aps.canvasHistory.pastAvailable());
+            updateHistoryButton(redoButton, aps.canvasHistory.futureAvailable());
         }
     }
 
@@ -321,23 +324,21 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
 
     @Override
     public void pastAvailabilityChanged(boolean available) {
-        if (!available) {
-            undoButton.setAlpha(0.5f);
-            undoButton.setBackgroundResource(R.drawable.full_round_rect_bg);
-        } else {
-            undoButton.setAlpha(1f);
-            undoButton.setBackgroundResource(R.drawable.sketchbook_style_bg_selector_2);
-        }
+        updateHistoryButton(undoButton, available);
     }
 
     @Override
     public void futureAvailabilityChanged(boolean available) {
+        updateHistoryButton(redoButton, available);
+    }
+
+    private void updateHistoryButton(ImageButton button, boolean available){
         if (!available) {
-            redoButton.setAlpha(0.5f);
-            redoButton.setBackgroundResource(R.drawable.full_round_rect_bg);
+            button.setAlpha(0.5f);
+            button.setBackgroundResource(R.drawable.full_round_rect_bg);
         } else {
-            redoButton.setAlpha(1f);
-            redoButton.setBackgroundResource(R.drawable.sketchbook_style_bg_selector_2);
+            button.setAlpha(1f);
+            button.setBackgroundResource(R.drawable.sketchbook_style_bg_selector_2);
         }
     }
 

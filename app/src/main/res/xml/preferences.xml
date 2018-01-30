@@ -3,8 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="@string/behavior">
-        <SwitchPreference android:title="@string/auto_back_after_color_pick" android:summary="@string/abacp_desc" android:key="abacp" android:defaultValue="true"/>
-        <SwitchPreference android:title="@string/insta_swap" android:summary="@string/insta_swap_desc" android:key="insta_swap" android:defaultValue="false"/>
+        <SwitchPreferenceCompat android:title="@string/auto_back_after_color_pick" android:summary="@string/abacp_desc" android:key="abacp" android:defaultValue="true"/>
+        <SwitchPreferenceCompat android:title="@string/insta_swap" android:summary="@string/insta_swap_desc" android:key="insta_swap" android:defaultValue="false"/>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pixel_surface">
@@ -41,9 +41,9 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/performance">
-        <SwitchPreference android:key="hardware_accelerated" android:title="@string/hardware_acceleration" android:summary="@string/hw_desc" android:defaultValue="true"/>
-        <SwitchPreference android:key="allow_512" android:title="@string/allow_hi_res" android:summary="@string/hi_res_desc" android:defaultValue="false"/>
-        <SwitchPreference android:key="flawless_symmetry" android:title="@string/flawless_symmetry" android:summary="@string/flawless_sym_desc" android:defaultValue="true"/>
+        <SwitchPreferenceCompat android:key="hardware_accelerated" android:title="@string/hardware_acceleration" android:summary="@string/hw_desc" android:defaultValue="true"/>
+        <SwitchPreferenceCompat android:key="allow_512" android:title="@string/allow_hi_res" android:summary="@string/hi_res_desc" android:defaultValue="false"/>
+        <SwitchPreferenceCompat android:key="flawless_symmetry" android:title="@string/flawless_symmetry" android:summary="@string/flawless_sym_desc" android:defaultValue="true"/>
     </PreferenceCategory>
 
 

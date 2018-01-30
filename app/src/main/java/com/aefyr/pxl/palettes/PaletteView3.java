@@ -13,8 +13,8 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.aefyr.pxl.util.Utils;
 import com.aefyr.pxl.common.RectP;
+import com.aefyr.pxl.util.Utils;
 
 /**
  * Created by Aefyr on 22.07.2017.

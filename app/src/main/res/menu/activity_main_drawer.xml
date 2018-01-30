@@ -10,14 +10,15 @@
             android:id="@+id/nav_palettes"
             android:icon="@drawable/ic_color_lens_black_24dp"
             android:title="@string/palettes" />
-        <item
-            android:id="@+id/nav_prefs"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="@string/action_settings" />
     </group>
 
     <item android:title="@string/misc">
         <menu>
+            <item
+                android:id="@+id/nav_prefs"
+                android:icon="@drawable/ic_menu_manage"
+                android:title="@string/action_settings" />
+
             <item
                 android:id="@+id/nav_feedback"
                 android:icon="@drawable/ic_feedback_black_24dp"

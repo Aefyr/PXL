@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 
 import com.aefyr.pxl.fragments.PreferencesFragment;
@@ -322,4 +323,15 @@ public class SuperPencilH extends ToolH {
         else
             hitBounds = true;
     }
+
+    @Override
+    public void writeStateToBundle(Bundle outState) {
+        outState.putInt("superPencil_capStyle", style == Style.SQUARE?0:1);
+    }
+
+    @Override
+    public void restoreState(Bundle savedInstanceState) {
+        setStyle(savedInstanceState.getInt("superPencil_capStyle", 0)==0?Style.SQUARE:Style.ROUND);
+    }
+
 }

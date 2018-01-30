@@ -4,8 +4,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.preference.Preference;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
@@ -30,10 +31,11 @@ public class ColorPickPreference extends Preference implements Preference.OnPref
     private ColorCircle colorCircle;
 
     @Override
-    protected void onBindView(View view) {
-        super.onBindView(view);
-        ((TextView) view.findViewById(R.id.preferenceName)).setText(getTitle());
-        colorCircle = (ColorCircle) view.findViewById(R.id.colorCircle);
+    public void onBindViewHolder(PreferenceViewHolder holder) {
+        super.onBindViewHolder(holder);
+
+        ((TextView) holder.findViewById(R.id.preferenceName)).setText(getTitle());
+        colorCircle = (ColorCircle) holder.findViewById(R.id.colorCircle);
         colorCircle.setColor(currentColor);
     }
 

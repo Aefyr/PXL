@@ -2,9 +2,9 @@ package com.aefyr.pxl.preferences;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.preference.Preference;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -32,12 +32,13 @@ public class CursorOpacityPreference extends Preference {
     }
 
     @Override
-    protected void onBindView(View view) {
-        super.onBindView(view);
+    public void onBindViewHolder(PreferenceViewHolder holder) {
+        super.onBindViewHolder(holder);
+
         twoDigitsAfterPoint = new DecimalFormat("##.##");
-        seekBar = (SeekBar) view.findViewById(R.id.cursorOpacitySeekbar);
-        value = (TextView) view.findViewById(R.id.cursorOpacityValue);
-        preview = (ImageView) view.findViewById(R.id.cursorOpacityPreview);
+        seekBar = (SeekBar) holder.findViewById(R.id.cursorOpacitySeekbar);
+        value = (TextView) holder.findViewById(R.id.cursorOpacityValue);
+        preview = (ImageView) holder.findViewById(R.id.cursorOpacityPreview);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -57,6 +58,7 @@ public class CursorOpacityPreference extends Preference {
         });
         seekBar.setProgress(currentOpacity);
     }
+
 
     @Override
     protected Object onGetDefaultValue(TypedArray a, int index) {

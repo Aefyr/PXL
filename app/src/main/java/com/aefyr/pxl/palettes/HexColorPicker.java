@@ -4,10 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
-import android.text.InputFilter;
-import android.text.Spanned;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -15,9 +12,6 @@ import android.widget.TextView;
 import com.aefyr.pxl.R;
 import com.aefyr.pxl.custom.ColorRect;
 import com.aefyr.pxl.util.Utils;
-
-import java.util.Arrays;
-import java.util.HashSet;
 
 /**
  * Created by Aefyr on 25.01.2018.

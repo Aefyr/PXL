@@ -1,15 +1,15 @@
 package com.aefyr.pxl;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -22,20 +22,15 @@ import android.view.MenuItem;
 import com.aefyr.pxl.experimental.ExperimentalPaletteEditorActivity;
 import com.aefyr.pxl.fragments.GalleryFragment;
 import com.aefyr.pxl.fragments.PalettesFragment;
-import com.aefyr.pxl.fragments.PreferencesFragment;
 import com.aefyr.pxl.palettes.PaletteMaker;
 import com.aefyr.pxl.palettes.PaletteUtils;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private android.app.FragmentManager fragmentManager;
-
-    private enum PXLFragment {
-        UNINITIALIZED, GALLERY, PALETTES, PREFERENCES
-    }
+    private FragmentManager fragmentManager;
 
     private Fragment currentFragment;
-    private PXLFragment currentPxlFragment = PXLFragment.UNINITIALIZED;
+    private static String currentPxlFragment = "null";
 
     private NavigationView navigationView;
     private ActionBar actionBar;
@@ -89,11 +84,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         actionBar = getSupportActionBar();
 
         //Fragments
-        fragmentManager = getFragmentManager();
+        fragmentManager = getSupportFragmentManager();
         PaletteUtils.initialize(this);
 
-        setFragment(PXLFragment.GALLERY);
-        navigationView.setCheckedItem(R.id.nav_gallery);
+        if(savedInstanceState!=null){
+            currentFragment = fragmentManager.findFragmentByTag(currentPxlFragment);
+        }else {
+            setFragment(FRAGMENT_GALLERY);
+            navigationView.setCheckedItem(R.id.nav_gallery);
+        }
+
     }
 
     @Override
@@ -122,8 +122,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            navigationView.setCheckedItem(R.id.nav_prefs);
-            setFragment(PXLFragment.PREFERENCES);
+            openSettings();
             return true;
         }
 
@@ -138,13 +137,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch (id){
             case R.id.nav_gallery:
-                setFragment(PXLFragment.GALLERY);
+                setFragment(FRAGMENT_GALLERY);
                 break;
             case R.id.nav_palettes:
-                setFragment(PXLFragment.PALETTES);
+                setFragment(FRAGMENT_PALETTES);
                 break;
             case R.id.nav_prefs:
-                setFragment(PXLFragment.PREFERENCES);
+                openSettings();
                 break;
             case R.id.nav_feedback:
                 Intent mailIntent = new Intent(Intent.ACTION_SENDTO);
@@ -175,8 +174,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    void setFragment(PXLFragment pxlFragment) {
-        if (currentPxlFragment == pxlFragment)
+    public static final String FRAGMENT_GALLERY = "gallery";
+    public static final String FRAGMENT_PALETTES = "palettes";
+
+
+    void setFragment(String pxlFragment) {
+        if (currentPxlFragment.equals(pxlFragment))
             return;
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -185,11 +188,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             transaction.hide(currentFragment);
 
         switch (pxlFragment) {
-            case GALLERY:
-                Fragment gallery = fragmentManager.findFragmentByTag(FragmentTag.GALLERY);
+            case FRAGMENT_GALLERY:
+                Fragment gallery = fragmentManager.findFragmentByTag(FRAGMENT_GALLERY);
                 if (gallery == null) {
                     gallery = new GalleryFragment();
-                    transaction.add(R.id.container, gallery, FragmentTag.GALLERY);
+                    transaction.add(R.id.container, gallery, FRAGMENT_GALLERY);
                     System.out.println("created gallery");
                 } else
                     transaction.show(gallery);
@@ -197,11 +200,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 currentFragment = gallery;
                 actionBar.setTitle(getString(R.string.projects));
                 break;
-            case PALETTES:
-                Fragment palettes = fragmentManager.findFragmentByTag(FragmentTag.PALETTES);
+            case FRAGMENT_PALETTES:
+                Fragment palettes = fragmentManager.findFragmentByTag(FRAGMENT_PALETTES);
                 if (palettes == null) {
                     palettes = new PalettesFragment();
-                    transaction.add(R.id.container, palettes, FragmentTag.PALETTES);
+                    transaction.add(R.id.container, palettes, FRAGMENT_PALETTES);
                     System.out.println("created palettes");
                 } else
                     transaction.show(palettes);
@@ -209,25 +212,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 currentFragment = palettes;
                 actionBar.setTitle(getString(R.string.palettes));
                 break;
-            case PREFERENCES:
-                Fragment prefs = fragmentManager.findFragmentByTag(FragmentTag.PREFS);
-                if (prefs == null) {
-                    prefs = new PreferencesFragment();
-                    transaction.add(R.id.container, prefs, FragmentTag.PREFS);
-                    System.out.println("created prefs");
-                } else
-                    transaction.show(prefs);
-
-                currentFragment = prefs;
-                actionBar.setTitle(getString(R.string.title_activity_settings));
-                break;
         }
+
+        currentPxlFragment = pxlFragment;
 
         transaction.commit();
 
     }
+
+    private void openSettings(){
+        startActivity(new Intent(this, SettingsActivity.class));
+    }
+
     public void notifyProjectOpened(){
-        destroyFragments(FragmentTag.PALETTES, FragmentTag.PREFS);
+        destroyFragments(FRAGMENT_PALETTES);
     }
 
     public void destroyFragments(String... tags){
@@ -238,11 +236,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 transaction.remove(fragment);
         }
         transaction.commit();
-    }
-
-    public class FragmentTag {
-        public static final String GALLERY = "GALLERY";
-        public static final String PALETTES = "PALETTES";
-        public static final String PREFS = "PREFS";
     }
 }

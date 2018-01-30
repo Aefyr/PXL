@@ -2,7 +2,6 @@ package com.aefyr.pxl;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -109,8 +108,11 @@ public class ToolSettingsManager {
 
     private void multishapeSetup() {
         toolSettingsWindowLayout.removeAllViews();
-        if (multishapeView == null)
+        if (multishapeView == null) {
             initializeMultishapeView();
+            multishapeShapeSetup(aps.multiShape.shape, true);
+        }
+
         toolSettingsWindowLayout.addView(multishapeView);
 
         shapeSizeBar.setProgress(strokeWidth - 1);
@@ -185,13 +187,13 @@ public class ToolSettingsManager {
             public void onClick(View view) {
                 switch (view.getId()) {
                     case R.id.lineTool:
-                        multishapeShapeSetup(MultiShapeH.Shape.LINE);
+                        multishapeShapeSetup(MultiShapeH.Shape.LINE, false);
                         break;
                     case R.id.rectTool:
-                        multishapeShapeSetup(MultiShapeH.Shape.RECT);
+                        multishapeShapeSetup(MultiShapeH.Shape.RECT, false);
                         break;
                     case R.id.circleTool:
-                        multishapeShapeSetup(MultiShapeH.Shape.CIRCLE);
+                        multishapeShapeSetup(MultiShapeH.Shape.CIRCLE, false);
                         break;
                 }
             }
@@ -255,13 +257,12 @@ public class ToolSettingsManager {
         roundingSeekBar.setOnSeekBarChangeListener(onSeekBarChangeListener);
         roundingText = (TextView) multishapeView.findViewById(R.id.roundingText);
         roundingText.setText(String.format(TEXT_ROUNDING, rounding));
-
     }
 
-    private void multishapeShapeSetup(MultiShapeH.Shape shape){
+    private void multishapeShapeSetup(MultiShapeH.Shape shape, boolean forcedForStateRestoration){
         switch (shape){
             case LINE:
-                if (aps.multiShape.shape == MultiShapeH.Shape.LINE)
+                if (!forcedForStateRestoration&&aps.multiShape.shape == MultiShapeH.Shape.LINE)
                     return;
 
                 aps.multiShape.shape = MultiShapeH.Shape.LINE;
@@ -280,7 +281,7 @@ public class ToolSettingsManager {
                 roundingSeekBar.setVisibility(View.GONE);
                 break;
             case RECT:
-                if (aps.multiShape.shape == MultiShapeH.Shape.RECT)
+                if (!forcedForStateRestoration&&aps.multiShape.shape == MultiShapeH.Shape.RECT)
                     return;
 
                 aps.multiShape.shape = MultiShapeH.Shape.RECT;
@@ -299,7 +300,7 @@ public class ToolSettingsManager {
                 roundingSeekBar.setVisibility(View.VISIBLE);
                 break;
             case CIRCLE:
-                if (aps.multiShape.shape == MultiShapeH.Shape.CIRCLE)
+                if (!forcedForStateRestoration&&aps.multiShape.shape == MultiShapeH.Shape.CIRCLE)
                     return;
 
                 aps.multiShape.shape = MultiShapeH.Shape.CIRCLE;

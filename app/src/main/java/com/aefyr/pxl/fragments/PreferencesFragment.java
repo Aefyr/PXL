@@ -3,19 +3,14 @@ package com.aefyr.pxl.fragments;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.support.annotation.Nullable;
+import android.support.v14.preference.PreferenceFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.aefyr.pxl.MainActivity;
 import com.aefyr.pxl.R;
-import com.aefyr.pxl.util.Utils;
 import com.aefyr.pxl.palettes.PaletteMaker;
+import com.aefyr.pxl.util.Utils;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,27 +31,18 @@ public class PreferencesFragment extends PreferenceFragment {
         // Required empty public constructor
     }
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_preferences, container, false);
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.preferences);
 
-        findPreference("restore_palettes").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        findPreference("restore_palettes").setOnPreferenceChangeListener(new android.support.v7.preference.Preference.OnPreferenceChangeListener() {
             @Override
-            public boolean onPreferenceClick(Preference preference) {
+            public boolean onPreferenceChange(android.support.v7.preference.Preference preference, Object newValue) {
                 new AlertDialog.Builder(getActivity()).setTitle(R.string.warn).setMessage(R.string.palettes_override_warn).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         PaletteMaker.generateDefaultPalettes(getActivity());
-                        ((MainActivity)getActivity()).destroyFragments(MainActivity.FragmentTag.PALETTES);
+                        ((MainActivity)getActivity()).destroyFragments(MainActivity.FRAGMENT_PALETTES);
                         Utils.toaster(getActivity(), getString(R.string.palettes_restored));
                     }
                 }).setNegativeButton(R.string.cancel, null).create().show();
@@ -64,15 +50,14 @@ public class PreferencesFragment extends PreferenceFragment {
             }
         });
 
-        findPreference("hardware_accelerated").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        findPreference("hardware_accelerated").setOnPreferenceChangeListener(new android.support.v7.preference.Preference.OnPreferenceChangeListener() {
             @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
+            public boolean onPreferenceChange(android.support.v7.preference.Preference preference, Object newValue) {
                 if(!((boolean)newValue))
                     Utils.easyAlert(getActivity(), getString(R.string.warn), getText(R.string.hw_warn)).show();
 
                 return true;
             }
         });
-
     }
 }

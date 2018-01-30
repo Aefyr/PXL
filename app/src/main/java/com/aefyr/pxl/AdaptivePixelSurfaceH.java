@@ -21,10 +21,11 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.aefyr.pxl.analytics.CanvasAnalyticsHelper;
+import com.aefyr.pxl.common.RectP;
+import com.aefyr.pxl.fragments.HistoryHolderFragment;
 import com.aefyr.pxl.fragments.PreferencesFragment;
 import com.aefyr.pxl.palettes.PaletteManagerH;
 import com.aefyr.pxl.projects.Project;
-import com.aefyr.pxl.common.RectP;
 import com.aefyr.pxl.util.QueueLinearFloodFiller;
 import com.aefyr.pxl.util.Utils;
 
@@ -246,11 +247,19 @@ public class AdaptivePixelSurfaceH extends View {
         this.pixelWidth = pixelBitmap.getWidth();
         this.pixelHeight = pixelBitmap.getHeight();
         pixelCanvas = new Canvas(pixelBitmap);
-        if(savedState==null) {
+
+        HistoryHolderFragment historyHolder = (HistoryHolderFragment) ((DrawingActivity)getContext()).getSupportFragmentManager().findFragmentByTag("historyHolder");
+        if(historyHolder==null||historyHolder.history()==null) {
+            Log.d("APS", "No history holder found, creating new one");
             canvasHistory = new CanvasHistoryH(this, project, CanvasHistoryH.ADAPTIVE_SIZE);
+            historyHolder = new HistoryHolderFragment();
+            historyHolder.holdHistory(canvasHistory);
+            ((DrawingActivity)getContext()).getSupportFragmentManager().beginTransaction().add(historyHolder, "historyHolder").commit();
             //Save history in the persistent fragment
         }else {
-            canvasHistory = new CanvasHistoryH(this, project, CanvasHistoryH.ADAPTIVE_SIZE);
+            Log.d("APS", "Retrieved history from holder");
+            canvasHistory = historyHolder.history();
+            canvasHistory.restore(this, project);
             //Pull history from the persistent fragment
         }
         superPencil = new SuperPencilH(this);
@@ -760,10 +769,12 @@ public class AdaptivePixelSurfaceH extends View {
 
     void writeStateToBundle(Bundle outState){
         Log.d("APH", "Saving changes done to the project and preserving state...");
+        cancelDrawing();
         canvasHistory.saveCanvas();
 
         outState.putFloat("pixelScale", pixelScale);
         outState.putInt("currentColor", currentColor);
+        outState.putInt("strokeWidth", (int) paint.getStrokeWidth());
         outState.putBoolean("grid", gridEnabled);
         outState.putBoolean("cursorMode", cursorMode);
         outState.putBoolean("symmetry", symmetry);
@@ -792,11 +803,15 @@ public class AdaptivePixelSurfaceH extends View {
                 break;
         }
         outState.putInt("tool", tool);
+
+        superPencil.writeStateToBundle(outState);
+        multiShape.writeStateToBundle(outState);
     }
 
     void restoreState(Bundle savedState){
         pixelScale = Utils.clamp(savedState.getFloat("pixelScale", 1f), 1f, realWidth / 4);
         setColor(savedState.getInt("selectedColor", Color.RED));
+        setStrokeWidth(savedState.getInt("strokeWidth", 1));
         setGridEnabled(savedState.getBoolean("grid", false));
         setCursorModeEnabled(savedState.getBoolean("cursorMode", false));
         symmetryAxisesShown = savedState.getBoolean("symmetryAxisesShown", false);
@@ -825,6 +840,9 @@ public class AdaptivePixelSurfaceH extends View {
                 setTool(Tool.SELECTOR, false);
                 break;
         }
+
+        superPencil.restoreState(savedState);
+        multiShape.restoreState(savedState);
     }
 
     OnSpecialToolUseListener onSpecialToolUseListener;

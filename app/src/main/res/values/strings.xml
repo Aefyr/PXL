@@ -78,7 +78,7 @@
     <string name="cancel_import">Cancel Importing</string>
     <string name="posterizing">Posterizing Image…</string>
     <string name="posterizer_prompt">Posterizing</string>
-    <string name="posterizer_desc"><b>Do you want to posterize the Image?</b>\n\n(Posterization means reducing the color palette of the image to 16 colors, so it looks more \"pixelartish\". Looks good on some images, bad on some others.)</string>
+    <string name="posterizer_desc"><b>Do you want to posterize this image?</b>\n\n(Posterization means reducing the color palette of the image to 16 colors, so it looks more \"pixelartish\". Usually looks good on art, but somewhat odd on photos, you can experiment though)</string>
     <string name="suggested_multiplier">(Suggested for posting/sharing the art)</string>
     <string name="invalid_resolution">Invalid Resolution</string>
     <string name="invalid_resolution_desc">Both width and height must be greater than 0</string>
@@ -146,7 +146,7 @@
     <string name="hardware_acceleration">Hardware Acceleration</string>
     <string name="hw_desc">Improves performance of some tools drastically</string>
     <string name="warn">Warning</string>
-    <string name="hw_warn">Only disable Hardware Acceleration, if \"Accelerated Tools\", listed below, make app crash or don\'t work\n\n<b>Accelerated Tools:</b>\nColor Swapper\n\n<b>Tools that won\'t work without hardware acceleration enabled:</b>\nPosterization on Import</string>
+    <string name="hw_warn">Only disable Hardware Acceleration, if \"Accelerated Tools\", listed below, make app crash or don\'t work\n\n<b>Accelerated Tools:</b>\nColor Swapper\n\n<b>Tools that aren\'t available without hardware acceleration:</b>\nPosterization on Import</string>
     <string name="allow_hi_res">Allow High Resolution</string>
     <string name="hi_res_desc">Enable support of up to 512x512 projects and images.\nNot recommended on devices with less than 2GBs of RAM</string>
     <string name="palettes_override_warn">This will override all of the modified colors in default palettes and restore deleted ones</string>

@@ -13,7 +13,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -96,6 +95,12 @@ public class BitmapsMergeActivity extends AppCompatActivity {
         setupTouch();
 
         piv.setImageBitmap(b);
+
+        if(savedInstanceState!=null){
+            offsetX = savedInstanceState.getFloat("offsetX", 0);
+            offsetY = savedInstanceState.getFloat("offsetY", 0);
+
+        }
         redraw();
     }
 
@@ -217,5 +222,12 @@ public class BitmapsMergeActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putFloat("offsetX", offsetX);
+        outState.putFloat("offsetY", offsetY);
     }
 }

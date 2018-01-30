@@ -13,8 +13,8 @@ import android.widget.TextView;
 import com.aefyr.pxl.AdaptivePixelSurfaceH;
 import com.aefyr.pxl.ColorPickerH;
 import com.aefyr.pxl.R;
-import com.aefyr.pxl.util.Utils;
 import com.aefyr.pxl.custom.ColorCircle;
+import com.aefyr.pxl.util.Utils;
 
 /**
  * Created by Aefyr on 03.08.2017.

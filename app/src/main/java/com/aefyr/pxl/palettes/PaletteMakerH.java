@@ -12,7 +12,6 @@ import com.aefyr.pxl.R;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 

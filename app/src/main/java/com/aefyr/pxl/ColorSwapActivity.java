@@ -13,8 +13,8 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
-import com.aefyr.pxl.util.Utils;
 import com.aefyr.pxl.custom.PixelImageView;
+import com.aefyr.pxl.util.Utils;
 
 import java.io.File;
 
@@ -98,6 +98,12 @@ public class ColorSwapActivity extends AppCompatActivity {
             }
         });
 
+        if(savedInstanceState!=null){
+            int colorToSwapTo = savedInstanceState.getInt("colorToSwapTo", color);
+            colorPicker.setColor(colorToSwapTo);
+            colorPicker.applyColorSwap();
+        }
+
     }
 
     private ColorPickerH colorPickerH;
@@ -129,5 +135,11 @@ public class ColorSwapActivity extends AppCompatActivity {
         Log.d("Destroyed!", "Ai ");
         colorPicker.destroySwapperIfNeeded();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("colorToSwapTo", colorPicker.getColor());
     }
 }

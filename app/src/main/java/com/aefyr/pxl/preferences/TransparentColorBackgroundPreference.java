@@ -4,8 +4,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.preference.Preference;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
@@ -38,17 +39,18 @@ public class TransparentColorBackgroundPreference extends Preference {
     private ColorPicker colorPicker;
 
     @Override
-    protected void onBindView(View view) {
-        super.onBindView(view);
-        colorPickButton = (Button) view.findViewById(R.id.colorPickButton);
+    public void onBindViewHolder(PreferenceViewHolder holder) {
+        super.onBindViewHolder(holder);
+
+        colorPickButton = (Button) holder.findViewById(R.id.colorPickButton);
         colorPickButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 openColorEditDialog();
             }
         });
-        colorConfig = (LinearLayout) view.findViewById(R.id.colorConfig);
-        optionsSpinner = (Spinner) view.findViewById(R.id.spinner);
+        colorConfig = (LinearLayout) holder.findViewById(R.id.colorConfig);
+        optionsSpinner = (Spinner) holder.findViewById(R.id.spinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, getContext().getResources().getStringArray(R.array.trans_bg_options));
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         optionsSpinner.setAdapter(adapter);
@@ -100,6 +102,7 @@ public class TransparentColorBackgroundPreference extends Preference {
             }
         });
     }
+
 
     private void updateColor() {
         colorPickButton.setBackgroundColor(currentValue);

@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
+import android.os.Bundle;
 
 import com.aefyr.pxl.common.RectP;
 import com.aefyr.pxl.util.Utils;
@@ -151,6 +152,9 @@ public class MultiShapeH extends ToolH {
                     cY = sY;
                 } else{
                     d = Utils.signedVector2Distance(startX, startY, sX, sY);
+                    float actualD = (float) Math.sqrt(Math.pow(d[0], 2f)/2f);
+                    d[0] = actualD * Math.signum(d[0]);
+                    d[1] = actualD * Math.signum(d[1]);
 
                     float x1 = startX + d[0] >= 0 ? startX : startX + d[0];
                     float x2 = startX + d[0] >= 0 ? startX + d[0] : startX;
@@ -236,5 +240,36 @@ public class MultiShapeH extends ToolH {
             hitBounds = shapeBounds.overlaps(canvasBounds);
         } else
             hitBounds = true;
+    }
+
+
+    @Override
+    public void writeStateToBundle(Bundle outState) {
+        int shapeInt = 0;
+        if(shape==Shape.RECT)
+            shapeInt = 1;
+        else if(shape==Shape.CIRCLE)
+            shapeInt = 2;
+
+        outState.putInt("multishape_shape", shapeInt);
+        outState.putBoolean("multishape_locked", locked);
+        outState.putBoolean("multishape_fill", fill);
+        outState.putInt("multishape_rounding", rounding);
+
+    }
+
+    @Override
+    public void restoreState(Bundle savedInstanceState) {
+        int shapeInt = savedInstanceState.getInt("multishape_shape", 0);
+        if(shapeInt == 1)
+            shape = Shape.RECT;
+        else if(shapeInt == 2)
+            shape = Shape.CIRCLE;
+        else
+            shape = Shape.LINE;
+
+        locked = savedInstanceState.getBoolean("multishape_locked", false);
+        fill = savedInstanceState.getBoolean("multishape_fill", false);
+        rounding = savedInstanceState.getInt("multishape_rounding", 0);
     }
 }

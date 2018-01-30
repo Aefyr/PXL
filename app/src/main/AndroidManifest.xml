@@ -5,31 +5,28 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-    <supports-screens/>
+    <supports-screens />
 
     <application
+        android:name="android.support.multidex.MultiDexApplication"
         android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/icon3"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:name="android.support.multidex.MultiDexApplication">
+        android:theme="@style/AppTheme">
         <activity
             android:name=".DrawingActivity"
             android:theme="@style/AppTheme.NoStatusBar" />
         <activity
             android:name=".ColorSwapActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoStatusBar" />
         <activity
             android:name=".BitmapsMergeActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoStatusBar" />
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -56,7 +53,11 @@
                 android:resource="@xml/filepaths" />
         </provider>
 
-        <activity android:name=".experimental.ExperimentalPaletteEditorActivity" android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".experimental.ExperimentalPaletteEditorActivity"
+            android:theme="@style/AppTheme" />
+
+        <activity android:name=".SettingsActivity" android:theme="@style/AppTheme.SettingActivity"/>
     </application>
 
 </manifest>
