@@ -142,8 +142,6 @@ public class SelectorH extends ToolH {
             aps.canvasHistory.completeHistoricalChange();
         else if (hasSelection)
             aps.canvasHistory.cancelHistoricalChange(sessionStarted);
-        else
-            return;
 
         sessionStarted = false;
         hasSelection = false;
