@@ -1,5 +1,7 @@
 package com.aefyr.pxl.util;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.Resources;
@@ -10,6 +12,7 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.util.TypedValue;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.aefyr.pxl.R;
@@ -252,6 +255,23 @@ public class Utils {
             builder.setMessage(message);
 
         return builder.create();
+    }
+
+    public static void highlightET(final EditText editText){
+        ValueAnimator colorAnimator = new ValueAnimator();
+        colorAnimator.setIntValues(Color.RED, editText.getResources().getColor(R.color.colorEditTextHint));
+        colorAnimator.setEvaluator(new ArgbEvaluator());
+        colorAnimator.setRepeatCount(6);
+        colorAnimator.setRepeatMode(ValueAnimator.REVERSE);
+        colorAnimator.setDuration(100);
+        colorAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                editText.setHintTextColor((Integer) valueAnimator.getAnimatedValue());
+            }
+        });
+        editText.requestFocus();
+        colorAnimator.start();
     }
 
 }

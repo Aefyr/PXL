@@ -10,6 +10,6 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:gravity="center"
-        android:inputType="text"
+        android:inputType="text|textNoSuggestions"
         android:singleLine="true" />
 </FrameLayout>

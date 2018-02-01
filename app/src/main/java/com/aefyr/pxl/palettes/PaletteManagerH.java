@@ -26,7 +26,7 @@ public class PaletteManagerH {
     private ColorCircle colorCircleMain;
     private Palette2 palette;
     private ColorSelectionRecyclerAdapter adapter;
-    private ColorCircle colorCircleCur;
+    //private ColorCircle colorCircleCur;
     private TextView paletteName;
     private ColorPickerH colorPicker;
 
@@ -52,7 +52,7 @@ public class PaletteManagerH {
         aps = apsH;
         colorCircleMain = mainColorCircle;
         palette = PaletteUtils.loadPalette(aps.getProject().palette);
-        colorCircleCur = (ColorCircle) paletteLayoutRoot.findViewById(R.id.colorCircle);
+        //colorCircleCur = (ColorCircle) paletteLayoutRoot.findViewById(R.id.colorCircle);
         setCurrentColor(palette.getColor(0));
         paletteName = (TextView) paletteLayoutRoot.findViewById(R.id.paletteName);
         paletteName.setText(palette.getName());
@@ -137,7 +137,7 @@ public class PaletteManagerH {
         aps.setColor(color);
         this.currentColor = color;
         colorCircleMain.setColor(color);
-        colorCircleCur.setColor(color);
+        //colorCircleCur.setColor(color);
     }
 
     public void setOnVisibilityChangedListener(OnVisibilityChangedListener listener) {

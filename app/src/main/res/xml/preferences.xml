@@ -37,13 +37,12 @@
             android:title="@string/cursor_opacity" />
         <Preference
             android:enabled="false"
-            android:title="@string/select_cursor_image" />
+            android:title="@string/select_cursor_image"/>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/performance">
         <SwitchPreferenceCompat android:key="hardware_accelerated" android:title="@string/hardware_acceleration" android:summary="@string/hw_desc" android:defaultValue="true"/>
         <SwitchPreferenceCompat android:key="allow_512" android:title="@string/allow_hi_res" android:summary="@string/hi_res_desc" android:defaultValue="false"/>
-        <SwitchPreferenceCompat android:key="flawless_symmetry" android:title="@string/flawless_symmetry" android:summary="@string/flawless_sym_desc" android:defaultValue="true"/>
     </PreferenceCategory>
 
 

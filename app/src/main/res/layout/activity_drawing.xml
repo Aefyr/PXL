@@ -222,20 +222,10 @@
             android:id="@+id/editColor"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="wrap_content"
-            android:layout_height="64dp"
-            android:layout_alignParentStart="true"
+            android:layout_height="56dp"
             android:layout_below="@+id/paletteRecycler"
-            android:text="@string/pick_color" />
-
-        <com.aefyr.pxl.custom.ColorCircle
-            android:id="@+id/colorCircle"
-            android:layout_width="@dimen/main_color_circle_size"
-            android:layout_height="@dimen/main_color_circle_size"
-            android:layout_alignParentBottom="false"
-            android:layout_alignParentEnd="true"
-            android:layout_alignTop="@+id/editColor"
             android:layout_centerHorizontal="true"
-            android:elevation="@dimen/default_elevation" />
+            android:text="@string/pick_color" />
 
     </RelativeLayout>
 

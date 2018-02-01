@@ -1,6 +1,8 @@
 package com.aefyr.pxl.palettes;
 
 import android.content.Context;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.util.Log;
 
 import com.aefyr.pxl.R;
@@ -18,7 +20,7 @@ import java.util.ArrayList;
 
 public class PaletteUtils {
 
-    private static final String PALETTE_NAME_VALIDITY_PATTERN = "\\w+[A-Za-zА-Яа-я_0-9\\s]*";
+    private static final String PALETTE_NAME_VALIDITY_PATTERN = "[a-zA-Zа-яА-Я0-9 ]+";
     private static String paletteDuplicatePrefix;
     private static String defaultPaletteName;
 
@@ -147,5 +149,22 @@ public class PaletteUtils {
 
     public static int getSavedPalettesCount(){
         return new File(palettesPath).listFiles().length;
+    }
+
+    public static InputFilter[] createPaletteNameFilter(){
+        InputFilter nameFilter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                if(source.length()==0)
+                    return null;
+
+                if(source.toString().matches(PALETTE_NAME_VALIDITY_PATTERN))
+                    return null;
+
+                return "";
+            }
+        };
+
+        return new InputFilter[]{nameFilter, new InputFilter.LengthFilter(48)};
     }
 }

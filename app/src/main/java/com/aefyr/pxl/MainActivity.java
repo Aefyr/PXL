@@ -2,6 +2,7 @@ package com.aefyr.pxl;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FragmentManager fragmentManager;
 
     private Fragment currentFragment;
-    private static String currentPxlFragment = "null";
+    private String currentPxlFragment = "null";
 
     private NavigationView navigationView;
     private ActionBar actionBar;
@@ -88,7 +89,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         PaletteUtils.initialize(this);
 
         if(savedInstanceState!=null){
+            currentPxlFragment = savedInstanceState.getString("currentFragment", FRAGMENT_GALLERY);
             currentFragment = fragmentManager.findFragmentByTag(currentPxlFragment);
+
+            if(currentFragment==null)
+                setFragment(FRAGMENT_GALLERY);
+
         }else {
             setFragment(FRAGMENT_GALLERY);
             navigationView.setCheckedItem(R.id.nav_gallery);
@@ -152,16 +158,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(Intent.createChooser(mailIntent, getString(R.string.feedback)));
                 break;
             case R.id.nav_about:
-                Intent epea = new Intent(this, ExperimentalPaletteEditorActivity.class);
-                startActivity(epea);
-                /*String versionName = "???";
+                //Intent epea = new Intent(this, ExperimentalPaletteEditorActivity.class);
+                //startActivity(epea);
+                String versionName = "???";
                 try {
                     versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
                 } catch (PackageManager.NameNotFoundException e) {
                     e.printStackTrace();
                 }
                 new AlertDialog.Builder(this).setMessage(String.format(getString(R.string.about_info), versionName, Runtime.getRuntime().maxMemory()/1024/1024)).setPositiveButton(R.string.ok, null).create().show();
-                */
+
                 break;
             /*case R.id.nav_tutorial:
                 Intent tut = new Intent(MainActivity.this, TutorialActivity.class);
@@ -236,5 +242,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 transaction.remove(fragment);
         }
         transaction.commit();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("currentFragment", currentPxlFragment);
     }
 }

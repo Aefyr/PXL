@@ -17,6 +17,7 @@ import android.widget.Spinner;
 
 import com.aefyr.pxl.ColorPicker;
 import com.aefyr.pxl.R;
+import com.aefyr.pxl.palettes.HexColorPicker;
 import com.aefyr.pxl.util.Utils;
 
 /**
@@ -120,6 +121,17 @@ public class TransparentColorBackgroundPreference extends Preference {
             }
         }).setNegativeButton(getContext().getString(R.string.cancel), null).setTitle(getContext().getString(R.string.edit_color)).create();
         colorEditDialog.show();
+        colorEditDialog.getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new HexColorPicker(getContext(), colorPicker.getColor(), new HexColorPicker.OnColorPickListener() {
+                    @Override
+                    public void onColorPicked(int color) {
+                        colorPicker.setColor(color);
+                    }
+                }).show();
+            }
+        });
         int c = Color.WHITE;
         if (currentValue < 0)
             c = currentValue;

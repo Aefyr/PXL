@@ -164,7 +164,8 @@ public class PalettePickerActivity extends AppCompatActivity {
         creationDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         creationDialog.show();
         final EditText paletteName = (EditText)creationDialog.findViewById(R.id.dialogEditText);
-        paletteName.setFilters(new InputFilter[]{new InputFilter.LengthFilter(48)});
+        paletteName.setFilters(PaletteUtils.createPaletteNameFilter());
+        paletteName.setHint(R.string.enter_name);
         creationDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -178,8 +179,6 @@ public class PalettePickerActivity extends AppCompatActivity {
                     Utils.toaster(PalettePickerActivity.this, getString(R.string.incorrect_palette_name));
             }
         });
-        ((EditText)creationDialog.findViewById(R.id.dialogEditText)).setHint(R.string.enter_name);
-
     }
 
     private void renamePalette(final Palette2 palette, final int id) {
@@ -188,6 +187,7 @@ public class PalettePickerActivity extends AppCompatActivity {
         renameDialog.show();
 
         final EditText nameEditText = renameDialog.findViewById(R.id.dialogEditText);
+        nameEditText.setFilters(PaletteUtils.createPaletteNameFilter());
         nameEditText.setHint(getString(R.string.new_name));
         nameEditText.setText(palette.getName());
         nameEditText.selectAll();

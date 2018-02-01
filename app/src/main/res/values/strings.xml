@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">PXLRT</string>
+    <string name="app_name" translatable="false">PXL</string>
 
     <string name="pencil">Pencil</string>
     <string name="fill">Flood Fill</string>
@@ -25,9 +25,9 @@
     <string name="cursor_action">DRAW</string>
     <string name="error">Internal error</string>
     <string name="dont_show_again">Don\'t show again</string>
-    <string name="comp_mode">On Android 4.4, PXLRT uses compatible dark theme</string>
-    <string name="feedback_mail_subject">PXLRT Feedback</string>
-    <string name="about_info" formatted="false">PXLRT version %s\nMax process memory: %d MB</string>
+    <string name="comp_mode">On Android 4.4, PXL uses compatible dark theme</string>
+    <string name="feedback_mail_subject">PXL Feedback</string>
+    <string name="about_info" formatted="false">PXL version %s\nMax process memory: %d MB</string>
     <string name="hex" translatable="false">HEX</string>
 
     <!-- Misc -->
@@ -45,7 +45,7 @@
     <string name="incorrect_palette_name">Palette name is already in use or incorrect!\n(You may use only letters, digits and spaces)</string>
     <string name="create_new_palette">Create New Palette</string>
     <string name="enter_name">Enter name</string>
-    <string name="pick_color">Edit Current Color</string>
+    <string name="pick_color">Custom Color</string>
     <string name="add_to_palette">Add to Palette</string>
     <string name="add_to_palette_hint">Click on the color in palette you want to replace with current color!</string>
     <string name="color_edit_hint">Click on a color to edit it!</string>
@@ -73,8 +73,8 @@
     <string name="storage_permissions_denied">Unable to access gallery. Please give the app permission to access files on the device.</string>
     <string name="create">Create</string>
     <string name="project_saved">Project has been exported</string>
-    <string name="res_notice">If you\'re going to use the exported image for further editing or as an asset in game, select original resolution to keep it a \"True Pixel Art\". But if you want share the image, select a reasonably high resolution, otherwise the image will look blurry due to scaling algorithms used in most apps/programs</string>
-    <string name="resize_promt">Maximum project resolution is %dx%d.\n\nDo you want PXLRT to resize imported image to %dx%d?</string>
+    <string name="res_notice">Original resolution will look blurry in most apps, but is suitable for further editing as a pixel art.\n\nOn the other hand, resolution suggested for posting/sharing the art will look good in other apps, but it will be unsuitable for further editing as a pixel art</string>
+    <string name="resize_promt">Maximum project resolution is %dx%d.\n\nDo you want PXL to resize imported image to %dx%d?</string>
     <string name="cancel_import">Cancel Importing</string>
     <string name="posterizing">Posterizing Image…</string>
     <string name="posterizer_prompt">Posterizing</string>
@@ -82,6 +82,7 @@
     <string name="suggested_multiplier">(Suggested for posting/sharing the art)</string>
     <string name="invalid_resolution">Invalid Resolution</string>
     <string name="invalid_resolution_desc">Both width and height must be greater than 0</string>
+    <string name="invalid_name">Please enter project name</string>
 
 
     <!--gallery_item-->

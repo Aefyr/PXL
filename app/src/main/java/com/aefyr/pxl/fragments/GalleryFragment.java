@@ -69,11 +69,11 @@ public class GalleryFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
 
 
-        ProjectsUtils.initialize(getActivity());
+        ProjectsUtils.initialize(getContext());
 
         recyclerView = (RecyclerView) view.findViewById(R.id.galleryRecycler);
-        adapter = new ProjectsRecycleAdapter(getActivity());
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), (int) (Utils.getScreenWidth(getResources()) / Utils.dpToPx(180, getResources()))));
+        adapter = new ProjectsRecycleAdapter(getContext());
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), (int) (Utils.getScreenWidth(getResources()) / Utils.dpToPx(180, getResources()))));
         recyclerView.setItemViewCacheSize(16);
         adapter.setHasStableIds(true);
         recyclerView.setAdapter(adapter);
@@ -81,14 +81,14 @@ public class GalleryFragment extends Fragment {
         initializeFABOnClickListener(view);
         initializeOnProjectClickListener();
 
-        DynamicProjectsLoader.getInstance(getActivity()).loadProjects(new DynamicProjectsLoader.ProjectsLoaderCallbackD() {
+        DynamicProjectsLoader.getInstance(getContext()).loadProjects(new DynamicProjectsLoader.ProjectsLoaderCallbackD() {
             @Override
             public void onProjectLoaded(Project project) {
                 adapter.addProject(project, false);
             }
         });
 
-        projectsAnalytics = ProjectsAnalyticsHelper.getInstance(getActivity());
+        projectsAnalytics = ProjectsAnalyticsHelper.getInstance(getContext());
 
         return view;
     }
@@ -97,15 +97,15 @@ public class GalleryFragment extends Fragment {
 
     private void openProject(String id, int index) {
         projectsAnalytics.logProjectOpened();
-        Intent i = new Intent(getActivity(), DrawingActivity.class);
+        Intent i = new Intent(getContext(), DrawingActivity.class);
         i.putExtra("projectToLoad", id);
         startActivityForResult(i, DRAWING_REQUEST);
 
         adapter.moveItemToFront(index);
         recyclerView.scrollToPosition(0);
         recyclerView.clearAnimation();
-        ((MainActivity)getActivity()).notifyProjectOpened();
-        //getActivity().finish();
+        ((MainActivity)getContext()).notifyProjectOpened();
+        //getContext().finish();
     }
 
     private void initializeFABOnClickListener(View view) {
@@ -113,7 +113,7 @@ public class GalleryFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog newProjectOptionPick = new AlertDialog.Builder(getActivity()).setItems(getResources().getStringArray(R.array.new_project_options), new DialogInterface.OnClickListener() {
+                AlertDialog newProjectOptionPick = new AlertDialog.Builder(getContext()).setItems(getResources().getStringArray(R.array.new_project_options), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if (i == 0)
@@ -128,8 +128,8 @@ public class GalleryFragment extends Fragment {
     }
 
     private void createNewProject() {
-        final int dLimit = Ruler.getInstance(getActivity()).maxDimensionSize();
-        final AlertDialog d = new AlertDialog.Builder(getActivity()).setView(R.layout.project_creation).setPositiveButton(R.string.create, null).setNegativeButton(R.string.cancel, null).create();
+        final int dLimit = Ruler.getInstance(getContext()).maxDimensionSize();
+        final AlertDialog d = new AlertDialog.Builder(getContext()).setView(R.layout.project_creation).setPositiveButton(R.string.create, null).setNegativeButton(R.string.cancel, null).create();
         d.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         d.show();
 
@@ -165,17 +165,24 @@ public class GalleryFragment extends Fragment {
         d.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String name = nameET.getText().toString();
-                /*if (!ProjectsUtils.isNameAvailable(name)) {
-                    Utils.toaster(getActivity(), getString(R.string.incorrect_project_name));
-                    return;
-                }*/
-
-                if (widthET.getText().length() == 0 || heightET.getText().length() == 0 || widthET.getText().toString().equals("0") || heightET.getText().toString().equals("0")) {
-                    Utils.toaster(getActivity(), getString(R.string.incorrect_width_or_height));
+                if(nameET.length()==0){
+                    Utils.highlightET(nameET);
+                    Utils.toaster(getContext(), getString(R.string.invalid_name));
                     return;
                 }
 
+                boolean wrongWidth = widthET.getText().length() == 0 || widthET.getText().toString().equals("0");
+                if (wrongWidth || heightET.getText().length() == 0 || heightET.getText().toString().equals("0")) {
+                    if(wrongWidth)
+                        Utils.highlightET(widthET);
+                    else
+                        Utils.highlightET(heightET);
+
+                    Utils.toaster(getContext(), getString(R.string.incorrect_width_or_height));
+                    return;
+                }
+
+                String name = nameET.getText().toString();
                 int width = Integer.parseInt(widthET.getText().toString());
                 int height = Integer.parseInt(heightET.getText().toString());
                 Project newProject = ProjectsUtils.createNewProject(name, width, height, "Default", ((Switch) d.findViewById(R.id.transparentBackground)).isChecked());
@@ -188,7 +195,7 @@ public class GalleryFragment extends Fragment {
     }
 
     private void importImage() {
-        if (!PermissionsUtils.checkStoragePermissions(getActivity())) {
+        if (!PermissionsUtils.checkStoragePermissions(getContext())) {
             actionAfter = 1;
             PermissionsUtils.requestStoragePermissions(this);
             return;
@@ -203,20 +210,20 @@ public class GalleryFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IMPORT_IMAGE && resultCode == Activity.RESULT_OK) {
-            final int dLimit = Ruler.getInstance(getActivity()).maxDimensionSize();
+            final int dLimit = Ruler.getInstance(getContext()).maxDimensionSize();
             final Bitmap importedImage;
             try {
-                importedImage = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(data.getData()));
+                importedImage = BitmapFactory.decodeStream(getContext().getContentResolver().openInputStream(data.getData()));
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
-                Utils.toaster(getActivity(), getString(R.string.error));
+                Utils.toaster(getContext(), getString(R.string.error));
                 return;
             }
             if (importedImage.getWidth() > dLimit || importedImage.getHeight() > dLimit) {
                 final int suggestedW = importedImage.getWidth()>importedImage.getHeight()?dLimit: (int) ((float)importedImage.getWidth() / ((float) importedImage.getHeight() / (float)dLimit));
                 final int suggestedH = importedImage.getHeight()>importedImage.getWidth()?dLimit:(int) ((float)importedImage.getHeight() / ((float) importedImage.getWidth() / (float) dLimit));
-                new AlertDialog.Builder(getActivity()).setTitle(R.string.warn).setMessage(String.format(getString(R.string.resize_promt), dLimit, dLimit, suggestedW, suggestedH)).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                new AlertDialog.Builder(getContext()).setTitle(R.string.warn).setMessage(String.format(getString(R.string.resize_promt), dLimit, dLimit, suggestedW, suggestedH)).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Bitmap resizedImportedImage = Bitmap.createScaledBitmap(importedImage, suggestedW, suggestedH, true);
@@ -238,14 +245,14 @@ public class GalleryFragment extends Fragment {
     }
 
     private void suggestPosterizing(final Bitmap image){
-        if(PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean("hardware_accelerated", true)){
-            new AlertDialog.Builder(getActivity()).setTitle(R.string.posterizer_prompt).setMessage(R.string.posterizer_desc).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+        if(PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("hardware_accelerated", true)){
+            new AlertDialog.Builder(getContext()).setTitle(R.string.posterizer_prompt).setMessage(R.string.posterizer_desc).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    final Posterizer posterizer = new Posterizer(getActivity());
-                    final ProgressDialog progressDialog = Posterizer.createGenerationProgressDialog(getActivity());
+                    final Posterizer posterizer = new Posterizer(getContext());
+                    final ProgressDialog progressDialog = Posterizer.createGenerationProgressDialog(getContext());
                     progressDialog.show();
-                    posterizer.posterizeAsync(image,  Ruler.getInstance(getActivity()).posterizationColorsCount(), new Posterizer.PosterizationListener() {
+                    posterizer.posterizeAsync(image,  Ruler.getInstance(getContext()).posterizationColorsCount(), new Posterizer.PosterizationListener() {
                         @Override
                         public void onImagePosterized(Bitmap posterizedImage) {
                             progressDialog.dismiss();
@@ -270,7 +277,7 @@ public class GalleryFragment extends Fragment {
     }
 
     private void createProjectFromImportedImage(Bitmap importedImage){
-        Project p = ProjectsUtils.createProjectFromBitmap(getActivity(), importedImage);
+        Project p = ProjectsUtils.createProjectFromBitmap(getContext(), importedImage);
         adapter.addProject(p, true);
         projectsAnalytics.logProjectCreated(FirebaseConstants.Projects.VIA_IMPORTING);
         openProject(p.id, 0);
@@ -285,7 +292,7 @@ public class GalleryFragment extends Fragment {
 
             @Override
             public void onLongProjectClick(final int id, final Project project) {
-                AlertDialog optionsDialog = new AlertDialog.Builder(getActivity()).setTitle(project.name).setItems(getResources().getStringArray(R.array.project_options), new DialogInterface.OnClickListener() {
+                AlertDialog optionsDialog = new AlertDialog.Builder(getContext()).setTitle(project.name).setItems(getResources().getStringArray(R.array.project_options), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         switch (i) {
@@ -316,7 +323,7 @@ public class GalleryFragment extends Fragment {
 
     private void exportProject(final Project project, final boolean forShare) {
         if(projectsExporter==null)
-            projectsExporter = new ProjectsExporter(getActivity());
+            projectsExporter = new ProjectsExporter(getContext());
 
         projectsExporter.prepareDialogFor(project, forShare, new ProjectsExporter.ExportListener() {
             @Override
@@ -325,7 +332,7 @@ public class GalleryFragment extends Fragment {
             }
         });
 
-        if (!PermissionsUtils.checkStoragePermissions(getActivity())) {
+        if (!PermissionsUtils.checkStoragePermissions(getContext())) {
             actionAfter = 0;
             PermissionsUtils.requestStoragePermissions(this);
             return;
@@ -351,12 +358,12 @@ public class GalleryFragment extends Fragment {
                 }
 
             } else
-                PermissionsUtils.showNoStoragePermissionWarning(getActivity());;
+                PermissionsUtils.showNoStoragePermissionWarning(getContext());;
         }
     }
 
     private void renameProject(final Project project, final int index) {
-        final AlertDialog renameDialog = new AlertDialog.Builder(getActivity()).setTitle(R.string.rename_project).setView(R.layout.edit_text_dialog_view).setPositiveButton(R.string.ok, null).setNegativeButton(R.string.cancel, null).create();
+        final AlertDialog renameDialog = new AlertDialog.Builder(getContext()).setTitle(R.string.rename_project).setView(R.layout.edit_text_dialog_view).setPositiveButton(R.string.ok, null).setNegativeButton(R.string.cancel, null).create();
         renameDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         renameDialog.show();
         final EditText nameEditText = renameDialog.findViewById(R.id.dialogEditText);
@@ -380,7 +387,7 @@ public class GalleryFragment extends Fragment {
     }
 
     private void deleteProject(final Project project, final int id) {
-        AlertDialog deleteDialog = new AlertDialog.Builder(getActivity()).setTitle(project.name).setMessage(getString(R.string.delete_project)).setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+        AlertDialog deleteDialog = new AlertDialog.Builder(getContext()).setTitle(project.name).setMessage(getString(R.string.delete_project)).setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 ProjectsUtils.deleteProject(project);

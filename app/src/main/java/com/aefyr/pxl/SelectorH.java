@@ -140,9 +140,11 @@ public class SelectorH extends ToolH {
     void cancel(float x, float y) {
         if (hasSelection && (offsetX != 0 || offsetY != 0))
             aps.canvasHistory.completeHistoricalChange();
-        else if (offsetX == 0 && offsetY == 0) {
+        else if (hasSelection)
             aps.canvasHistory.cancelHistoricalChange(sessionStarted);
-        }
+        else
+            return;
+
         sessionStarted = false;
         hasSelection = false;
         selection.set(0, 0, 0, 0);

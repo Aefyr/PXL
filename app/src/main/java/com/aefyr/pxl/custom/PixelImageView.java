@@ -5,10 +5,10 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.Display;
@@ -28,7 +28,7 @@ public class PixelImageView extends View {
     private Paint p;
     private float pixelScale;
     private boolean autoResize;
-    private int backgroundColor;
+    private Drawable tBackground;
 
     private boolean r = false;
     private OnSizeChangedListener onSizeChangedListener;
@@ -47,7 +47,8 @@ public class PixelImageView extends View {
 
             bitmap = BitmapFactory.decodeResource(getResources(), a.getResourceId(R.styleable.PixelImageView_image, R.drawable.pencil), noInterpolationOptions);
             autoResize = a.getBoolean(R.styleable.PixelImageView_autoResizeToMax, false);
-            backgroundColor = a.getColor(R.styleable.PixelImageView_imageBackground, Color.TRANSPARENT);
+            tBackground = a.getDrawable(R.styleable.PixelImageView_imageBackground);
+
         } finally {
             a.recycle();
         }
@@ -90,6 +91,9 @@ public class PixelImageView extends View {
         float offsetX = (getWidth() - (bitmap.getWidth() * pixelScale)) * 0.5f;
         float offsetY = (getHeight() - (bitmap.getHeight() * pixelScale)) * 0.5f;
         scaleMatrix.postTranslate(offsetX, offsetY);
+
+        if(tBackground!=null)
+            tBackground.setBounds((int) offsetX, (int) offsetY, (int) (offsetX+bitmap.getWidth() * pixelScale), (int)(offsetY+bitmap.getHeight() * pixelScale));
     }
 
     private void resize() {
@@ -107,8 +111,8 @@ public class PixelImageView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (backgroundColor != 0)
-            canvas.drawColor(backgroundColor);
+        if (tBackground != null)
+            tBackground.draw(canvas);
         canvas.drawBitmap(bitmap, scaleMatrix, p);
     }
 

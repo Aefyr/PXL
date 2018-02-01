@@ -79,7 +79,7 @@
     <string name="pencil_action">Рисовать!</string>
     <string name="title_activity_settings">Настройки</string>
     <string name="fill_shape">Залить</string>
-    <string name="lock_angles">Заблокировать углы</string>
+    <string name="lock_angles">Привязка углов</string>
     <string name="lock_circle">Круг</string>
     <string name="lock_square">Квадрат</string>
     <string name="pencil">Карандаш</string>
@@ -89,7 +89,7 @@
     <string name="tool_style">Стиль концов линии</string>
     <string name="corners_rounding">Закругление углов: %d</string>
     <string name="add_to_palette">Добавить в палитру</string>
-    <string name="pick_color">Выбор текущего цвета</string>
+    <string name="pick_color">Произвольный цвет</string>
     <string name="add_to_palette_hint">Нажмите на цвет в палитре, который вы хотите заменить на текущий цвет!</string>
     <string name="about">О приложении</string>
     <string name="color_edit_hint">Нажмите на цвет, чтобы изменить его!</string>
@@ -124,7 +124,7 @@
     <string name="tt_selector">Проведите из одной точки в другую, чтобы создать выделение.\n\nЧтобы переместить выделенные пиксели, нажмите внутри выделения и перетащите.\n\nИспользуйте кнопку \"Штамп\" слева, чтобы создать копию выделения прямо под ним, или кнопку \"Очистить\", чтобы удалить выделенные пиксели.\n\nЧтобы убрать выделение, нажмите вне него.</string>
     <string name="warn">Внимание</string>
     <string name="tt_color_swap">Заменяет все пиксели определенного цвета на изображении на другой. При использовании открывается окно, где вы можете менять цвет в реальном времени.\n\n<b>Внимание:</b>\nПри выключенном аппаратном ускорении, этот инструмент будет работать очень медленно на больших изображениях</string>
-    <string name="comp_mode">На Android 4.4, PXLRT использует совместимое темное оформление</string>
+    <string name="comp_mode">На Android 4.4, PXL использует совместимое темное оформление</string>
     <string name="custom">Своё…</string>
     <string name="enter_custom_resolution">Введите желаемый размер в пикселях для большей стороны изображения, размер меньшей стороны будет вычислен на основе соотношения сторон проекта</string>
     <string name="exit_prompt">Закрыть текущий проект?</string>
@@ -134,9 +134,9 @@
     <string name="hi_res_desc">Поддержка проектов и изображений с разрешением вплоть до 512x512.\nНе рекомендуется на устройствах с меньше 2ГБ ОЗУ.</string>
     <string name="tc_bg_desc">Фон прозрачного холста, чтобы было видно где рисовать.\nИсчезает при экспорте проекта</string>
     <string name="precise_picker">Точный выбор цвета</string>
-    <string name="feedback_mail_subject">PXLRT Обратная связь</string>
+    <string name="feedback_mail_subject">PXL Обратная связь</string>
     <string name="palettes_override_warn">Это восстановит все цвета в изменённых стандартных палитрах и вновь создаст удаленные</string>
-    <string name="res_notice">Если вы собираетесь дальше редактировать изображение, экспортируйте его в оригинальном разрешении, чтобы оно осталось \"настоящим пиксель артом\". Но если вы собираетесь публиковать изображение, выберите разрешение повыше, иначе оно будет выглядить размыто в большинстве программах/приложений, из-за алгоритмов увеличения применяемых в них</string>
+    <string name="res_notice">Оригинальное разрешение годится для дальнейшего редактирования изображения как пиксель арта, но в большинстве других программ такое изображение будет выглядить размыто\n\nРекомендованное для публикации разрешение будет хорошо выглядить в других программах, но оно непригодно для дальнейшего редактирования как пиксель арта</string>
     <string name="dont_show_again">Больше не показывать</string>
     <string name="flip_direction_selection">Направление отражения</string>
     <string name="auto_back_after_color_pick">Перелючить после выбора цвета</string>
@@ -151,14 +151,16 @@
     <string name="sym_axises_hidden">Ось симметрии скрыта</string>
     <string name="sym_axises_color">Цвет осей симметрии</string>
     <string name="default_palette">По умолчанию</string>
-    <string name="about_info" formatted="false">PXLRT версии %s\nМаксимальная память процесса: %d МБ</string>
-    <string name="resize_promt">Максимальное разрешение проекта равно %dx%d.\n\nХотите, чтобы PXLRT сжал выбранное изображение до разрешения %dx%d?</string>
+    <string name="about_info" formatted="false">PXL версии %s\nМаксимальная память процесса: %d МБ</string>
+    <string name="resize_promt">Максимальное разрешение проекта равно %dx%d.\n\nХотите, чтобы PXL сжал выбранное изображение до разрешения %dx%d?</string>
     <string name="cancel_import">Отмена импорта</string>
     <string name="posterizing">Постеризация изображения…</string>
     <string name="posterizer_prompt">Постеризация</string>
-    <string name="posterizer_desc"><b>Вы хотите, чтобы PXLRT постеризовал это изображение?</b>\n\n(Постеризация - это снижение количества цветов, используемых в изображении до 16, чтобы оно выглядело более \"пиксельартно\". Обычно хорошо смотрится на артах и странновато на фотографиях, экспериментируйте)</string>
+    <string name="posterizer_desc"><b>Вы хотите, чтобы PXL постеризовал это изображение?</b>\n\n(Постеризация - это снижение количества цветов, используемых в изображении до 16, чтобы оно выглядело более \"пиксельартно\". Обычно хорошо смотрится на артах и странновато на фотографиях, экспериментируйте)</string>
     <string name="suggested_multiplier">(Рекомендуется для публикации арта)</string>
     <string name="invalid_resolution">Неверное разрешение</string>
     <string name="invalid_resolution_desc">Высота и ширина должны быть больше 0</string>
+    <string name="invalid_name">Введите имя проекта</string>
+
 
 </resources>

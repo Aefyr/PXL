@@ -388,6 +388,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                 mergeIntent.putExtra("path", t.getAbsolutePath());
                 mergeIntent.putExtra("mode", BitmapsMergeActivity.MODE_MERGE);
                 mergeIntent.putExtra("uri", data.getDataString());
+                aps.cancelDrawing();
                 aps.canvasHistory.startHistoricalChange();
                 startActivityForResult(mergeIntent, 1337);
             }
@@ -510,6 +511,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
         i.putExtra("path", t.getAbsolutePath());
         i.putExtra("mode", BitmapsMergeActivity.MODE_TRANSLATE);
         i.putExtra("transparentBackground", aps.project.transparentBackground);
+        aps.cancelDrawing();
         aps.canvasHistory.startHistoricalChange();
         startActivityForResult(i, 1337);
     }

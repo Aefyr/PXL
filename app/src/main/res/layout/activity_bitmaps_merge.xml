@@ -14,9 +14,10 @@
         android:layout_centerHorizontal="true"
         android:layout_centerInParent="true"
         android:layout_marginTop="4dp"
-        android:background="@drawable/tile_background"
+        android:background="@color/colorPrimaryDark"
         app:autoResizeToMax="true"
-        app:image="@drawable/warning" />
+        app:image="@drawable/warning"
+        app:imageBackground="@drawable/tile_background" />
 
     <ImageButton
         android:id="@+id/ibl"
