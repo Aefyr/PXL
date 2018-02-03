@@ -10,6 +10,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.aefyr.pxl.fragments.PreferencesFragment;
 import com.aefyr.pxl.util.Utils;
@@ -40,14 +41,13 @@ public class SuperPencilH extends ToolH {
         path = new Path();
         mirroredPath = new Path();
         mirrorMatrix = new Matrix();
-        highVelocityThreshold = Utils.dpToPx(6, adaptivePixelSurface.getResources());
-
         flawlessSymmetry = PreferenceManager.getDefaultSharedPreferences(adaptivePixelSurface.getContext()).getBoolean(PreferencesFragment.FLAWLESS_SYMMETRY, true);
         if(flawlessSymmetry) {
             mBitmap = Bitmap.createBitmap(aps.pixelWidth, aps.pixelHeight, Bitmap.Config.ARGB_8888);
             mCanvas = new Canvas(mBitmap);
             flawlessPaint = new Paint();
         }
+        notifyScaleChanged();
     }
 
     void setStyle(Style style) {
@@ -81,6 +81,10 @@ public class SuperPencilH extends ToolH {
             }else
                 aps.paint.setColor(aps.currentColor);
         }
+    }
+
+    void notifyScaleChanged(){
+        highVelocityThreshold = aps.pixelScale*2;
     }
 
 
@@ -159,6 +163,7 @@ public class SuperPencilH extends ToolH {
         boolean highVelocity = Utils.vector2Distance(x, y, lX, lY) >= highVelocityThreshold;
 
         calculateCanvasXY(x, y);
+        Log.d("SPH", "highVelocity="+highVelocity);
 
         if (aps.cursorMode && !highVelocity && aps.paint.getStrokeWidth() <= 4)
             path.lineTo(sX, sY);
@@ -314,6 +319,15 @@ public class SuperPencilH extends ToolH {
             mirrorMatrix.setScale(1f, -1f, ((float) aps.pixelWidth) / 2f, ((float) aps.pixelHeight )/ 2f);
         }
 
+    }
+
+    @Override
+    protected void calculateCanvasXY(float x, float y) {
+        super.calculateCanvasXY(x, y);
+        if(aps.cursorMode){
+            sX = (int) sX;
+            sY = (int) sY;
+        }
     }
 
     @Override

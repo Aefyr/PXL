@@ -723,6 +723,7 @@ public class AdaptivePixelSurfaceH extends View {
             matrixOffsetX = Utils.clamp(matrixOffsetX, (-pixelScale*pixelWidth-(scaleAnchorX*(1-pixelScale))), realWidth-(scaleAnchorX*(1-pixelScale)));
             matrixOffsetY = Utils.clamp(matrixOffsetY, (-pixelScale*pixelHeight-(scaleAnchorY*(1-pixelScale))), realHeight-(scaleAnchorY*(1-pixelScale)));
             pixelMatrix.postTranslate(matrixOffsetX, matrixOffsetY);
+            superPencil.notifyScaleChanged();
             scaleChanged = false;
             translateChanged = false;
 

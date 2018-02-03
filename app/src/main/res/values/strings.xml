@@ -17,6 +17,7 @@
     <string name="yes">Yes</string>
     <string name="no">Nope</string>
     <string name="tutorial_hint">You can always revisit the tutorial from the navigation drawer!</string>
+    <string name="tutorial_for_tool">Tutorial: %s</string>
 
     <!-- Commons and MainActivity -->
     <string name="ok">OK</string>
@@ -169,6 +170,7 @@
     <string name="tt_color_pick">Sets the current color to the color you selected with it</string>
     <string name="tt_color_swap">Swaps all the pixels of the selected color on the image to another color. It will open a live preview window on use, where you can alter the selected color in real time.\n\n<b>Warning:</b>\nThis will work super-slow on large pictures if you have disabled the hardware acceleration in settings</string>
     <string name="tt_selector">Drag from one point to another to create a selection rect.\n\nTo move selected pixels, tap inside the selection rect and drag it.\n\nYou can use the \"Clone\" button on the left to create a clone of selection under it and the \"Clear\" button to delete the selected pixels.\n\nTo remove the selection, tap outside the selection rect.</string>
+    <string name="t2_cursor">In cursor mode, you use your finger to move the cursor on screen and the \"Draw\" button at the bottom to draw at the cursor position.\n\n• Drag your finger anywhere on screen to move the cursor.\n\n• You can move cursor and press the \"Draw\" button at the same time.</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

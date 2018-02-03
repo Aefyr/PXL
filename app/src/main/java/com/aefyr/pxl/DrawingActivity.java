@@ -30,6 +30,7 @@ import com.aefyr.pxl.analytics.FirebaseConstants;
 import com.aefyr.pxl.custom.ColorCircle;
 import com.aefyr.pxl.custom.ItemWithIcon;
 import com.aefyr.pxl.custom.ListAdapterWithIcons;
+import com.aefyr.pxl.experimental.Tutorial;
 import com.aefyr.pxl.palettes.PaletteManagerH;
 import com.aefyr.pxl.palettes.PalettePickerActivity;
 import com.aefyr.pxl.palettes.PaletteUtils;
@@ -53,6 +54,8 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
     PaletteManagerH pm;
     ToolPickRecyclerAdapter toolPicker;
     SymmetrySwitcher symmetrySwitcher;
+
+    private Tutorial tutorial;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +98,8 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         instaSwap = preferences.getBoolean("insta_swap", false);
+
+        tutorial = new Tutorial(this);
     }
 
     private AlertDialog dialog11;
@@ -248,6 +253,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
             public void onClick(View view) {
                 switch (view.getId()) {
                     case R.id.cursorMode:
+                        tutorial.cursorMode();
                         aps.setCursorModeEnabled(!aps.cursorMode);
                         if (aps.cursorMode) {
                             cursorToggle.setImageResource(R.drawable.cursor3);
