@@ -3,11 +3,15 @@ package com.aefyr.pxl.fragments;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -15,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputFilter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,12 +49,26 @@ public class PalettesFragment extends Fragment {
     RecyclerView recyclerView;
     private PalettesAnalyticsHelper palettesAnalytics;
 
+    private BroadcastReceiver palettesUpdateReceiver;
+
     public PalettesFragment() {
         // Required empty public constructor
     }
 
-
     int IMPORT_IMAGE = 223;
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        palettesUpdateReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                reloadPalettes();
+            }
+        };
+        getActivity().registerReceiver(palettesUpdateReceiver, new IntentFilter("com.aefyr.pxl.ACTION_RELOAD_PALETTES"));
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -85,16 +104,21 @@ public class PalettesFragment extends Fragment {
             }
         });
 
+        palettesAnalytics = PalettesAnalyticsHelper.getInstance(getActivity());
+
+        reloadPalettes();
+
+        return view;
+    }
+
+    private void reloadPalettes(){
+        adapter.clearPalettes();
         DynamicPalettesLoader.getInstance(getActivity()).loadPalettes(new DynamicPalettesLoader.PalettesLoaderCallbackD() {
             @Override
             public void onPaletteLoaded(Palette2 palette) {
                 adapter.addPalette(palette);
             }
         });
-
-        palettesAnalytics = PalettesAnalyticsHelper.getInstance(getActivity());
-
-        return view;
     }
 
 
@@ -274,4 +298,10 @@ public class PalettesFragment extends Fragment {
         deleteDialog.show();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(palettesUpdateReceiver!=null)
+            getActivity().unregisterReceiver(palettesUpdateReceiver);
+    }
 }

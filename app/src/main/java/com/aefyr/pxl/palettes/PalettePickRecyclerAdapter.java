@@ -66,6 +66,13 @@ public class PalettePickRecyclerAdapter extends RecyclerView.Adapter<PalettePick
         notifyItemInserted(palettes.size()-1);
     }
 
+    public void clearPalettes(){
+        if(palettes!=null) {
+            palettes.clear();
+            notifyDataSetChanged();
+        }
+    }
+
     public void removeItem(int index) {
         palettes.remove(index);
         notifyItemRemoved(index);

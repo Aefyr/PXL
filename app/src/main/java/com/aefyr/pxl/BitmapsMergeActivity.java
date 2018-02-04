@@ -11,6 +11,7 @@ import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
@@ -86,6 +87,7 @@ public class BitmapsMergeActivity extends AppCompatActivity {
         image = BitmapFactory.decodeFile(path);
 
         piv = (PixelImageView) findViewById(R.id.pxlImageView);
+        piv.setBackgroundColor(PreferenceManager.getDefaultSharedPreferences(this).getInt("background_color", -3343361));
 
 
         b = Bitmap.createBitmap(image.getWidth(), image.getHeight(), Bitmap.Config.ARGB_8888);

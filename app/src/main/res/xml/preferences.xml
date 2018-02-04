@@ -51,5 +51,6 @@
 
     <PreferenceCategory android:title="@string/category_other">
         <Preference android:title="@string/restore_default_palettes" android:key="restore_palettes"/>
+        <Preference android:title="@string/t2_reset_tutorial" android:key="reset_tutorial" android:summary="@string/t2_reset_tutorial_desc"/>
     </PreferenceCategory>
 </PreferenceScreen>

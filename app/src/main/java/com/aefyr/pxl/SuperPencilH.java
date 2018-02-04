@@ -37,6 +37,7 @@ public class SuperPencilH extends ToolH {
     }
 
     SuperPencilH(AdaptivePixelSurfaceH adaptivePixelSurface) {
+        autoCheckHitBounds = false;
         aps = adaptivePixelSurface;
         path = new Path();
         mirroredPath = new Path();
@@ -328,6 +329,7 @@ public class SuperPencilH extends ToolH {
             sX = (int) sX;
             sY = (int) sY;
         }
+        checkHitBounds();
     }
 
     @Override

@@ -41,12 +41,7 @@ public class HexColorPicker {
             public void onClick(DialogInterface dialog, int which) {
                 listener.onColorPicked(color);
             }
-        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        }).create();
+        }).setNegativeButton(R.string.cancel, null).create();
     }
 
     public void show(){

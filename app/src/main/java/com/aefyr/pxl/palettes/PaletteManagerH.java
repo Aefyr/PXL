@@ -14,6 +14,7 @@ import com.aefyr.pxl.AdaptivePixelSurfaceH;
 import com.aefyr.pxl.ColorPickerH;
 import com.aefyr.pxl.R;
 import com.aefyr.pxl.custom.ColorCircle;
+import com.aefyr.pxl.experimental.Tutorial;
 import com.aefyr.pxl.util.Utils;
 
 /**
@@ -33,6 +34,8 @@ public class PaletteManagerH {
     private boolean shown = false;
 
     private int currentColor = Color.RED;
+
+    private Tutorial tutorial;
 
     public interface OnPaletteChangeRequestListener {
         void onPaletteChangeRequest();
@@ -57,9 +60,12 @@ public class PaletteManagerH {
         paletteName = (TextView) paletteLayoutRoot.findViewById(R.id.paletteName);
         paletteName.setText(palette.getName());
 
+        tutorial = new Tutorial(apsH.getContext());
+
         colorCircleMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                tutorial.palettes();
                 if (!shown)
                     show();
                 else

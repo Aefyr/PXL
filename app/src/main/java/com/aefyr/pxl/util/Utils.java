@@ -11,6 +11,7 @@ import android.media.MediaScannerConnection;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.util.TypedValue;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -214,7 +215,7 @@ public class Utils {
         char[] hexChars = hex.toCharArray();
 
         for(int i = 0; i<hexChars.length; i++)
-            base += hexCharToInt(hexChars[i]) * Math.pow(16, ascendingOrder?hexChars.length - 1:5 - i);
+            base |= hexCharToInt(hexChars[i]) << (ascendingOrder?i:5-i)*4;
 
         return base;
     }

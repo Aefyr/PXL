@@ -27,6 +27,13 @@ public class Tutorial {
         }
     }
 
+    public void palettes(){
+        if(!tutorialFlags.getBoolean("palettes", false)){
+            createTutorialDialog(R.string.palettes, R.string.t2_palettes).show();
+            tutorialFlags.edit().putBoolean("palettes", true).apply();
+        }
+    }
+
     private AlertDialog createTutorialDialog(@StringRes int toolName, @StringRes int text){
         return new AlertDialog.Builder(c).setTitle(String.format(c.getString(R.string.tutorial_for_tool), c.getString(toolName))).setMessage(text).setPositiveButton(R.string.ok, null).create();
     }

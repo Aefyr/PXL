@@ -71,7 +71,7 @@
     <string name="enter_custom_resolution">Enter desired pixel size of greater side of the image, size of the lesser side will be calculated using aspect ratio of the project</string>
     <string name="share">Share</string>
     <string name="exporting">Exporting image</string>
-    <string name="storage_permissions_denied">Unable to access gallery. Please give the app permission to access files on the device.</string>
+    <string name="storage_permissions_denied">Unable to access gallery. Please give PXL permission to access files on the device.</string>
     <string name="create">Create</string>
     <string name="project_saved">Project has been exported</string>
     <string name="res_notice">Original resolution will look blurry in most apps, but is suitable for further editing as a pixel art.\n\nOn the other hand, resolution suggested for posting/sharing the art will look good in other apps, but it will be unsuitable for further editing as a pixel art</string>
@@ -170,7 +170,12 @@
     <string name="tt_color_pick">Sets the current color to the color you selected with it</string>
     <string name="tt_color_swap">Swaps all the pixels of the selected color on the image to another color. It will open a live preview window on use, where you can alter the selected color in real time.\n\n<b>Warning:</b>\nThis will work super-slow on large pictures if you have disabled the hardware acceleration in settings</string>
     <string name="tt_selector">Drag from one point to another to create a selection rect.\n\nTo move selected pixels, tap inside the selection rect and drag it.\n\nYou can use the \"Clone\" button on the left to create a clone of selection under it and the \"Clear\" button to delete the selected pixels.\n\nTo remove the selection, tap outside the selection rect.</string>
-    <string name="t2_cursor">In cursor mode, you use your finger to move the cursor on screen and the \"Draw\" button at the bottom to draw at the cursor position.\n\n• Drag your finger anywhere on screen to move the cursor.\n\n• You can move cursor and press the \"Draw\" button at the same time.</string>
+
+    <string name="t2_reset_tutorial">Reset tutorial progress</string>
+    <string name="t2_reset_tutorial_desc">In case you want to read it again</string>
+    <string name="t2_reset_tutotial_done">Tutorial progress was reset</string>
+    <string name="t2_cursor">In cursor mode use your finger to move the cursor on screen and press the \"Draw\" button at the bottom to draw at the cursor position.\n\n• Drag your finger anywhere on screen to move the cursor.\n\n• You can move cursor and press the \"Draw\" button at the same time.</string>
+    <string name="t2_palettes">You can pick color from a palette or select an arbitrary custom color.\n\n• You can override a color in a palette with currently selected one by long-clicking the color in palette you want to override.</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

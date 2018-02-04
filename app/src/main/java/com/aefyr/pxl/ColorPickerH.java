@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.SeekBar;
@@ -68,8 +69,8 @@ public class ColorPickerH {
 
         Color.colorToHSV(color, this.color);
         hueBar.setProgress((int) this.color[0]);
-        saturationBar.setProgress((int) (this.color[1] * 100));
-        valueBar.setProgress((int) (this.color[2] * 100));
+        saturationBar.setProgress((int) (this.color[1] * 100f));
+        valueBar.setProgress((int) (this.color[2] * 100f));
 
         editTextHue.setText(String.valueOf((int) this.color[0]));
         editTextSat.setText(String.valueOf((int) (this.color[1] * 100f)));
