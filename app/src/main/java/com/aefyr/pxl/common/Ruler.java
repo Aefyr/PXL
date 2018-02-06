@@ -28,4 +28,8 @@ public class Ruler {
     public int posterizationColorsCount(){
         return preferences.getInt("posterization_colors_count", 16);
     }
+
+    public boolean infiniteHistory(){
+        return preferences.getBoolean("infinite_history", true);
+    }
 }

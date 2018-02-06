@@ -37,7 +37,7 @@ public class SuperPencilH extends ToolH {
     }
 
     SuperPencilH(AdaptivePixelSurfaceH adaptivePixelSurface) {
-        autoCheckHitBounds = false;
+        roundCanvasXY = true;
         aps = adaptivePixelSurface;
         path = new Path();
         mirroredPath = new Path();
@@ -298,15 +298,22 @@ public class SuperPencilH extends ToolH {
 
     private Path mirroredPath;
     private float aSX, aSY;
+    private float symmetryAxisX = 12.5f;
+    private float symmetryAxisY = 64.5f;
 
     private void calculateSymmetricalCanvasXY() {
         aSX = sX;
         aSY = sY;
-        if (aps.symmetryType == AdaptivePixelSurfaceH.SymmetryType.HORIZONTAL)
-            aSX = Math.abs(aps.pixelWidth - sX);
+        if (aps.symmetryType == AdaptivePixelSurfaceH.SymmetryType.HORIZONTAL) {
+            float d = Math.abs(symmetryAxisX-sX);
+            aSX = symmetryAxisX+(sX<symmetryAxisX?d:-d);
 
-        if (aps.symmetryType == AdaptivePixelSurfaceH.SymmetryType.VERTICAL)
-            aSY = Math.abs(aps.pixelHeight - sY);
+        }
+
+        if (aps.symmetryType == AdaptivePixelSurfaceH.SymmetryType.VERTICAL) {
+            float d = Math.abs(symmetryAxisY-sY);
+            aSY = symmetryAxisY+(sY<symmetryAxisY?d:+d);
+        }
     }
 
     void symmetryUpdate() {
@@ -320,16 +327,6 @@ public class SuperPencilH extends ToolH {
             mirrorMatrix.setScale(1f, -1f, ((float) aps.pixelWidth) / 2f, ((float) aps.pixelHeight )/ 2f);
         }
 
-    }
-
-    @Override
-    protected void calculateCanvasXY(float x, float y) {
-        super.calculateCanvasXY(x, y);
-        if(aps.cursorMode){
-            sX = (int) sX;
-            sY = (int) sY;
-        }
-        checkHitBounds();
     }
 
     @Override

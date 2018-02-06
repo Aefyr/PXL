@@ -2,24 +2,24 @@ package com.aefyr.pxl.fragments;
 
 import android.support.v4.app.Fragment;
 
-import com.aefyr.pxl.CanvasHistoryH;
+import com.aefyr.pxl.history.CanvasHistory;
 
 /**
  * Created by Aefyr on 30.01.2018.
  */
 
 public class HistoryHolderFragment extends Fragment {
-    private CanvasHistoryH history;
+    private CanvasHistory history;
 
     public HistoryHolderFragment(){
         setRetainInstance(true);
     }
 
-    public void holdHistory(CanvasHistoryH history){
+    public void holdHistory(CanvasHistory history){
         this.history = history;
     }
 
-    public CanvasHistoryH history(){
+    public CanvasHistory history(){
         return history;
     }
 }

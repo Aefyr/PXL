@@ -275,4 +275,12 @@ public class Utils {
         colorAnimator.start();
     }
 
+    public static void deleteRecursive(File file){
+        if(file.isDirectory()){
+            for(File child: file.listFiles())
+                deleteRecursive(child);
+        }
+        file.delete();
+    }
+
 }

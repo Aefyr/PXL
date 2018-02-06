@@ -31,6 +31,7 @@ import com.aefyr.pxl.custom.ColorCircle;
 import com.aefyr.pxl.custom.ItemWithIcon;
 import com.aefyr.pxl.custom.ListAdapterWithIcons;
 import com.aefyr.pxl.experimental.Tutorial;
+import com.aefyr.pxl.history.CanvasHistory;
 import com.aefyr.pxl.palettes.PaletteManagerH;
 import com.aefyr.pxl.palettes.PalettePickerActivity;
 import com.aefyr.pxl.palettes.PaletteUtils;
@@ -43,7 +44,7 @@ import com.aefyr.pxl.util.Utils;
 
 import java.io.File;
 
-public class DrawingActivity extends AppCompatActivity implements AdaptivePixelSurfaceH.OnSpecialToolUseListener, PaletteManagerH.OnPaletteChangeRequestListener, CanvasHistoryH.OnHistoryAvailabilityChangeListener {
+public class DrawingActivity extends AppCompatActivity implements AdaptivePixelSurfaceH.OnSpecialToolUseListener, PaletteManagerH.OnPaletteChangeRequestListener, CanvasHistory.OnHistoryAvailabilityChangeListener {
 
     AdaptivePixelSurfaceH aps;
     ImageButton.OnClickListener onClickListener;
@@ -89,7 +90,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                 return false;
             }
         });
-        aps.canvasHistory.setOnHistoryAvailabilityChangeListener(this);
+        aps.canvasHistory.addOnHistoryAvailabilityChangeListener(this);
 
         initializeCursor();
         initializeButtons(savedInstanceState!=null);

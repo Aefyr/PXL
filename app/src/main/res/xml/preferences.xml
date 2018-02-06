@@ -43,6 +43,7 @@
     <PreferenceCategory android:title="@string/performance">
         <SwitchPreferenceCompat android:key="hardware_accelerated" android:title="@string/hardware_acceleration" android:summary="@string/hw_desc" android:defaultValue="true"/>
         <SwitchPreferenceCompat android:key="allow_512" android:title="@string/allow_hi_res" android:summary="@string/hi_res_desc" android:defaultValue="false"/>
+        <SwitchPreferenceCompat android:key="infinite_history" android:title="@string/infinite_history" android:summary="@string/infinite_history_desc" android:defaultValue="true"/>
     </PreferenceCategory>
 
 

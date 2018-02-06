@@ -16,6 +16,7 @@ abstract class ToolH {
 
     protected boolean autoCheckHitBounds = true;
     protected boolean hitBounds = false;
+    protected boolean roundCanvasXY = false;
 
     protected AdaptivePixelSurfaceH aps;
 
@@ -42,6 +43,11 @@ abstract class ToolH {
         aps.pixelMatrix.mapPoints(p);
         sX = (x - p[0]) / aps.pixelScale;
         sY = (y - p[1]) / aps.pixelScale;
+
+        if(roundCanvasXY){
+            sX = (int)sX;
+            sY = (int)sY;
+        }
 
         if (autoCheckHitBounds)
             checkHitBounds();

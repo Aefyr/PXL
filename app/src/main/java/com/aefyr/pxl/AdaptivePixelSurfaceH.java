@@ -22,8 +22,12 @@ import android.view.View;
 
 import com.aefyr.pxl.analytics.CanvasAnalyticsHelper;
 import com.aefyr.pxl.common.RectP;
+import com.aefyr.pxl.common.Ruler;
 import com.aefyr.pxl.fragments.HistoryHolderFragment;
 import com.aefyr.pxl.fragments.PreferencesFragment;
+import com.aefyr.pxl.history.CanvasHistory;
+import com.aefyr.pxl.history.CanvasHistoryH;
+import com.aefyr.pxl.history.InfiniteCanvasHistory;
 import com.aefyr.pxl.palettes.PaletteManagerH;
 import com.aefyr.pxl.projects.Project;
 import com.aefyr.pxl.util.QueueLinearFloodFiller;
@@ -64,7 +68,7 @@ public class AdaptivePixelSurfaceH extends View {
     Tool currentTool = Tool.PENCIL;
     private Tool prevTool = Tool.PENCIL;
 
-    CanvasHistoryH canvasHistory;
+    CanvasHistory canvasHistory;
 
     CursorH cursor;
     boolean cursorMode = false;
@@ -239,6 +243,22 @@ public class AdaptivePixelSurfaceH extends View {
         return new RectP(0, 0, pixelWidth, pixelHeight);
     }
 
+    public int pixelWidth(){
+        return pixelWidth;
+    }
+
+    public int pixelHeight(){
+        return pixelHeight;
+    }
+
+    public Bitmap pixelBitmap(){
+        return pixelBitmap;
+    }
+
+    public Canvas pixelCanvas(){
+        return pixelCanvas;
+    }
+
     Paint trans;
 
     public void setProject(Project project, Bundle savedState) {
@@ -251,7 +271,12 @@ public class AdaptivePixelSurfaceH extends View {
         HistoryHolderFragment historyHolder = (HistoryHolderFragment) ((DrawingActivity)getContext()).getSupportFragmentManager().findFragmentByTag("historyHolder");
         if(historyHolder==null||historyHolder.history()==null) {
             Log.d("APS", "No history holder found, creating new one");
-            canvasHistory = new CanvasHistoryH(this, project, CanvasHistoryH.ADAPTIVE_SIZE);
+
+            if(Ruler.getInstance(getContext()).infiniteHistory())
+                canvasHistory = new InfiniteCanvasHistory(this, project);
+            else
+                canvasHistory = new CanvasHistoryH(this, project);
+
             historyHolder = new HistoryHolderFragment();
             historyHolder.holdHistory(canvasHistory);
             ((DrawingActivity)getContext()).getSupportFragmentManager().beginTransaction().add(historyHolder, "historyHolder").commit();
