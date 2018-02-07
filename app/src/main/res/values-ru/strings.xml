@@ -169,6 +169,8 @@
     <string name="t2_reset_tutotial_done">Прогресс прохождения обучения сброшен</string>
     <string name="infinite_history">Огроменная история</string>
     <string name="infinite_history_desc">Держит в истории до 1024 шагов</string>
+    <string name="import_error">Ошибка импорта изображения</string>
+    <string name="import_in_pxl">Импортировать в PXL</string>
 
 
 </resources>

@@ -36,7 +36,7 @@ public class Project {
         op.inMutable = mutable;
         op.inPreferredConfig = Bitmap.Config.ARGB_8888;
         Bitmap loadedBitmap = BitmapFactory.decodeFile(directory + "/image.pxl", op);
-        if (transparentBackground)
+        if (loadedBitmap!=null&&transparentBackground)
             loadedBitmap.setHasAlpha(true);
         return loadedBitmap;
 
@@ -65,6 +65,7 @@ public class Project {
 
     public void notifyProjectModified() {
         directory.setLastModified(System.currentTimeMillis());
+        ProjectsUtils.updateVersion();
     }
 
     public String getResolutionString() {

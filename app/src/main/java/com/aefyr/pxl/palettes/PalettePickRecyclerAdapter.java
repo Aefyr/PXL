@@ -68,7 +68,7 @@ public class PalettePickRecyclerAdapter extends RecyclerView.Adapter<PalettePick
 
     public void clearPalettes(){
         if(palettes!=null) {
-            palettes.clear();
+            palettes = null;
             notifyDataSetChanged();
         }
     }

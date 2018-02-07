@@ -310,7 +310,7 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
     }
 
     private void initializeCursor() {
-        //Set up cursor action button
+        //Set up cursor getActionName button
         cursorAction = (Button) findViewById(R.id.cursorAction);
         cursorAction.setOnTouchListener(new View.OnTouchListener() {
             @Override

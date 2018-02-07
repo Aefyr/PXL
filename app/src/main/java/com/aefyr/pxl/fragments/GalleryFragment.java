@@ -8,9 +8,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -57,6 +59,8 @@ public class GalleryFragment extends Fragment {
 
     private ProjectsAnalyticsHelper projectsAnalytics;
 
+    private long projectsVersion = 0;
+
     public GalleryFragment() {
         // Required empty public constructor
     }
@@ -80,13 +84,6 @@ public class GalleryFragment extends Fragment {
 
         initializeFABOnClickListener(view);
         initializeOnProjectClickListener();
-
-        DynamicProjectsLoader.getInstance(getContext()).loadProjects(new DynamicProjectsLoader.ProjectsLoaderCallbackD() {
-            @Override
-            public void onProjectLoaded(Project project) {
-                adapter.addProject(project, false);
-            }
-        });
 
         projectsAnalytics = ProjectsAnalyticsHelper.getInstance(getContext());
 
@@ -206,42 +203,100 @@ public class GalleryFragment extends Fragment {
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), IMPORT_IMAGE);
     }
 
+    private Intent queuedToImportIntent;
+    public void importImageFromSendIntent(Intent sendIntent){
+        queuedToImportIntent = sendIntent;
+    }
+
+    private void importImageFromIntent(Intent intent){
+        Uri imageUri = intent.getData();
+        if(imageUri==null)
+            imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+
+        if(imageUri!=null)
+            importImageFromUri(imageUri);
+        else
+            Utils.toaster(getContext(), getString(R.string.import_error));
+
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IMPORT_IMAGE && resultCode == Activity.RESULT_OK) {
-            final int dLimit = Ruler.getInstance(getContext()).maxDimensionSize();
-            final Bitmap importedImage;
-            try {
-                importedImage = BitmapFactory.decodeStream(getContext().getContentResolver().openInputStream(data.getData()));
 
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                Utils.toaster(getContext(), getString(R.string.error));
-                return;
-            }
-            if (importedImage.getWidth() > dLimit || importedImage.getHeight() > dLimit) {
-                final int suggestedW = importedImage.getWidth()>importedImage.getHeight()?dLimit: (int) ((float)importedImage.getWidth() / ((float) importedImage.getHeight() / (float)dLimit));
-                final int suggestedH = importedImage.getHeight()>importedImage.getWidth()?dLimit:(int) ((float)importedImage.getHeight() / ((float) importedImage.getWidth() / (float) dLimit));
-                new AlertDialog.Builder(getContext()).setTitle(R.string.warn).setMessage(String.format(getString(R.string.resize_promt), dLimit, dLimit, suggestedW, suggestedH)).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Bitmap resizedImportedImage = Bitmap.createScaledBitmap(importedImage, suggestedW, suggestedH, true);
-                        importedImage.recycle();
-                        suggestPosterizing(resizedImportedImage);
-                    }
-                }).setNegativeButton(R.string.cancel_import, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        importedImage.recycle();
-                    }
-                }).create().show();
-                return;
-            }
-            suggestPosterizing(importedImage);
+            importImageFromIntent(data);
+
         } else if (requestCode == DRAWING_REQUEST && resultCode == 1) {
             adapter.notifyItemChanged(0);
         }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if(queuedToImportIntent!=null) {
+            Log.d("Gallery", "Importing image from sendIntent");
+            importImageFromIntent(queuedToImportIntent);
+            queuedToImportIntent = null;
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        long currentVersion = ProjectsUtils.getVersion();
+        if(projectsVersion!=currentVersion){
+            reloadProjects();
+            projectsVersion = currentVersion;
+        }
+    }
+
+    private void reloadProjects(){
+        adapter.clearProjects();
+        DynamicProjectsLoader.getInstance(getContext()).loadProjects(new DynamicProjectsLoader.ProjectsLoaderCallbackD() {
+            @Override
+            public void onProjectLoaded(Project project) {
+                adapter.addProject(project, false);
+            }
+
+            @Override
+            public void onLoadingFinished() {
+
+            }
+        });
+    }
+
+    private void importImageFromUri(Uri imageUri){
+        final int dLimit = Ruler.getInstance(getContext()).maxDimensionSize();
+        final Bitmap importedImage;
+        try {
+            importedImage = BitmapFactory.decodeStream(getContext().getContentResolver().openInputStream(imageUri));
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Utils.toaster(getContext(), getString(R.string.error));
+            return;
+        }
+        if (importedImage.getWidth() > dLimit || importedImage.getHeight() > dLimit) {
+            final int suggestedW = importedImage.getWidth()>importedImage.getHeight()?dLimit: (int) ((float)importedImage.getWidth() / ((float) importedImage.getHeight() / (float)dLimit));
+            final int suggestedH = importedImage.getHeight()>importedImage.getWidth()?dLimit:(int) ((float)importedImage.getHeight() / ((float) importedImage.getWidth() / (float) dLimit));
+            new AlertDialog.Builder(getContext()).setTitle(R.string.warn).setMessage(String.format(getString(R.string.resize_promt), dLimit, dLimit, suggestedW, suggestedH)).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Bitmap resizedImportedImage = Bitmap.createScaledBitmap(importedImage, suggestedW, suggestedH, true);
+                    importedImage.recycle();
+                    suggestPosterizing(resizedImportedImage);
+                }
+            }).setNegativeButton(R.string.cancel_import, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    importedImage.recycle();
+                }
+            }).create().show();
+            return;
+        }
+        suggestPosterizing(importedImage);
     }
 
     private void suggestPosterizing(final Bitmap image){

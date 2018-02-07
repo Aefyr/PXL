@@ -9,6 +9,7 @@ import com.aefyr.pxl.R;
 import com.aefyr.pxl.util.Utils;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,6 +24,8 @@ public class ProjectsUtils {
     private static final String PROJECT_NAME_VALIDITY_PATTERN = "\\w+[A-Za-zА-Яа-я_0-9\\s]*";
     private static final String META_SEPARATOR = "]|[";
     static final String META_SEPARATOR_REGEX = "]\\|\\[";
+    private static File versionFile;
+
 
     public static void initialize(Context c) {
         projectsFolderDirectory = c.getFilesDir() + "/projects";
@@ -34,6 +37,8 @@ public class ProjectsUtils {
 
         if (!projectsDirectory.exists())
             projectsDirectory.mkdir();
+
+        versionFile = new File(projectsFolderDirectory, "version");
     }
 
     public static ArrayList<Project> getProjects() {
@@ -100,6 +105,8 @@ public class ProjectsUtils {
         }
         Utils.saveBitmap(b, bitmapPath);
         b.recycle();
+
+        updateVersion();
         return new Project(newProjectDirectory);
     }
 
@@ -114,6 +121,7 @@ public class ProjectsUtils {
         }
         try (FileWriter fileWrite = new FileWriter(meta, false)) {
             fileWrite.write(project.width + META_SEPARATOR + project.height + META_SEPARATOR + project.palette + META_SEPARATOR + project.transparentBackground + META_SEPARATOR + project.name);
+            updateVersion();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -129,6 +137,8 @@ public class ProjectsUtils {
         }
         Project project = createNewProject(name, bitmap.getWidth(), bitmap.getHeight(), "Default", bitmap.hasAlpha());
         Utils.saveBitmap(bitmap, new File(project.directory, "image.pxl"));
+
+        updateVersion();
         return project;
     }
 
@@ -139,6 +149,8 @@ public class ProjectsUtils {
         for (File c : children)
             c.delete();
         project.directory.delete();
+
+        updateVersion();
     }
 
     public static Project duplicateProject(Project project) {
@@ -151,6 +163,7 @@ public class ProjectsUtils {
         duplicate.setName(duplicatedName);
         duplicate.notifyProjectModified();
 
+        updateVersion();
         return duplicate;
     }
 
@@ -159,5 +172,31 @@ public class ProjectsUtils {
         while (new File(projectsFolderDirectory + "/" + String.valueOf(System.currentTimeMillis())).exists())
             id++;
         return String.valueOf(id);
+    }
+
+    static void updateVersion(){
+        try (FileWriter writer = new FileWriter(versionFile, false)){
+            writer.write(String.valueOf(System.currentTimeMillis()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static long getVersion(){
+        try (FileReader reader = new FileReader(versionFile)){
+            int lidlBuffer = reader.read();
+            StringBuilder builder = new StringBuilder(11);
+
+            while (lidlBuffer!=-1){
+                builder.append((char)lidlBuffer);
+                lidlBuffer = reader.read();
+            }
+
+            return Long.parseLong(builder.toString());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return -1;
+        }
     }
 }

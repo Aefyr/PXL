@@ -69,6 +69,13 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
         notifyItemInserted(toFront?0:projects.size()-1);
     }
 
+    public void clearProjects(){
+        if(projects!=null){
+            projects = null;
+            notifyDataSetChanged();
+        }
+    }
+
     @Override
     public ProjectViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = inflater.inflate(R.layout.gallery_item, null, false);

@@ -30,6 +30,7 @@
     <string name="feedback_mail_subject">PXL Feedback</string>
     <string name="about_info" formatted="false">PXL version %s\nMax process memory: %d MB</string>
     <string name="hex" translatable="false">HEX</string>
+    <string name="import_in_pxl">Import in PXL</string>
 
     <!-- Misc -->
     <string name="misc">Other</string>
@@ -84,6 +85,7 @@
     <string name="invalid_resolution">Invalid Resolution</string>
     <string name="invalid_resolution_desc">Both width and height must be greater than 0</string>
     <string name="invalid_name">Please enter project name</string>
+    <string name="import_error">Error while importing selected image</string>
 
 
     <!--gallery_item-->

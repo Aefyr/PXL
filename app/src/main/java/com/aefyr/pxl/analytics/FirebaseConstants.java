@@ -32,7 +32,7 @@ public class FirebaseConstants {
         static final String EVENT_GRID_VISIBILITY_CHANGED = "grid_visibility_changed";
 
         static final String EVENT_CANVAS_SPECIAL_ACTION = "canvas_action";
-        static final String EVENT_CANVAS_SPECIAL_ACTION_ARG_ACTION = "action";
+        static final String EVENT_CANVAS_SPECIAL_ACTION_ARG_ACTION = "getActionName";
         public static final String ACTION_CLEAR = "clear";
         public static final String ACTION_MOVE = "move";
         public static final String ACTION_OVERLAY = "overlay";

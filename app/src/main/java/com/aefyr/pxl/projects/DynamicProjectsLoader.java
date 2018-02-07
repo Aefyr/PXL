@@ -30,6 +30,7 @@ public class DynamicProjectsLoader {
 
     public interface ProjectsLoaderCallbackD{
         void onProjectLoaded(Project project);
+        void onLoadingFinished();
     }
 
     private class Params{
@@ -54,8 +55,12 @@ public class DynamicProjectsLoader {
                 }
             });
 
-            for(File projectFile: projectsFiles)
+            for(File projectFile: projectsFiles) {
+                if(projectFile.getName().equals("version"))
+                    continue;
+
                 publishProgress(new Project(projectFile));
+            }
 
             return null;
         }
@@ -64,6 +69,12 @@ public class DynamicProjectsLoader {
         protected void onProgressUpdate(Project... projects) {
             super.onProgressUpdate(projects);
             listener.onProjectLoaded(projects[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            listener.onLoadingFinished();
         }
     }
 }

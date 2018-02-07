@@ -20,7 +20,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import com.aefyr.pxl.experimental.ExperimentalPaletteEditorActivity;
 import com.aefyr.pxl.fragments.GalleryFragment;
 import com.aefyr.pxl.fragments.PalettesFragment;
 import com.aefyr.pxl.palettes.PaletteMaker;
@@ -44,30 +43,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if (preferences.getBoolean("first_start", true)) {
-            preferences.edit().putBoolean("first_start", false).apply();
+        SharedPreferences firstStartPrefs = getSharedPreferences("first_start", MODE_PRIVATE);
+        if (firstStartPrefs.getBoolean("first_start", true)) {
+            firstStartPrefs.edit().putBoolean("first_start", false).apply();
             PaletteUtils.initialize(this);
             PaletteUtils.defaultPalette();
             PaletteMaker.generateDefaultPalettes(this);
 
             if((Runtime.getRuntime().maxMemory()/1024/1024)>=128)
                 PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit().putBoolean("allow_512", true).apply();
-
-            /*new AlertDialog.Builder(this).setMessage(getString(R.string.tutorial_prompt)).setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    //Start tutorial
-
-                    Intent tut = new Intent(MainActivity.this, TutorialActivity.class);
-                    startActivity(tut);
-                }
-            }).setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    new AlertDialog.Builder(MainActivity.this).setMessage(getString(R.string.tutorial_hint)).setPositiveButton(getString(R.string.ok), null).create().show();
-                }
-            }).setCancelable(false).create().show();*/
 
             if(Build.VERSION.SDK_INT<21) {
                 new AlertDialog.Builder(this).setTitle(getString(R.string.warn)).setMessage(getString(R.string.comp_mode)).setPositiveButton(getString(R.string.ok), null).setCancelable(false).create().show();
@@ -100,6 +84,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             navigationView.setCheckedItem(R.id.nav_gallery);
         }
 
+        //Intent actions
+        if(getIntent().getAction().equals(Intent.ACTION_SEND)||getIntent().getAction().equals(Intent.ACTION_EDIT)){
+            setFragment(FRAGMENT_GALLERY);
+            ((GalleryFragment)currentFragment).importImageFromSendIntent(getIntent());
+        }
+
     }
 
     @Override
@@ -114,14 +104,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu; this adds items to the getActionName bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
+        // Handle getActionName bar item clicks here. The getActionName bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();

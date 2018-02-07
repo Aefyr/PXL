@@ -10,8 +10,10 @@ import android.util.Log;
 import com.aefyr.pxl.AdaptivePixelSurfaceH;
 import com.aefyr.pxl.projects.Project;
 import com.aefyr.pxl.util.Utils;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -58,7 +60,7 @@ public class InfiniteCanvasHistory extends CanvasHistory {
         saver = new CanvasSaver(2000);
         saver.start();
 
-        offloader = new HistoryOffloader(500);
+        offloader = new HistoryOffloader();
         offloader.start();
 
         past = new ArrayDeque<>(t);
@@ -106,7 +108,6 @@ public class InfiniteCanvasHistory extends CanvasHistory {
     private class HistoryOffloader extends Thread {
         private static final String TAG = "HistoryOffloader";
         boolean running = true;
-        int interval;
 
         private File pastFolder;
         private File futureFolder;
@@ -117,20 +118,16 @@ public class InfiniteCanvasHistory extends CanvasHistory {
 
         private int pastBreaksAt = -1;
 
-        HistoryOffloader(int interval) {
-            this.interval = interval;
-
-            pastFolder = new File(aps.getContext().getCacheDir(), "past_" + project.directory + "_" + System.currentTimeMillis());
+        HistoryOffloader() {
+            pastFolder = new File(aps.getContext().getCacheDir(), "past_" + project.directory.getName() + "_" + System.currentTimeMillis());
             pastFolder.mkdirs();
-            futureFolder = new File(aps.getContext().getCacheDir(), "future_" + project.directory + "_" + System.currentTimeMillis());
+            futureFolder = new File(aps.getContext().getCacheDir(), "future_" + project.directory.getName() + "_" + System.currentTimeMillis());
             futureFolder.mkdirs();
         }
 
         @Override
         public void run() {
             while (running) {
-
-                Log.d(TAG, "pastSize=" + pastSize() + ", offloadedPastSize=" + offloadedPastCount + ", lastPastIndex=" + offloadedPastLastIndex);
                 if (pastSize() > t) {
                     offloadPast();
                 } else if (offloadedPastCount > 0 && pastSize() < t) {
@@ -148,7 +145,8 @@ public class InfiniteCanvasHistory extends CanvasHistory {
                         wait();
                     }
                 } catch (InterruptedException e) {
-                    Log.e(TAG, "Unable to sleep\n" + e.getMessage());
+                    Log.e(TAG, "Unable to call wait");
+                    e.printStackTrace();
                 }
             }
             Log.d(TAG, "Finishing, deleting history trails...");
@@ -164,23 +162,32 @@ public class InfiniteCanvasHistory extends CanvasHistory {
                 pastBreaksAt = -1;
             }
             while (pastSize() > t) {
-                offload(removeElementFromPast(true, false), pastFolder, "p" + offloadedPastLastIndex++);
+                offload(removeElementFromPast(true), pastFolder, "p" + offloadedPastLastIndex++);
                 offloadedPastCount++;
 
                 if(offloadedPastCount>trailSizeLimit)
                     breakPast();
 
-                Log.d(TAG, "Offloading past, lastPastIndex=" + offloadedPastLastIndex + ", offloadedPastSize=" + offloadedPastCount);
             }
             Log.d(TAG, String.format("Offloaded past, there are %d elements in past trail now out of total %d elements in past", offloadedPastCount, pastSize() + offloadedPastCount));
         }
 
         private void reloadPast() {
             while (offloadedPastCount > 0 && pastSize() < t) {
-                addElementToPast(reload(pastFolder, "p" + --offloadedPastLastIndex), true);
-                offloadedPastCount--;
+                Bitmap reloadedPast = reload(pastFolder, "p" + --offloadedPastLastIndex);
+
+                if(reloadedPast!=null) {
+                    addElementToPast(reloadedPast, true);
+                    offloadedPastCount--;
+                    Log.d(TAG, String.format("Reloaded past, %d elements remain in past trail", offloadedPastCount));
+                }else {
+                    Log.wtf(TAG, "Where the hell did the offloaded past go? Resetting offloaded past...");
+                    FirebaseCrash.report(new FileNotFoundException("Couldn't find next offloaded past file."));
+                    offloadedPastCount = 0;
+                    offloadedPastLastIndex = 0;
+                }
+
             }
-            Log.d(TAG, String.format("Reloaded past, %d elements remain in past trail", offloadedPastCount));
         }
 
         private void breakPast(){
@@ -193,7 +200,7 @@ public class InfiniteCanvasHistory extends CanvasHistory {
 
         private void offloadFuture() {
             while (futureSize() > t) {
-                offload(removeElementFromFuture(true, false), futureFolder, "f" + offloadedFutureLastIndex++);
+                offload(removeElementFromFuture(true), futureFolder, "f" + offloadedFutureLastIndex++);
                 offloadedFutureCount++;
             }
             Log.d(TAG, String.format("Offloaded future, there are %d elements in future trail now out of total %d elements in past", offloadedFutureCount, futureSize() + offloadedFutureCount));
@@ -201,11 +208,19 @@ public class InfiniteCanvasHistory extends CanvasHistory {
 
         private void reloadFuture() {
             while (offloadedFutureCount > 0 && futureSize() < t) {
-                addElementToFuture(reload(futureFolder, "f" + --offloadedFutureLastIndex), true, false);
-                offloadedFutureCount--;
+                Bitmap reloadedFuture = reload(futureFolder, "f" + --offloadedFutureLastIndex);
+
+                if(reloadedFuture!=null) {
+                    addElementToFuture(reloadedFuture, true);
+                    offloadedFutureCount--;
+                    Log.d(TAG, String.format("Reloaded future, %d elements remain in future trail", offloadedFutureCount));
+                }else {
+                    Log.wtf(TAG, "Where the hell did the offloaded future go? Resetting offloaded future...");
+                    FirebaseCrash.report(new FileNotFoundException("Couldn't find next offloaded future file."));
+                    destroyFuture();
+                }
 
             }
-            Log.d(TAG, String.format("Reloaded future, %d elements remain in future trail", offloadedFutureCount));
         }
 
         private void offload(Bitmap bitmap, File where, String name) {
@@ -248,7 +263,7 @@ public class InfiniteCanvasHistory extends CanvasHistory {
         }
     }
 
-    private void addElementToFuture(Bitmap element, boolean last, boolean reallyNew) {
+    private void addElementToFuture(Bitmap element, boolean last) {
         addElement(future, element, last);
 
         if (futureSize() == 1) {
@@ -273,7 +288,7 @@ public class InfiniteCanvasHistory extends CanvasHistory {
         offloader.beat();
     }
 
-    private Bitmap removeElementFromPast(boolean last, boolean reallyNew) {
+    private Bitmap removeElementFromPast(boolean last) {
 
         if (pastSize() - 1 == 0) {
             for (final OnHistoryAvailabilityChangeListener listener : listeners) {
@@ -289,7 +304,7 @@ public class InfiniteCanvasHistory extends CanvasHistory {
         return removeElement(past, last);
     }
 
-    private Bitmap removeElementFromFuture(boolean last, boolean reallyNew) {
+    private Bitmap removeElementFromFuture(boolean last) {
 
         if (futureSize() - 1 == 0) {
             for (final OnHistoryAvailabilityChangeListener listener : listeners) {
@@ -403,9 +418,9 @@ public class InfiniteCanvasHistory extends CanvasHistory {
 
         aps.cancelDrawing();
 
-        addElementToFuture(bitmap.copy(Bitmap.Config.ARGB_8888, false), false, true);
+        addElementToFuture(bitmap.copy(Bitmap.Config.ARGB_8888, false), false);
 
-        aps.pixelCanvas().drawBitmap(removeElementFromPast(false, true), 0, 0, srcPaint);
+        aps.pixelCanvas().drawBitmap(removeElementFromPast(false), 0, 0, srcPaint);
 
         aps.invalidate();
         changesSinceLastSave.incrementAndGet();
@@ -420,7 +435,7 @@ public class InfiniteCanvasHistory extends CanvasHistory {
 
         addElementToPast(bitmap.copy(Bitmap.Config.ARGB_8888, false), false);
 
-        aps.pixelCanvas().drawBitmap(removeElementFromFuture(false, true), 0, 0, srcPaint);
+        aps.pixelCanvas().drawBitmap(removeElementFromFuture(false), 0, 0, srcPaint);
 
         aps.invalidate();
         changesSinceLastSave.incrementAndGet();
@@ -451,7 +466,7 @@ public class InfiniteCanvasHistory extends CanvasHistory {
     @Override
     public void finish() {
         long start = System.currentTimeMillis();
-        Log.d(TAG, "Finishing. Stopping CanvasSaver's internal loop...");
+        Log.d(TAG, "Finishing. Stopping CanvasSaver and HistoryOffloader...");
         saver.running = false;
         offloader.running = false;
         offloader.beat();
