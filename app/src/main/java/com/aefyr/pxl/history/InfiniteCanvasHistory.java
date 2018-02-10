@@ -8,6 +8,7 @@ import android.graphics.PorterDuffXfermode;
 import android.util.Log;
 
 import com.aefyr.pxl.AdaptivePixelSurfaceH;
+import com.aefyr.pxl.R;
 import com.aefyr.pxl.projects.Project;
 import com.aefyr.pxl.util.Utils;
 import com.google.firebase.crash.FirebaseCrash;
@@ -181,6 +182,7 @@ public class InfiniteCanvasHistory extends CanvasHistory {
                     offloadedPastCount--;
                     Log.d(TAG, String.format("Reloaded past, %d elements remain in past trail", offloadedPastCount));
                 }else {
+                    historyLostAlert();
                     Log.wtf(TAG, "Where the hell did the offloaded past go? Resetting offloaded past...");
                     FirebaseCrash.report(new FileNotFoundException("Couldn't find next offloaded past file."));
                     offloadedPastCount = 0;
@@ -215,6 +217,7 @@ public class InfiniteCanvasHistory extends CanvasHistory {
                     offloadedFutureCount--;
                     Log.d(TAG, String.format("Reloaded future, %d elements remain in future trail", offloadedFutureCount));
                 }else {
+                    historyLostAlert();
                     Log.wtf(TAG, "Where the hell did the offloaded future go? Resetting offloaded future...");
                     FirebaseCrash.report(new FileNotFoundException("Couldn't find next offloaded future file."));
                     destroyFuture();
@@ -243,6 +246,15 @@ public class InfiniteCanvasHistory extends CanvasHistory {
 
         synchronized void beat() {
             notifyAll();
+        }
+
+        private void historyLostAlert(){
+            aps.post(new Runnable() {
+                @Override
+                public void run() {
+                    Utils.easyAlert(aps.getContext(), aps.getContext().getString(R.string.history_gone), aps.getContext().getString(R.string.history_gone_desc)).show();
+                }
+            });
         }
 
     }

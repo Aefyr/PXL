@@ -44,7 +44,6 @@ import com.aefyr.pxl.util.Posterizer;
 import com.aefyr.pxl.util.Utils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 
 
 /**
@@ -272,12 +271,16 @@ public class GalleryFragment extends Fragment {
         final Bitmap importedImage;
         try {
             importedImage = BitmapFactory.decodeStream(getContext().getContentResolver().openInputStream(imageUri));
-
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            Utils.toaster(getContext(), getString(R.string.error));
+            Utils.toaster(getContext(), getString(R.string.import_error));
             return;
         }
+        if(importedImage==null){
+            Utils.toaster(getContext(), getString(R.string.import_error));
+            return;
+        }
+
         if (importedImage.getWidth() > dLimit || importedImage.getHeight() > dLimit) {
             final int suggestedW = importedImage.getWidth()>importedImage.getHeight()?dLimit: (int) ((float)importedImage.getWidth() / ((float) importedImage.getHeight() / (float)dLimit));
             final int suggestedH = importedImage.getHeight()>importedImage.getWidth()?dLimit:(int) ((float)importedImage.getHeight() / ((float) importedImage.getWidth() / (float) dLimit));

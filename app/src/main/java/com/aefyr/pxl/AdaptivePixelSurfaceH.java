@@ -56,6 +56,7 @@ public class AdaptivePixelSurfaceH extends View {
     Canvas pixelCanvas;
 
     float pixelScale = 1f;
+    float minimalPixelScale = 1f;
     Matrix pixelMatrix;
 
     int realWidth, realHeight;
@@ -428,6 +429,11 @@ public class AdaptivePixelSurfaceH extends View {
             cursor.center(realWidth, realHeight);
             surfaceReady = true;
         }
+
+        int minDisplayDimension = realWidth>realHeight?realHeight:realWidth;
+        if(minDisplayDimension/2<(minDisplayDimension==realHeight?pixelHeight:pixelWidth))
+            minimalPixelScale = ((float)minDisplayDimension/2f)/(float)(minDisplayDimension==realHeight?pixelHeight:pixelWidth);
+
         invalidate();
     }
 
@@ -492,7 +498,7 @@ public class AdaptivePixelSurfaceH extends View {
                 c = 0;
             }
 
-            pixelScale = Utils.clamp(pixelScale, 1f, realWidth / 4);
+            pixelScale = Utils.clamp(pixelScale, minimalPixelScale, realWidth / 4);
 
             prevDist = dist;
 
