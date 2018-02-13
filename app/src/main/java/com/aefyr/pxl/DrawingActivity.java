@@ -30,6 +30,7 @@ import com.aefyr.pxl.analytics.FirebaseConstants;
 import com.aefyr.pxl.custom.ColorCircle;
 import com.aefyr.pxl.custom.ItemWithIcon;
 import com.aefyr.pxl.custom.ListAdapterWithIcons;
+import com.aefyr.pxl.custom.SymmetryAxisDragger;
 import com.aefyr.pxl.experimental.Tutorial;
 import com.aefyr.pxl.history.CanvasHistory;
 import com.aefyr.pxl.palettes.PaletteManagerH;
@@ -234,6 +235,8 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
                 }
             }
         });
+
+        ((SymmetryAxisDragger) findViewById (R.id.symmetryAxisDragger)).bindToAPS(aps);
 
         if(savedInstanceState!=null){
             toolPicker.restoreState(savedInstanceState);

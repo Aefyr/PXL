@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.aefyr.pxl.R;
 import com.aefyr.pxl.custom.PixelImageView;
+import com.aefyr.pxl.util.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,6 +27,8 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
     private ArrayList<Project> projects;
     private OnProjectClickListener onProjectClickListener;
     private SimpleDateFormat simpleDateFormat;
+
+    private  int maxSizeSide;
 
     public interface OnProjectClickListener {
         void onProjectClick(Project project, int id);
@@ -50,6 +53,7 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
     private void initialize(Context c){
         inflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         simpleDateFormat = new SimpleDateFormat("dd.MM.yy HH:mm", Locale.getDefault());
+        maxSizeSide = (int) Utils.dpToPx(144, c.getResources());
     }
 
     public void setProjects(ArrayList<Project> projects) {
@@ -88,7 +92,7 @@ public class ProjectsRecycleAdapter extends RecyclerView.Adapter<ProjectsRecycle
         holder.name.setText(p.name);
         holder.resolution.setText(p.getResolutionString());
         holder.lastModified.setText(simpleDateFormat.format(getProject(position).lastModified()));
-        holder.preview.setImageBitmap(p.getBitmap(false));
+        holder.preview.setImageBitmap(p.getPreviewBitmap(maxSizeSide));
     }
 
     @Override

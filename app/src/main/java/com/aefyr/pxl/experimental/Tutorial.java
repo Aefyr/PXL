@@ -34,6 +34,13 @@ public class Tutorial {
         }
     }
 
+    public void symmetry(){
+        if(!tutorialFlags.getBoolean("symmetry", false)){
+            createTutorialDialog(R.string.symmetry, R.string.t2_symmetry).show();
+            tutorialFlags.edit().putBoolean("symmetry", true).apply();
+        }
+    }
+
     private AlertDialog createTutorialDialog(@StringRes int toolName, @StringRes int text){
         return new AlertDialog.Builder(c).setTitle(String.format(c.getString(R.string.tutorial_for_tool), c.getString(toolName))).setMessage(text).setPositiveButton(R.string.ok, null).create();
     }

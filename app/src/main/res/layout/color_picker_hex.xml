@@ -36,8 +36,10 @@
         android:digits="0123456789abcdefABCDEF"
         android:ems="6"
         android:hint="000000"
+        android:imeOptions="actionGo"
         android:inputType="textVisiblePassword"
         android:maxLength="6"
+        android:maxLines="1"
         android:text="ff0000"
         android:textSize="24sp" />
 

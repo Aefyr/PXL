@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -39,7 +40,7 @@ public class HexColorPicker {
         dialog = new AlertDialog.Builder(c).setView(R.layout.color_picker_hex).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                listener.onColorPicked(color);
+                done();
             }
         }).setNegativeButton(R.string.cancel, null).create();
     }
@@ -74,6 +75,21 @@ public class HexColorPicker {
 
         hexEditText.setText(Utils.colorToHex(color));
         hexEditText.setSelection(0, hexEditText.length());
+        hexEditText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+                    done();
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    private void done(){
+        dialog.dismiss();
+        listener.onColorPicked(color);
     }
 
     public void setColor(int color){

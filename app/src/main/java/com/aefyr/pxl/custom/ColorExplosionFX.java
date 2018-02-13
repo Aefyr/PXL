@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -38,14 +37,10 @@ public class ColorExplosionFX {
     }
 
     void renderOn(Canvas c){
-        long start = System.currentTimeMillis();
-
         for(Explosion explosion: currentExplosions){
             sharedPaint.setColor(explosion.color);
             c.drawCircle(explosion.x, explosion.y, explosion.currentRadius, sharedPaint);
         }
-
-        Log.d(TAG, String.format("Rendered %d explosions in %d ms.", currentExplosions.size(), System.currentTimeMillis()-start));
     }
 
     public class ExplosionTracker{

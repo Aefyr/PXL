@@ -81,6 +81,8 @@ public class AdaptivePixelSurfaceH extends View {
     boolean symmetry = false;
     SymmetryType symmetryType = SymmetryType.HORIZONTAL;
     boolean symmetryAxisesShown = false;
+    float symmetryAxisX;
+    float symmetryAxisY;
 
     public enum SymmetryType {
         HORIZONTAL, VERTICAL
@@ -204,6 +206,9 @@ public class AdaptivePixelSurfaceH extends View {
         superPencil.symmetryUpdate();
         superPencil.updatePaints();
         canvasAnalytics.logSymmetryChange(enabled, type);
+
+        if(onSymmetryConfigChangeListener!=null)
+            onSymmetryConfigChangeListener.onSymmetryConfigChanged();
     }
 
     public SymmetryType getSymmetryType() {
@@ -216,6 +221,8 @@ public class AdaptivePixelSurfaceH extends View {
 
     public boolean toggleSymmetryGuidelines(){
         symmetryAxisesShown = !symmetryAxisesShown;
+        if(onSymmetryConfigChangeListener!=null)
+            onSymmetryConfigChangeListener.onSymmetryConfigChanged();
         invalidate();
         return symmetryAxisesShown;
     }
@@ -224,19 +231,36 @@ public class AdaptivePixelSurfaceH extends View {
         return symmetryAxisesShown;
     }
 
+    public void setSymmetryAxises(float axisX, float axisY){
+        symmetryAxisX = axisX;
+        symmetryAxisY = axisY;
+        superPencil.symmetryUpdate();
+        if(onSymmetryConfigChangeListener!=null)
+            onSymmetryConfigChangeListener.onSymmetryConfigChanged();
+        invalidate();
+    }
+
+    public float symmetryAxisX(){
+        return  symmetryAxisX;
+    }
+
+    public float symmetryAxisY(){
+        return symmetryAxisY;
+    }
+
     private Paint sAP;
     private void drawSymmetryAxises(Canvas c){
         sAP.setStrokeWidth((int) Utils.clamp(pixelScale / 12, 1, 999));
         if(symmetryType==SymmetryType.HORIZONTAL){
-            p[0] = ((float)pixelWidth)/2f;
+            p[0] = symmetryAxisX;
             p[1] = 0;
             pixelMatrix.mapPoints(p);
-            c.drawLine(p[0], p[1]-pixelScale, p[0], p[1]+(pixelScale*(pixelHeight+1)), sAP);
+            c.drawLine(p[0], 0, p[0], realHeight, sAP);
         }else {
             p[0] = 0;
-            p[1] = ((float)pixelHeight)/2f;
+            p[1] = symmetryAxisY;
             pixelMatrix.mapPoints(p);
-            c.drawLine(p[0]-pixelScale, p[1],p[0]+(pixelScale*(pixelWidth+1)), p[1], sAP);
+            c.drawLine(0, p[1],realWidth, p[1], sAP);
         }
     }
 
@@ -260,6 +284,14 @@ public class AdaptivePixelSurfaceH extends View {
         return pixelCanvas;
     }
 
+    public Matrix pixelMatrix(){
+        return pixelMatrix;
+    }
+
+    public float pixelScale(){
+        return pixelScale;
+    }
+
     Paint trans;
 
     public void setProject(Project project, Bundle savedState) {
@@ -267,6 +299,8 @@ public class AdaptivePixelSurfaceH extends View {
         pixelBitmap = project.getBitmap(true);
         this.pixelWidth = pixelBitmap.getWidth();
         this.pixelHeight = pixelBitmap.getHeight();
+        symmetryAxisX = (float)pixelWidth/2f;
+        symmetryAxisY = (float)pixelHeight/2f;
         pixelCanvas = new Canvas(pixelBitmap);
 
         HistoryHolderFragment historyHolder = (HistoryHolderFragment) ((DrawingActivity)getContext()).getSupportFragmentManager().findFragmentByTag("historyHolder");
@@ -463,9 +497,19 @@ public class AdaptivePixelSurfaceH extends View {
     float lastX, lastY;
     boolean touchToolWillBeUsedOnUpEvent = false;
 
+    boolean active = true;
+
+    public void setActive(boolean active){
+        this.active = active;
+        if(!active)
+            cancelDrawing();
+    }
+
     //TODO Make method processEvent(float x, float y, int pointerId) in Tool class, and use a ArrayList of Paths or whatever that tool uses, so symmetry can be implemented on this level, just by sending mirrored coords with toolButton.pointers+1 as pointerId
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if(!active)
+            return false;
 
         //We really don't wanna interfere the flood fill algorithm
         if (fillInProgress)
@@ -755,6 +799,8 @@ public class AdaptivePixelSurfaceH extends View {
             matrixOffsetY = Utils.clamp(matrixOffsetY, (-pixelScale*pixelHeight-(scaleAnchorY*(1-pixelScale))), realHeight-(scaleAnchorY*(1-pixelScale)));
             pixelMatrix.postTranslate(matrixOffsetX, matrixOffsetY);
             superPencil.notifyScaleChanged();
+            if(onCanvasTransformChangeListener!=null)
+                onCanvasTransformChangeListener.onCanvasTransformChanged();
             scaleChanged = false;
             translateChanged = false;
 
@@ -812,6 +858,9 @@ public class AdaptivePixelSurfaceH extends View {
         outState.putBoolean("symmetry", symmetry);
         outState.putInt("symmetryType", symmetryType==SymmetryType.HORIZONTAL?0:1);
         outState.putBoolean("symmetryAxisesShown", symmetryAxisesShown);
+        outState.putFloat("symmetryAxisX", symmetryAxisX);
+        outState.putFloat("symmetryAxisY", symmetryAxisY);
+
 
         int tool = 0; //Pencil
         switch (currentTool){
@@ -848,6 +897,8 @@ public class AdaptivePixelSurfaceH extends View {
         setCursorModeEnabled(savedState.getBoolean("cursorMode", false));
         symmetryAxisesShown = savedState.getBoolean("symmetryAxisesShown", false);
         setSymmetryEnabled(savedState.getBoolean("symmetry", false), savedState.getInt("symmetryType", 0)==0?SymmetryType.HORIZONTAL:SymmetryType.VERTICAL);
+        symmetryAxisX = savedState.getFloat("symmetryAxisX", (float)pixelWidth/2f);
+        symmetryAxisY = savedState.getFloat("symmetryAxisY", (float)pixelHeight/2f);
 
         switch (savedState.getInt("tool", 0)){
             case 0:
@@ -887,5 +938,25 @@ public class AdaptivePixelSurfaceH extends View {
         void onColorSwapToolUse(int color);
 
         void onSelectionOptionsVisibilityChanged(boolean visible);
+    }
+
+    OnCanvasTransformChangeListener onCanvasTransformChangeListener;
+
+    public void setOnCanvasTransformChangeListener(OnCanvasTransformChangeListener listener){
+        onCanvasTransformChangeListener = listener;
+    }
+
+    public interface OnCanvasTransformChangeListener{
+        void onCanvasTransformChanged();
+    }
+
+    OnSymmetryConfigChangeListener onSymmetryConfigChangeListener;
+
+    public void setOnSymmetryConfigChangeListener(OnSymmetryConfigChangeListener listener){
+        onSymmetryConfigChangeListener = listener;
+    }
+
+    public interface OnSymmetryConfigChangeListener{
+        void onSymmetryConfigChanged();
     }
 }

@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.aefyr.pxl.AdaptivePixelSurfaceH;
 import com.aefyr.pxl.R;
+import com.aefyr.pxl.experimental.Tutorial;
 import com.aefyr.pxl.util.Utils;
 
 /**
@@ -32,6 +33,9 @@ public class SymmetrySwitcher {
 
     private int toastOffset;
 
+    private Tutorial tutorial;
+
+
     public interface OnVisibilityChangedListener {
         void onVisibilityChanged(boolean visible);
     }
@@ -44,6 +48,7 @@ public class SymmetrySwitcher {
         symmetryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                tutorial.symmetry();
                 if (shown)
                     hide();
                 else
@@ -85,6 +90,8 @@ public class SymmetrySwitcher {
         normal(h, v);
 
         toastOffset = (int) Utils.dpToPx(58, aps.getResources());
+
+        tutorial = new Tutorial(aps.getContext());
     }
 
 

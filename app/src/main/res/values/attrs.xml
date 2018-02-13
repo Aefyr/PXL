@@ -13,4 +13,8 @@
         <attr name="cornersRounding" format="dimension"/>
     </declare-styleable>
 
+    <declare-styleable name="SymmetryAxisDragger">
+        <attr name="strokeWidth" format="dimension"/>
+    </declare-styleable>
+
 </resources>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -276,6 +275,14 @@
             android:layout_weight="1"
             android:elevation="16dp"
             app:srcCompat="@drawable/sym_axises_hidden" />
+
     </LinearLayout>
+
+    <com.aefyr.pxl.custom.SymmetryAxisDragger
+        android:id="@+id/symmetryAxisDragger"
+        android:layout_width="@dimen/axis_dragger_size"
+        android:layout_height="@dimen/axis_dragger_size"
+        android:visibility="gone"
+        app:strokeWidth="6dp" />
 
 </RelativeLayout>

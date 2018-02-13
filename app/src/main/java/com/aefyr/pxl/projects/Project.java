@@ -2,6 +2,7 @@ package com.aefyr.pxl.projects;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 import com.aefyr.pxl.palettes.Palette2;
 
@@ -40,6 +41,33 @@ public class Project {
             loadedBitmap.setHasAlpha(true);
         return loadedBitmap;
 
+    }
+
+    public Bitmap getPreviewBitmap(int targetMaxSideSize){
+        BitmapFactory.Options op = new BitmapFactory.Options();
+        op.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(directory + "/image.pxl", op);
+
+        int oW = op.outWidth;
+        int oH = op.outHeight;
+
+        int maxSideSize = op.outWidth>op.outHeight?op.outWidth:op.outHeight;
+
+        if(maxSideSize>targetMaxSideSize) {
+            op.inScaled = true;
+            op.inDensity = maxSideSize;
+            op.inTargetDensity = targetMaxSideSize;
+        }
+
+        op.inJustDecodeBounds = false;
+        op.inMutable = false;
+
+        Bitmap loadedBitmap = BitmapFactory.decodeFile(directory + "/image.pxl", op);
+        if (loadedBitmap!=null&&transparentBackground)
+            loadedBitmap.setHasAlpha(true);
+
+        Log.d("PROJECTS", String.format("maxside=%d, from %dx%d to %dx%d",targetMaxSideSize, oW, oH, loadedBitmap.getWidth(), loadedBitmap.getHeight()));
+        return loadedBitmap;
     }
 
     public void setPalette(Palette2 palette) {

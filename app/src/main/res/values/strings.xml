@@ -11,6 +11,7 @@
     <string name="pencil_action">Draw</string>
     <string name="fill_action">Fill!</string>
     <string name="colorpick_action">Pick!</string>
+    <string name="symmetry">Symmetry</string>
 
     <!-- Tutorials-related -->
     <string name="tutorial_prompt">Want to see the tutorial?</string>
@@ -183,6 +184,7 @@
     <string name="t2_reset_tutotial_done">Tutorial progress was reset</string>
     <string name="t2_cursor">In cursor mode use your finger to move the cursor on screen and press the \"Draw\" button at the bottom to draw at the cursor position.\n\n• Drag your finger anywhere on screen to move the cursor.\n\n• You can move cursor and press the \"Draw\" button at the same time.</string>
     <string name="t2_palettes">You can pick color from a palette or select an arbitrary custom color.\n\n• You can override a color in a palette with currently selected one by long-clicking the color in palette you want to override.</string>
+    <string name="t2_symmetry">You can select between no symmetry, horizontal and vertical symmetry.\n\n• Symmetry works with pencil, eraser and shapes tools.\n\n• To offset symmetry axis, enable symmetry axises showing (the last button in symmetry settings toggles it) and drag the ring that will appear on the axis, but keep in mind that axis won\'t be shown in no symmetry mode.</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

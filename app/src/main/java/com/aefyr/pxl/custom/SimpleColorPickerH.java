@@ -28,7 +28,9 @@ import com.aefyr.pxl.util.Utils;
 public class SimpleColorPickerH extends View {
     private Bitmap gradient;
     private RectF mainGradientBorders;
+    private RectF mainGradientHitBox;
     private RectF valueGradientBorders;
+    private RectF valueGradientHitBox;
     private float valuePickerWidth = 80;
     private float cornersRounding = 20;
 
@@ -86,11 +88,24 @@ public class SimpleColorPickerH extends View {
         if(mainGradientBorders.width()<1||mainGradientBorders.height()<1)
             return;
 
+        mainGradientHitBox = new RectF(mainGradientBorders);
+        float d = mainCircleRadius + circleStrokeThickness/2f;
+        mainGradientHitBox.top -= d;
+        mainGradientHitBox.bottom += d;
+        mainGradientHitBox.left -= d;
+        mainGradientHitBox.right += d;
+
 
         valueGradientBorders = new RectF(mainGradientBorders.right+getPaddingRight(), mainGradientBorders.top, getWidth()-getPaddingRight(), mainGradientBorders.bottom);
 
         valueCircleX = valueGradientBorders.left+valueGradientBorders.width()/2f;
         valueCircleRadius = valueGradientBorders.width()/2f;
+
+        valueGradientHitBox = new RectF(valueGradientBorders);
+        valueGradientHitBox.top -= valueCircleRadius + circleStrokeThickness/2f;
+        valueGradientHitBox.bottom += valueCircleRadius + circleStrokeThickness/2f;
+        valueGradientHitBox.left -= circleStrokeThickness/2f;
+        valueGradientHitBox.right += circleStrokeThickness/2f;
 
         mainCircleX = mainGradientBorders.left;
         mainCircleY = mainGradientBorders.top;
@@ -130,12 +145,12 @@ public class SimpleColorPickerH extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if(event.getAction()==MotionEvent.ACTION_DOWN) {
-            if(mainGradientBorders.contains(event.getX(), event.getY())){
+            if(mainGradientHitBox.contains(event.getX(), event.getY())){
                 currentlyMoving = MAIN_CIRCLE;
                 return true;
             }
 
-            if(valueGradientBorders.contains(event.getX(), event.getY())){
+            if(valueGradientHitBox.contains(event.getX(), event.getY())){
                 currentlyMoving = VALUE_CIRCLE;
                 return true;
             }

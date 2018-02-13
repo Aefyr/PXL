@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_color_picker_height"
         android:layout_below="@+id/linear"
-        android:padding="18dp"
+        android:padding="19dp"
         app:circleSize="10dp"
         app:circleStrokeWidth="3dp" />
 
