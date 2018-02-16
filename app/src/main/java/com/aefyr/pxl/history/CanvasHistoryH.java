@@ -12,7 +12,6 @@ import com.aefyr.pxl.AdaptivePixelSurfaceH;
 import com.aefyr.pxl.R;
 import com.aefyr.pxl.projects.Project;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -38,8 +37,6 @@ public class CanvasHistoryH extends CanvasHistory {
 
     private ArrayList<OnHistoryAvailabilityChangeListener> listeners;
 
-    private File projectBitmap;
-
     private CanvasSaver saver;
     private AtomicInteger changesSinceLastSave;
 
@@ -64,7 +61,6 @@ public class CanvasHistoryH extends CanvasHistory {
 
     void setProject(Project project) {
         this.project = project;
-        projectBitmap = new File(project.directory + "/image.pxl");
         bitmap = aps.pixelBitmap();
     }
 
@@ -235,9 +231,9 @@ public class CanvasHistoryH extends CanvasHistory {
 
     @Override
     public void saveCanvas() {
-        if (projectBitmap == null)
+        if (project == null)
             return;
-        try (FileOutputStream out = new FileOutputStream(projectBitmap, false)) {
+        try (FileOutputStream out = new FileOutputStream(project.imageFile, false)) {
             aps.pixelBitmap().compress(Bitmap.CompressFormat.PNG, 100, out);
             project.notifyProjectModified();
         } catch (IOException e) {

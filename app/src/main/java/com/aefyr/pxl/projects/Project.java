@@ -17,6 +17,7 @@ import java.io.IOException;
 public class Project {
     public String id;
     public File directory;
+    public File imageFile;
     public String name;
 
     //Meta
@@ -29,6 +30,7 @@ public class Project {
     public Project(File directory) {
         id = directory.getName();
         this.directory = directory;
+        imageFile = new File(directory, "image.png");
         loadMeta();
     }
 
@@ -36,7 +38,7 @@ public class Project {
         BitmapFactory.Options op = new BitmapFactory.Options();
         op.inMutable = mutable;
         op.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap loadedBitmap = BitmapFactory.decodeFile(directory + "/image.pxl", op);
+        Bitmap loadedBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), op);
         if (loadedBitmap!=null&&transparentBackground)
             loadedBitmap.setHasAlpha(true);
         return loadedBitmap;
@@ -46,7 +48,7 @@ public class Project {
     public Bitmap getPreviewBitmap(int targetMaxSideSize){
         BitmapFactory.Options op = new BitmapFactory.Options();
         op.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(directory + "/image.pxl", op);
+        BitmapFactory.decodeFile(imageFile.getAbsolutePath(), op);
 
         int oW = op.outWidth;
         int oH = op.outHeight;
@@ -62,7 +64,7 @@ public class Project {
         op.inJustDecodeBounds = false;
         op.inMutable = false;
 
-        Bitmap loadedBitmap = BitmapFactory.decodeFile(directory + "/image.pxl", op);
+        Bitmap loadedBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), op);
         if (loadedBitmap!=null&&transparentBackground)
             loadedBitmap.setHasAlpha(true);
 
@@ -103,7 +105,7 @@ public class Project {
     private void loadMeta() {
         StringBuilder builder = new StringBuilder();
 
-        try (FileReader reader = new FileReader(directory + "/.pxlmeta")) {
+        try (FileReader reader = new FileReader(directory + "/.meta")) {
             int c = reader.read();
             while (c != -1) {
                 builder.append((char) c);

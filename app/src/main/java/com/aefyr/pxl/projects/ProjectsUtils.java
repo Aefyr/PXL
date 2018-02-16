@@ -97,7 +97,7 @@ public class ProjectsUtils {
 
         writeMeta(project);
 
-        File bitmapPath = new File(newProjectDirectory, "image.pxl");
+        File bitmapPath = new File(newProjectDirectory, "image.png");
         Bitmap b = Bitmap.createBitmap(pixelWidth, pixelHeight, Bitmap.Config.ARGB_8888);
         if (!transparentBackground) {
             Canvas c = new Canvas(b);
@@ -111,7 +111,7 @@ public class ProjectsUtils {
     }
 
     static void writeMeta(Project project){
-        File meta = new File(project.directory, ".pxlmeta");
+        File meta = new File(project.directory, ".meta");
         if(!meta.exists()) {
             try {
                 meta.createNewFile();
@@ -136,7 +136,7 @@ public class ProjectsUtils {
             name += " " + a;
         }
         Project project = createNewProject(name, bitmap.getWidth(), bitmap.getHeight(), "Default", bitmap.hasAlpha());
-        Utils.saveBitmap(bitmap, new File(project.directory, "image.pxl"));
+        Utils.saveBitmap(bitmap, project.imageFile);
 
         updateVersion();
         return project;
