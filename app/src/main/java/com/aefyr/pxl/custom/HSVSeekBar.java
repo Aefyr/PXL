@@ -1,19 +1,21 @@
 package com.aefyr.pxl.custom;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
+import android.graphics.RadialGradient;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.aefyr.pxl.R;
 import com.aefyr.pxl.util.Utils;
 
 /**
@@ -26,20 +28,21 @@ public class HSVSeekBar extends View {
     public static final int MODE_V = 2;
 
     private int mode = 0;
-    private int rounding = 8;
+    private float rounding = 8;
 
     private float[] color = {0, 1, 1};
     int[] colors;
     private Paint paint;
 
     private RectF gradientRectBorders;
-    private float gradientPadding = 8;
 
-    private float pointerAdditionalSize = 16;
-    private float rawPointerPosition = 0;
-    private float pointerStrokeWidth = 8;
-    private float segmentsCount;
+    private float pointerShadowSize = 16;
+    private float pointerPadding = 0;
+    private float actualRadius = 0;
+
+    private int segmentsCount;
     private float segmentSize;
+    private int position;
 
     private Bitmap hBitmap;
 
@@ -50,14 +53,18 @@ public class HSVSeekBar extends View {
 
     public HSVSeekBar(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.HSVSeekBar);
+        mode = attributes.getInt(R.styleable.HSVSeekBar_mode, 0);
+        rounding = attributes.getDimension(R.styleable.HSVSeekBar_rounding, 8);
+        pointerShadowSize = attributes.getDimension(R.styleable.HSVSeekBar_pointerShadowSize, 8);
+        pointerPadding = attributes.getDimension(R.styleable.HSVSeekBar_pointerPadding, 0);
+        attributes.recycle();
         initialize();
     }
 
     private void initialize(){
-        setMode(MODE_H);
+        setMode(mode);
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setStrokeWidth(pointerStrokeWidth);
-        gradientPadding += pointerAdditionalSize;
     }
 
     public void setMode(int mode){
@@ -67,27 +74,69 @@ public class HSVSeekBar extends View {
 
         if(mode == MODE_H){
             colors = new int[361];
-            segmentsCount = 361;
+            segmentsCount = 360;
         }else if(mode == MODE_S){
             colors = new int[101];
-            segmentsCount = 101;
+            segmentsCount = 100;
         }else if (mode == MODE_V){
             colors = new int[101];
-            segmentsCount = 101;
+            segmentsCount = 100;
         }else
             throw new IllegalArgumentException("Invalid mode parameter");
     }
 
+    public void setColor(float h, float s, float v){
+        color[0] = h;
+        color[1] = s;
+        color[2] = v;
+        syncColorWithPosition();
+    }
+
+    public void setColor(float[] newColorHSV){
+        color[0] = newColorHSV[0];
+        color[1] = newColorHSV[1];
+        color[2] = newColorHSV[2];
+        syncColorWithPosition();
+    }
+
+    private void syncColorWithPosition(){
+        if(mode == MODE_H){
+            int pPos = position;
+            position = Utils.clamp((int)color[0],0, segmentsCount);
+
+            if(pPos!=position)
+                invalidate();
+        }else {
+            position = Utils.clamp((int) (color[mode] * 100f), 0, segmentsCount);
+            invalidate();
+        }
+    }
+
+    public void setPosition(int position){
+        this.position = Utils.clamp(position, 0, segmentsCount);
+        invalidate();
+    }
+
     public int getSelectedPosition(){
-        return (int) ((rawPointerPosition - gradientRectBorders.left)/segmentSize);
+        return position;
+    }
+
+    public interface OnPositionUpdateListener{
+        void onPositionChanged(HSVSeekBar seekBar, int newPosition);
+    }
+
+    private OnPositionUpdateListener onPositionUpdateListener;
+
+    public void setOnPositionUpdateListener(OnPositionUpdateListener listener){
+        onPositionUpdateListener = listener;
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        gradientRectBorders = new RectF(0+gradientPadding + (h - gradientPadding*2f)/2f, 0+gradientPadding, w-gradientPadding - (h - gradientPadding*2f)/2f, h-gradientPadding);
+        actualRadius = h/2f - pointerPadding - pointerShadowSize;
+        gradientRectBorders = new RectF(getPaddingLeft() + actualRadius + pointerShadowSize, getPaddingTop(), w  - actualRadius - pointerShadowSize, h-getPaddingBottom());
         segmentSize = gradientRectBorders.width()/segmentsCount;
-
         if(mode == MODE_H)
             hBitmap = generateGradient();
     }
@@ -95,6 +144,21 @@ public class HSVSeekBar extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        if(isInEditMode()){
+            paint.setShader(null);
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(Color.RED);
+            canvas.drawRoundRect(gradientRectBorders, rounding, rounding, paint);
+
+            paint.setColor(Color.GRAY);
+            float boundPosition = position*segmentSize + gradientRectBorders.left;
+            canvas.drawCircle(boundPosition, canvas.getHeight()/2f, actualRadius + pointerShadowSize, paint);
+
+            paint.setColor(Color.WHITE);
+            canvas.drawCircle(boundPosition, canvas.getHeight()/2f, actualRadius, paint);
+            return;
+        }
+
         drawGradient(canvas);
         drawPointer(canvas);
     }
@@ -107,16 +171,18 @@ public class HSVSeekBar extends View {
     }
 
     private void drawPointer(Canvas c){
-        int segment = getSelectedPosition();
-        Log.d("HSVSeekBar", "pos="+segment);
-        float boundPosition = segment*segmentSize + gradientRectBorders.left;
+        float boundPosition = position*segmentSize + gradientRectBorders.left;
+        float cy = gradientRectBorders.top + gradientRectBorders.height()/2f;
+
+        RadialGradient pointerShadow = new RadialGradient(boundPosition, cy, actualRadius + pointerShadowSize, Color.GRAY, Color.TRANSPARENT, Shader.TileMode.CLAMP);
+        paint.setShader(pointerShadow);
+        paint.setStyle(Paint.Style.FILL);
+        c.drawCircle(boundPosition, cy, actualRadius + pointerShadowSize, paint);
+
         paint.setShader(null);
         paint.setColor(Color.WHITE);
         paint.setStyle(Paint.Style.FILL);
-        c.drawCircle(boundPosition, c.getHeight()/2f, gradientRectBorders.height()/2f + pointerAdditionalSize, paint);
-        paint.setColor(Color.GRAY);
-        paint.setStyle(Paint.Style.STROKE);
-        c.drawCircle(boundPosition, c.getHeight()/2f, gradientRectBorders.height()/2f + pointerAdditionalSize, paint);
+        c.drawCircle(boundPosition, cy, actualRadius, paint);
     }
 
     //Used only for MODE_H since it has a static gradient
@@ -141,30 +207,39 @@ public class HSVSeekBar extends View {
             }
         }
 
-        paint.setShader(new LinearGradient(0, 0, gradientRectBorders.width(), gradientRectBorders.height(), colors, null, Shader.TileMode.CLAMP));
+        paint.setShader(new LinearGradient(gradientRectBorders.left, gradientRectBorders.top, gradientRectBorders.right, gradientRectBorders.bottom, colors, null, Shader.TileMode.CLAMP));
         c.drawRoundRect(gradientRectBorders, rounding, rounding, paint);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if(event.getAction() == MotionEvent.ACTION_DOWN){
-            rawPointerPosition = Utils.clamp(event.getX(), gradientRectBorders.left, gradientRectBorders.right);
-            invalidate();
+            updatePosition(event.getX(0));
             return true;
         }
 
         if(event.getAction() == MotionEvent.ACTION_MOVE){
-            rawPointerPosition = Utils.clamp(event.getX(), gradientRectBorders.left, gradientRectBorders.right);
-            invalidate();
+            updatePosition(event.getX(0));
             return true;
         }
 
         if (event.getAction() == MotionEvent.ACTION_UP){
-            rawPointerPosition = Utils.clamp(event.getX(), gradientRectBorders.left, gradientRectBorders.right);
-            invalidate();
+            updatePosition(event.getX(0));
             return true;
         }
 
         return super.onTouchEvent(event);
+    }
+
+    private void updatePosition(float rawX){
+        rawX = Utils.clamp(rawX, gradientRectBorders.left, gradientRectBorders.right);
+        int pPos = position;
+        position = (int) ((rawX - gradientRectBorders.left)/segmentSize);
+
+        if(pPos!=position) {
+            if(onPositionUpdateListener!=null)
+                onPositionUpdateListener.onPositionChanged(this, position);
+            invalidate();
+        }
     }
 }

@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
-import com.aefyr.pxl.ColorPickerH;
+import com.aefyr.pxl.ColorPickerHSV;
 import com.aefyr.pxl.R;
 
 /**
@@ -19,7 +19,7 @@ public class PaletteManager {
     private TextView paletteName;
     private PaletteView3 paletteView;
     private boolean dialogShown;
-    private ColorPickerH colorPicker;
+    private ColorPickerHSV colorPicker;
     private Palette2 currentPalette;
     private boolean first = true;
 
@@ -90,7 +90,7 @@ public class PaletteManager {
                 }).show();
             }
         });
-        colorPicker = new ColorPickerH(colorEditDialog.getWindow(), currentPalette.getColor(position));
+        colorPicker = new ColorPickerHSV(colorEditDialog.getWindow(), currentPalette.getColor(position));
     }
 
 

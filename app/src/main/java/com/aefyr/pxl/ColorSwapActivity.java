@@ -106,19 +106,19 @@ public class ColorSwapActivity extends AppCompatActivity {
 
     }
 
-    private ColorPickerH colorPickerH;
+    private ColorPickerHSV colorPickerHSV;
     private void openPreciseColorPicker(int currentColor){
         final AlertDialog colorEditDialog = new AlertDialog.Builder(this).setView(R.layout.color_picker_2).setPositiveButton(R.string.done, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                colorPicker.setColor(colorPickerH.getColor(), false);
+                colorPicker.setColor(colorPickerHSV.getColor(), false);
                 colorPicker.applyColorSwap();
                 pixelImageView.invalidate();
-                colorPickerH = null;
+                colorPickerHSV = null;
             }
         }).setNegativeButton(R.string.cancel, null).setTitle(R.string.edit_color).create();
         colorEditDialog.show();
-        colorPickerH = new ColorPickerH(colorEditDialog.getWindow(), currentColor);
+        colorPickerHSV = new ColorPickerHSV(colorEditDialog.getWindow(), currentColor);
     }
 
 

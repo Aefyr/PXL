@@ -11,7 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aefyr.pxl.AdaptivePixelSurfaceH;
-import com.aefyr.pxl.ColorPickerH;
+import com.aefyr.pxl.ColorPickerHSV;
 import com.aefyr.pxl.R;
 import com.aefyr.pxl.custom.ColorCircle;
 import com.aefyr.pxl.experimental.Tutorial;
@@ -29,7 +29,7 @@ public class PaletteManagerH {
     private ColorSelectionRecyclerAdapter adapter;
     //private ColorCircle colorCircleCur;
     private TextView paletteName;
-    private ColorPickerH colorPicker;
+    private ColorPickerHSV colorPicker;
 
     private boolean shown = false;
 
@@ -103,7 +103,7 @@ public class PaletteManagerH {
                         }).show();
                     }
                 });
-                colorPicker = new ColorPickerH(colorEditDialog.getWindow(), currentColor);
+                colorPicker = new ColorPickerHSV(colorEditDialog.getWindow(), currentColor);
             }
         });
 
