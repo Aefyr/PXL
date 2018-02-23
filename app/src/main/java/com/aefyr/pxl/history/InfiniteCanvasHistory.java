@@ -19,7 +19,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by Aefyr on 06.02.2018.
@@ -40,7 +39,6 @@ public class InfiniteCanvasHistory extends CanvasHistory {
     private ArrayList<OnHistoryAvailabilityChangeListener> listeners;
 
     private CanvasSaver saver;
-    private AtomicInteger changesSinceLastSave;
 
     private HistoryOffloader offloader;
     private int t = 32;
@@ -55,8 +53,7 @@ public class InfiniteCanvasHistory extends CanvasHistory {
 
         setProject(project);
 
-        changesSinceLastSave = new AtomicInteger(0);
-        saver = new CanvasSaver(2000);
+        saver = new CanvasSaver();
         saver.start();
 
         offloader = new HistoryOffloader();
@@ -75,30 +72,29 @@ public class InfiniteCanvasHistory extends CanvasHistory {
     private class CanvasSaver extends Thread {
         private static final String TAG = "CanvasSaver";
         boolean running = true;
-        int interval;
-
-        CanvasSaver(int interval) {
-            this.interval = interval;
-        }
 
         @Override
         public void run() {
             while (running) {
-                if (changesSinceLastSave.intValue() > 0) {
-                    changesSinceLastSave.set(0);
-                    long start = System.currentTimeMillis();
-                    Log.d(TAG, "Canvas has been changed since last save. Saving...");
-                    saveCanvas();
-                    Log.d(TAG, String.format("Canvas has been saved in %d ms.", System.currentTimeMillis() - start));
-                }
+
+                long start = System.currentTimeMillis();
+                Log.d(TAG, "Asynchroniously saving canvas...");
+                saveCanvas();
+                Log.d(TAG, String.format("Canvas has been saved in %d ms.", System.currentTimeMillis() - start));
 
                 try {
-                    sleep(interval);
+                    synchronized (this) {
+                        wait();
+                    }
                 } catch (InterruptedException e) {
-                    Log.e(TAG, "Unable to sleep\n" + e.getMessage());
+                    Log.e(TAG, "Unable to wait\n" + e.getMessage());
                 }
             }
             Log.d(TAG, "Finished.");
+        }
+
+        synchronized void beat(){
+            notifyAll();
         }
 
     }
@@ -241,10 +237,6 @@ public class InfiniteCanvasHistory extends CanvasHistory {
             offloadedFutureLastIndex = 0;
         }
 
-        synchronized void beat() {
-            notifyAll();
-        }
-
         private void historyLostAlert(){
             aps.post(new Runnable() {
                 @Override
@@ -252,6 +244,10 @@ public class InfiniteCanvasHistory extends CanvasHistory {
                     Utils.easyAlert(aps.getContext(), aps.getContext().getString(R.string.history_gone), aps.getContext().getString(R.string.history_gone_desc)).show();
                 }
             });
+        }
+
+        synchronized void beat(){
+            notifyAll();
         }
 
     }
@@ -405,7 +401,8 @@ public class InfiniteCanvasHistory extends CanvasHistory {
             destroyFuture();
 
             historicalChangeInProgress = false;
-            changesSinceLastSave.incrementAndGet();
+
+            saver.beat();
         }
     }
 
@@ -432,7 +429,8 @@ public class InfiniteCanvasHistory extends CanvasHistory {
         aps.pixelCanvas().drawBitmap(removeElementFromPast(false), 0, 0, srcPaint);
 
         aps.invalidate();
-        changesSinceLastSave.incrementAndGet();
+
+        saver.beat();
     }
 
     @Override
@@ -447,7 +445,8 @@ public class InfiniteCanvasHistory extends CanvasHistory {
         aps.pixelCanvas().drawBitmap(removeElementFromFuture(false), 0, 0, srcPaint);
 
         aps.invalidate();
-        changesSinceLastSave.incrementAndGet();
+
+        saver.beat();
     }
 
     @Override
@@ -479,6 +478,7 @@ public class InfiniteCanvasHistory extends CanvasHistory {
         saver.running = false;
         offloader.running = false;
         offloader.beat();
+        saver.beat();
 
         Log.d(TAG, "Synchronously saving canvas...");
         saveCanvas();

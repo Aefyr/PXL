@@ -17,6 +17,8 @@ import java.io.IOException;
  */
 
 public class Project {
+    private static final String TAG = "Projects";
+
     public String id;
     public File directory;
     public File imageFile;
@@ -70,7 +72,7 @@ public class Project {
         if (transparentBackground)
             loadedBitmap.setHasAlpha(true);
 
-        Log.d("PROJECTS", String.format("maxside=%d, from %dx%d to %dx%d",targetMaxSideSize, oW, oH, loadedBitmap.getWidth(), loadedBitmap.getHeight()));
+        Log.d(TAG, String.format("maxside=%d, from %dx%d to %dx%d",targetMaxSideSize, oW, oH, loadedBitmap.getWidth(), loadedBitmap.getHeight()));
         return loadedBitmap;
     }
 
@@ -84,7 +86,7 @@ public class Project {
         loadedBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
         if(loadedBitmap == null) {
             ProjectsUtils.deleteProject(this);
-            Log.wtf("Projects", "Project %s has been corrupted completely (how?), deleting it, the app will crash now.");
+            Log.wtf(TAG, "Project %s has been corrupted completely (how?), deleting it, the app will crash now.");
             FirebaseCrash.report(new RuntimeException("Project has been corrupted"));
         }
 
@@ -123,13 +125,13 @@ public class Project {
     public void backup(){
         File backup = new File(directory, "image.bak");
         Utils.copyFile(imageFile, backup);
-        Log.d("Projects", String.format("Project %s has been backed up", name));
+        Log.d(TAG, String.format("Project %s has been backed up", name));
     }
 
     public void restoreFromBackup(){
         File backup = new File(directory, "image.bak");
         Utils.copyFile(backup, imageFile);
-        Log.d("Projects", String.format("Project %s was corrupted, so it has been restored from the backup", name));
+        Log.d(TAG, String.format("Project %s was corrupted, so it has been restored from the backup", name));
     }
 
     private void loadMeta() {
