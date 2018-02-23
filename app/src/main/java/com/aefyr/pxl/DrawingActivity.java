@@ -36,6 +36,7 @@ import com.aefyr.pxl.history.CanvasHistory;
 import com.aefyr.pxl.palettes.PaletteManagerH;
 import com.aefyr.pxl.palettes.PalettePickerActivity;
 import com.aefyr.pxl.palettes.PaletteUtils;
+import com.aefyr.pxl.projects.Project;
 import com.aefyr.pxl.projects.ProjectsExporter;
 import com.aefyr.pxl.projects.ProjectsUtils;
 import com.aefyr.pxl.tools.SymmetrySwitcher;
@@ -66,8 +67,15 @@ public class DrawingActivity extends AppCompatActivity implements AdaptivePixelS
 
         aps = (AdaptivePixelSurfaceH) findViewById(R.id.aps);
 
-        if (getIntent().getStringExtra("projectToLoad") != null)
-            aps.setProject(ProjectsUtils.loadProject(getIntent().getStringExtra("projectToLoad")), savedInstanceState);
+        if (getIntent().getStringExtra("projectToLoad") == null) {
+            finish();
+            return;
+        }
+
+        Project project = ProjectsUtils.loadProject(getIntent().getStringExtra("projectToLoad"));
+        project.backup();
+
+        aps.setProject(project, savedInstanceState);
         aps.project.notifyProjectModified();
 
 

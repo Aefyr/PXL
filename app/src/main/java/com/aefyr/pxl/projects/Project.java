@@ -5,6 +5,8 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.aefyr.pxl.palettes.Palette2;
+import com.aefyr.pxl.util.Utils;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.io.File;
 import java.io.FileReader;
@@ -38,7 +40,7 @@ public class Project {
         BitmapFactory.Options op = new BitmapFactory.Options();
         op.inMutable = mutable;
         op.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap loadedBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), op);
+        Bitmap loadedBitmap = loadProjectImage(op);
         if (loadedBitmap!=null&&transparentBackground)
             loadedBitmap.setHasAlpha(true);
         return loadedBitmap;
@@ -48,6 +50,7 @@ public class Project {
     public Bitmap getPreviewBitmap(int targetMaxSideSize){
         BitmapFactory.Options op = new BitmapFactory.Options();
         op.inJustDecodeBounds = true;
+        op.inPreferredConfig = Bitmap.Config.ARGB_8888;
         BitmapFactory.decodeFile(imageFile.getAbsolutePath(), op);
 
         int oW = op.outWidth;
@@ -62,13 +65,29 @@ public class Project {
         }
 
         op.inJustDecodeBounds = false;
-        op.inMutable = false;
 
-        Bitmap loadedBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), op);
-        if (loadedBitmap!=null&&transparentBackground)
+        Bitmap loadedBitmap = loadProjectImage(op);
+        if (transparentBackground)
             loadedBitmap.setHasAlpha(true);
 
         Log.d("PROJECTS", String.format("maxside=%d, from %dx%d to %dx%d",targetMaxSideSize, oW, oH, loadedBitmap.getWidth(), loadedBitmap.getHeight()));
+        return loadedBitmap;
+    }
+
+    private Bitmap loadProjectImage(BitmapFactory.Options options){
+        Bitmap loadedBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
+        if(loadedBitmap == null)
+            restoreFromBackup();
+        else
+            return loadedBitmap;
+
+        loadedBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
+        if(loadedBitmap == null) {
+            ProjectsUtils.deleteProject(this);
+            Log.wtf("Projects", "Project %s has been corrupted completely (how?), deleting it, the app will crash now.");
+            FirebaseCrash.report(new RuntimeException("Project has been corrupted"));
+        }
+
         return loadedBitmap;
     }
 
@@ -100,6 +119,17 @@ public class Project {
 
     public String getResolutionString() {
         return width + "x" + height;
+    }
+    public void backup(){
+        File backup = new File(directory, "image.bak");
+        Utils.copyFile(imageFile, backup);
+        Log.d("Projects", String.format("Project %s has been backed up", name));
+    }
+
+    public void restoreFromBackup(){
+        File backup = new File(directory, "image.bak");
+        Utils.copyFile(backup, imageFile);
+        Log.d("Projects", String.format("Project %s was corrupted, so it has been restored from the backup", name));
     }
 
     private void loadMeta() {

@@ -11,7 +11,6 @@ import android.media.MediaScannerConnection;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.util.TypedValue;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -24,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.channels.FileChannel;
 
 /**
  * Created by Aefyr on 01.07.2017.
@@ -281,6 +281,16 @@ public class Utils {
                 deleteRecursive(child);
         }
         file.delete();
+    }
+
+    public static boolean copyFile(File source, File dest){
+        try(FileInputStream inputStream = new FileInputStream(source); FileOutputStream outputStream = new FileOutputStream(dest, false); FileChannel inputChannel = inputStream.getChannel()){
+            outputStream.getChannel().transferFrom(inputChannel, 0, inputChannel.size());
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }

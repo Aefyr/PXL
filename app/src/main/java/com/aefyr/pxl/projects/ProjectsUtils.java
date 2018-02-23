@@ -107,7 +107,10 @@ public class ProjectsUtils {
         b.recycle();
 
         updateVersion();
-        return new Project(newProjectDirectory);
+
+        Project newProject = new Project(newProjectDirectory);
+        newProject.backup();
+        return newProject;
     }
 
     static void writeMeta(Project project){
@@ -137,6 +140,7 @@ public class ProjectsUtils {
         }
         Project project = createNewProject(name, bitmap.getWidth(), bitmap.getHeight(), "Default", bitmap.hasAlpha());
         Utils.saveBitmap(bitmap, project.imageFile);
+        project.backup();
 
         updateVersion();
         return project;
@@ -162,6 +166,7 @@ public class ProjectsUtils {
         Project duplicate = loadProject(duplicatedId);
         duplicate.setName(duplicatedName);
         duplicate.notifyProjectModified();
+        duplicate.backup();
 
         updateVersion();
         return duplicate;
